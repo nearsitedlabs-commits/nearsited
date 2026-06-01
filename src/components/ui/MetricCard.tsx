@@ -1,0 +1,105 @@
+import { type ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { Card, type CardVariant } from "./Card";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export type MetricCardProps = {
+  /** Icon element (lucide-react icon) */
+  icon?: ReactNode;
+  /** Primary metric value */
+  value: string | number;
+  /** Metric label shown below the value */
+  label: string;
+  /** Optional trend direction */
+  trend?: "up" | "down" | "neutral";
+  /** Trend value text (e.g. "+12%") */
+  trendValue?: string;
+  /** Card variant */
+  variant?: CardVariant;
+  /** Class override */
+  className?: string;
+  /** Click handler */
+  onClick?: () => void;
+};
+
+// ── Style Map ──────────────────────────────────────────────────────────────────
+
+const TREND_COLORS: Record<string, string> = {
+  up: "text-[var(--score-good)]",
+  down: "text-[var(--score-high)]",
+  neutral: "text-[var(--text-tertiary)]",
+};
+
+const TREND_ICONS: Record<string, string> = {
+  up: "▲",
+  down: "▼",
+  neutral: "–",
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function MetricCard({
+  icon,
+  value,
+  label,
+  trend,
+  trendValue,
+  variant = "default",
+  className,
+  onClick,
+}: MetricCardProps) {
+  return (
+    <Card
+      variant={onClick ? "interactive" : variant}
+      padding="md"
+      className={cn(className)}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e: React.KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+    >
+      <div className="flex items-start justify-between">
+        {/* Icon */}
+        {icon && (
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-tint)] text-[var(--accent)]">
+            {icon}
+          </div>
+        )}
+
+        {/* Trend indicator */}
+        {trend && trendValue && (
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 text-xs font-medium",
+              TREND_COLORS[trend],
+            )}
+          >
+            <span className="text-[10px]" aria-hidden="true">
+              {TREND_ICONS[trend]}
+            </span>
+            {trendValue}
+          </span>
+        )}
+      </div>
+
+      {/* Value */}
+      <div className="mt-3 text-2xl font-medium text-[var(--text-primary)]">
+        {value}
+      </div>
+
+      {/* Label */}
+      <div className="mt-0.5 text-xs text-[var(--text-tertiary)]">{label}</div>
+    </Card>
+  );
+}
+MetricCard.displayName = "MetricCard";

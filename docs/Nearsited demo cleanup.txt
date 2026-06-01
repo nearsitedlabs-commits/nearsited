@@ -1,0 +1,187 @@
+# Nearsited — Screenshot States Checklist
+**Purpose:** Every button state, interaction result, and edge case needed to complete the full pre-demo review.
+**How to use:** Work through batches in priority order. Send screenshots to Claude in batches by page. You don't need all 70 at once — start with Batch 1.
+
+---
+
+## PRIORITY ORDER
+
+| Batch | Page | Items | Why first |
+|---|---|---|---|
+| 1 | Lead Detail | 46–60 | Strongest page, most demo time spent here |
+| 2 | Quick Audit | 28–34 | Demo killer if unreliable |
+| 3 | Dashboard | 5–9 | First impression for every new user |
+| 4 | Opportunity Discovery | 10–19 | Flagship feature |
+| 5 | Everything else | All remaining | Polish and edge cases |
+
+---
+
+## BATCH 1 — LEAD DETAIL (`/dashboard/leads/[id]`)
+
+This is your strongest page and the one that will get the most time in any demo. Need to see every state.
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 46 | **Mobile vs Desktop toggle** — flip it and screenshot both sides | Audit finding: score breakdown may not update correctly on toggle |
+| 47 | **Audit tab** — full layout (currently only showed Overview) | Unknown — haven't seen this tab at all |
+| 48 | **Issues tab** — full layout, issue count, what each issue card looks like | Core product output — need to see quality |
+| 49 | **History tab** — full content | Unknown — does it actually show history or is it empty |
+| 50 | **"Re-analyse" button click** — show progress state mid-run | Verify combined audit + design runs in sequence |
+| 51 | **"Copy Pitch" button click** — what gets copied, toast confirmation | Verify clipboard works in production |
+| 52 | **Status dropdown open** — show all options, then change one and reload to confirm persist | Was an audit finding — PATCH vs upsert bug |
+| 53 | **"Generate Pitch" when lead is unanalysed** — is the button disabled or enabled | Should be disabled with no audit data to work from |
+| 54 | **Tone + Length dropdowns open** — show all options in each | Need to verify Professional/Friendly/Luxury + Short/Medium exist |
+| 55 | **After "Generate Pitch" completes** — where does the output appear | Does it show inline below the button or navigate elsewhere |
+| 56 | **PDF Report button click** — immediate download, preview, or failure | Was listed as functional but untested |
+| 57 | **Share Link button click** — copies URL, opens modal, or shows share page | Was fixed in audit — verify it works |
+| 58 | **The shared link page in incognito** — open the share URL in incognito window | What does a recipient/prospect actually see |
+| 59 | **Lead with no_website status** — open any lead that has No Website badge | Does the page break, show empty scores, or handle gracefully |
+| 60 | **Lead with multiple re-analyses** — History tab for a lead analysed 2+ times | Does History actually record each run |
+
+---
+
+## BATCH 2 — OPPORTUNITY REVIEW / QUICK AUDIT (`/dashboard/audit`)
+
+The timeout bug on `21st.dev` means this needs thorough verification before any demo.
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 28 | **Empty initial state** — page load before typing anything | Confirm clean empty state |
+| 29 | **URL typed, before pressing Run Audit** — button enabled state | Verify button only enables with valid URL |
+| 30 | **Mid-analysis** — partial progress, some steps done, some pending | Already partially shown — need a fresh complete example |
+| 31 | **Successful completion** — both Mobile and Desktop return real scores | Most important — is the happy path actually working |
+| 32 | **"Generate Pitch" click** — what happens immediately after clicking | Modal, inline result, or navigation — need to see all three possibilities |
+| 33 | **"Add to Pipeline" click** — toast, button state change, or navigation | Verify this actually persists |
+| 34 | **"Review Again" with same URL** — does it re-run or serve from cache | Cache hit behavior needs to be obvious to user |
+
+---
+
+## BATCH 3 — DASHBOARD
+
+First page every user sees after login. Determines if they understand what to do next.
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 5 | **Zero-leads empty state** — create a new account or clear leads, screenshot the dashboard | Onboarding experience for every new signup |
+| 6 | **Dashboard with at least one analysed lead** — does right preview panel populate | Preview panel is empty in current screenshot |
+| 7 | **Click a row in "Recent Opportunities"** — where does it go, what happens | Navigate to Lead Detail or something else |
+| 8 | **"All Opportunities" button click** — just routes to /leads or does something more | Verify navigation works |
+| 9 | **Credits widget at or near zero** — what happens to the user experience | Important for the free tier — do features get disabled |
+
+---
+
+## BATCH 4 — OPPORTUNITY DISCOVERY (`/dashboard/discover`)
+
+Flagship feature. Needs to be bulletproof for demos.
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 10 | **Immediately after pressing "Find Businesses"** — loading/streaming state | Does it show a progress indicator or just hang |
+| 11 | **Zero results** — search a city + type that returns nothing | Error/empty state UX |
+| 12 | **Invalid city input** — typo or fake city name | What error appears and is it clear |
+| 13 | **Radius slider in motion** — does it update live or only on submit | UX friction point |
+| 14 | **"+ Add" button immediately after click** — visual confirmation | Does the user know it worked |
+| 15 | **A row after it's been added to pipeline** — does the row change state | Prevents duplicate adds |
+| 16 | **The shuffle/random button** — press it and screenshot result | What does it randomize |
+| 17 | **After "Analyse Opportunity" completes** — the row inline update | Does score ring populate in place or require reload |
+| 18 | **"Analyse Opportunity" failure / timeout state** — the row after it fails | What does the row show — error badge, retry button |
+| 19 | **"Save this search" click** — where does it save, how is it retrieved | Feature needs to be verified as working |
+
+---
+
+## BATCH 5 — SIGN-IN / SIGN-UP
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 1 | **Wrong password error** — enter incorrect password, screenshot result | Error state UX |
+| 2 | **Sign-up page** — if separate from sign-in | Onboarding entry point |
+| 3 | **Forgot password flow** — if it exists | Recovery path must work before public launch |
+| 4 | **After clicking "Continue with Google"** — popup, redirect, or stall | OAuth flow working end to end |
+
+---
+
+## BATCH 6 — OPPORTUNITIES LIST (`/dashboard/leads`)
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 20 | **Click "View" on any row** — confirms navigation to correct Lead Detail | Basic routing verification |
+| 21 | **An analysed card with real score** — all current screenshots show unanalysed only | Need to see what an analysed card/row looks like |
+| 22 | **Each filter tab result** — click All, Audited, Analysed, Needs Improvement, Strong Opportunity, Contacted, Archived — one screenshot per tab | Verify filter logic is correct for each |
+| 23 | **Search bar in use** — type a business name, screenshot results | Live filter or enter-to-search |
+| 24 | **Sort dropdown open** — show all sort options | What sorts are available |
+| 25 | **"Filters" button open** — the filter panel content | Need to see what filter options exist |
+| 26 | **Page 2 and last page** — pagination working | Pagination logic verification |
+| 27 | **"New Search" button** — destination and state | Navigates to Discover |
+
+---
+
+## BATCH 5 — PIPELINE (`/dashboard/pipeline`)
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 35 | **Status dropdown open** — all selectable stages visible | Verify all PipelineStatus enum values are present |
+| 36 | **After changing status → reload page** — does it persist | Was an audit finding — PATCH vs upsert |
+| 37 | **Row click** — navigate to Lead Detail or do nothing | Is the row clickable |
+| 38 | **Score "—" row clicked** — unanalysed pipeline entry | Does it handle gracefully |
+| 39 | **Empty pipeline** — no entries | Empty state UX |
+
+---
+
+## BATCH 5 — PITCHES (`/dashboard/pitches`)
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 40 | **Click pitch body** — expand, navigate, or nothing | Interaction behavior |
+| 41 | **Copy button click** — toast, icon change, or silent | Clipboard verification |
+| 42 | **Delete button click** — confirmation dialog or immediate | Destructive action needs confirmation |
+| 43 | **After generating pitch from Lead Detail** — appears here immediately or requires refresh | Data sync between pages |
+| 44 | **Empty Pitches state** — no pitches generated yet | Empty state UX |
+| 45 | **"sent" or "replied" status pitch** — if any exist | Verify status display works beyond "draft" |
+
+---
+
+## BATCH 5 — SETTINGS (`/dashboard/settings`)
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 61 | **Click each integration row** — opens config, does nothing, or navigates | Are these interactive or just display |
+| 62 | **Sign out → result** — does it sign out and redirect to landing | Basic auth flow |
+| 63 | **"Buy More Credits" click** — destination | Stripe not built yet — where does this go |
+
+---
+
+## BATCH 5 — CROSS-CUTTING EDGE CASES
+
+These appear across multiple pages and need to be captured wherever they appear.
+
+| # | What to capture | Why it matters |
+|---|---|---|
+| 64 | **The "1 Issue ×" red badge — click it** | Mystery indicator — need to see what it opens to identify it |
+| 65 | **Sidebar at narrow viewport (e.g. 1024px wide window)** | Responsive behavior |
+| 66 | **App on mobile-width viewport** | Agencies may demo from a phone |
+| 67 | **Click any "Coming Soon" sidebar item** | Does it route, show a modal, or do nothing |
+| 68 | **Any toast notification** — copy 2–3 examples you've seen | Verify toast system is consistent |
+| 69 | **Any error states seen during your own testing** — screenshot and paste | Surface issues you've already found |
+| 70 | **Any loading skeleton states** — screenshot any page mid-load | Verify loading states exist and look intentional |
+
+---
+
+## NOTES ON CAPTURING
+
+**You don't need 70 separate screenshots.** Many of these can be captured in groups:
+- Filter tabs (item 22) can be 7 quick screenshots in a row
+- Dropdown open states can be captured as a group
+
+**Screen recording is faster than screenshots** for flows with multiple steps (items 50, 55, 32). A short Loom or screen recording for those saves time.
+
+**Priority within batches:** Items marked in **bold** are the highest priority within each batch — if you can only do a few, do those.
+
+**What to look for while capturing:**
+- Does the button change state after clicking (loading indicator, disabled, label change)?
+- Does the action produce a toast, navigation, or inline update?
+- Is there a visual difference between success and failure states?
+- Does reloading the page preserve the action's result?
+
+---
+
+*Send batches to Claude as you complete them. Start with Batch 1 (Lead Detail) — that's the page that will make or break demos.*

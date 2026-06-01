@@ -1,0 +1,80 @@
+import { type ReactNode } from "react";
+import { cn } from "@/lib/cn";
+import { Card, type CardVariant } from "./Card";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export type StatCardProps = {
+  /** Metric label */
+  label: string;
+  /** Primary value */
+  value: string | number;
+  /** Numeric change value (e.g. 12 for +12%) */
+  change?: number;
+  /** Change label (e.g. "vs last week") */
+  changeLabel?: string;
+  /** Optional icon */
+  icon?: ReactNode;
+  /** Card variant */
+  variant?: CardVariant;
+  /** Class override */
+  className?: string;
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function StatCard({
+  label,
+  value,
+  change,
+  changeLabel,
+  icon,
+  variant = "default",
+  className,
+}: StatCardProps) {
+  const isPositive = change != null && change > 0;
+  const isNegative = change != null && change < 0;
+
+  return (
+    <Card variant={variant} padding="md" className={cn(className)}>
+      {/* Label row */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-[var(--text-tertiary)]">{label}</span>
+        {icon && (
+          <span className="text-[var(--text-tertiary)]">{icon}</span>
+        )}
+      </div>
+
+      {/* Value + change row */}
+      <div className="mt-2 flex items-baseline gap-3">
+        <span className="text-2xl font-medium text-[var(--text-primary)]">
+          {value}
+        </span>
+
+        {change != null && (
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 text-xs font-medium",
+              isPositive && "text-[var(--score-good)]",
+              isNegative && "text-[var(--score-high)]",
+              change === 0 && "text-[var(--text-tertiary)]",
+            )}
+          >
+            <span aria-hidden="true">
+              {isPositive ? "▲" : isNegative ? "▼" : "–"}
+            </span>
+            {Math.abs(change)}%
+          </span>
+        )}
+      </div>
+
+      {/* Change footnote */}
+      {changeLabel && (
+        <div className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+          {changeLabel}
+        </div>
+      )}
+    </Card>
+  );
+}
+StatCard.displayName = "StatCard";

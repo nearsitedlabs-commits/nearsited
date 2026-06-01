@@ -1,0 +1,9 @@
+<svg width="128" height="32" viewBox="0 0 128 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mark: two connected nodes -->
+  <rect x="1" y="7" width="14" height="14" rx="7" stroke="currentColor" stroke-width="1.8" fill="none"/>
+  <rect x="22" y="7" width="14" height="14" rx="7" stroke="currentColor" stroke-width="1.8" fill="none"/>
+  <line x1="15" y1="14" x2="22" y2="14" stroke="currentColor" stroke-width="1.8"/>
+  <circle cx="29" cy="14" r="2" fill="currentColor" opacity="0.6"/>
+  <!-- Wordmark -->
+  <text x="42" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="500" letter-spacing="-0.02em" fill="currentColor">Nearsited</text>
+</svg>
