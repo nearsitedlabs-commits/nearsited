@@ -173,6 +173,11 @@ const EMPTY_MESSAGES: Record<TabFilter, { icon: typeof Compass; title: string; d
     title: "No opportunities yet",
     description: "Hidden revenue is waiting to be uncovered. Start your first discovery search to find local businesses with redesign potential.",
   },
+  all_pipeline: {
+    icon: Compass,
+    title: "No leads in pipeline",
+    description: "Add discovered opportunities to your pipeline to start tracking them from prospect to won deal.",
+  },
   needs_improvement: {
     icon: Target,
     title: "No opportunities need improvement",
