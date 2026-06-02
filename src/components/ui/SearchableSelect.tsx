@@ -1,8 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Command } from "cmdk";
 import { cn } from "@/lib/cn";
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+/**
+ * Maximum number of dropdown items to render at once.
+ * Prevents jank when options is 200k+ (cities.json is ~29 MB).
+ */
+const MAX_VISIBLE_OPTIONS = 200;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -19,6 +27,8 @@ type SearchableSelectProps = {
   valueKey: string;
   groupKey?: string;
   inputClassName?: string;
+  /** Optional callback fired on every search input change (e.g. for async search-as-you-type). */
+  onSearchChange?: (query: string) => void;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -32,14 +42,50 @@ export default function SearchableSelect({
   valueKey,
   groupKey,
   inputClassName,
+  onSearchChange,
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const onChangeRef = useRef(onChange);
+  const onSearchChangeRef = useRef(onSearchChange);
 
-  const selectedOption = options.find((opt) => opt[valueKey] === value);
+  // Keep refs in sync so useCallbacks don't break when callbacks change
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    onSearchChangeRef.current = onSearchChange;
+  }, [onSearchChange]);
+
+  // Fire onSearchChange when the search query changes (for async search-as-you-type)
+  useEffect(() => {
+    onSearchChangeRef.current?.(search);
+  }, [search]);
+
+  // ── Memoized lookups ──────────────────────────────────────────────────────
+
+  const selectedOption = useMemo(
+    () => options.find((opt) => opt[valueKey] === value),
+    [options, value, valueKey],
+  );
   const displayText = selectedOption ? selectedOption[displayKey] : "";
+
+  // Group options by groupKey (only relevant for small datasets like businessTypes)
+  const grouped = useMemo(
+    () =>
+      groupKey
+        ? options.reduce<Record<string, Option[]>>((acc, opt) => {
+            const group = opt[groupKey] ?? "Other";
+            if (!acc[group]) acc[group] = [];
+            acc[group].push(opt);
+            return acc;
+          }, {})
+        : null,
+    [options, groupKey],
+  );
 
   // Close on outside click
   useEffect(() => {
@@ -56,33 +102,84 @@ export default function SearchableSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelect = useCallback(
-    (selectedValue: string) => {
-      onChange(selectedValue);
-      setOpen(false);
-      setSearch("");
-      inputRef.current?.blur();
-    },
-    [onChange],
-  );
+  const handleSelect = useCallback((selectedValue: string) => {
+    onChangeRef.current(selectedValue);
+    setOpen(false);
+    setSearch("");
+    inputRef.current?.blur();
+  }, []);
 
   const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange("");
+    onChangeRef.current("");
     setSearch("");
     setOpen(true);
     inputRef.current?.focus();
-  }, [onChange]);
+  }, []);
 
-  // Group options by groupKey
-  const grouped = groupKey
-    ? options.reduce<Record<string, Option[]>>((acc, opt) => {
-        const group = opt[groupKey] ?? "Other";
-        if (!acc[group]) acc[group] = [];
-        acc[group].push(opt);
-        return acc;
-      }, {})
-    : null;
+  // ── Limited option rendering ─────────────────────────────────────────────
+
+  /**
+   * For flat (non-grouped) lists with many items, only render the first
+   * MAX_VISIBLE_OPTIONS that match the search query.  cmdk still manages
+   * keyboard navigation over the full set via `value`, but React only needs
+   * to create VDOM for a small subset.
+   */
+  const flatVisible = useMemo(() => {
+    if (!search) return options.slice(0, MAX_VISIBLE_OPTIONS);
+
+    const lower = search.toLowerCase();
+    const matched: Option[] = [];
+    for (let i = 0; i < options.length && matched.length < MAX_VISIBLE_OPTIONS; i++) {
+      const opt = options[i];
+      if (opt[displayKey].toLowerCase().includes(lower)) {
+        matched.push(opt);
+      }
+    }
+    return matched;
+  }, [options, search, displayKey]);
+
+  /**
+   * Same treatment for grouped lists — limit items per group.
+   */
+  const groupedVisible = useMemo(() => {
+    if (!grouped) return null;
+
+    if (!search) {
+      const result: Record<string, Option[]> = {};
+      for (const [group, groupOptions] of Object.entries(grouped)) {
+        result[group] = groupOptions.slice(0, MAX_VISIBLE_OPTIONS);
+      }
+      return result;
+    }
+
+    const lower = search.toLowerCase();
+    const result: Record<string, Option[]> = {};
+    for (const [group, groupOptions] of Object.entries(grouped)) {
+      const matched: Option[] = [];
+      for (let i = 0; i < groupOptions.length && matched.length < MAX_VISIBLE_OPTIONS; i++) {
+        const opt = groupOptions[i];
+        if (opt[displayKey].toLowerCase().includes(lower)) {
+          matched.push(opt);
+        }
+      }
+      if (matched.length > 0) {
+        result[group] = matched;
+      }
+    }
+    return result;
+  }, [grouped, search, displayKey]);
+
+  const hasMore =
+    (grouped
+      ? Object.values(groupedVisible ?? {}).reduce((sum, arr) => sum + arr.length, 0)
+      : flatVisible.length) <
+    (grouped
+      ? Object.values(grouped).reduce((sum, arr) => sum + arr.length, 0)
+      : options.length) &&
+    (search
+      ? false /* once filtered we show all matches up to the limit, so no "more" hint */
+      : options.length > MAX_VISIBLE_OPTIONS);
 
   return (
     <div ref={containerRef} className="relative">
@@ -95,7 +192,7 @@ export default function SearchableSelect({
             setSearch(e.target.value);
             if (!open) setOpen(true);
             if (e.target.value !== displayText) {
-              onChange("");
+              onChangeRef.current("");
             }
           }}
           onFocus={() => {
@@ -121,6 +218,8 @@ export default function SearchableSelect({
           autoComplete="off"
           role="combobox"
           aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-controls="searchable-select-listbox"
         />
 
         {/* Clear or chevron */}
@@ -161,9 +260,9 @@ export default function SearchableSelect({
             label={placeholder}
             shouldFilter={false}
           >
-            <Command.List className="max-h-60 overflow-auto p-1">
-              {grouped ? (
-                Object.entries(grouped).map(([group, groupOptions]) => (
+            <Command.List id="searchable-select-listbox" className="max-h-60 overflow-auto p-1">
+              {groupedVisible ? (
+                Object.entries(groupedVisible).map(([group, groupOptions]) => (
                   <Command.Group
                     key={group}
                     heading={
@@ -176,13 +275,6 @@ export default function SearchableSelect({
                       const optValue = opt[valueKey];
                       const optDisplay = opt[displayKey];
                       const isSelected = optValue === value;
-                      // Filter by search
-                      if (
-                        search &&
-                        !optDisplay.toLowerCase().includes(search.toLowerCase())
-                      ) {
-                        return null;
-                      }
                       return (
                         <Command.Item
                           key={optValue}
@@ -204,17 +296,10 @@ export default function SearchableSelect({
                 ))
               ) : (
                 <>
-                  {options.map((opt) => {
+                  {flatVisible.map((opt) => {
                     const optValue = opt[valueKey];
                     const optDisplay = opt[displayKey];
                     const isSelected = optValue === value;
-                    // Filter by search
-                    if (
-                      search &&
-                      !optDisplay.toLowerCase().includes(search.toLowerCase())
-                    ) {
-                      return null;
-                    }
                     return (
                       <Command.Item
                         key={optValue}
@@ -233,6 +318,13 @@ export default function SearchableSelect({
                     );
                   })}
                 </>
+              )}
+
+              {/* Hint when there are more results than rendered */}
+              {hasMore && (
+                <div className="px-3 py-2 text-center text-[11px] text-[var(--text-tertiary)] border-t border-[var(--border)] mt-1">
+                  Type to narrow results…
+                </div>
               )}
 
               {/* Empty state */}

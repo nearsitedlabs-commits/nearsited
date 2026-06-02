@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { name, city, businessType, radius } = body;
+  const { name, city, businessType } = body;
 
   if (!name || !city || !businessType) {
     return NextResponse.json({ error: "Missing required fields: name, city, businessType" }, { status: 400 });

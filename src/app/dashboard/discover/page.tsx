@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import SearchableSelect from "@/components/ui/SearchableSelect";
-import { getOrderedCities } from "@/lib/data/cities";
 import type { CityOption } from "@/lib/data/cities";
 import { businessTypes } from "@/lib/data/businessTypes";
 import {
@@ -18,6 +17,7 @@ import {
   Building2,
   Globe,
   Compass,
+  Loader2,
 } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -25,7 +25,7 @@ import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { Toast } from "@/components/ui/Toast";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
-import { computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
+import { estimatedOpportunity } from "@/lib/scoring";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -92,12 +92,8 @@ type SortOption = {
 };
 
 const SORT_OPTIONS: SortOption[] = [
-  { value: "opportunity-desc", label: "Opportunity (Highest First)" },
-  { value: "opportunity-asc", label: "Opportunity (Lowest First)" },
+  { value: "opportunity-desc", label: "Estimated Opportunity" },
   { value: "rating-desc", label: "Rating (High to Low)" },
-  { value: "rating-asc", label: "Rating (Low to High)" },
-  { value: "name-asc", label: "Name (A-Z)" },
-  { value: "date-desc", label: "Most Recently Added" },
   { value: "outreach-first", label: "Flagged for Outreach First" },
 ];
 
@@ -110,18 +106,9 @@ type FilterTab = {
 
 const FILTER_TABS: FilterTab[] = [
   { value: "all", label: "All" },
-  { value: "no_website", label: "Website Opportunity" },
-  { value: "social_only", label: "Social Presence" },
-  { value: "platform_only", label: "Platform Presence" },
-  { value: "has_website", label: "Opportunity Found" },
+  { value: "has_website", label: "Has website" },
+  { value: "no_website", label: "No real website" },
 ];
-
-const STATUS_BAR_COLOR: Record<string, string> = {
-  has_website: "bg-[var(--badge-green-text)]",
-  no_website: "bg-[var(--badge-red-text)]",
-  social_only: "bg-[var(--badge-amber-text)]",
-  platform_only: "bg-[var(--badge-indigo-text)]",
-};
 
 // ─── Muted reason tags when no audit/design actions are available ──────────
 
@@ -252,19 +239,27 @@ export default function DiscoverPage() {
 
   // ── UI state ──
   const [websiteFilter, setWebsiteFilter] = useState<string>("all");
-  const [sortOption, setSortOption] = useState<string>("rating-desc");
+  const [sortOption, setSortOption] = useState<string>("opportunity-desc");
   const [visibleCount, setVisibleCount] = useState(50);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [cities, setCities] = useState<CityOption[]>([]);
+  const [citySearchQuery, setCitySearchQuery] = useState("");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [savedSearches, setSavedSearches] = useState<{ id: string; name: string; city: string; business_type: string; radius?: number }[]>([]);
   const [savedSearchesOpen, setSavedSearchesOpen] = useState(false);
   const savedSearchesRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(true);
+
+  // ── Cleanup on unmount ─────────────────────────────────────────────
+  useEffect(() => {
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const supabase = createClient();
   const sortRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   // ── Restore state from sessionStorage on mount ──
   useEffect(() => {
@@ -320,10 +315,13 @@ export default function DiscoverPage() {
         // non-critical
       }
 
-      // Lazy-load cities (29 MB JSON loaded on first access, not at module level)
+      // Load initial popular cities from server-side API (avoids loading 29MB JSON on client)
       try {
-        const ordered = await getOrderedCities();
-        setCities(ordered);
+        const res = await fetch("/api/cities/search");
+        if (res.ok) {
+          const data = await res.json();
+          setCities(data.cities ?? []);
+        }
       } catch {
         // non-critical — city select will show empty state
       }
@@ -333,6 +331,25 @@ export default function DiscoverPage() {
 
     init();
   }, []);
+
+  // ── Debounced city search: fetch from API as user types ──
+  useEffect(() => {
+    if (!citySearchQuery) return; // initial load already happened above
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/cities/search?q=${encodeURIComponent(citySearchQuery)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (mountedRef.current) {
+            setCities(data.cities ?? []);
+          }
+        }
+      } catch {
+        // non-critical
+      }
+    }, 150); // 150ms debounce
+    return () => clearTimeout(timer);
+  }, [citySearchQuery]);
 
   // ── Close dropdowns on click outside ──
   useEffect(() => {
@@ -357,39 +374,36 @@ export default function DiscoverPage() {
   // ── Sort + filter results ──
   const processedResults = useMemo(() => {
     const filtered = results.filter((b) => {
-      if (websiteFilter !== "all" && b.website_status !== websiteFilter)
-        return false;
+      if (websiteFilter === "all") return true;
+      if (websiteFilter === "has_website")
+        return b.website_status === "has_website" || b.website_status === "platform_only";
+      if (websiteFilter === "no_website")
+        return b.website_status === "no_website" || b.website_status === "social_only";
       return true;
     });
 
     const sorted = [...filtered].sort((a, b) => {
       switch (sortOption) {
-        case "opportunity-desc":
-        case "opportunity-asc": {
-          // Compute effective opportunity score from audit or website status
-          const aScore = a.audit?.mobile?.performance_score ?? null;
-          const bScore = b.audit?.mobile?.performance_score ?? null;
-          // Businesses with no website / social-only are high opportunity
-          const aOpp = a.website_status === "no_website" || a.website_status === "social_only" ? 90
-                     : a.website_status === "platform_only" ? 75
-                     : aScore ?? 0;
-          const bOpp = b.website_status === "no_website" || b.website_status === "social_only" ? 90
-                     : b.website_status === "platform_only" ? 75
-                     : bScore ?? 0;
-          const cmp = aOpp - bOpp;
-          return sortOption === "opportunity-desc" ? -cmp : cmp;
+        case "opportunity-desc": {
+          // Use verified audit score if available, otherwise estimate
+          const getScore = (business: BusinessResult) => {
+            const verified = business.audit?.mobile?.performance_score;
+            if (verified != null) return verified;
+            return estimatedOpportunity({
+              website_status: business.website_status,
+              website: business.website ?? null,
+              rating: business.rating ?? null,
+              user_ratings_total: business.review_count ?? null,
+            });
+          };
+          return getScore(b) - getScore(a);
         }
-        case "rating-asc":
-          return (a.rating ?? 0) - (b.rating ?? 0);
         case "rating-desc":
           return (b.rating ?? 0) - (a.rating ?? 0);
-        case "name-asc":
-          return a.name.localeCompare(b.name);
         case "outreach-first":
           if (a.flagged_for_outreach && !b.flagged_for_outreach) return -1;
           if (!a.flagged_for_outreach && b.flagged_for_outreach) return 1;
           return (b.rating ?? 0) - (a.rating ?? 0);
-        case "date-desc":
         default:
           return 0;
       }
@@ -408,7 +422,7 @@ export default function DiscoverPage() {
     setSelectedBusinessType(randomType.value);
   }, [cities]);
 
-  // ── Analyse Opportunity handler (chains audit → design analysis) ──
+  // ── Analyse Opportunity handler (audit + design analysis CONCURRENTLY) ──
   const handleAnalyseOpportunity = useCallback(
     async (businessId: string, website: string) => {
       setAnalyseProgress((prev) => {
@@ -422,171 +436,184 @@ export default function DiscoverPage() {
       });
 
       try {
+        const abortController = new AbortController();
+        abortControllersRef.current.set(businessId, abortController);
+        const { signal } = abortController;
+
         const decoder = new TextDecoder();
-
-        // ── Phase 1: Audit ──
-        const auditResponse = await fetch("/api/audit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ businessId, website, force: true }),
-        });
-
-        if (!auditResponse.ok) {
-          const errData = await auditResponse.json().catch(() => null);
-          throw new Error(errData?.error ?? "Audit request failed");
-        }
-
-        const auditReader = auditResponse.body!.getReader();
-        let auditBuffer = "";
         let auditResultData: AuditResult | null = null;
+        let designResultData: Record<string, unknown> | null = null;
+        let auditError: string | null = null;
+        let designError: string | null = null;
 
-        while (true) {
-          const { done, value } = await auditReader.read();
-          if (done) break;
+        // ── Helper: read an NDJSON stream ────────────────────────────
+        async function readStream(
+          response: Response,
+          onProgress: (step: string, label: string) => void,
+          onResult: (data: Record<string, unknown>) => void,
+        ): Promise<void> {
+          const reader = response.body!.getReader();
+          let buffer = "";
 
-          auditBuffer += decoder.decode(value, { stream: true });
-          const lines = auditBuffer.split("\n");
-          auditBuffer = lines.pop() ?? "";
+          while (true) {
+            if (signal.aborted) return; // stop if cancelled
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (!mountedRef.current) return; // stop if unmounted
 
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            let chunk: Record<string, unknown>;
-            try {
-              chunk = JSON.parse(line);
-            } catch {
-              continue;
-            }
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
 
-            const type = chunk.type as string;
-            if (type === "progress") {
-              setAnalyseProgress((prev) => {
-                const next = new Map(prev);
-                next.set(businessId, {
-                  step: chunk.step as string,
-                  label: (chunk.label as string) ?? "",
-                  phase: "audit",
-                });
-                return next;
-              });
-            } else if (type === "result") {
-              auditResultData = {
-                mobile: chunk.mobile as AuditResult["mobile"],
-                desktop: chunk.desktop as AuditResult["desktop"],
-              };
-            } else if (type === "error") {
-              throw new Error((chunk.message as string) ?? "Audit failed");
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              let chunk: Record<string, unknown>;
+              try {
+                chunk = JSON.parse(line);
+              } catch {
+                continue;
+              }
+
+              const type = chunk.type as string;
+              if (type === "progress") {
+                onProgress(chunk.step as string, (chunk.label as string) ?? "");
+              } else if (type === "result") {
+                onResult(chunk);
+              } else if (type === "error") {
+                throw new Error((chunk.message as string) ?? "Request failed");
+              }
             }
           }
         }
 
-        if (auditResultData) {
-          setResults((prev) =>
-            prev.map((b) =>
-              b.id === businessId ? { ...b, audit: auditResultData! } : b
-            )
-          );
-        }
-
-        setAuditedIds((prev) => {
-          const next = new Set(prev);
-          next.add(businessId);
-          saveToSession(STORAGE_KEY_AUDITED, [...next]);
-          return next;
-        });
-
-        // ── Phase 2: Design Analysis ──
-        setAnalyseProgress((prev) => {
-          const next = new Map(prev);
-          next.set(businessId, {
-            step: "starting",
-            label: "Starting design analysis...",
-            phase: "design",
-          });
-          return next;
-        });
-
-        const designResponse = await fetch("/api/analyze-design", {
+        // ── Fire BOTH requests CONCURRENTLY ──────────────────────────
+        const auditResponsePromise = fetch("/api/audit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ businessId, website, force: true }),
+          signal,
+        });
+        const designResponsePromise = fetch("/api/analyze-design", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ businessId, website, force: true }),
+          signal,
         });
 
-        if (!designResponse.ok) {
-          const errData = await designResponse.json().catch(() => null);
-          throw new Error(errData?.error ?? "Design analysis request failed");
-        }
-
-        const designReader = designResponse.body!.getReader();
-        let designBuffer = "";
-        let designResultData: Record<string, unknown> | null = null;
-
-        while (true) {
-          const { done, value } = await designReader.read();
-          if (done) break;
-
-          designBuffer += decoder.decode(value, { stream: true });
-          const lines = designBuffer.split("\n");
-          designBuffer = lines.pop() ?? "";
-
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            let chunk: Record<string, unknown>;
-            try {
-              chunk = JSON.parse(line);
-            } catch {
-              continue;
+        // ── Process audit stream ─────────────────────────────────────
+        const auditProcess = (async () => {
+          try {
+            const res = await auditResponsePromise;
+            if (!res.ok) {
+              const errData = await res.json().catch(() => null);
+              throw new Error(errData?.error ?? "Audit request failed");
             }
 
-            const type = chunk.type as string;
-            if (type === "progress") {
-              setAnalyseProgress((prev) => {
-                const next = new Map(prev);
-                next.set(businessId, {
-                  step: chunk.step as string,
-                  label: (chunk.label as string) ?? "",
-                  phase: "design",
+            await readStream(
+              res,
+              (step, label) => {
+                setAnalyseProgress((prev) => {
+                  const next = new Map(prev);
+                  next.set(businessId, { step, label, phase: "audit" });
+                  return next;
                 });
+              },
+              (data) => {
+                auditResultData = {
+                  mobile: data.mobile as AuditResult["mobile"],
+                  desktop: data.desktop as AuditResult["desktop"],
+                };
+              },
+            );
+
+            if (auditResultData) {
+              setResults((prev) =>
+                prev.map((b) =>
+                  b.id === businessId ? { ...b, audit: auditResultData! } : b
+                )
+              );
+              setAuditedIds((prev) => {
+                const next = new Set(prev);
+                next.add(businessId);
+                saveToSession(STORAGE_KEY_AUDITED, [...next]);
                 return next;
               });
-            } else if (type === "result") {
-              designResultData = chunk;
-            } else if (type === "error") {
-              throw new Error(
-                (chunk.message as string) ?? "Design analysis failed"
-              );
             }
+          } catch (err) {
+            auditError = err instanceof Error ? err.message : "Audit failed";
           }
-        }
+        })();
 
-        if (designResultData) {
-          const mobile = designResultData.mobile as Record<string, unknown> | undefined;
-          const desktop = designResultData.desktop as Record<string, unknown> | undefined;
-          const score =
-            (mobile?.design_score as number) ??
-            (desktop?.design_score as number);
+        // ── Process design stream ────────────────────────────────────
+        const designProcess = (async () => {
+          try {
+            const res = await designResponsePromise;
+            if (!res.ok) {
+              const errData = await res.json().catch(() => null);
+              throw new Error(errData?.error ?? "Design analysis request failed");
+            }
 
-          if (score) {
-            setResults((prev) =>
-              prev.map((b) =>
-                b.id === businessId ? { ...b, design_score: score } : b
-              )
+            await readStream(
+              res,
+              (step, label) => {
+                setAnalyseProgress((prev) => {
+                  const next = new Map(prev);
+                  next.set(businessId, { step, label, phase: "design" });
+                  return next;
+                });
+              },
+              (data) => {
+                designResultData = data;
+              },
             );
-          }
 
-          if (mobile?.status === "error") {
-            console.warn("[DISCOVER] Mobile design analysis warning:", mobile.error);
+            if (designResultData) {
+              const design = designResultData as Record<string, unknown>;
+              const mobile = design.mobile as Record<string, unknown> | undefined;
+              const desktop = design.desktop as Record<string, unknown> | undefined;
+              const score =
+                (mobile?.design_score as number) ??
+                (desktop?.design_score as number);
+
+              if (score) {
+                setResults((prev) =>
+                  prev.map((b) =>
+                    b.id === businessId ? { ...b, design_score: score } : b
+                  )
+                );
+              }
+
+              if (mobile?.status === "error") {
+                console.warn("[DISCOVER] Mobile design analysis warning:", mobile.error);
+              }
+              if (desktop?.status === "error") {
+                console.warn("[DISCOVER] Desktop design analysis warning:", desktop.error);
+              }
+
+              setAnalysedIds((prev) => {
+                const next = new Set(prev);
+                next.add(businessId);
+                saveToSession(STORAGE_KEY_ANALYSED, [...next]);
+                return next;
+              });
+            }
+          } catch (err) {
+            designError = err instanceof Error ? err.message : "Design analysis failed";
           }
-          if (desktop?.status === "error") {
-            console.warn("[DISCOVER] Desktop design analysis warning:", desktop.error);
-          }
+        })();
+
+        // ── Wait for BOTH to complete ────────────────────────────────
+        await Promise.all([auditProcess, designProcess]);
+
+        // Bail if unmounted
+        if (!mountedRef.current) return;
+
+        // Surface errors (audit is critical, design is non-fatal)
+        if (auditError) throw new Error(auditError);
+        if (designError) {
+          console.warn("[DISCOVER] Design analysis failed (non-fatal):", designError);
+          setToastMessage("Performance audit complete, but design analysis unavailable. Try again later.");
         }
-
-        setAnalysedIds((prev) => {
-          const next = new Set(prev);
-          next.add(businessId);
-          saveToSession(STORAGE_KEY_ANALYSED, [...next]);
-          return next;
-        });
 
         setAnalyseProgress((prev) => {
           const next = new Map(prev);
@@ -598,12 +625,12 @@ export default function DiscoverPage() {
           return next;
         });
       } catch (err) {
-        const msg =
-          err instanceof DOMException && err.name === "AbortError"
-            ? "Request timed out (screenshots or AI took too long)"
-            : err instanceof Error
-            ? err.message
-            : "Analysis failed";
+        // If cancelled by user, silently clean up (handleCancelAnalysis already removed progress)
+        if (err instanceof DOMException && err.name === "AbortError") {
+          abortControllersRef.current.delete(businessId);
+          return;
+        }
+        const msg = err instanceof Error ? err.message : "Analysis failed";
         setAnalyseProgress((prev) => {
           const next = new Map(prev);
           next.set(businessId, {
@@ -614,6 +641,8 @@ export default function DiscoverPage() {
           });
           return next;
         });
+      } finally {
+        abortControllersRef.current.delete(businessId);
       }
     },
     []
@@ -695,6 +724,22 @@ export default function DiscoverPage() {
     },
     [userId]
   );
+
+  // ── Cancel Analysis handler ──
+  const handleCancelAnalysis = useCallback((businessId: string) => {
+    const controllers = abortControllersRef.current;
+    const controller = controllers.get(businessId);
+    if (controller) {
+      controller.abort();
+      controllers.delete(businessId);
+    }
+    setAnalyseProgress((prev) => {
+      const next = new Map(prev);
+      next.delete(businessId);
+      return next;
+    });
+    setToastMessage("Analysis cancelled");
+  }, []);
 
   // ── Submit handler ──
   const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -945,14 +990,6 @@ export default function DiscoverPage() {
     { key: "design_complete",    label: "Analysis complete",            phase: "design" },
   ];
 
-  // ── Progress bar animation style ──
-  const progressBarStyle = (progressStep: string) => {
-    const currentIdx = ANALYSE_STEPS.findIndex((s) => s.key === progressStep);
-    const totalSteps = ANALYSE_STEPS.length;
-    const pct = Math.min(95, Math.round(((currentIdx + 1) / totalSteps) * 100));
-    return { width: `${pct}%` };
-  };
-
   // ── RENDER ─────────────────────────────────────────────────────────────────
 
   return (
@@ -1002,6 +1039,7 @@ export default function DiscoverPage() {
                   placeholder="City…"
                   displayKey="label"
                   valueKey="value"
+                  onSearchChange={setCitySearchQuery}
                   inputClassName="!pl-10 !h-11 !rounded-xl !border-[var(--border)] !bg-[var(--bg-elevated)] !text-sm !text-[var(--text-primary)] !shadow-none placeholder:!text-[var(--text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
                 />
               </div>
@@ -1020,8 +1058,15 @@ export default function DiscoverPage() {
                 />
               </div>
               <div className="flex-shrink-0 min-w-[160px]">
-                <label className="mb-1 block text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--text-tertiary)]">
-                  Radius: {radiusMeters >= 1000 ? `${(radiusMeters / 1000).toFixed(0)} km` : `${radiusMeters} m`}
+                <label className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--text-tertiary)]">
+                  <span>Radius: {radiusMeters >= 1000 ? `${(radiusMeters / 1000).toFixed(0)} km` : `${radiusMeters} m`}</span>
+                  <span className="relative group inline-flex items-center">
+                    <Info className="size-3 cursor-help opacity-60" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-surface-3)] text-[var(--text-primary)] text-xs font-normal normal-case tracking-normal rounded-xl px-3 py-2.5 w-64 shadow-xl z-50 leading-relaxed pointer-events-none">
+                      Radius is measured from the city center coordinates.
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-surface-3)]" />
+                    </div>
+                  </span>
                 </label>
                 <input
                   type="range"
@@ -1225,6 +1270,11 @@ export default function DiscoverPage() {
               </div>
             </div>
 
+            {/* Helper note about estimated scores */}
+            <p className="text-xs text-[var(--text-tertiary)] px-1">
+              ~ Estimated opportunity. Analyse any business for the verified score.
+            </p>
+
             {/* Business rows */}
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
               <div>
@@ -1240,50 +1290,37 @@ export default function DiscoverPage() {
                   return (
                     <div
                       key={business.id}
-                      className={`relative flex items-center gap-4 px-5 py-0 min-h-[52px] transition-colors duration-150 hover:bg-[var(--bg-elevated)] cursor-default ${
+                      className={`relative w-full flex items-center gap-4 px-5 py-0 min-h-[52px] transition-colors duration-150 hover:bg-[var(--bg-elevated)] cursor-default ${
                         idx < Math.min(visibleCount, processedResults.length) - 1 ? "border-b border-[var(--border)]" : ""
                       }`}
                     >
-                      {/* Left status accent strip — full row height */}
-                      <div className={`w-[3px] self-stretch flex-shrink-0 ${STATUS_BAR_COLOR[business.website_status] ?? "bg-[var(--text-tertiary)]"}`} />
+                      {/* Thin accent bar — only visible during analysis */}
+                      {isAnalyseLoading ? (
+                        <div className="w-[2px] self-stretch flex-shrink-0 bg-[var(--accent)]" />
+                      ) : (
+                        <div className="w-[2px] self-stretch flex-shrink-0 bg-transparent" />
+                      )}
 
-                      {/* Score ring — shows audit score when available */}
-                      <ScoreRing
-                        score={business.audit?.mobile?.performance_score ?? null}
-                        size={44}
-                      />
+                      {/* Score ring — spinner during analysis, estimate/verified otherwise */}
+                      {isAnalyseLoading ? (
+                        <div className="flex items-center justify-center w-[44px] h-[44px] flex-shrink-0">
+                          <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
+                        </div>
+                      ) : (() => {
+                        const verifiedScore = business.audit?.mobile?.performance_score ?? null;
+                        if (verifiedScore != null) {
+                          return <ScoreRing score={verifiedScore} size={44} variant="verified" />;
+                        }
+                        const est = estimatedOpportunity({
+                          website_status: business.website_status,
+                          website: business.website ?? null,
+                          rating: business.rating ?? null,
+                          user_ratings_total: business.review_count ?? null,
+                        });
+                        return <ScoreRing score={est} size={44} variant="estimate" />;
+                      })()}
 
-                      {/* Opportunity indicator badge */}
-                      <div className="w-[130px] flex-shrink-0 flex items-center">
-                        {(() => {
-                          const score = business.audit?.mobile?.performance_score ?? null;
-                          const oppScore = score != null
-                            ? computeOpportunityScore(score, business.review_count ?? 0, business.rating ?? 0)
-                            : 0;
-                          const label = opportunityLabel(oppScore);
-                          const variant = opportunityBadgeVariant(oppScore);
-                          const colorMap: Record<string, string> = {
-                            green:  "border-[var(--badge-green-border)] text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
-                            amber:  "border-[var(--badge-amber-border)] text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
-                            indigo: "border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
-                            red:    "border-[var(--badge-red-border)] text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
-                          };
-                          const dotMap: Record<string, string> = {
-                            green:  "bg-[var(--badge-green-text)]",
-                            amber:  "bg-[var(--badge-amber-text)]",
-                            indigo: "bg-[var(--badge-indigo-text)]",
-                            red:    "bg-[var(--badge-red-text)]",
-                          };
-                          return (
-                            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-medium whitespace-nowrap ${colorMap[variant] ?? ""}`}>
-                              <span className={`h-1.5 w-1.5 rounded-full ${dotMap[variant] ?? ""}`} />
-                              {label}
-                            </span>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Status badge — fixed width so name column never shifts */}
+                      {/* Website-status badge — neutral, just states the fact */}
                       <div className="w-[90px] flex-shrink-0 flex items-center">
                         <WebsiteBadge status={business.website_status} />
                       </div>
@@ -1294,7 +1331,21 @@ export default function DiscoverPage() {
                           <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--text-primary)] truncate leading-snug">
                             {business.name}
                           </span>
-                          {business.rating != null && (
+                          {isAnalyseLoading && ap && (
+                            <>
+                              <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap shrink-0">
+                                Analysing... step {ANALYSE_STEPS.findIndex(s => s.key === ap.step) + 1} of {ANALYSE_STEPS.length}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleCancelAnalysis(business.id)}
+                                className="cursor-pointer text-[10px] font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          )}
+                          {business.rating != null && !isAnalyseLoading && (
                             <span className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] whitespace-nowrap shrink-0">
                               <span className="text-[var(--badge-amber-text)]">★</span>
                               {business.rating.toFixed(1)}
@@ -1346,63 +1397,21 @@ export default function DiscoverPage() {
                         </div>
                       </div>
 
-                      {/* Action buttons — single Analyse Opportunity + Pipeline */}
-                      <div className="flex-shrink-0 flex items-center justify-end gap-2" style={{ minWidth: isAnalyseLoading ? "320px" : "216px" }}>
+                      {/* Action buttons — Analyse Opportunity + Pipeline */}
+                      <div className="flex-shrink-0 flex items-center justify-end gap-2" style={{ minWidth: "216px" }}>
                         {/* Analyse Opportunity */}
                         {(() => {
                           if (isAnalyseLoading) return (
-                            <div className="w-[160px]">
-                              <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-tertiary)] justify-center mb-1.5">
-                                <div className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-[var(--accent)] border-t-transparent" />
-                                <span>Analysing…</span>
-                              </div>
-                              {/* Compact progress panel */}
-                              <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1.5">
-                                <div className="space-y-0.5">
-                                  {ANALYSE_STEPS.map((stepDef) => {
-                                    const apStep = ap!.step;
-                                    // Build completed set: keys up to and including the current step in the same phase
-                                    const isDone = (() => {
-                                      if (ap!.phase === "done") return true;
-                                      if (ap!.phase === "audit" && stepDef.phase === "audit") {
-                                        const phaseKeys = ANALYSE_STEPS.filter(s => s.phase === "audit").map(s => s.key);
-                                        const currentIdx = phaseKeys.indexOf(apStep === "complete" ? "audit_complete" : apStep);
-                                        const stepIdx = phaseKeys.indexOf(stepDef.key);
-                                        return stepIdx <= currentIdx;
-                                      }
-                                      if (ap!.phase === "design" && stepDef.phase === "audit") return true;
-                                      if (ap!.phase === "design" && stepDef.phase === "design") {
-                                        const phaseKeys = ANALYSE_STEPS.filter(s => s.phase === "design").map(s => s.key);
-                                        const currentIdx = phaseKeys.indexOf(apStep === "complete" ? "design_complete" : apStep);
-                                        const stepIdx = phaseKeys.indexOf(stepDef.key);
-                                        return stepIdx <= currentIdx;
-                                      }
-                                      return false;
-                                    })();
-                                    const isActive = !isDone && stepDef.key === apStep;
-
-                                    return (
-                                      <div key={stepDef.key} className="flex items-center gap-1.5">
-                                        {isDone ? (
-                                          <svg className="h-2.5 w-2.5 shrink-0 text-[var(--score-good)]" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                        ) : isActive ? (
-                                          <div className="h-2.5 w-2.5 shrink-0 animate-spin rounded-full border-[1.5px] border-[var(--accent)] border-t-transparent" />
-                                        ) : (
-                                          <div className="h-2.5 w-2.5 shrink-0 rounded-full border border-[var(--border)]" />
-                                        )}
-                                        <span className={`text-[10px] leading-tight ${
-                                          isDone ? "text-[var(--text-tertiary)] line-through" :
-                                          isActive ? "font-medium text-[var(--text-primary)]" :
-                                          "text-[var(--text-tertiary)]"
-                                        }`}>
-                                          {stepDef.label}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
+                            <button
+                              type="button"
+                              disabled
+                              className="cursor-not-allowed text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 w-[120px] text-center"
+                            >
+                              <span className="inline-flex items-center justify-center gap-1.5">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Analysing…
+                              </span>
+                            </button>
                           );
                           if (ap?.phase === "error") return (
                             <button
@@ -1413,11 +1422,19 @@ export default function DiscoverPage() {
                             >Retry</button>
                           );
                           if (isAnalyseDone) return (
-                            <button
-                              type="button"
-                              onClick={() => handleAnalyseOpportunity(business.id, business.website!)}
-                              className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[120px] text-center"
-                            >Re-analyse</button>
+                            <div className="flex items-center gap-1.5">
+                              <Link
+                                href={`/dashboard/leads/${business.id}`}
+                                className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[90px] text-center"
+                              >
+                                View
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => handleAnalyseOpportunity(business.id, business.website!)}
+                                className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[90px] text-center"
+                              >Re-analyse</button>
+                            </div>
                           );
                           if (showAnalyseButton) return (
                             <button
@@ -1466,15 +1483,6 @@ export default function DiscoverPage() {
                         )}
                       </div>
 
-                      {/* Progress bar */}
-                      {isAnalyseLoading && (
-                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--bg-elevated)]">
-                          <div
-                            className="h-full bg-[var(--accent)] transition-all duration-500 ease-out"
-                            style={progressBarStyle(ap!.step)}
-                          />
-                        </div>
-                      )}
                     </div>
                   );
                 })}

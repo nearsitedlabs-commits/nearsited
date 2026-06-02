@@ -7,16 +7,10 @@ import { useEffect, useRef } from "react";
 const GRID_LINE_COLOR = "rgba(120, 140, 110, 0.12)";
 const NODE_RESTING_COLOR = "rgba(100, 120, 90, 0.25)";
 const NODE_ACTIVATED_COLOR = [140, 165, 110] as const; // RGB tuple
-const CONNECTION_COLOR = "rgba(120, 150, 100, 0.35)";
-
 const NODE_COUNT = 100;
 const LENS_RADIUS_BASE = 180;
 const LENS_RADIUS_AMP = 60; // ±60px breathing
 const LENS_BREATHE_PERIOD = 20; // seconds
-const LENS_CYCLE_TIME = 30; // seconds for full Lissajous loop
-
-const FADE_IN_DURATION = 0.8; // seconds for node to reach full brightness in lens
-const FADE_OUT_DURATION = 1.2; // seconds for node to dim after lens passes
 const MOUNT_DELAY = 0.3; // seconds before first lens pass starts
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -259,9 +253,6 @@ export default function OpportunityAtlas() {
 
         // ── Pulse cycle ──────────────────────────────────────────────
         const pulse = Math.sin(elapsed * (Math.PI * 2 / node.period) + node.phase) * 0.5 + 0.5;
-
-        // ── Compute brightness ────────────────────────────────────────
-        const brightness = node.baseBrightness + lensInfluence * pulse;
 
         // ── Determine opacity ─────────────────────────────────────────
         const opacity = lensInfluence > 0.01

@@ -1,7 +1,20 @@
-# NEARSITED — MASTER CONTEXT PROMPT v2
+# NEARSITED — MASTER CONTEXT PROMPT v2.2
 > Paste this entire block at the start of every Copilot Chat or Zed AI session.
 > Replace CURRENT TASK at the bottom with your specific task.
-> Last updated: June 1, 2026 — corrected theme, fonts, path, new bugs from Batch 1+2 review.
+> Last updated: June 2, 2026 — includes all post-demo performance fixes, copy corrections, dashboard redesign, and simplification review.
+
+---
+
+## ⚠️ RECENT CHANGES (June 2, 2026)
+- **Performance:** Discover API now batched-upserts (50/batch, was 1-at-a-time). PageSpeed timeout reduced 90s→30s. Cities search moved to server-side API (29MB JSON no longer loaded on client).
+- **Messaging:** "Opportunity intelligence" removed from all copy. Replaced with "Find businesses that need websites."
+- **Dashboard:** Action-first KPI hierarchy (Ready to Pitch > Pipeline > Conversations > Leads). Smart "Next Best Action" system.
+- **Middleware:** Restricted to only `/dashboard/*` and `/(auth)/*` (was running on every request including static files).
+- **Founder Story:** Added to landing page between Agency Use Cases and Objections.
+- **Docs:** `docs/SIMPLIFICATION_REVIEW.md` created with simplification priorities. `research_markdown.md` and demo cleanup checklist deleted.
+- **Launch checklist:** `docs/Nearsited_Launch_Checklist.md` — Phase 1-5 items.
+- **Product direction:** `docs/Nearsited_Redesign_Summary.md` — current philosophy.
+
 
 ---
 
@@ -14,17 +27,17 @@ structure may differ. Before writing any Next.js-specific code, read
 
 ## PROJECT
 
-**Nearsited** — AI-powered redesign opportunity intelligence SaaS for web agencies.
-Tagline: "Find what others overlook."
-Core belief: "The best opportunities are not hidden. They are overlooked."
+**Nearsited** — finds businesses that need websites. Designed for web design agencies.
+Tagline: "Find businesses that need websites."
+Core belief: "Every city has businesses with weak websites. We find them for you."
 Built by Again Labs. Founder is near-sighted — the glasses logo is literal.
 
 Magic workflow:
   New Search → discover 20–60 businesses by city + type + radius
     → score each by web presence → open a lead
-    → 6 AI scores + screenshot + ranked issues + projection
-    → AI Opportunity Summary → AI Generated Pitch (tone-adjustable, cites real numbers)
-    → Export PDF / Copy Pitch → Add to Pipeline → track to Won
+    → 6 scores + screenshot + ranked issues
+    → AI Generated Pitch (tone-adjustable, cites real numbers)
+    → Export / Copy Pitch → Add to Pipeline → track to Won
 
 Internal mantra: Discover. Understand. Pitch. Win.
 
@@ -34,7 +47,7 @@ Internal mantra: Discover. Understand. Pitch. Win.
 
 Framework:  Next.js 16.2.6, App Router, Turbopack (see warning above)
 Language:   TypeScript strict
-Styling:    Tailwind CSS v4 + CSS variables in globals.css — DARK theme
+Styling:    Tailwind CSS v4 + CSS variables in globals.css — **DARK theme** (see below)
 DB / Auth:  Supabase (Postgres 15 + GoTrue)
 AI:         gemini-3.5-flash — header auth: x-goog-api-key. NEVER gemini-1.5-flash (shut down).
 Screenshots:ScreenshotOne (takeScreenshot() abstraction in analyze-design route)
@@ -44,8 +57,10 @@ PDF:        jsPDF server-side
 Animation:  framer-motion
 Tables:     @tanstack/react-table
 Icons:      lucide-react — no emojis as icons ever
+Radix UI:   @radix-ui/react-select, popover, dialog, dropdown-menu, scroll-area, tabs, tooltip
+Charts:     recharts (pipeline funnel)
 
-Project root: C:\Projects\nearsited — ALL npm commands run HERE.
+Project root: c:/Projects/nearsited — ALL npm commands run HERE.
 Dev server:   npm run dev → localhost:3000. Restart after ANY env variable change.
 Windows note: Use Select-String not grep in PowerShell.
 
@@ -53,7 +68,7 @@ Windows note: Use Select-String not grep in PowerShell.
 
 ## TWO RUNTIMES — NEVER CONFUSE THEM
 
-Runtime A (Vercel): All Next.js pages, all v1 API routes, auth, anything under 60s.
+Runtime A (Vercel): All Next.js pages, all v1 API routes, auth, anything under 30s per external call.
 Runtime B (Railway/Render/Fly.io): Playwright only, v2 only.
 NEVER run Playwright on Vercel. V1 ships entirely on Runtime A.
 
@@ -62,14 +77,14 @@ NEVER run Playwright on Vercel. V1 ships entirely on Runtime A.
 ## DESIGN SYSTEM
 
 ### Theme
-DARK theme. Near-black navy foundation. Sage/olive green accent.
+**DARK theme.** Near-black navy foundation. Sage/olive green accent (`#8A9777`).
 Premium simplicity — Linear/Raycast/Vercel quality.
 NOT glassmorphism, cyberpunk, neon, startup illustrations.
 
 ### Typography
-Primary UI:   Geist (weights 300/400/500/600) — everything in the dashboard
-Display/Hero: Switzer (weights 400/500/600) — hero headlines on landing ONLY, never dashboard
-Mono:         Geist Mono — code, metrics, data values
+Primary UI:   **Geist** (weights 300/400/500/600) — everything in the dashboard
+Display/Hero: **Switzer** (weights 400/500/600) — hero headlines on landing ONLY, never dashboard
+Mono:         **Geist Mono** — code, metrics, data values
 
 Rules:
 - Geist is the default. Every element uses Geist unless explicitly Switzer.
@@ -78,57 +93,60 @@ Rules:
 - Page headers: Geist, text-2xl font-normal, not bold.
 
 ### CSS Variables (globals.css — authoritative)
+See [`src/app/globals.css`](src/app/globals.css) for the full authoritative token set.
 
---bg-base:         #0a0e12
---bg-surface:      #12171e
---bg-elevated:     #1a2028
+Key tokens:
+--bg-base:         #0a0e12    (page background, deepest)
+--bg-surface-1:    #12171e    (cards, containers)
+--bg-surface-2:    #1a2028    (elevated, hover)
+--bg-surface-3:    #222b36    (modals, dropdowns)
 --border:          rgba(255,255,255,0.06)
 --border-strong:   rgba(255,255,255,0.10)
---text-primary:    #f0ede8
---text-secondary:  #b8b0a8
---text-tertiary:   #7a7268
---text-muted:      #3f3a35
---accent:          #8A9777  (sage green — primary accent)
+--text-primary:    #f0ede8    (headings, body)
+--text-secondary:  #b8b0a8    (subdued body)
+--text-tertiary:   #7a7268    (labels, metadata)
+--accent:          #8A9777    (sage green — primary CTA, active nav)
 --accent-hover:    #7F8C63
 --accent-tint:     rgba(138,151,119,0.14)
---success:         #7a9f7a  (score >=70)
---success-tint:    rgba(122,159,122,0.10)
---warning:         #c4984a  (score 40-69)
---warning-tint:    rgba(196,152,74,0.10)
---error:           #c4665a  (score <40)
---error-tint:      rgba(196,102,90,0.10)
---score-high:      #e86c4a
---score-high-tint: rgba(232,108,74,0.10)
---score-mid:       #d4a017
---score-mid-tint:  rgba(212,160,23,0.10)
---score-good:      #4caf76
---score-good-tint: rgba(76,175,118,0.10)
---badge-green-bg:     rgba(122,159,122,0.12)
---badge-green-border: rgba(122,159,122,0.30)
---badge-green-text:   #9ac49a
---badge-red-bg:       rgba(196,102,90,0.12)
---badge-red-border:   rgba(196,102,90,0.30)
---badge-red-text:     #d49080
---badge-amber-bg:     rgba(196,152,74,0.12)
---badge-amber-border: rgba(196,152,74,0.30)
---badge-amber-text:   #d4b870
---badge-indigo-bg:    rgba(108,92,231,0.10)
---badge-indigo-border:rgba(108,92,231,0.25)
---badge-indigo-text:  #b0a0f0
+--success:         #7a9f7a    (score >=70)
+--warning:         #c4984a    (score 40-69)
+--error:           #c4665a    (score <40)
+
+Badge colors (semantic):
+- green:  bg rgba(122,159,122,0.12) / border rgba(122,159,122,0.30) / text #9ac49a
+- red:    bg rgba(196,102,90,0.12)  / border rgba(196,102,90,0.30)  / text #d49080
+- amber:  bg rgba(196,152,74,0.12)  / border rgba(196,152,74,0.30)  / text #d4b870
+- indigo: bg rgba(138,151,119,0.10) / border rgba(138,151,119,0.25) / text #b0c0a0
+
+Pipeline status CSS vars:
+--pipeline-new:         var(--text-tertiary)
+--pipeline-analysed:    #60a5fa
+--pipeline-pitch:       #818cf8
+--pipeline-contacted:   #fbbf24
+--pipeline-conversation:#60a5fa
+--pipeline-won:         #4ade80
+--pipeline-lost:        #f87171
+
 
 ### Component Patterns
-Cards:    bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-5
+Cards:    bg-[var(--bg-surface-1)] border border-[var(--border)] rounded-xl p-5
 Buttons:  Primary: bg-[var(--accent)] text-white rounded-lg px-4 py-2.5 text-sm font-medium
           Ghost: border border-[var(--border)] bg-transparent text-[var(--text-secondary)]
-Inputs:   bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg py-2.5 px-4
+Inputs:   bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-lg py-2.5 px-4
 Badges:   rounded-full px-2.5 py-0.5 text-xs font-medium (use badge semantic tokens)
-Tables:   overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]
+Tables:   overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)]
 Page h1:  text-2xl font-normal text-[var(--text-primary)] — Geist, NOT bold, NOT serif
           Section label above: text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]
 
-Landing page and dashboard share ONE component library from components/ui/*.
-components/landing/* is legacy — new work goes in components/ui/*.
-OpportunityAtlas shader is already built at src/components/landing/atlas/.
+Landing page and dashboard share **ONE component library** from [`src/components/ui/*`](src/components/ui/).
+`components/landing/*` is legacy — new work goes in components/ui/*.
+OpportunityAtlas shader is already built at [`src/components/landing/atlas/`](src/components/landing/atlas/).
+
+---
+
+## SIDEBAR NAVIGATION (confirmed June 2026)
+7 items in sidebar-nav.tsx: Dashboard, Opportunities, Opportunity Discovery, Opportunity Review, Pipeline, Pitches, Settings.
+No "Coming Soon" section. Radar/Templates/Campaigns/Reports/Integrations are not rendered.
 
 ---
 
@@ -189,6 +207,18 @@ DO NOT add rating or review_count — Google Places API ToS violation.
 rating and review_count live on the businesses table (per-user, written during discovery).
 Staleness: 90-day TTL via details_fetched_at.
 Writes: admin client only. Reads: batched SELECT WHERE place_id IN (...).
+
+---
+
+## UI CONSTANTS — PIPELINE LABELS (src/lib/ui-constants.ts)
+```ts
+PIPELINE_LABELS: new_lead → "New Lead", analysed → "Analysed", pitch_generated → "Pitch Generated",
+                 contacted → "Contacted", in_conversation → "In Conversation", won → "Won", lost → "Lost"
+PIPELINE_BADGE_STYLES: per-stage CSS var references
+PITCH_STATUS_LABELS: draft → "Draft", sent → "Sent", replied → "Replied"
+LEAD_TYPE_LABELS: has_website → "Has Website", no_website → "No Website", social_only → "Social Only",
+                  platform_only → "Platform Only", unknown → "Unknown"
+```
 
 ---
 
@@ -328,33 +358,45 @@ C:\Projects\nearsited\
 
 ---
 
-## PAGES STATUS (June 1, 2026)
+## SIDEBAR NAV (7 items, no Coming Soon)
+```
+Dashboard     /dashboard           ✅
+Opportunities /dashboard/leads     ✅
+Opportunity Discovery /dashboard/discover ✅
+Opportunity Review /dashboard/audit ✅
+Pipeline      /dashboard/pipeline  ✅
+Pitches       /dashboard/pitches   ✅
+Settings      /dashboard/settings  ✅
+```
+
+---
+
+## PAGES STATUS (June 2, 2026)
 
 Landing /                    ✅ Built + cleaned (fake stats/testimonials removed)
 Sign In /(auth)/login        ✅ Built + cleaned (fake stats removed)
 Sign Up /(auth)/signup       ✅ Built
-Dashboard /dashboard         ✅ Built + cleaned (fake feed removed, 4 stats, full-width)
-Opportunities /dashboard/leads ✅ Built + cleaned (table layout, 4 filter tabs)
-Lead Detail /dashboard/leads/[id] ✅ Built + fixed (share link, History numbers, Proposal Ready, date format)
-Opportunity Discovery /dashboard/discover ✅ Built
-Opportunity Review /dashboard/audit ✅ Built + fixed (Gemini retry, pitch fallback)
-Pipeline /dashboard/pipeline ✅ Built
-Pitches /dashboard/pitches   ✅ Built (label maps added)
-Settings /dashboard/settings ✅ Built + cleaned (Stripe row removed)
+Dashboard /dashboard         ✅ Built + cleaned (fake feed removed, 4 stat cards, full-width)
+Opportunities /dashboard/leads ✅ Built + cleaned (table layout, 4 filter tabs, 25/page pagination)
+Lead Detail /dashboard/leads/[id] ✅ Built + fixed (share link, History numbers, Proposal Ready, date format, toast system)
+Opportunity Discovery /dashboard/discover ✅ Built (NDJSON streaming, progress panels, session storage)
+Opportunity Review /dashboard/audit ✅ Built + fixed (90s timeout, Gemini retry, pitch fallback, step checklist)
+Pipeline /dashboard/pipeline ✅ Built (optimistic updates, 7 canonical stages)
+Pitches /dashboard/pitches   ✅ Built (label maps, copy/delete)
+Settings /dashboard/settings ✅ Built + cleaned (Stripe row removed, integrations display-only)
 Share /share/[token]         ✅ Built + fixed (Jun 1, 2026)
 
 No remaining critical fixes before demo.
-All Batch 1 + 2 issues resolved as of June 1, 2026.
-
-Remaining V1 build (not blocking demo):
-  Contacted/Archived tab filter logic in Leads (needs pipeline join)
-  Issues count column in Leads table
-  Opportunity Review Generate Pitch — ephemeral mode for URL-only flow
+All Batch 1 + 2 + 3 issues resolved as of June 1, 2026.
 
 V2 priorities (post-demo):
   Stripe + subscription management
-  Opportunity Radar
+  Opportunity Radar (decay monitoring)
+  UX interaction analysis (Playwright + queue + worker + Storage)
+  Competitor intelligence
   URL import
+  AI redesign mockups
+  Email sending in-product
 
 ---
 

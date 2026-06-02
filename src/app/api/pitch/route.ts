@@ -57,6 +57,9 @@ type PitchRequestBody = {
   };
   tone?: "professional" | "friendly" | "luxury";
   length?: "short" | "medium" | "detailed";
+  channel?: "email" | "whatsapp";
+  workflow?: "website" | "social_only" | "no_digital_presence";
+  socialPlatforms?: string[];
   focus?: string;
   force?: boolean;
 };
@@ -133,6 +136,104 @@ function buildAngle(
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
+/** Build channel-specific formatting instructions for the Gemini prompt */
+function channelInstruction(channel: string, tone: string, length: string, businessName: string): string {
+  switch (channel) {
+    case "whatsapp":
+      return `OUTREACH CHANNEL: WhatsApp Message
+FORMAT: Very short message under ${{ short: "40", medium: "60", detailed: "80" }[length] ?? "60"} words.
+STYLE: Casual and direct. No formatting, no line breaks. Write like a text message.
+No formal greetings or sign-offs. Get straight to the point.
+End with a simple question to keep the conversation going.
+
+Return ONLY a valid JSON object, no markdown, no backticks:
+{ "subject": "WhatsApp", "body": "your whatsapp message here" }`;
+    default: // email
+      return `OUTREACH CHANNEL: Email
+FORMAT: Subject line + body. ${{ short: "Keep the email under 80 words.", medium: "Keep the email under 150 words.", detailed: "Write a detailed email up to 250 words." }[length] ?? "Keep the email under 150 words."}
+${businessName !== "there" ? `Start with: Hi ${businessName} team,` : "Start with: Hi there,"}
+
+Return ONLY a valid JSON object, no markdown, no backticks:
+{ "subject": "email subject line here", "body": "full email body here" }`;
+  }
+}
+
+/** Build a workflow-specific prompt for non-website leads (social_only, no_digital_presence) */
+function buildWorkflowPrompt(
+  businessName: string,
+  businessType: string,
+  location: string,
+  workflow: string,
+  socialPlatforms: string[],
+  tone: string,
+  length: string,
+  channel: string,
+  rating: number | null,
+  reviewCount: number | null,
+): string {
+  const reviewStr = rating != null && reviewCount != null
+    ? `\nGoogle reviews: ${rating.toFixed(1)}★ (${reviewCount.toLocaleString()} reviews)`
+    : rating != null
+      ? `\nGoogle Rating: ${rating.toFixed(1)}★`
+      : reviewCount != null
+        ? `\nGoogle reviews: ${reviewCount.toLocaleString()}`
+        : "";
+  const platformStr = socialPlatforms.length > 0 ? socialPlatforms.join(", ") : "social media";
+  const channelFmt = channel === "whatsapp" ? "WhatsApp message" : "email";
+
+  if (workflow === "social_only") {
+    return `You are a web agency sales consultant writing outreach ${channelFmt}s. The prospect has an active social media presence but no dedicated website.
+
+Business: ${businessName}
+Type: ${businessType}
+Location: ${location}
+Detected social platforms: ${platformStr}${reviewStr}
+
+Your job is to acknowledge their social media success first, then explain what a website would add that social alone cannot provide.
+
+Tone: ${tone} (professional = concise and confident; friendly = warm and approachable; luxury = polished and premium)
+${{ short: "Keep it under 80 words.", medium: "Keep it under 150 words.", detailed: "Write up to 250 words." }[length] ?? "Keep it under 150 words."}
+
+CRITICAL RULES:
+- Start by acknowledging their social presence positively: "I noticed you're active on ${platformStr} — that's great for engagement."
+- Explain that a website adds credibility, search visibility, and lead capture that social platforms can't replace.
+- NEVER mention audits, performance scores, SEO scores, LCP, FCP, CLS, TBT, or any technical metrics.
+- NEVER mention website issues or problems with their current social presence.
+- Focus on the ADDITIONAL value a website provides, not problems with what they have.
+- Address the recipient directly.
+- End with a soft CTA: offer to discuss how a website could complement their social presence.
+- No fluff, no buzzwords, no generic compliments.
+- Write like a real person, not a template.
+
+${channelInstruction(channel, tone, length, businessName)}`;
+  }
+
+  // no_digital_presence
+  return `You are a web agency sales consultant writing outreach ${channelFmt}s. The prospect has no detectable online presence — no website and no social media profiles.
+
+Business: ${businessName}
+Type: ${businessType}
+Location: ${location}${reviewStr}
+
+Your job is to help them understand the importance of having an online presence in today's market.
+
+Tone: ${tone} (professional = concise and confident; friendly = warm and approachable; luxury = polished and premium)
+${{ short: "Keep it under 80 words.", medium: "Keep it under 150 words.", detailed: "Write up to 250 words." }[length] ?? "Keep it under 150 words."}
+
+CRITICAL RULES:
+- Focus on visibility, credibility, and lead generation opportunities.
+- Explain that many customers search online before making purchasing decisions.
+- NEVER mention audits, performance scores, SEO scores, or any technical metrics.
+- NEVER mention website issues since there is no website.
+- Be constructive and positive — frame this as an opportunity to establish their digital presence.
+- Address the recipient directly.
+- End with a soft CTA: offer to discuss how they can establish an online presence.
+- No fluff, no buzzwords, no generic compliments.
+- Write like a real person, not a template.
+
+${channelInstruction(channel, tone, length, businessName)}`;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as PitchRequestBody;
@@ -143,6 +244,9 @@ export async function POST(request: NextRequest) {
       design,
       tone = "professional",
       length = "medium",
+      channel = "email",
+      workflow,
+      socialPlatforms,
       focus,
       force = false,
     } = body;
@@ -189,6 +293,8 @@ export async function POST(request: NextRequest) {
     let promptBusinessType = "business";
     let promptLocation = "their market";
     let promptWebsite = "";
+    let promptRating: number | null = null;
+    let promptReviewCount: number | null = null;
     let leadType: WebsiteStatus = "has_website";
     let auditContext = "No audit data available.";
     let designContext = "No design analysis available.";
@@ -244,7 +350,7 @@ export async function POST(request: NextRequest) {
       // 3. Fetch business + latest audit + latest design analysis
       const { data: business, error: fetchError } = await supabase
         .from("businesses")
-        .select("id, name, business_type, city, website_status, website")
+        .select("id, name, business_type, city, website_status, website, rating, review_count")
         .eq("id", persistedBusinessId)
         .single();
 
@@ -261,6 +367,8 @@ export async function POST(request: NextRequest) {
       promptLocation = (business.city as string) ?? "their market";
       promptWebsite = (business.website as string) ?? "";
       leadType = (business.website_status ?? "unknown") as WebsiteStatus;
+      promptRating = business.rating as number | null;
+      promptReviewCount = business.review_count as number | null;
 
       const { data: audits } = await supabase
         .from("audits")
@@ -338,17 +446,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const reviewContext = promptRating != null && promptReviewCount != null
+      ? `\nReviews: ${promptRating.toFixed(1)}★ from ${promptReviewCount.toLocaleString()} reviews on Google.`
+      : promptRating != null
+        ? `\nGoogle Rating: ${promptRating.toFixed(1)}★.`
+        : promptReviewCount != null
+          ? `\nGoogle reviews: ${promptReviewCount.toLocaleString()} reviews.`
+          : "";
+
     const promptWebsiteSection = hasPersistedMode
       ? `Business: ${promptBusinessName}`
       : `Website: ${promptWebsite}`;
 
-    const prompt = hasAuditData && hasDesignData
+    // ── Workflow-aware prompt override (social_only, no_digital_presence) ──
+    const prompt = (workflow === "social_only" || workflow === "no_digital_presence")
+      ? buildWorkflowPrompt(promptBusinessName, promptBusinessType, promptLocation, workflow ?? "no_digital_presence", socialPlatforms ?? [], tone, length, channel, promptRating, promptReviewCount)
+      : hasAuditData && hasDesignData
       ? // ── Full prompt — both audit + design data available ──
         `You are a web agency sales consultant writing outreach emails that sound like a real human agency owner wrote them. Your job is to translate technical website issues into business problems the prospect cares about.
 
 ${promptWebsiteSection}
 Type: ${promptBusinessType}
-Location: ${promptLocation}
+Location: ${promptLocation}${reviewContext}
 Website status: ${leadType}
 Angle: ${angle}
 Pain point summary: ${painPoint}
@@ -356,13 +475,7 @@ Pain point summary: ${painPoint}
 Data we have:
 ${auditContext}
 ${designContext}
-
 Tone: ${tone} (professional = concise and confident; friendly = warm and approachable; luxury = polished and premium)
-${{
-  short: "Keep the email under 80 words.",
-  medium: "Keep the email under 150 words.",
-  detailed: "Write a detailed email up to 250 words.",
-}[length] ?? "Keep the email under 150 words."}
 ${focus ? `Focus particularly on: ${focus}.` : ""}
 
 CRITICAL RULES:
@@ -371,22 +484,20 @@ CRITICAL RULES:
 - Example of what NOT to write: "Your LCP is 4.2s and your TBT is 340ms."
 - Example of what TO write: "Your website is loading slowly on phones — visitors are clicking away before seeing your content. That's lost customers every day."
 - Address the recipient directly.
-- ${hasPersistedMode ? `Start with: Hi ${promptBusinessName} team,` : "Start with: Hi there,"}
 - Reference one specific observation from the analysis, framed as a business problem.
 - Never sound like a template — make it feel personal and specific to their situation.
 - End with a soft CTA: offer a free audit report or a quick call to discuss findings.
 - No fluff, no buzzwords, no generic compliments.
 - Keep it short and conversational — like a real person wrote it in 2 minutes.
 
-Return ONLY a valid JSON object, no markdown, no backticks:
-{ "subject": "email subject line here", "body": "full email body here" }`
+${channelInstruction(channel, tone, length, promptBusinessName)}`
       : hasAuditData
         ? // ── Audit-only fallback — shorter, performance-focused ──
           `You are a web agency sales consultant writing outreach emails that sound like a real human agency owner wrote them. Your job is to translate performance issues into business problems the prospect cares about.
 
 ${promptWebsiteSection}
 Type: ${promptBusinessType}
-Location: ${promptLocation}
+Location: ${promptLocation}${reviewContext}
 Website status: ${leadType}
 Angle: ${angle}
 Pain point summary: ${painPoint}
@@ -397,7 +508,6 @@ Performance data:
 ${auditContext}
 
 Tone: ${tone} (professional = concise and confident; friendly = warm and approachable; luxury = polished and premium)
-Keep the email under 80 words — one tight paragraph.
 
 CRITICAL RULES:
 - Write like a real agency owner, NOT like a developer or auditor.
@@ -405,17 +515,15 @@ CRITICAL RULES:
 - Example of what NOT to write: "Your LCP is 4.2s and your TBT is 340ms."
 - Example of what TO write: "Your website is loading slowly — visitors are clicking away before seeing your content. That's lost customers every day."
 - Address the recipient directly.
-- ${hasPersistedMode ? `Start with: Hi ${promptBusinessName} team,` : "Start with: Hi there,"}
 - Reference the performance issues as a business problem.
 - Never sound like a template — make it feel personal and specific to their situation.
 - End with a soft CTA: offer a free performance review or a quick call to discuss findings.
 - No fluff, no buzzwords, no generic compliments.
 
-Return ONLY a valid JSON object, no markdown, no backticks:
-{ "subject": "email subject line here", "body": "full email body here" }`
+${channelInstruction(channel, tone, length, promptBusinessName)}`
         : // ── Design-only fallback — shorter, design-focused ──
-          `You are a web agency sales consultant writing outreach emails that sound like a real human agency owner wrote them. Your job is to translate design issues into business problems the prospect cares about.
-
+          `You are a web agency sales consultant writing outreach${''}
+${''}
 ${promptWebsiteSection}
 Type: ${promptBusinessType}
 Location: ${promptLocation}
@@ -429,7 +537,6 @@ Design data:
 ${designContext}
 
 Tone: ${tone} (professional = concise and confident; friendly = warm and approachable; luxury = polished and premium)
-Keep the email under 80 words — one tight paragraph.
 
 CRITICAL RULES:
 - Write like a real agency owner, NOT like a developer or auditor.
@@ -437,14 +544,12 @@ CRITICAL RULES:
 - Example of what NOT to write: "Your design score is 45/100."
 - Example of what TO write: "Your website looks dated — visitors are forming a negative impression before reading a single word. That's lost trust and lost sales."
 - Address the recipient directly.
-- ${hasPersistedMode ? `Start with: Hi ${promptBusinessName} team,` : "Start with: Hi there,"}
 - Reference one specific design issue as a business problem.
 - Never sound like a template — make it feel personal and specific to their situation.
 - End with a soft CTA: offer a free design review or a quick call to discuss findings.
 - No fluff, no buzzwords, no generic compliments.
 
-Return ONLY a valid JSON object, no markdown, no backticks:
-{ "subject": "email subject line here", "body": "full email body here" }`;
+${channelInstruction(channel, tone, length, promptBusinessName)}`;
 
     // 4. Call Gemini API (correct model + header auth)
     let parsedPitch: ParsedPitch;
@@ -536,6 +641,7 @@ Return ONLY a valid JSON object, no markdown, no backticks:
         subject: parsedPitch.subject,
         body: parsedPitch.body,
         tone,
+        channel,
         lead_type: leadType,
         pitch_status: "draft",
         created_at: now,

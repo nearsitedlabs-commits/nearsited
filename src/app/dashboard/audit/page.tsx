@@ -2,8 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
+
+// ── Constants ───────────────────────────────────────────────────────────────────
+const SAVE_INTERVAL_MS = 3000;
+const AUDIT_COMPLETED_KEY = "nearsited_has_completed_audit";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -24,8 +28,7 @@ type DesignResult = {
   error?: string;
 };
 
-
-// ── Progress steps (Fix 1) ─────────────────────────────────────────────────────
+// ── Progress steps ─────────────────────────────────────────────────────────────
 
 const AUDIT_STEP_KEYS = ["fetching", "mobile", "desktop", "audit_complete"] as const;
 
@@ -40,6 +43,56 @@ const ALL_STEPS: { key: string; label: string }[] = [
   { key: "analysing_desktop",  label: "Analysing Desktop design" },
   { key: "design_complete",    label: "Analysis complete" },
 ];
+
+// ── Example data ───────────────────────────────────────────────────────────────
+
+type ExampleTab = "weak_website" | "no_website" | "social_only";
+
+const EXAMPLE_TABS: { key: ExampleTab; label: string }[] = [
+  { key: "weak_website", label: "Weak Website" },
+  { key: "no_website",   label: "No Website" },
+  { key: "social_only",  label: "Social Only" },
+];
+
+type ExampleInfo = {
+  businessLabel: string;
+  currentScore?: number;
+  potentialScore?: number;
+  opportunityText: string;
+  findings: string[];
+};
+
+const EXAMPLE_DATA: Record<ExampleTab, ExampleInfo> = {
+  weak_website: {
+    businessLabel: "lawfirmdubai.com",
+    currentScore: 42,
+    potentialScore: 81,
+    opportunityText: "+39 Opportunity",
+    findings: [
+      "Mobile experience creates friction",
+      "Weak trust signals",
+      "Missing conversion pathways",
+    ],
+  },
+  no_website: {
+    businessLabel: "Marina Legal Consultants",
+    opportunityText: "High Opportunity",
+    findings: [
+      "No website detected",
+      "Limited online visibility",
+      "Missed lead generation opportunities",
+    ],
+  },
+  social_only: {
+    businessLabel: "Blue Wave Restaurant",
+    opportunityText: "High Opportunity",
+    findings: [
+      "Active social presence",
+      "No dedicated website",
+      "Limited search visibility",
+    ],
+  },
+};
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -65,7 +118,6 @@ function getDesignSummary(
   return `The main issues found: ${top.join(", ")}, and ${last}.`;
 }
 
-/** Map a design analysis error string to a user-friendly title + description. */
 function getDesignErrorDisplay(error: string | undefined): { title: string; description: string } {
   if (!error) return { title: "Analysis failed", description: "Click retry to try again." };
   const lower = error.toLowerCase();
@@ -101,6 +153,157 @@ function SubScore({ label, score }: { label: string; score: number | null | unde
   );
 }
 
+// ── Example Report Modal ───────────────────────────────────────────────────────
+
+function ExampleReportModal({ type, onClose }: { type: ExampleTab; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const data = EXAMPLE_DATA[type];
+  const isWebsite = type === "weak_website";
+  const badgeColor = type === "weak_website"
+    ? "bg-[var(--badge-green-bg)] text-[var(--badge-green-text)] border-[var(--badge-green-border)]"
+    : type === "no_website"
+      ? "bg-[var(--badge-red-bg)] text-[var(--badge-red-text)] border-[var(--badge-red-border)]"
+      : "bg-[var(--badge-amber-bg)] text-[var(--badge-amber-text)] border-[var(--badge-amber-border)]";
+  const badgeLabel = EXAMPLE_TABS.find((t) => t.key === type)?.label ?? "";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-[var(--bg-base)]/80 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] shadow-[var(--brand-shadow-lg)]">
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--bg-surface-2)] px-6 py-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Preview</p>
+            <h2 className="mt-0.5 text-base font-medium text-[var(--text-primary)]">Example Report — {badgeLabel}</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-surface-1)] hover:text-[var(--text-primary)]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="space-y-6 p-6">
+          {/* Type badge */}
+          <div>
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${badgeColor}`}>
+              {badgeLabel}
+            </span>
+          </div>
+
+          {/* Opportunity Score */}
+          {isWebsite ? (
+            <div>
+              <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Score</p>
+              <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] p-4">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-[var(--score-high)]">{data.currentScore}</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">Current</p>
+                </div>
+                <ArrowRight className="mx-2 h-4 w-4 flex-shrink-0 text-[var(--text-muted)]" />
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-[var(--score-good)]">{data.potentialScore}</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">Potential</p>
+                </div>
+                <div className="ml-auto rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-2 text-center">
+                  <p className="text-2xl font-bold text-[var(--badge-green-text)]">+{data.potentialScore! - data.currentScore!}</p>
+                  <p className="text-[10px] text-[var(--text-tertiary)]">Opportunity</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Website Opportunity</p>
+              <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] p-4">
+                <p className="text-sm font-medium text-[var(--text-primary)]">{data.opportunityText}</p>
+                <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                  {type === "no_website"
+                    ? "This business has no website — a significant gap in visibility and lead generation."
+                    : "This business relies on social platforms — no owned website for search visibility."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Top Findings */}
+          <div>
+            <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">
+              {isWebsite ? "Top Issues" : "Why It Matters"}
+            </p>
+            <div className="space-y-2">
+              {data.findings.map((finding, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] px-3 py-2.5">
+                  <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-muted)]" />
+                  <span className="text-sm text-[var(--text-secondary)]">{finding}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Summary / Why It Matters */}
+          {isWebsite ? (
+            <div>
+              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">AI Opportunity Summary</p>
+              <div className="rounded-lg border border-[var(--accent)]/20 bg-[var(--accent-tint)] p-4 text-sm leading-relaxed text-[var(--text-secondary)]">
+                The website appears functional but underperforms in several areas that may impact lead generation and trust. Improving mobile usability, trust indicators, and conversion pathways could significantly improve effectiveness.
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">
+                {type === "no_website" ? "Why a Website Matters" : "Why an Owned Website Matters"}
+              </p>
+              <div className="rounded-lg border border-[var(--accent)]/20 bg-[var(--accent-tint)] p-4 text-sm leading-relaxed text-[var(--text-secondary)]">
+                {type === "no_website"
+                  ? "A professional website establishes credibility, improves search visibility, and creates a central hub for lead generation. Without one, potential customers may struggle to find or trust the business."
+                  : "Social media drives engagement, but an owned website provides credibility, search visibility, and lead capture that platforms cannot replace. It's the foundation of a professional digital presence."}
+              </div>
+            </div>
+          )}
+
+          {/* Outreach Preview */}
+          <div>
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Outreach Preview</p>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 text-sm leading-relaxed text-[var(--text-secondary)]">
+              {isWebsite ? (
+                <>
+                  <p>Hi,</p>
+                  <p className="mt-3">I recently reviewed your website and noticed several opportunities that could improve user experience and increase enquiries.</p>
+                  <p className="mt-3">A few areas that stood out were mobile usability, trust-building elements, and conversion pathways.</p>
+                  <p className="mt-3">I&apos;d be happy to share a few ideas that could help improve results.</p>
+                </>
+              ) : type === "no_website" ? (
+                <>
+                  <p>Hi,</p>
+                  <p className="mt-3">I noticed your business doesn&apos;t have a website yet. In today&apos;s market, that means potential customers searching for your services may not find you.</p>
+                  <p className="mt-3">A professional website could help establish trust, improve discoverability, and generate leads automatically.</p>
+                  <p className="mt-3">I&apos;d be happy to discuss how we could help.</p>
+                </>
+              ) : (
+                <>
+                  <p>Hi,</p>
+                  <p className="mt-3">I noticed you&apos;re doing a great job engaging customers on social media. However, without a dedicated website, you&apos;re leaving search visibility and lead capture on the table.</p>
+                  <p className="mt-3">A website complements your social presence and gives customers a professional destination to learn more.</p>
+                  <p className="mt-3">I&apos;d love to show you what that could look like.</p>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function AuditPage() {
@@ -122,9 +325,56 @@ export default function AuditPage() {
   const [pipelineAdded, setPipelineAdded] = useState(false);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const [designRetrying, setDesignRetrying] = useState<{ mobile: boolean; desktop: boolean }>({ mobile: false, desktop: false });
+  const [hasCompletedAudit, setHasCompletedAudit] = useState(false);
+  const [showExampleModal, setShowExampleModal] = useState(false);
+  const [exampleTab, setExampleTab] = useState<ExampleTab>("weak_website");
   const quotaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const mountedRef = useRef(true);
+  const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fix 2: restore from sessionStorage on mount
+  // Read hasCompletedAudit from localStorage on mount — useEffect is required for SSR safety
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHasCompletedAudit(localStorage.getItem(AUDIT_COMPLETED_KEY) === "true");
+    } catch { /* ignore */ }
+  }, []);
+
+  // Mark completed when step reaches "done"
+  useEffect(() => {
+    if (step === "done") {
+      try {
+        localStorage.setItem(AUDIT_COMPLETED_KEY, "true");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setHasCompletedAudit(true);
+      } catch { /* ignore */ }
+    }
+  }, [step]);
+
+  // ── Helpers to save/load intermediate state ──────────────────────────────────
+  const saveCurrentState = useCallback(
+    (audit: typeof auditResult, design: typeof designResult, u: string, ts?: number) => {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+          url: u,
+          auditResult: audit,
+          designResult: design,
+          timestamp: ts ?? Date.now(),
+        }));
+      } catch { /* ignore storage errors */ }
+    },
+    [],
+  );
+
+  // ── Cleanup on unmount ───────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
+    };
+  }, []);
+
+  // Restore from sessionStorage on mount
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -135,8 +385,6 @@ export default function AuditPage() {
         designResult?: { mobile: DesignResult; desktop: DesignResult };
         timestamp?: number;
       };
-      // sessionStorage restoration is a synchronous read — this is the idiomatic
-      // pattern for hydrating component state from an external cache on mount.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.url) setUrl(parsed.url);
       if (parsed.auditResult) {
@@ -179,7 +427,47 @@ export default function AuditPage() {
   const handleRun = async () => {
     if (!url.trim()) return;
 
-    // Fix 2: clear saved result when starting new audit
+    const trimmedUrl = url.trim();
+
+    async function readStream(
+      response: Response,
+      onProgress: (key: string) => void,
+      onResult: (data: Record<string, unknown>) => void,
+      onError?: (data: Record<string, unknown>) => void,
+    ): Promise<void> {
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No response body");
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (!mountedRef.current) return;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const parsed = JSON.parse(line);
+            if (parsed.type === "progress" && parsed.step) {
+              onProgress(parsed.step as string);
+            } else if (parsed.type === "result") {
+              onResult(parsed as Record<string, unknown>);
+            } else if (parsed.type === "error") {
+              onError?.(parsed as Record<string, unknown>);
+            }
+          } catch {
+            // skip malformed lines
+          }
+        }
+      }
+    }
+
     sessionStorage.removeItem(STORAGE_KEY);
     setSavedTimestamp(null);
 
@@ -195,126 +483,114 @@ export default function AuditPage() {
 
     let localAuditResult: { mobile: StrategyResult; desktop: StrategyResult } | null = null;
     let localDesignResult: { mobile: DesignResult; desktop: DesignResult } | null = null;
+    let auditError: string | null = null;
+    let designError: string | null = null;
+    let isQuotaError = false;
 
-    // ── Phase 1: stream from /api/audit ───────────────────────────────
-    try {
-      const res = await fetch("/api/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ website: url.trim() }),
-      });
-      if (!res.ok) throw new Error("Audit failed");
+    const auditResponsePromise = fetch("/api/audit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ website: trimmedUrl }),
+    });
+    const designResponsePromise = fetch("/api/analyze-design", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ website: trimmedUrl }),
+    });
 
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const parsed = JSON.parse(line);
-            if (parsed.type === "progress" && parsed.step) {
-              // Map "complete" in audit phase to "audit_complete"
-              const key = parsed.step === "complete" ? "audit_complete" : parsed.step;
-              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-            } else if (parsed.type === "result") {
-              localAuditResult = { mobile: parsed.mobile, desktop: parsed.desktop };
-              setAuditResult(localAuditResult);
-              setCompletedKeys([...AUDIT_STEP_KEYS]);
-              setActiveKeys([]);
-            }
-          } catch {
-            // skip malformed lines
-          }
-        }
+    const progressiveSave = () => {
+      if (localAuditResult || localDesignResult) {
+        saveCurrentState(localAuditResult, localDesignResult, trimmedUrl);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Audit failed");
+    };
+    saveIntervalRef.current = setInterval(progressiveSave, SAVE_INTERVAL_MS);
+
+    const auditProcess = (async () => {
+      try {
+        const res = await auditResponsePromise;
+        if (!res.ok) throw new Error("Audit failed");
+
+        await readStream(
+          res,
+          (step) => {
+            const key = step === "complete" ? "audit_complete" : step;
+            setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+          },
+          (data) => {
+            localAuditResult = { mobile: data.mobile as StrategyResult, desktop: data.desktop as StrategyResult };
+            setAuditResult(localAuditResult);
+            setCompletedKeys([...AUDIT_STEP_KEYS]);
+            setActiveKeys([]);
+            progressiveSave();
+          },
+        );
+      } catch (err) {
+        auditError = err instanceof Error ? err.message : "Audit failed";
+      }
+    })();
+
+    const designProcess = (async () => {
+      try {
+        const res = await designResponsePromise;
+        if (!res.ok) throw new Error("Design analysis failed");
+
+        await readStream(
+          res,
+          (step) => {
+            const key = step === "complete" ? "design_complete" : step;
+            setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+          },
+          (data) => {
+            localDesignResult = { mobile: data.mobile as DesignResult, desktop: data.desktop as DesignResult };
+            setDesignResult(localDesignResult);
+            setCompletedKeys(ALL_STEPS.map((s) => s.key));
+            setActiveKeys([]);
+            progressiveSave();
+          },
+          (data) => {
+            if (data.error === "AI_QUOTA_EXCEEDED" || data.error === "AI_SERVICE_BUSY") {
+              isQuotaError = true;
+            }
+          },
+        );
+      } catch (err) {
+        designError = err instanceof Error ? err.message : "Design analysis failed";
+      }
+    })();
+
+    await Promise.all([auditProcess, designProcess]);
+
+    if (saveIntervalRef.current) {
+      clearInterval(saveIntervalRef.current);
+      saveIntervalRef.current = null;
+    }
+
+    if (!mountedRef.current) {
+      progressiveSave();
+      return;
+    }
+
+    if (auditError) {
+      setError(auditError);
       setRunning(false);
       return;
     }
 
-    // ── Phase 2: stream from /api/analyze-design ──────────────────────
-    setStep("design");
-    try {
-      const res = await fetch("/api/analyze-design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ website: url.trim() }),
-      });
-      if (!res.ok) throw new Error("Design analysis failed");
-
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let isQuotaError = false;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const parsed = JSON.parse(line);
-            if (parsed.type === "progress" && parsed.step) {
-              // Map "complete" in design phase to "design_complete"
-              const key = parsed.step === "complete" ? "design_complete" : parsed.step;
-              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-            } else if (parsed.type === "result") {
-              localDesignResult = { mobile: parsed.mobile, desktop: parsed.desktop };
-              setDesignResult(localDesignResult);
-              setCompletedKeys(ALL_STEPS.map((s) => s.key));
-              setActiveKeys([]);
-            } else if (parsed.type === "error" && parsed.error === "AI_QUOTA_EXCEEDED") {
-              isQuotaError = true;
-            }
-          } catch {
-            // skip malformed lines
-          }
-        }
-      }
-
-      if (isQuotaError) {
-        setQuotaError("AI quota exceeded — please wait a moment and try again");
-        startQuotaTimer(60);
-        setRunning(false);
-        return;
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Design analysis failed");
+    if (isQuotaError) {
+      setQuotaError("AI quota exceeded — please wait a moment and try again");
+      startQuotaTimer(60);
+      setRunning(false);
+      return;
     }
 
-    // Fix 2: persist to sessionStorage
+    if (designError) {
+      console.warn("[AUDIT] Design analysis failed (non-fatal):", designError);
+    }
+
     if (localAuditResult) {
-      try {
-        const ts = Date.now();
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-          url: url.trim(),
-          auditResult: localAuditResult,
-          designResult: localDesignResult,
-          timestamp: ts,
-        }));
-        setSavedTimestamp(ts);
-      } catch {
-        // ignore storage errors
-      }
+      const ts = Date.now();
+      saveCurrentState(localAuditResult, localDesignResult, trimmedUrl, ts);
+      setSavedTimestamp(ts);
     }
 
     setStep("done");
@@ -323,7 +599,6 @@ export default function AuditPage() {
 
   const showProgress = running || completedKeys.length > 0;
 
-  // ── Pitch handler ──────────────────────────────────────────────────────────
   const handleGeneratePitch = useCallback(async () => {
     if (!url.trim() || !auditResult) return;
     setPitchLoading(true);
@@ -344,7 +619,6 @@ export default function AuditPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        // Distinguish between "no data" (400) and "AI failed" (502/other)
         if (res.status === 400) {
           throw new Error("Cannot generate pitch — no audit or design data available. Run the audit first.");
         }
@@ -389,7 +663,6 @@ export default function AuditPage() {
     }
   }, [url, auditResult, designResult]);
 
-  // ── Retry design analysis for a single strategy ──────────────────────────
   const handleRetryDesign = useCallback(async (strategy: "mobile" | "desktop") => {
     if (!url.trim()) return;
     setDesignRetrying((prev) => ({ ...prev, [strategy]: true }));
@@ -434,7 +707,6 @@ export default function AuditPage() {
       if (newDesignResult) {
         setDesignResult((prev) => {
           if (!prev) return newDesignResult;
-          // Merge: update only the retried strategy, keep the other one as-is
           return {
             mobile: strategy === "mobile" ? newDesignResult!.mobile : prev.mobile,
             desktop: strategy === "desktop" ? newDesignResult!.desktop : prev.desktop,
@@ -448,22 +720,46 @@ export default function AuditPage() {
     }
   }, [url]);
 
-  // ── Empty state (idle) ──────────────────────────────────────────────────────
+  // ── Reset helper ───────────────────────────────────────────────────────────────
+  const handleReset = () => {
+    sessionStorage.removeItem(STORAGE_KEY);
+    setStep("idle");
+    setUrl("");
+    setAuditResult(null);
+    setDesignResult(null);
+    setError(null);
+    setCompletedKeys([]);
+    setActiveKeys([]);
+    setSavedTimestamp(null);
+    setShowPitchResult(false);
+    setPitchResult(null);
+    setPipelineAdded(false);
+    setPipelineError(null);
+  };
+
+  // ── Idle state ─────────────────────────────────────────────────────────────────
   if (step === "idle" && !error && !auditResult && !showProgress) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-4xl px-6 py-8">
-          <Link href="/dashboard" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
+          <Link
+            href="/dashboard"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
+          >
             <ArrowLeft className="h-4 w-4" /> Back to Dashboard
           </Link>
 
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-            <h1 className="text-2xl font-medium text-[var(--text-primary)]">Opportunity Review</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
-              Enter any website URL to evaluate its performance, design quality, and opportunity potential.
+          {/* Hero */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-medium text-[var(--text-primary)]">Quick Opportunity Review</h1>
+            <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+              Analyse a business website and uncover opportunities in seconds.
             </p>
+          </div>
 
-            <div className="mt-6 flex gap-3">
+          {/* URL Input Card */}
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+            <div className="flex gap-3">
               <div className="relative flex-1">
                 <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
                 <input
@@ -471,7 +767,8 @@ export default function AuditPage() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && handleRun()}
-                  placeholder="https://example.com"
+                  placeholder="Paste a business website URL"
+                  autoFocus
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                 />
               </div>
@@ -481,11 +778,109 @@ export default function AuditPage() {
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Search className="h-4 w-4" />
-                Review Opportunity
+                Analyse Website
               </button>
             </div>
+            {/* Example URL chips */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-[var(--text-tertiary)]">Try:</span>
+              {["lawfirmdubai.com", "dentalcaretoronto.ca", "accountingbrisbane.com.au"].map((ex) => (
+                <button
+                  key={ex}
+                  onClick={() => setUrl(ex)}
+                  className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-0.5 font-mono text-xs text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                >
+                  {ex}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Example Opportunity Card — hidden once user has run an audit */}
+          {!hasCompletedAudit && (
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Example</p>
+                  <h2 className="mt-1 text-base font-medium text-[var(--text-primary)]">Example Opportunity</h2>
+                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
+                    See how Nearsited evaluates a business.
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-1 font-mono text-xs text-[var(--text-tertiary)]">
+                  {EXAMPLE_DATA[exampleTab].businessLabel}
+                </span>
+              </div>
+
+              {/* Type tabs */}
+              <div className="mb-5 flex flex-wrap gap-1.5">
+                {EXAMPLE_TABS.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setExampleTab(tab.key)}
+                    className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                      exampleTab === tab.key
+                        ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                        : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Score display — only for weak_website */}
+              {exampleTab === "weak_website" ? (
+                <div className="mb-5 flex flex-col gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-4 sm:flex-row sm:items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-[var(--score-high)]">{EXAMPLE_DATA.weak_website.currentScore}</p>
+                      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">Current</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 flex-shrink-0 text-[var(--text-muted)]" />
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-[var(--score-good)]">{EXAMPLE_DATA.weak_website.potentialScore}</p>
+                      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">Potential</p>
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-2 text-center sm:ml-auto">
+                    <p className="text-xl font-bold text-[var(--badge-green-text)]">+{EXAMPLE_DATA.weak_website.potentialScore! - EXAMPLE_DATA.weak_website.currentScore!}</p>
+                    <p className="text-[10px] text-[var(--text-tertiary)]">Opportunity</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
+                  <p className="text-base font-semibold text-[var(--text-primary)]">{EXAMPLE_DATA[exampleTab].opportunityText}</p>
+                  <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                    {exampleTab === "no_website"
+                      ? "This business has no digital presence — missed visibility and lead generation."
+                      : "Active on social platforms but no owned website for search and credibility."}
+                  </p>
+                </div>
+              )}
+
+              {/* Top Findings */}
+              <div className="mb-5 space-y-2">
+                {EXAMPLE_DATA[exampleTab].findings.map((finding, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <div className="h-1 w-1 shrink-0 rounded-full bg-[var(--text-muted)]" />
+                    <span className="text-sm text-[var(--text-secondary)]">{finding}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* View Example Report CTA */}
+              <button
+                onClick={() => setShowExampleModal(true)}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              >
+                View Example Report
+              </button>
+            </div>
+          )}
         </div>
+
+        {showExampleModal && <ExampleReportModal type={exampleTab} onClose={() => setShowExampleModal(false)} />}
       </div>
     );
   }
@@ -515,6 +910,7 @@ export default function AuditPage() {
     );
   }
 
+  // ── Active / Done state ────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="mx-auto max-w-4xl px-6 py-8">
@@ -522,7 +918,7 @@ export default function AuditPage() {
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard
         </Link>
 
-        {/* URL input card — always visible */}
+        {/* URL input card */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -535,21 +931,7 @@ export default function AuditPage() {
               {step === "done" && (
                 <>
                   <button
-                    onClick={() => {
-                      sessionStorage.removeItem(STORAGE_KEY);
-                      setStep("idle");
-                      setUrl("");
-                      setAuditResult(null);
-                      setDesignResult(null);
-                      setError(null);
-                      setCompletedKeys([]);
-                      setActiveKeys([]);
-                      setSavedTimestamp(null);
-                      setShowPitchResult(false);
-                      setPitchResult(null);
-                      setPipelineAdded(false);
-                      setPipelineError(null);
-                    }}
+                    onClick={handleReset}
                     className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
                   >
                     <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
@@ -572,7 +954,7 @@ export default function AuditPage() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && handleRun()}
-                placeholder="https://example.com"
+                placeholder="Paste a business website URL"
                 className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
               />
             </div>
@@ -595,10 +977,7 @@ export default function AuditPage() {
                     const isDone   = completedKeys.includes(stepDef.key);
                     const isActive = !isDone && activeKeys.includes(stepDef.key);
                     return (
-                      <div
-                        key={stepDef.key}
-                        className="flex items-center gap-3 py-1.5"
-                      >
+                      <div key={stepDef.key} className="flex items-center gap-3 py-1.5">
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
                         ) : isActive ? (
@@ -654,7 +1033,7 @@ export default function AuditPage() {
           </p>
         )}
 
-        {/* Timeout error panel — both strategies timed out */}
+        {/* Both strategies timed out */}
         {auditResult && auditResult.mobile.status === "timeout" && auditResult.desktop.status === "timeout" && (
           <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-8 text-center">
             <AlertTriangle className="mx-auto h-10 w-10 text-[var(--score-mid)]" />
@@ -671,21 +1050,7 @@ export default function AuditPage() {
                 Try again
               </button>
               <button
-                onClick={() => {
-                  sessionStorage.removeItem(STORAGE_KEY);
-                  setStep("idle");
-                  setUrl("");
-                  setAuditResult(null);
-                  setDesignResult(null);
-                  setError(null);
-                  setCompletedKeys([]);
-                  setActiveKeys([]);
-                  setSavedTimestamp(null);
-                  setShowPitchResult(false);
-                  setPitchResult(null);
-                  setPipelineAdded(false);
-                  setPipelineError(null);
-                }}
+                onClick={handleReset}
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
               >
                 <Search className="h-4 w-4" />
@@ -695,7 +1060,7 @@ export default function AuditPage() {
           </div>
         )}
 
-        {/* Results — skip if both timed out (handled above) */}
+        {/* Results */}
         {auditResult && !(auditResult.mobile.status === "timeout" && auditResult.desktop.status === "timeout") && (
           <div className="mt-6 space-y-6">
             {/* Performance Scores */}
@@ -837,10 +1202,9 @@ export default function AuditPage() {
           </div>
         )}
 
-        {/* Success state — actions: Generate Pitch + Add to Pipeline */}
+        {/* Done state actions */}
         {step === "done" && !error && auditResult && (
           <div className="mt-6 space-y-4">
-            {/* Design data missing notice — only when performance exists but design failed */}
             {(!designResult || (designResult.mobile.status !== "ok" && designResult.desktop.status !== "ok")) && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
                 Pitch will be based on performance data only.{" "}
@@ -890,7 +1254,6 @@ export default function AuditPage() {
                 )}
               </div>
 
-              {/* Pitch result */}
               {showPitchResult && pitchResult && (
                 <div className="mt-4">
                   <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-5">

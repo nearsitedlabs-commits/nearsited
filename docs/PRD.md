@@ -1,16 +1,16 @@
 # Nearsited — Product Requirements Document
-**Version:** 2.1 · **Date:** May 2026 · **Team:** Again Labs
+**Version:** 2.2 · **Date:** June 2026 · **Team:** Again Labs
 
 ---
 
 ## 1. Product Overview
 
 ### 1.1 What Nearsited Is
-Nearsited is an AI-powered redesign opportunity intelligence platform for web design agencies. It automates the entire business-development workflow: finding local businesses with weak web presence, gathering hard evidence of their problems, and generating a personalised cold outreach pitch — in under two minutes.
+Nearsited finds local businesses with weak websites or no website at all, shows you exactly what's wrong, and writes the pitch — so agencies close redesign deals in minutes, not hours.
 
 ### 1.2 Positioning
-**"AI-powered redesign opportunity intelligence for web design agencies."**
-Not a generic lead finder. The tool that walks an agency's salesperson into a prospect meeting fully loaded: real performance numbers, a design critique, ranked issues with point deductions, an interaction/UX teardown, a pitch already written, and an export-ready PDF.
+**"Find businesses that need websites."**
+Not a generic lead finder. The tool that walks an agency's salesperson into a prospect meeting fully loaded: real performance numbers, a design critique, ranked issues with point deductions, a pitch already written, and an export-ready PDF.
 
 ### 1.3 Target User
 Web design agencies (1–20 people) doing outbound prospecting. Today they Google local businesses, eyeball sites, write pitches from scratch. Nearsited automates every step from discovery to outreach. Primary persona: agency owner or sales lead — non-technical, time-poor, prospecting 20–50 businesses/week.
@@ -40,25 +40,18 @@ This workflow is the spine. Every feature serves it or is deferred.
 
 ### 3.1 Sidebar
 ```
-nearsited [logo]
-MAIN
-  Dashboard           ✅
-  Leads               ✅ (primary working page)
-  Business Discovery  ✅
-  AI Audit            ✅
-  Pipeline            ✅
-  Pitches             ✅
-  Radar     [v2 stub] — Coming Soon
-  Templates [v2 stub] — Coming Soon
-  Campaigns [v2 stub] — Coming Soon
-  Reports   [v2 stub] — Coming Soon
-  Integrations [v2 stub] — Coming Soon
-  Settings            ✅
+Dashboard           ✅
+Opportunities       ✅ (primary working page)
+Opportunity Discovery ✅
+Opportunity Review  ✅
+Pipeline            ✅
+Pitches             ✅
+Settings            ✅
 USAGE
   Credits 100/100 · Resets in 30 days · [Buy More — disabled, no Stripe]
 [avatar · Free Plan]
 ```
-v2 nav items present but disabled with "Coming Soon" tooltip. Credits widget always visible (UI wired, Stripe deferred).
+7 nav items (no Coming Soon section). Credits widget always visible (UI wired, Stripe deferred).
 
 ### 3.2 Pages (V1 — All Built ✅)
 | Page | Route | Status | Features |
@@ -71,20 +64,24 @@ v2 nav items present but disabled with "Coming Soon" tooltip. Credits widget alw
 | Pipeline | `/dashboard/pipeline` | ✅ Live | Table with status dropdown (optimistic updates), canonical statuses |
 | Pitches | `/dashboard/pitches` | ✅ Live | List of saved pitches, copy to clipboard, delete |
 | Settings | `/dashboard/settings` | ✅ Live | Profile view, plan info, API status, sign out |
-| Auth | `/login`, `/signup` | ✅ Live | Email/password + Google OAuth |
+| Auth | `/login`, `/signup` | ✅ Live | Email/password + Google OAuth, sign-up with name |
 
 ---
 
 ## 4. Page Specifications
 
 ### 4.1 Dashboard (`/dashboard`)
-✅ **Built.** Two-column split. Left (~65%): stat cards + recent leads + pipeline funnel + radar stub. Right (~35%): inline lead detail for the selected lead.
+✅ **Built.** Full-width layout. Action-first hierarchy with dynamic "Next Best Action" system.
 
-**Stat cards (6):** Leads Analyzed · Opportunities · Pitches Generated · In Pipeline · Emails Sent [v2 stub] · Reply Rate [v2 stub]. The first four show real counts from the DB. The two email cards are v2 stubs (dashed border, "—" value, "v2" badge) — email sending infrastructure is deferred to v2.
-**Recent Leads:** 5 most recent — thumbnail, name, city, category, overall score ring, time ago. Click → updates right panel. "View All" → /dashboard/leads.
-**Pipeline Overview:** count per stage (New Leads / Analysed / Pitch Generated / Contacted / In Conversation / Won), Win Rate %.
-**Opportunity Radar:** [v2 stub] "We monitor your leads and notify you when new opportunities appear." Placeholder stats (Websites Updated, Performance Dropped, SSL Issues, No Updates 90+ days), "Coming Soon" badge.
-**Inline Lead Detail (right):** condensed Overview — score ring, sub-scores, flagged status, "View Full Lead" link.
+**Stat cards (4):** Ready to Pitch · In Pipeline · Active Conversations · Leads (with unanalysed count) — ordered by revenue proximity, not collection volume.
+
+**Next Best Action:** Smart contextual guidance based on user state — shows "Generate Outreach" if flagged leads exist but pipeline is empty, "Analyse Opportunities" if unanalysed leads exist, "Discover More" if everything is analysed.
+
+**Recent Leads:** 5 most recent — name, city, category, score ring, time ago. "View all" → /dashboard/leads.
+
+**Pipeline Overview:** count per stage (Prospect / Contacted / In Conversation / Won / Lost), Win Rate %. Empty/small pipelines show contextual action buttons ("Generate Outreach", "Analyse Leads", "Discover More") instead of static "no items" text.
+
+**Empty state (first-time user):** centered card with "Find your first opportunity" heading + "Start Discovering →" CTA.
 
 ### 4.2 Leads (`/dashboard/leads`)
 ✅ **Built.** Full-width table + right filter panel.
@@ -254,13 +251,13 @@ Discover + Classify · Performance Audit (6 scores) · Design Analysis (Gemini s
 ---
 
 ## 10. Design System
-Theme: **light** — white/light backgrounds, indigo-600 `#4F46E5` primary. ✅ Light theme migration COMPLETE (CSS variables in `globals.css`).
-Font: DM Sans or Plus Jakarta Sans (Geist as fallback).
-Score rings: SVG circular progress, colour-coded (emerald/green/amber/red).
+Theme: **dark** — near-black navy `#0a0e12`, sage green accent `#8A9777`. CSS variables in [`src/app/globals.css`](src/app/globals.css) are authoritative.
+Font: **Geist** (UI, weights 300/400/500/600), **Switzer** (hero headlines only, landing page), **Geist Mono** (mono/code).
+Score rings: SVG circular progress, colour-coded (score-good/score-mid/score-high CSS vars).
 Impact pills: High=red, Medium=amber, Low=green.
-Layout: left sidebar + main + right panel (dashboard). v2 nav items disabled with tooltip.
+Layout: fixed sidebar (w-60) + main (flex-1, max-w-7xl centered). v2 nav items removed entirely.
 Credits widget always visible, "Buy More" disabled (no Stripe).
-Screenshot thumbnails 16:9, rounded, bordered.
+Screenshot thumbnails 16:9, rounded (`rounded-xl`), bordered.
 
 ---
 

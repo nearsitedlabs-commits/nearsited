@@ -1,7 +1,7 @@
 # Nearsited Design System
 
-> **Version:** 2.0 · **Updated:** May 2026
-> **Status:** ✅ Approved — official design direction
+> **Version:** 2.1 · **Updated:** June 2026
+> **Status:** ✅ Approved — official design direction (confirmed dark theme, sage accent)
 
 ---
 
@@ -140,7 +140,7 @@ Nearsited has one frontend, one design system, one component library. The landin
 
 The landing page uses the exact same:
 - Colors (backgrounds, surfaces, accent, text, borders)
-- Typography (Satoshi for UI, Switzer for hero headlines only)
+- Typography (Geist for UI, Switzer for hero headlines only)
 - Border radii (buttons, cards, inputs, badges, modals)
 - Shadows (xs, sm, md, lg)
 - Card styles (border, background, padding, radius, shadow)
@@ -205,7 +205,7 @@ export function Hero() {
           {/* Left: marketing copy */}
           <div>
             <Badge color="indigo" dot>
-              Opportunity intelligence for web agencies
+              Find businesses that need websites
             </Badge>
             <h1 className="mt-6 font-display text-hero">
               Find what others <em>overlook.</em>
@@ -244,7 +244,7 @@ export function Hero() {
 
 | Role | Font | Weights | Use Case |
 |------|------|---------|----------|
-| **Primary UI** | **Geist** (via @fontsource/geist | 300, 400, 500, 600 | Dashboards, tables, forms, navigation, product interfaces, body text — **everything** |
+| **Primary UI** | **Geist** (via @fontsource/geist-sans) | 300, 400, 500, 600 | Dashboards, tables, forms, navigation, product interfaces, body text — **everything** |
 | **Display** | **Switzer** (via @fontsource or CDN) | 400, 500, 600 | **Hero headlines only** on the landing page. Never in the dashboard. |
 | **Mono** | **Geist Mono** (already installed) | 400, 500 | Code, metrics, data values, coordinates |
 
@@ -263,9 +263,9 @@ export function Hero() {
 ```css
 /* Marketing (Switzer — hero only) */
 --text-hero:    clamp(3.5rem, 5.5vw, 5.8rem);  /* Hero H1 — Switzer */
---text-display: 2.5rem;                          /* Section headings — Satoshi */
+--text-display: 2.5rem;                          /* Section headings — Geist */
 
-/* Product UI (Satoshi) */
+/* Product UI (Geist) */
 --text-2xl: 1.5rem;    /* Page titles */
 --text-xl:  1.25rem;   /* Card headings */
 --text-lg:  1.125rem;  /* Section subtitles */
@@ -281,7 +281,7 @@ export function Hero() {
 
 ### 6.1 Philosophy
 
-Nearsited uses a restrained, muted palette inspired by Linear and Vercel. No neon, no bright colors. Every color serves a functional purpose. The deep violet accent is used once per view as a focal point — never more.
+Nearsited uses a restrained, muted palette inspired by Linear and Vercel. No neon, no bright colors. Every color serves a functional purpose. The sage green accent is used once per view as a focal point — never more.
 
 ### 6.2 Semantic Tokens
 
@@ -338,20 +338,20 @@ Nearsited uses a restrained, muted palette inspired by Linear and Vercel. No neo
 --badge-amber-border:rgba(196,152,74,0.30);
 --badge-amber-text:  #d4b870;
 
---badge-indigo-bg:   rgba(108,92,231,0.10);   /* Platform Presence */
---badge-indigo-border:rgba(108,92,231,0.25);
---badge-indigo-text: #b0a0f0;
+--badge-indigo-bg:   rgba(138,151,119,0.10);   /* Platform Presence (uses accent tone) */
+--badge-indigo-border:rgba(138,151,119,0.25);
+--badge-indigo-text: #b0c0a0;
 ```
 
 ### 6.4 Color Usage Rules
 
-1. **Accent (deep violet)** — Use **once per view** as a focal point. Primary CTAs, active navigation, key metrics.
+1. **Accent (sage green `#8A9777`)** — Use **once per view** as a focal point. Primary CTAs, active navigation, key metrics.
 2. **Success (muted green)** — Score rings ≥70, positive badges, completion states.
 3. **Warning (muted amber)** — Scores 40–69, "Needs Improvement" badges.
 4. **Error (muted red)** — Scores <40, errors, "Website Opportunity" badges.
 5. **Never** use raw hex colors inline — always reference CSS variables.
 6. **Never** use bright/neon variants of any color — the palette is intentionally muted.
-7. **Pipeline status colors** must use the badge semantic tokens, not Tailwind arbitrary values like `bg-blue-500/15`.
+7. **Pipeline status colors** must use the CSS pipeline variables (`--pipeline-*`) defined in globals.css, not Tailwind arbitrary values.
 
 ---
 
@@ -484,7 +484,7 @@ DashboardLayout (sidebar w-60 fixed | main flex-1)
 
 - Radius: `rounded-full`
 - Padding: `px-2.5 py-0.5`
-- Font: `text-xs font-medium` — Satoshi
+- Font: `text-xs font-medium` — Geist
 - Style: Inline-flex with rgba background + border
 
 ### 10.4 Score Rings
@@ -492,7 +492,7 @@ DashboardLayout (sidebar w-60 fixed | main flex-1)
 - Size: 44px default (SVG viewBox `0 0 44 44`)
 - Empty state: Ghost ring with em-dash
 - Scored: Colored ring using `--score-*` vars
-- Score text: Satoshi medium (500), not serif
+- Score text: Geist medium (500), not serif
 
 ### 10.5 Toast Notifications
 
@@ -508,21 +508,21 @@ DashboardLayout (sidebar w-60 fixed | main flex-1)
 - Structure: Icon container (rounded, tinted) + large value + small label
 - Padding: `p-5` minimum
 - Value font: Satoshi medium, 1.875rem (`text-3xl`)
-- Label font: Satoshi, `text-xs` or `text-[11px]`
+- Label font: Geist, `text-xs` or `text-[11px]`
 - No hover effect unless interactive
 - Stub/future cards: `opacity-40 border-dashed`
 
 ### 10.7 Page Header
 
 - Subtitle: `text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]`
-- Title: Satoshi, `text-2xl` (1.5rem), `font-normal` (not serif)
+- Title: Geist, `text-2xl` (1.5rem), `font-normal` (not serif)
 - Action: Optional right-aligned button group
 
 ### 10.8 Empty States
 
 - Centered layout, `py-20`
 - Icon in `bg-[var(--bg-elevated)]` rounded container
-- Title: Satoshi, `text-xl`, `text-[var(--text-primary)]`
+- Title: Geist, `text-xl`, `text-[var(--text-primary)]`
 - Description: `text-xs text-[var(--text-tertiary)]`
 - Action button to relevant flow
 
@@ -569,7 +569,7 @@ Use `@tanstack/react-table` for:
 - Border: `border border-[var(--border)]`
 - Radius: `rounded-lg`
 - Padding: `py-2.5 px-4`
-- Text: `text-sm text-[var(--text-primary)]` — Satoshi
+- Text: `text-sm text-[var(--text-primary)]` — Geist
 - Placeholder: `placeholder:text-[var(--text-tertiary)]`
 - Focus: `focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)]`
 - Transition: `transition-colors duration-150`
@@ -582,7 +582,7 @@ Use `@tanstack/react-table` for:
 
 ### 12.3 Labels
 
-- Font: `text-xs font-medium` — Satoshi
+- Font: `text-xs font-medium` — Geist
 - Color: `text-[var(--text-tertiary)]`
 - Margin: `mb-1.5`
 
@@ -597,7 +597,7 @@ Use `@tanstack/react-table` for:
 - Hover: `hover:bg-[var(--accent-hover)]`
 - Radius: `rounded-lg`
 - Padding: `px-4 py-2.5`
-- Font: `text-sm font-medium` — Satoshi
+- Font: `text-sm font-medium` — Geist
 - Shadow: `shadow-[var(--shadow-xs)]`
 - **No transform on hover** — color change only
 
@@ -660,7 +660,7 @@ Every data-fetching view must handle three states consistently:
 
 - Centered layout, `py-20`
 - Icon in `bg-[var(--bg-elevated)]` container
-- Title: Satoshi, `text-xl`, `text-[var(--text-primary)]`
+- Title: Geist, `text-xl`, `text-[var(--text-primary)]`
 - Description: `text-xs text-[var(--text-tertiary)]`
 - Action button to relevant flow
 
@@ -736,7 +736,7 @@ settings     → workspace
 | Emojis as icons | Unprofessional, inconsistent | Use Lucide React icons |
 | Glassmorphism on main content | Reduces readability | Solid surfaces with subtle borders |
 | Neon or bright accent colors | Contradicts premium simplicity | Muted deep violet palette |
-| Serif fonts in dashboard | Reduces scanability (violates §4.2 rule 3) | Satoshi everywhere in product UI |
+| Serif fonts in dashboard | Reduces scanability (violates §4.2 rule 3) | Geist everywhere in product UI |
 | Decorative entrance animations | Wastes user time, feels slow | Functional motion only (§9.2) |
 | Startup-style illustrations | Adds noise without signal | Show product UI instead |
 | `$ grep` in Windows PowerShell | Doesn't work | Use `Select-String` |

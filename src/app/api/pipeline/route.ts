@@ -161,7 +161,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const validStatuses = ["new_lead", "analysed", "pitch_generated", "contacted", "in_conversation", "won", "lost"];
+    const validStatuses = ["new_lead", "analysed", "contacted", "in_conversation", "won", "lost"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` },

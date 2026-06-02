@@ -1,9 +1,9 @@
 # Nearsited — Pre-Demo Cleanup Tasks
-**Document created:** May 31, 2026 · **Batch 1 completed:** Jun 1, ~04:17–04:19 · **Batch 2 completed:** Jun 1, ~09:11 · **Batch 3 completed:** Jun 1, ~10:00
+**Document created:** May 31, 2026 · **Batch 1 completed:** Jun 1, ~04:17–04:19 · **Batch 2 completed:** Jun 1, ~09:11 · **Batch 3 completed:** Jun 1, ~10:00 · **All v1 pre-demo fixes resolved:** June 1, 2026
 
-> **Source checklist:** [`docs/Nearsited demo cleanup.txt`](docs/Nearsited%20demo%20cleanup.txt) — 70 screenshot states across 6 page-based batches
+> **Completion status:** ✅ All v1 pre-demo cleanup tasks resolved (June 1, 2026)
 >
-> **Completion status:** ✅ Done | ⬜ Pending
+> **Post-demo fixes (Batch 4):** June 2, 2026 — Performance, messaging, and dashboard prioritisation.
 
 ---
 
@@ -46,6 +46,18 @@ Code fix batches (by priority, as executed):
 | 6.1 | Fix Quick Audit timeout & retry | ✅ | `REQUEST_TIMEOUT_MS=90s` + retry on AbortError/500/429 + client error panel + disabled pitch on failure. | Batch 2 (#28-34) |
 | 11.1 | Verify Analyse button surfaces | ✅ | Code-audited across `/dashboard/leads`, `/dashboard/discover`, `/dashboard/leads/[id]`. All show correct Analyse/Re-analyse/— logic with unified NDJSON streaming. | Batch 4 (#17-18) |
 | — | Design system consistency | ✅ | Sidebar colors → CSS vars, auth input/button radii → `rounded-lg`, pitches delete error handling with Toast. | — |
+
+### Batch 4 — Post-demo performance + messaging (Jun 2)
+| # | Task | Status | Key changes | Checklist items |
+|---|------|--------|-------------|-----------------|
+| P1 | Batch discover DB upserts | ✅ | Sequential per-business upserts replaced with batched upserts (50/batch). `places_cache` upserts also batched. | — |
+| P2 | Increase enrichment batch size | ✅ | Place Details fetch batch increased from 10 → 25, reducing API round-trips by 60%. | — |
+| P3 | Reduce PageSpeed timeout | ✅ | `REQUEST_TIMEOUT_MS` reduced from 90s → 30s. | — |
+| P4 | Restrict middleware matcher | ✅ | Middleware now only matches `/dashboard/*` and `/(auth)/*` instead of every request including static files and API routes. | — |
+| P5 | Create cities search API | ✅ | 29MB `cities.json` no longer loaded on client. New `/api/cities/search` route caches server-side and returns max 200 results with search-as-you-type. | — |
+| M1 | Landing page copy correction | ✅ | "Opportunity intelligence" → "Find businesses that need websites". "underperforming websites" → "weak websites". Footer/meta/hero all updated. | — |
+| D1 | Dashboard KPI hierarchy rewrite | ✅ | KPIs reordered: Ready to Pitch → In Pipeline → Active Conversations → Leads. Smart "Next Best Action" system added. Pipeline empty states show contextual action buttons. | — |
+| R1 | Product simplification review | ✅ | All pages reviewed for unnecessary complexity. Findings documented in `docs/SIMPLIFICATION_REVIEW.md`. | — |
 
 ---
 

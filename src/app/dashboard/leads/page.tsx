@@ -5,10 +5,10 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Info, Compass, Target, Lightbulb, Eye } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
-import { computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
+import { computeOpportunityScore } from "@/lib/scoring";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
-import { SCORE_STATUS_PILLS, PIPELINE_LABELS } from "@/lib/ui-constants";
+import { PIPELINE_LABELS, PIPELINE_BADGE_STYLES } from "@/lib/ui-constants";
 
 // ── Analyse Steps ──────────────────────────────────────────────────────────────
 
@@ -48,50 +48,44 @@ type LeadRow = {
   opportunity_score: number | null;
 };
 
-type TabFilter = "all" | "needs_improvement" | "strong_opportunity" | "contacted";
+type OpportunityTab = "all" | "needs_improvement" | "strong_opportunity";
+type PipelineTab = "all_pipeline" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
+type TabFilter = OpportunityTab | PipelineTab;
 
 const PAGE_SIZE = 25;
 
-const TAB_OPTIONS: { value: TabFilter; label: string; tooltip?: string }[] = [
-  { value: "all", label: "All" },
-  { value: "needs_improvement", label: "Needs Improvement", tooltip: "Leads with an overall score between 40–69" },
-  { value: "strong_opportunity", label: "Strong Opportunity", tooltip: "Leads with score ≥70, or businesses with no website, social-only, or platform-only presence" },
-  { value: "contacted", label: "Contacted", tooltip: `Leads with pipeline status: Contacted or ${PIPELINE_LABELS.in_conversation}` },
+const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string; tooltip?: string }[] = [
+  { value: "all",               label: "All" },
+  { value: "needs_improvement", label: "Needs Improvement", tooltip: "Leads with a performance or design score between 40–69" },
+  { value: "strong_opportunity",label: "Strong Opportunity", tooltip: "Leads with score ≥ 70, or businesses with no website, social-only, or platform-only presence" },
+];
+
+const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [
+  { value: "all_pipeline",             label: "All Pipeline" },
+  { value: "pipeline_prospect",        label: "Prospect" },
+  { value: "pipeline_contacted",       label: "Contacted" },
+  { value: "pipeline_in_conversation", label: "In Conversation" },
+  { value: "pipeline_won",             label: "Won" },
 ];
 
 const WEBSITE_FILTER_OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "has_website", label: "Opportunity Found" },
-  { value: "no_website", label: "Website Opportunity" },
-  { value: "social_only", label: "Social Presence" },
-  { value: "platform_only", label: "Platform Presence" },
+  { value: "all",          label: "All" },
+  { value: "has_website",  label: "Opportunity Found" },
+  { value: "no_website",   label: "Website Opportunity" },
+  { value: "social_only",  label: "Social Presence" },
+  { value: "platform_only",label: "Platform Presence" },
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Compute effective score (opportunity_score with fallback for legacy rows). */
 function effectiveOpportunityScore(lead: LeadRow): number {
   if (lead.opportunity_score != null) return lead.opportunity_score;
-  // Fallback for businesses analysed before this change shipped
   const qualityScore = lead.performance_score ?? 50;
   return computeOpportunityScore(qualityScore, lead.review_count ?? 0, lead.rating ?? 0);
 }
 
-function scoreStatusLabel(lead: LeadRow): string {
-  const oppScore = effectiveOpportunityScore(lead);
-  return opportunityLabel(oppScore);
-}
-
-function scoreStatusStyle(lead: LeadRow): string {
-  const oppScore = effectiveOpportunityScore(lead);
-  const variant = opportunityBadgeVariant(oppScore);
-  const map: Record<string, string> = {
-    green:  "bg-[var(--badge-green-bg)] text-[var(--badge-green-text)] border border-[var(--badge-green-border)]",
-    amber:  "bg-[var(--badge-amber-bg)] text-[var(--badge-amber-text)] border border-[var(--badge-amber-border)]",
-    indigo: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)] border border-[var(--badge-indigo-border)]",
-    red:    "bg-[var(--badge-red-bg)] text-[var(--badge-red-text)] border border-[var(--badge-red-border)]",
-  };
-  return map[variant] ?? "bg-[var(--bg-elevated)] text-[var(--text-tertiary)] border border-[var(--border)]";
+function effectiveScore(lead: LeadRow): number | null {
+  return lead.performance_score ?? lead.design_score ?? null;
 }
 
 function formatDate(dateStr: string | null): string {
@@ -105,12 +99,23 @@ function formatDate(dateStr: string | null): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-/** Compute a single "effective" score from available data */
-function effectiveScore(lead: LeadRow): number | null {
-  return lead.performance_score ?? lead.design_score ?? null;
+function getOpportunityContext(lead: LeadRow): { text: string; color: string } {
+  if (lead.website_status === "no_website") {
+    return { text: "No Website Opportunity", color: "text-[var(--score-high)]" };
+  }
+  if (lead.website_status === "social_only") {
+    return { text: "Social Presence Opportunity", color: "text-[var(--score-mid)]" };
+  }
+  if (lead.website_status === "platform_only") {
+    return { text: "Platform Dependency Opportunity", color: "text-[var(--text-tertiary)]" };
+  }
+  const oppScore = effectiveOpportunityScore(lead);
+  if (oppScore >= 70) return { text: "High Website Opportunity",  color: "text-[var(--score-good)]" };
+  if (oppScore >= 40) return { text: `+${oppScore} Opportunity`,  color: "text-[var(--score-mid)]" };
+  return                     { text: "Low Website Opportunity",    color: "text-[var(--text-tertiary)]" };
 }
 
-// ── Tooltip Component ─────────────────────────────────────────────────────────
+// ── Sub-components ─────────────────────────────────────────────────────────────
 
 function TabTooltip({ text }: { text: string }) {
   return (
@@ -124,9 +129,45 @@ function TabTooltip({ text }: { text: string }) {
   );
 }
 
+/** Score column replacement for non-has_website leads */
+function WebPresenceBadge({ status }: { status: WebsiteStatus }) {
+  const configs: Partial<Record<WebsiteStatus, { abbr: string; title: string; className: string }>> = {
+    no_website:    { abbr: "NW", title: "No Website",    className: "border-[var(--score-high)]/30 bg-[var(--score-high-tint)] text-[var(--score-high)]" },
+    social_only:   { abbr: "SO", title: "Social Only",   className: "border-[var(--score-mid)]/30  bg-[var(--score-mid-tint)]  text-[var(--score-mid)]" },
+    platform_only: { abbr: "PO", title: "Platform Only", className: "border-[var(--border)]         bg-[var(--bg-elevated)]     text-[var(--text-tertiary)]" },
+  };
+  const cfg = configs[status];
+  if (!cfg) return null;
+  return (
+    <div
+      title={cfg.title}
+      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${cfg.className}`}
+    >
+      {cfg.abbr}
+    </div>
+  );
+}
+
+/** Pipeline badge or "Not Tracked" fallback */
+function PipelineStatusBadge({ status }: { status: string | undefined }) {
+  if (!status) {
+    return (
+      <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)]">
+        Not Tracked
+      </span>
+    );
+  }
+  const badgeClass = PIPELINE_BADGE_STYLES[status] ?? "bg-[var(--bg-elevated)] text-[var(--text-tertiary)] border border-[var(--border)]";
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${badgeClass}`}>
+      {PIPELINE_LABELS[status] ?? status}
+    </span>
+  );
+}
+
 // ── Empty State ───────────────────────────────────────────────────────────────
 
-const EMPTY_MESSAGES: Record<string, { icon: typeof Compass; title: string; description: string }> = {
+const EMPTY_MESSAGES: Record<TabFilter, { icon: typeof Compass; title: string; description: string }> = {
   all: {
     icon: Compass,
     title: "No opportunities yet",
@@ -142,15 +183,29 @@ const EMPTY_MESSAGES: Record<string, { icon: typeof Compass; title: string; desc
     title: "No strong signals yet",
     description: "Score more leads to surface the strongest redesign candidates.",
   },
-  contacted: {
+  pipeline_prospect: {
+    icon: Target,
+    title: "No prospects yet",
+    description: "Add opportunities to your pipeline to start tracking progress.",
+  },
+  pipeline_contacted: {
     icon: Target,
     title: "No contacted leads",
     description: "Move leads through your pipeline to start tracking conversations.",
   },
+  pipeline_in_conversation: {
+    icon: Target,
+    title: "No active conversations",
+    description: "Leads marked In Conversation will appear here.",
+  },
+  pipeline_won: {
+    icon: Lightbulb,
+    title: "No won deals yet",
+    description: "Keep working your pipeline — won deals will appear here.",
+  },
 };
 
 function OpportunitiesEmptyState({ activeTab, searchQuery }: { activeTab: TabFilter; searchQuery: string }) {
-  // If actively searching, show a search-specific message
   if (searchQuery.trim()) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -196,31 +251,26 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<TabFilter>("all");
+  const [activeOpportunityTab, setActiveOpportunityTab] = useState<OpportunityTab>("all");
+  const [activePipelineTab, setActivePipelineTab] = useState<PipelineTab>("all_pipeline");
   const [searchQuery, setSearchQuery] = useState("");
   const [websiteFilter, setWebsiteFilter] = useState<string>("all");
   const [scoreRange, setScoreRange] = useState<[number, number]>([0, 100]);
-  // ★ Smart Sorting: default to "opportunity" (highest score first)
   const [sortBy, setSortBy] = useState<string>("opportunity");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showFilters, setShowFilters] = useState(false);
   const [filterAudited, setFilterAudited] = useState(false);
   const [filterAnalysed, setFilterAnalysed] = useState(false);
   const [includeArchived, setIncludeArchived] = useState(false);
-  // Restore pagination from sessionStorage via lazy initializer
   const [page, setPage] = useState(() => {
-    const savedPage = sessionStorage.getItem("nearsited_leads_page");
-    return savedPage ? parseInt(savedPage, 10) : 1;
+    try { return parseInt(sessionStorage.getItem("nearsited_leads_page") ?? "1", 10); } catch { return 1; }
   });
 
-  // Save page to sessionStorage whenever it changes
   useEffect(() => {
-    sessionStorage.setItem("nearsited_leads_page", page.toString());
+    try { sessionStorage.setItem("nearsited_leads_page", page.toString()); } catch { /* ignore */ }
   }, [page]);
 
-  // Combined Analyse action state
   const [analysingIds, setAnalysingIds] = useState<Set<string>>(new Set());
-  const [analysedIds, setAnalysedIds] = useState<Set<string>>(new Set());
   const [analyseProgress, setAnalyseProgress] = useState<Map<string, { step: number; phase: string; label: string; error?: string }>>(new Map());
 
   useEffect(() => {
@@ -230,7 +280,7 @@ export default function LeadsPage() {
 
       const { data, error: fetchError } = await supabase
         .from("businesses")
-        .select("id, name, business_type, address, city, place_id, website, website_status, rating, review_count, performance_score, design_score, audited_at, design_analyzed_at, discovered_at, flagged_for_outreach, outreach_reason")
+        .select("id, name, business_type, address, city, place_id, website, website_status, rating, review_count, performance_score, design_score, opportunity_score, audited_at, design_analyzed_at, discovered_at, flagged_for_outreach, outreach_reason")
         .eq("user_id", user.id)
         .order("discovered_at", { ascending: false });
 
@@ -245,7 +295,11 @@ export default function LeadsPage() {
         issuesCountMap.set(row.business_id, (issuesCountMap.get(row.business_id) ?? 0) + issues.length);
       }
 
-      setLeads((data ?? []).map((lead) => ({ ...lead, issues_count: issuesCountMap.get(lead.id) ?? 0, opportunity_score: (lead as Record<string, unknown>).opportunity_score as number | null ?? null })));
+      setLeads((data ?? []).map((lead) => ({
+        ...lead,
+        issues_count: issuesCountMap.get(lead.id) ?? 0,
+        opportunity_score: (lead as Record<string, unknown>).opportunity_score as number | null ?? null,
+      })));
 
       const { data: pipelineRows } = await supabase
         .from("pipeline").select("business_id, status").eq("user_id", user.id);
@@ -254,19 +308,11 @@ export default function LeadsPage() {
       for (const row of pipelineRows ?? []) pMap.set(row.business_id, row.status);
       setPipelineMap(pMap);
 
-      // Restore analysed set from business data (has both audit + design)
-      const analysed = new Set<string>();
-      for (const lead of data ?? []) {
-        if (lead.audited_at && lead.design_analyzed_at) analysed.add(lead.id);
-      }
-      setAnalysedIds(analysed);
-
       setLoading(false);
     }
     init();
   }, [supabase]);
 
-  /** Read NDJSON stream from a fetch Response, yielding progress events */
   const readStream = useCallback(async (
     res: Response,
     leadId: string,
@@ -309,7 +355,6 @@ export default function LeadsPage() {
     return hasQuotaError;
   }, []);
 
-  // Combined Analyse handler (chains audit → analyse-design with NDJSON streaming)
   const handleAnalyse = useCallback(async (leadId: string, website: string) => {
     setAnalysingIds((prev) => new Set(prev).add(leadId));
     setAnalyseProgress((prev) => {
@@ -321,7 +366,6 @@ export default function LeadsPage() {
     let quotaError = false;
 
     try {
-      // ── Phase 1: /api/audit ──────────────────────────────────────────
       const auditRes = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -330,7 +374,7 @@ export default function LeadsPage() {
 
       if (!auditRes.ok) throw new Error("Audit failed");
 
-      quotaError = await readStream(auditRes, leadId, "audit", (idx, key) => {
+      quotaError = await readStream(auditRes, leadId, "audit", (idx) => {
         setAnalyseProgress((prev) => {
           const next = new Map(prev);
           next.set(leadId, { step: idx, phase: "audit", label: ANALYSE_STEPS[idx].label });
@@ -347,7 +391,6 @@ export default function LeadsPage() {
         return;
       }
 
-      // ── Phase 2: /api/analyze-design ─────────────────────────────────
       const designRes = await fetch("/api/analyze-design", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -356,7 +399,7 @@ export default function LeadsPage() {
 
       if (!designRes.ok) throw new Error("Design analysis failed");
 
-      quotaError = await readStream(designRes, leadId, "design", (idx, key) => {
+      quotaError = await readStream(designRes, leadId, "design", (idx) => {
         setAnalyseProgress((prev) => {
           const next = new Map(prev);
           next.set(leadId, { step: idx, phase: "design", label: ANALYSE_STEPS[idx].label });
@@ -373,8 +416,6 @@ export default function LeadsPage() {
         return;
       }
 
-      // Both phases completed successfully
-      setAnalysedIds((prev) => new Set(prev).add(leadId));
       setAnalyseProgress((prev) => {
         const next = new Map(prev);
         next.set(leadId, { step: ANALYSE_STEPS.length - 1, phase: "done", label: "Analysis complete" });
@@ -399,11 +440,25 @@ export default function LeadsPage() {
   // ── Filtering + Smart Sorting ─────────────────────────────────────────────
   const filtered = useMemo(() => {
     let result = [...leads];
-    if (activeTab === "needs_improvement")  result = result.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 40 && s <= 69; });
-    else if (activeTab === "strong_opportunity") result = result.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 70; });
-    else if (activeTab === "contacted") result = result.filter((l) => { const s = pipelineMap.get(l.id); return s === "contacted" || s === "in_conversation"; });
-    if (filterAudited) result = result.filter((l) => l.audited_at !== null);
-    if (filterAnalysed) result = result.filter((l) => l.design_analyzed_at !== null);
+
+    if (activeOpportunityTab === "needs_improvement") {
+      result = result.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 40 && s <= 69; });
+    } else if (activeOpportunityTab === "strong_opportunity") {
+      result = result.filter((l) => {
+        const s = effectiveScore(l);
+        return l.website_status === "no_website"
+          || l.website_status === "social_only"
+          || l.website_status === "platform_only"
+          || (s !== null && s >= 70);
+      });
+    }
+
+    if (activePipelineTab !== "all_pipeline") {
+      result = result.filter((l) => pipelineMap.get(l.id) === activePipelineTab);
+    }
+
+    if (filterAudited)   result = result.filter((l) => l.audited_at !== null);
+    if (filterAnalysed)  result = result.filter((l) => l.design_analyzed_at !== null);
     if (!includeArchived) result = result.filter((l) => { const s = pipelineMap.get(l.id); return !s || (s !== "won" && s !== "lost"); });
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -412,7 +467,6 @@ export default function LeadsPage() {
     if (websiteFilter !== "all") result = result.filter((l) => l.website_status === websiteFilter);
     result = result.filter((l) => { const s = effectiveScore(l) ?? 0; return s >= scoreRange[0] && s <= scoreRange[1]; });
 
-    // ★ Smart Sorting: default to "opportunity" (highest effective score first)
     result.sort((a, b) => {
       let cmp = 0;
       if (sortBy === "name") {
@@ -420,14 +474,12 @@ export default function LeadsPage() {
       } else if (sortBy === "score") {
         cmp = (effectiveScore(a) ?? -1) - (effectiveScore(b) ?? -1);
       } else if (sortBy === "opportunity") {
-        // Sort by effective score descending (nulls last), then by flagged_for_outreach
         const aScore = effectiveScore(a);
         const bScore = effectiveScore(b);
         if (aScore === null && bScore === null) cmp = 0;
         else if (aScore === null) cmp = -1;
         else if (bScore === null) cmp = 1;
         else cmp = aScore - bScore;
-        // Secondary sort: flagged businesses rise
         if (cmp === 0) cmp = (a.flagged_for_outreach ? 1 : 0) - (b.flagged_for_outreach ? 1 : 0);
       } else {
         cmp = new Date(a.discovered_at).getTime() - new Date(b.discovered_at).getTime();
@@ -435,12 +487,122 @@ export default function LeadsPage() {
       return sortOrder === "asc" ? cmp : -cmp;
     });
     return result;
-  }, [leads, activeTab, searchQuery, websiteFilter, scoreRange, sortBy, sortOrder, pipelineMap]);
+  }, [leads, activeOpportunityTab, activePipelineTab, searchQuery, websiteFilter, scoreRange, sortBy, sortOrder, pipelineMap, filterAudited, filterAnalysed, includeArchived]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { setSearchQuery(e.target.value); setPage(1); }, []);
 
+  // ── KPI counts ────────────────────────────────────────────────────────────────
+  const auditedCount      = leads.filter((l) => l.audited_at !== null).length;
+  const readyToPitchCount = leads.filter((l) => l.flagged_for_outreach).length;
+  const inPipelineCount   = pipelineMap.size;
+
+  // ── Actions renderer (shared between table and mobile cards) ──────────────────
+  function renderActions(lead: LeadRow) {
+    const isAnalysing     = analysingIds.has(lead.id);
+    const isFullyAnalysed = lead.audited_at !== null && lead.design_analyzed_at !== null;
+    const progress        = analyseProgress.get(lead.id);
+    const hasError        = !!progress?.error;
+    const canAnalyse      = !!lead.website && (lead.website_status === "has_website" || lead.website_status === "platform_only");
+
+    const viewBtn = (
+      <Link
+        href={`/dashboard/leads/${lead.id}`}
+        className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+      >
+        <Eye className="h-3 w-3" /> View
+      </Link>
+    );
+
+    // Non-website lead types get fixed context-aware actions
+    if (lead.website_status === "no_website") {
+      return (
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/dashboard/leads/${lead.id}`}
+            className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
+          >
+            Generate Outreach
+          </Link>
+          {viewBtn}
+        </div>
+      );
+    }
+
+    if (lead.website_status === "social_only" || lead.website_status === "platform_only") {
+      return (
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/dashboard/leads/${lead.id}`}
+            className="inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+          >
+            Review Opportunity
+          </Link>
+          {viewBtn}
+        </div>
+      );
+    }
+
+    // has_website (or unknown) — inline analyse flow
+    return (
+      <div className="flex flex-col gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          {isAnalysing ? (
+            <span className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)]">
+              <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Analysing…
+            </span>
+          ) : hasError ? (
+            <button
+              onClick={() => handleAnalyse(lead.id, lead.website!)}
+              className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+            >
+              Retry
+            </button>
+          ) : canAnalyse && !isFullyAnalysed ? (
+            <button
+              onClick={() => handleAnalyse(lead.id, lead.website!)}
+              className="cursor-pointer rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+            >
+              Analyse
+            </button>
+          ) : canAnalyse && isFullyAnalysed ? (
+            <button
+              onClick={() => handleAnalyse(lead.id, lead.website!)}
+              className="cursor-pointer rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            >
+              Re-analyse
+            </button>
+          ) : null}
+          {viewBtn}
+        </div>
+
+        {/* Progress indicator */}
+        {isAnalysing && progress && (
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2">
+            <div className="flex items-center gap-1.5">
+              <svg className="h-3 w-3 animate-spin shrink-0 text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <span className="text-[11px] text-[var(--text-primary)]">{progress.label}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Error message */}
+        {hasError && !isAnalysing && (
+          <p className="text-[11px] text-red-400">{progress!.error}</p>
+        )}
+      </div>
+    );
+  }
+
+  // ── Loading / Error states ────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] p-6">
@@ -464,10 +626,7 @@ export default function LeadsPage() {
     );
   }
 
-  const needsImprovementCount = filtered.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 40 && s <= 69; }).length;
-  const strongCount           = filtered.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 70; }).length;
-  const contactedCount        = leads.filter((l) => { const s = pipelineMap.get(l.id); return s === "contacted" || s === "in_conversation"; }).length;
-
+  // ── Page render ───────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="mx-auto max-w-7xl px-6 py-8">
@@ -491,13 +650,13 @@ export default function LeadsPage() {
           </Link>
         </div>
 
-        {/* Stat strip */}
+        {/* KPI strip */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { value: leads.length,         label: "Opportunities Spotted", valueClass: "text-[var(--text-primary)]" },
-            { value: needsImprovementCount, label: "Needs Improvement",   valueClass: "text-[var(--score-mid)]" },
-            { value: strongCount,           label: "Strong Signals",      valueClass: "text-[var(--score-good)]" },
-            { value: contactedCount,        label: "Engaged",             valueClass: "text-[var(--accent)]" },
+            { value: leads.length,      label: "Total Opportunities", valueClass: "text-[var(--text-primary)]" },
+            { value: auditedCount,      label: "Audited",             valueClass: "text-[var(--score-mid)]" },
+            { value: readyToPitchCount, label: "Ready To Pitch",      valueClass: "text-[var(--score-good)]" },
+            { value: inPipelineCount,   label: "In Pipeline",         valueClass: "text-[var(--accent)]" },
           ].map((s) => (
             <div key={s.label} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
               <p className={`text-2xl font-bold ${s.valueClass}`}>{s.value}</p>
@@ -506,34 +665,57 @@ export default function LeadsPage() {
           ))}
         </div>
 
-        {/* Tabs + filter toggle */}
+        {/* Two-group filter bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          {TAB_OPTIONS.map((tab) => (
-            <span key={tab.value} className="inline-flex items-center">
+          {/* Group 1 — Opportunity quality */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {OPPORTUNITY_FILTER_OPTIONS.map((tab) => (
+              <span key={tab.value} className="inline-flex items-center">
+                <button
+                  onClick={() => { setActiveOpportunityTab(tab.value); setPage(1); }}
+                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                    activeOpportunityTab === tab.value
+                      ? "bg-[var(--accent)] text-white"
+                      : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+                {tab.tooltip && <TabTooltip text={tab.tooltip} />}
+              </span>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="hidden h-5 w-px bg-[var(--border)] sm:block" />
+
+          {/* Group 2 — Pipeline stage */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {PIPELINE_FILTER_OPTIONS.map((tab) => (
               <button
-                onClick={() => { setActiveTab(tab.value); setPage(1); }}
-                className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-150 ${
-                  activeTab === tab.value
+                key={tab.value}
+                onClick={() => { setActivePipelineTab(tab.value); setPage(1); }}
+                className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                  activePipelineTab === tab.value
                     ? "bg-[var(--accent)] text-white"
                     : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {tab.label}
               </button>
-              {tab.tooltip && (
-                <TabTooltip text={tab.tooltip} />
-              )}
-            </span>
-          ))}
+            ))}
+          </div>
+
+          {/* Filters toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`ml-auto cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-150 ${
+            className={`ml-auto cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
               showFilters
                 ? "bg-[var(--accent)] text-white"
                 : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"
             }`}
           >
-            <Filter className="mr-1.5 inline h-4 w-4" />Filters
+            <Filter className="mr-1.5 inline h-3.5 w-3.5" />Filters
           </button>
         </div>
 
@@ -545,18 +727,18 @@ export default function LeadsPage() {
               type="text"
               value={searchQuery}
               onChange={handleSearch}
-              placeholder="Search by name, city, or business type…"
+              placeholder="Search businesses, cities, industries…"
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
             />
           </div>
           <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-            <span>Sorted by</span>
+            <span className="hidden sm:inline">Sorted by</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
             >
-              <option value="opportunity">Opportunity Score</option>
+              <option value="opportunity">Opportunity</option>
               <option value="score">Raw Score</option>
               <option value="name">Name</option>
               <option value="discovered_at">Discovered</option>
@@ -570,7 +752,7 @@ export default function LeadsPage() {
           </div>
         </div>
 
-        {/* Filter panel */}
+        {/* Advanced filter panel */}
         {showFilters && (
           <div className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
             <div className="grid gap-4 sm:grid-cols-4">
@@ -590,9 +772,7 @@ export default function LeadsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">
-                  Sort by
-                </label>
+                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">Sort by</label>
                 <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
                   className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
                   <option value="opportunity">Opportunity Score</option>
@@ -609,47 +789,36 @@ export default function LeadsPage() {
                   onChange={(e) => setScoreRange([Number(e.target.value), scoreRange[1]])}
                   className="w-full accent-[var(--accent)]" />
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-[var(--border)] pt-4">
-                <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filterAudited}
-                    onChange={(e) => { setFilterAudited(e.target.checked); setPage(1); }}
-                    className="accent-[var(--accent)] rounded"
-                  />
-                  Show only audited
-                </label>
-                <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filterAnalysed}
-                    onChange={(e) => { setFilterAnalysed(e.target.checked); setPage(1); }}
-                    className="accent-[var(--accent)] rounded"
-                  />
-                  Show only analysed
-                </label>
-                <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeArchived}
-                    onChange={(e) => { setIncludeArchived(e.target.checked); setPage(1); }}
-                    className="accent-[var(--accent)] rounded"
-                  />
-                  Include archived
-                </label>
+              <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-[var(--border)] pt-4 sm:col-span-4">
+                {[
+                  { checked: filterAudited,   onChange: setFilterAudited,   label: "Show only audited" },
+                  { checked: filterAnalysed,  onChange: setFilterAnalysed,  label: "Show only analysed" },
+                  { checked: includeArchived, onChange: setIncludeArchived, label: "Include archived" },
+                ].map(({ checked, onChange, label }) => (
+                  <label key={label} className="flex cursor-pointer items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <input type="checkbox" checked={checked}
+                      onChange={(e) => { onChange(e.target.checked); setPage(1); }}
+                      className="accent-[var(--accent)] rounded" />
+                    {label}
+                  </label>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* ★ Opportunities Table */}
+        {/* ── Results ──────────────────────────────────────────────────────────── */}
         {paginated.length === 0 ? (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
-            <OpportunitiesEmptyState activeTab={activeTab} searchQuery={searchQuery} />
+            <OpportunitiesEmptyState
+              activeTab={activePipelineTab !== "all_pipeline" ? activePipelineTab : activeOpportunityTab}
+              searchQuery={searchQuery}
+            />
           </div>
         ) : (
           <>
-            <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
+            {/* ── Desktop table (hidden on mobile) ─────────────────────────────── */}
+            <div className="hidden overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] md:block">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
@@ -664,122 +833,98 @@ export default function LeadsPage() {
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
                     {paginated.map((lead) => {
-                      const score = effectiveScore(lead);
-                      const isAnalysing = analysingIds.has(lead.id);
-                      const isAnalysed = analysedIds.has(lead.id);
-                      const progress = analyseProgress.get(lead.id);
-                      const hasError = progress?.error;
-                      const isDone = isAnalysed && !isAnalysing;
+                      const score          = effectiveScore(lead);
                       const pipelineStatus = pipelineMap.get(lead.id);
-                      const canAnalyse = lead.website && (lead.website_status === "has_website" || lead.website_status === "platform_only");
-                      const isFullyAnalysed = lead.audited_at !== null && lead.design_analyzed_at !== null;
+                      const oppCtx         = getOpportunityContext(lead);
+                      const showScoreRing  = lead.website_status === "has_website" || lead.website_status === "unknown";
 
                       return (
                         <tr key={lead.id} className="transition-colors duration-150 hover:bg-[var(--bg-elevated)]">
-                          {/* Score Ring */}
+
+                          {/* Score / Web-presence badge */}
                           <td className="px-5 py-4">
-                            <ScoreRing score={score} size={44} />
+                            {showScoreRing
+                              ? <ScoreRing score={score} size={44} />
+                              : <WebPresenceBadge status={lead.website_status} />
+                            }
                           </td>
 
-                          {/* Business: name + type + city */}
+                          {/* Business name + type + city + opportunity context */}
                           <td className="px-5 py-4">
-                            <p className="font-medium text-[var(--text-primary)]">{lead.name}</p>
+                            {/* dir="auto" enables correct RTL rendering for Arabic/Persian/Hebrew */}
+                            <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
                             <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
+                            <p className={`mt-1 text-xs font-medium ${oppCtx.color}`}>{oppCtx.text}</p>
                           </td>
 
-                          {/* Website Status */}
+                          {/* Website status */}
                           <td className="px-5 py-4">
                             <WebsiteBadge status={lead.website_status} />
                           </td>
 
-                          {/* Last Analysed */}
+                          {/* Last analysed date */}
                           <td className="px-5 py-4 text-sm text-[var(--text-secondary)]">
                             {formatDate(lead.audited_at ?? lead.design_analyzed_at)}
                           </td>
 
-                          {/* Pipeline Status */}
+                          {/* Pipeline status badge */}
                           <td className="px-5 py-4">
-                            {pipelineStatus ? (
-                              <span className="text-sm text-[var(--text-secondary)]">
-                                {PIPELINE_LABELS[pipelineStatus] ?? pipelineStatus}
-                              </span>
-                            ) : (
-                              <span className="text-sm text-[var(--text-tertiary)]">—</span>
-                            )}
+                            <PipelineStatusBadge status={pipelineStatus} />
                           </td>
 
-                          {/* Actions */}
+                          {/* Context-aware actions */}
                           <td className="px-5 py-4">
-                            <div className="flex flex-wrap items-center gap-2">
-                              {/* Analyse button */}
-                              {canAnalyse && !isFullyAnalysed ? (
-                                isAnalysing ? (
-                                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)]">
-                                    <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                    Analysing…
-                                  </span>
-                                ) : hasError ? (
-                                  <button
-                                    onClick={() => handleAnalyse(lead.id, lead.website!)}
-                                    className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
-                                  >
-                                    Retry
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => handleAnalyse(lead.id, lead.website!)}
-                                    className="cursor-pointer rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
-                                  >
-                                    Analyse Opportunity
-                                  </button>
-                                )
-                              ) : canAnalyse && isFullyAnalysed ? (
-                                <button
-                                  onClick={() => handleAnalyse(lead.id, lead.website!)}
-                                  className="cursor-pointer rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-                                >
-                                  Re-analyse
-                                </button>
-                              ) : (
-                                <span className="text-xs text-[var(--text-tertiary)]">—</span>
-                              )}
-
-                              {/* View button */}
-                              <Link
-                                href={`/dashboard/leads/${lead.id}`}
-                                className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-                              >
-                                <Eye className="h-3 w-3" />
-                                View
-                              </Link>
-                            </div>
-
-                            {/* Progress tooltip while analysing */}
-                            {isAnalysing && progress && (
-                              <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2">
-                                <div className="flex items-center gap-1.5">
-                                  <svg className="h-3 w-3 animate-spin shrink-0 text-[var(--accent)]" viewBox="0 0 24 24" fill="none">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                  </svg>
-                                  <span className="text-[11px] text-[var(--text-primary)]">{progress.label}</span>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Error message */}
-                            {hasError && !isAnalysing && (
-                              <p className="mt-1 text-[11px] text-red-400">{progress!.error}</p>
-                            )}
+                            {renderActions(lead)}
                           </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            {/* ── Mobile card list (hidden on md+) ────────────────────────────── */}
+            <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] md:hidden">
+              <div className="divide-y divide-[var(--border)]">
+                {paginated.map((lead) => {
+                  const score          = effectiveScore(lead);
+                  const pipelineStatus = pipelineMap.get(lead.id);
+                  const oppCtx         = getOpportunityContext(lead);
+                  const showScoreRing  = lead.website_status === "has_website" || lead.website_status === "unknown";
+
+                  return (
+                    <div key={lead.id} className="p-4">
+                      <div className="flex items-start gap-3">
+                        {/* Score / Web-presence badge */}
+                        <div className="flex-shrink-0 pt-0.5">
+                          {showScoreRing
+                            ? <ScoreRing score={score} size={44} />
+                            : <WebPresenceBadge status={lead.website_status} />
+                          }
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          {/* Business info */}
+                          <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
+                          <p className="text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
+                          <p className={`mt-0.5 text-xs font-medium ${oppCtx.color}`}>{oppCtx.text}</p>
+
+                          {/* Badges */}
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            <WebsiteBadge status={lead.website_status} />
+                            <PipelineStatusBadge status={pipelineStatus} />
+                          </div>
+
+                          {/* Actions */}
+                          <div className="mt-3">
+                            {renderActions(lead)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

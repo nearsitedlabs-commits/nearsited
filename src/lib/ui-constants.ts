@@ -9,9 +9,8 @@
 // ── Pipeline ──────────────────────────────────────────────────────────────────
 
 export const PIPELINE_LABELS: Record<string, string> = {
-  new_lead:        "New Lead",
+  new_lead:        "Prospect",
   analysed:        "Analysed",
-  pitch_generated: "Pitch Generated",
   contacted:       "Contacted",
   in_conversation: "In Conversation",
   won:             "Won",
@@ -20,11 +19,16 @@ export const PIPELINE_LABELS: Record<string, string> = {
 
 export const PIPELINE_STATUSES = Object.keys(PIPELINE_LABELS);
 
+/**
+ * Sales-stage-only statuses for user-facing dropdowns.
+ * Hides "analysed" and "pitch_generated" (product events, not sales stages).
+ */
+export const PIPELINE_SALES_STATUSES = ["new_lead", "contacted", "in_conversation", "won", "lost"];
+
 /** Tailwind classes for each pipeline status badge — references CSS variables */
 export const PIPELINE_BADGE_STYLES: Record<string, string> = {
   new_lead:        "bg-[var(--bg-surface-2)] text-[var(--pipeline-new)] border border-[var(--border)]",
   analysed:        "bg-[var(--pipeline-analysed-tint)] text-[var(--pipeline-analysed)] border border-[var(--pipeline-analysed)]/30",
-  pitch_generated: "bg-[var(--pipeline-pitch-tint)] text-[var(--pipeline-pitch)] border border-[var(--pipeline-pitch)]/30",
   contacted:       "bg-[var(--pipeline-contacted-tint)] text-[var(--pipeline-contacted)] border border-[var(--pipeline-contacted)]/30",
   in_conversation: "bg-[var(--pipeline-conversation-tint)] text-[var(--pipeline-conversation)] border border-[var(--pipeline-conversation)]/30",
   won:             "bg-[var(--pipeline-won-tint)] text-[var(--pipeline-won)] border border-[var(--pipeline-won)]/30",
@@ -35,7 +39,6 @@ export const PIPELINE_BADGE_STYLES: Record<string, string> = {
 export const PIPELINE_BAR_COLORS: Record<string, string> = {
   new_lead:        "bg-[var(--pipeline-new)]",
   analysed:        "bg-[var(--pipeline-analysed)]",
-  pitch_generated: "bg-[var(--pipeline-pitch)]",
   contacted:       "bg-[var(--pipeline-contacted)]",
   in_conversation: "bg-[var(--pipeline-conversation)]",
   won:             "bg-[var(--pipeline-won)]",
@@ -77,10 +80,10 @@ export function getOpportunityLevel(websiteStatus: string, score: number | null)
 // ── Website Status ────────────────────────────────────────────────────────────
 
 export const WEBSITE_STATUS_LABELS: Record<string, string> = {
-  has_website:   "Opportunity Found",
-  no_website:    "Website Opportunity",
-  social_only:   "Social Presence",
-  platform_only: "Platform Presence",
+  has_website:   "Has site",
+  no_website:    "No site",
+  social_only:   "Social only",
+  platform_only: "Platform only",
   unknown:       "Unknown",
 };
 
@@ -121,7 +124,6 @@ export const OUTREACH_REASONS: Record<string, string> = {
 export const PIPELINE_TEXT_COLORS: Record<string, string> = {
   new_lead:        "text-[var(--pipeline-new)]",
   analysed:        "text-[var(--pipeline-analysed)]",
-  pitch_generated: "text-[var(--pipeline-pitch)]",
   contacted:       "text-[var(--pipeline-contacted)]",
   in_conversation: "text-[var(--pipeline-conversation)]",
   won:             "text-[var(--pipeline-won)]",
@@ -139,9 +141,9 @@ export const PITCH_STATUS_LABELS: Record<string, string> = {
 // ── Lead Type Labels ────────────────────────────────────────────────────────────
 
 export const LEAD_TYPE_LABELS: Record<string, string> = {
-  has_website:   "Has Website",
-  no_website:    "No Website",
-  social_only:   "Social Only",
-  platform_only: "Platform Only",
+  has_website:   "Has site",
+  no_website:    "No site",
+  social_only:   "Social only",
+  platform_only: "Platform only",
   unknown:       "Unknown",
 };

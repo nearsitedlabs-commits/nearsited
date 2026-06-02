@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node --max-old-space-size=2048 node_modules/.bin/next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "node scripts/clean-cache.mjs",
+    "clean:all": "node scripts/clean-cache.mjs --all"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.99.0",

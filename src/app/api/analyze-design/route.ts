@@ -26,7 +26,6 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
  */
 async function retryWithBackoff(
   fetchFn: (signal: AbortSignal) => Promise<Response>,
-  logLabel: string,
 ): Promise<Response> {
   const maxAttempts = RETRY_DELAYS.length + 1;
 
@@ -42,14 +41,14 @@ async function retryWithBackoff(
         if (attempt < maxAttempts) {
           const delay = RETRY_DELAYS[attempt - 1];
           console.log(
-            `[DESIGN-ANALYSIS] ${logLabel} — attempt ${attempt}/${maxAttempts - 1} got HTTP ${response.status}, retrying in ${delay}ms`,
+            `[DESIGN] Gemini ${response.status} retry attempt ${attempt} of ${maxAttempts - 1}`,
           );
           await sleep(delay);
           continue;
         }
         // Last attempt exhausted — return the response for the caller to handle
         console.log(
-          `[DESIGN-ANALYSIS] ${logLabel} — all ${maxAttempts} attempts exhausted, last HTTP ${response.status}`,
+          `[DESIGN] Gemini ${response.status} — all ${maxAttempts - 1} retries exhausted`,
         );
         return response;
       }
@@ -255,7 +254,6 @@ async function analyzeScreenshot(
           }),
           signal,
         }),
-      "Gemini design analysis",
     );
 
     console.log("[DESIGN] Gemini HTTP status:", response.status);
@@ -334,7 +332,8 @@ function sanitizeError(error: string): string {
   return trimmed;
 }
 
-/** Run the full screenshot + analysis pipeline for one strategy. */
+/** Run the full screenshot + analysis pipeline for one strategy. Reserved for Playwright swap (v2). */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function runStrategy(
   strategy: "mobile" | "desktop",
   website: string,
@@ -562,10 +561,19 @@ export async function POST(request: NextRequest) {
             return;
           }
 
+          // ── Both strategies failed — emit error instead of "done" ──
+          if (mobile.status === "error" && desktop.status === "error") {
+            const msg = "Design analysis failed — screenshots could not be captured. Try again later.";
+            console.error("[DESIGN] Both strategies failed — emitting error:", msg);
+            writeJson(controller, encoder, { type: "error", message: msg });
+            controller.close();
+            return;
+          }
+
           // 5. Persist results — only when a real businessId was provided
+          const persistenceErrors: string[] = [];
           if (shouldPersist) {
             const adminSupabase = createAdminClient();
-            const persistenceErrors: string[] = [];
 
             writeStep(controller, encoder, "persisting", "Saving results...");
 
@@ -646,7 +654,18 @@ export async function POST(request: NextRequest) {
             console.log("[DESIGN] Analysis complete — ephemeral (not persisted)");
           }
 
-          // 7. Stream result + done
+          // 7. If persistence failed, emit error instead of "done"
+          if (shouldPersist && persistenceErrors.length > 0) {
+            console.error("[DESIGN] Persistence failed — emitting error instead of done");
+            writeJson(controller, encoder, {
+              type: "error",
+              message: "Design analysis failed — could not save results.",
+            });
+            controller.close();
+            return;
+          }
+
+          // 8. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
 
           writeJson(controller, encoder, {

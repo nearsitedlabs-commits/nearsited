@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Eye, MapPin, ExternalLink, Zap, TrendingUp, ArrowUp } from "lucide-react";
+import { MapPin, ExternalLink, Zap, TrendingUp, ArrowUp } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
@@ -141,7 +141,7 @@ export function OpportunityCard({
 
   return (
     <div
-      className={`group relative rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
+      className={`group relative w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
     >
       <div className="flex items-start gap-5">
         {/* ── Left: Score Ring (primary visual) ── */}
@@ -156,7 +156,7 @@ export function OpportunityCard({
         <div className="min-w-0 flex-1">
           {/* Business name + type */}
           <Link href={detailUrl} className="block">
-            <h3 className="text-base font-medium text-[var(--text-primary)] transition-colors duration-150 group-hover:text-[var(--accent)]">
+            <h3 className="text-base font-medium text-[var(--text-primary)] transition-colors duration-150 group-hover:text-[var(--accent)] truncate max-w-full">
               {lead.name}
             </h3>
             <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">

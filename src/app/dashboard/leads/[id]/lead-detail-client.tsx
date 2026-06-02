@@ -1,24 +1,23 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Circle, Copy, ExternalLink, FileDown, Loader2, Mail, MapPin, Monitor, RefreshCw, Share2, Smartphone, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ChevronDown, Copy, ExternalLink, FileDown, Loader2, Mail, MapPin, Monitor, Phone, RefreshCw, Send, Share2, Smartphone, TrendingUp } from "lucide-react";
 import { scoreLabel, computeOverall, uxDesignScore, trustScore, projection } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/types";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
-import { PIPELINE_LABELS, PIPELINE_STATUSES, IMPACT_PILL_STYLES } from "@/lib/ui-constants";
+import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES, IMPACT_PILL_STYLES } from "@/lib/ui-constants";
+import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type TabId = "overview" | "audit" | "issues" | "history";
+type OutreachChannel = "email" | "whatsapp";
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "overview",    label: "Overview" },
-  { id: "audit",       label: "Audit" },
-  { id: "issues",      label: "Issues" },
-  { id: "history",     label: "History" },
+const OUTREACH_CHANNELS: { id: OutreachChannel; label: string; icon: typeof Mail }[] = [
+  { id: "email",    label: "Email",     icon: Mail },
+  { id: "whatsapp", label: "WhatsApp",  icon: Phone },
 ];
 
 // ── Analysis progress steps ──────────────────────────────────────────────
@@ -44,8 +43,7 @@ type Props = {
   pipelineStatus: string | null;
 };
 
-
-
+// ── Sub-components ──────────────────────────────────────────────────────────
 
 function ScoreRingWithLabel({ score, size = 56, label }: { score: number; size?: number; label?: string }) {
   const stroke = size >= 70 ? 5 : size <= 42 ? 3 : 4;
@@ -96,87 +94,90 @@ function ImpactPill({ impact }: { impact: string }) {
   );
 }
 
-function ProgressIndicator() {
-  return (
-    <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md">
-      <div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse" />
-    </div>
-  );
+
+
+/** Extract the top 3 highest-impact findings for "Why Contact This Lead" */
+function getTopFindings(issues: { title: string; detail: string; impact: string }[]): string[] {
+  const impactOrder: Record<string, number> = { High: 0, Medium: 1, Low: 2 };
+  const sorted = [...issues].sort((a, b) => (impactOrder[a.impact] ?? 2) - (impactOrder[b.impact] ?? 2));
+  return sorted.slice(0, 3).map((i) => i.title);
 }
 
-function getRiskIndicators(issues: { title: string; detail: string }[]) {
-  const text = issues.map((issue) => `${issue.title} ${issue.detail}`).join(" ").toLowerCase();
-  const indicators = new Set<string>();
+/** Build a concise client call summary from available data */
+function buildClientCallSummary(
+  businessName: string,
+  businessType: string,
+  city: string,
+  overallScore: number,
+  projScore: number,
+  opportunityDelta: number,
+  topIssues: { title: string; detail: string; impact: string }[],
+  mobilePerf: number | null,
+  desktopPerf: number | null,
+  rating: number | null,
+  reviewCount: number | null,
+) {
+  const delta = Math.max(0, projScore - overallScore);
+  const ratingStr = rating != null && reviewCount != null
+    ? `\n• Rating: ${rating.toFixed(1)}★ (${reviewCount} reviews)`
+    : "";
 
-  if (/(mobile|speed|load|performance|tbt|lcp|fcp|cls)/.test(text)) {
-    indicators.add("Slow mobile experience");
-  }
-  if (/(cta|button|action|hierarch|navigation|conversion)/.test(text)) {
-    indicators.add("Weak CTA hierarchy");
-  }
-  if (/(modern|outdat|visual|branding|design|style|trust)/.test(text)) {
-    indicators.add("Outdated visual design");
-  }
-  if (/(seo|search|visibility|ranking|index)/.test(text)) {
-    indicators.add("Low search visibility");
-  }
-  if (/(trust|secure|reputation|reviews|credibility)/.test(text)) {
-    indicators.add("Low brand trust");
-  }
+  const perfStr = mobilePerf != null && desktopPerf != null
+    ? `\n• Performance: Mobile ${mobilePerf}/100 · Desktop ${desktopPerf}/100`
+    : mobilePerf != null
+      ? `\n• Performance: ${mobilePerf}/100`
+      : "";
 
-  const defaults = [
-    "Slow mobile experience",
-    "Weak CTA hierarchy",
-    "Outdated visual design",
-  ];
+  const risks = topIssues.slice(0, 3).map((i) => i.title).join(", ");
+  const scope = topIssues.length > 0
+    ? `Fix "${topIssues[0].title}" as priority, then address ${topIssues.slice(1, 3).map((i) => `"${i.title}"`).join(" and ")}.`
+    : "Run an analysis to identify improvement areas.";
 
-  for (const def of defaults) {
-    if (indicators.size >= 3) break;
-    indicators.add(def);
-  }
-
-  return Array.from(indicators).slice(0, 3);
-}
-
-function formatProposalSummary(businessName: string, businessType: string, city: string, execSummary: string, before: number, potential: number, risks: string[]) {
-  return `Proposal Summary for ${businessName}
-
-${execSummary}
-
-Current score: ${before}. Potential score: ${potential} (+${Math.max(0, potential - before)}).
-
-Key business risks:
-- ${risks.join("\n- ")}
-
-Recommended scope:
-- 30 days: improve speed, mobile usability, and CTA clarity.
-- 60 days: refresh visual design and content hierarchy.
-- 90 days: refine conversion flow and measure results.
-
-This approach is designed to increase trust, update perception, and turn more website visitors into customers.`;
+  return [
+    `━━ Current Situation ━━`,
+    `${businessName} — ${businessType} in ${city}${ratingStr}${perfStr}`,
+    `Overall score: ${overallScore}/100`,
+    ``,
+    `━━ Opportunity ━━`,
+    `Potential score: ${projScore}/100 (+${delta} pts)`,
+    ``,
+    `━━ Risks ━━`,
+    risks || "No critical issues identified.",
+    ``,
+    `━━ Suggested Scope ━━`,
+    scope,
+  ].join("\n");
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus }: Props) {
-  const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [screenshotStrategy, setScreenshotStrategy] = useState<"mobile" | "desktop">("mobile");
   const [generatingPitch, setGeneratingPitch] = useState(false);
   const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(null);
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("professional");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("medium");
-  const [reanalyzing, setReanalyzing] = useState(false);
   const [runningAudit, setRunningAudit] = useState(false);
   const [runningDesign, setRunningDesign] = useState(false);
   const [runningFullAnalysis, setRunningFullAnalysis] = useState(false);
   const [completedKeys, setCompletedKeys] = useState<string[]>([]);
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
+  const [designError, setDesignError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [quotaError, setQuotaError] = useState<string | null>(null);
   const [quotaRetryTimer, setQuotaRetryTimer] = useState(0);
+  const [outreachChannel, setOutreachChannel] = useState<OutreachChannel>("email");
+  const [showTechDetails, setShowTechDetails] = useState(false);
+  const [contactInfo, setContactInfo] = useState<{
+    email: string | null;
+    phone: string | null;
+    loading: boolean;
+  }>({ email: null, phone: null, loading: true });
+  const [manualEmail, setManualEmail] = useState("");
   const quotaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const router = useRouter();
 
   // ── Quota retry countdown ──
@@ -210,6 +211,28 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     setTimeout(() => setToast(null), 3000);
   }, []);
 
+  // Fetch contact info on mount
+  useEffect(() => {
+    const bizId = (business as Record<string, unknown>).id as string;
+    if (!bizId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setContactInfo((prev) => ({ ...prev, loading: false }));
+      return;
+    }
+    fetch(`/api/contact-info?businessId=${bizId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setContactInfo({
+          email: data.email ?? null,
+          phone: data.phone ?? null,
+          loading: false,
+        });
+      })
+      .catch(() => {
+        setContactInfo((prev) => ({ ...prev, loading: false }));
+      });
+  }, [business]);
+
   const biz = business as {
     id: string; name: string; business_type: string; address: string; city: string;
     place_id: string | null; website: string | null; website_status: WebsiteStatus;
@@ -222,9 +245,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const mobileDesign  = designAnalyses?.find((a) => a.strategy === "mobile")  as Record<string, unknown> | undefined;
   const desktopDesign = designAnalyses?.find((a) => a.strategy === "desktop") as Record<string, unknown> | undefined;
 
-  // Fix 2: scores reactive to mobile/desktop toggle
-  const activeAudit  = screenshotStrategy === "mobile" ? mobileAudit  : desktopAudit;
-  const activeDesign = screenshotStrategy === "mobile" ? mobileDesign : desktopDesign;
+  const activeAudit  = screenshotStrategy === "mobile" ? (mobileAudit  ?? desktopAudit)  : (desktopAudit  ?? mobileAudit);
+  const activeDesign = screenshotStrategy === "mobile" ? (mobileDesign ?? desktopDesign) : (desktopDesign ?? mobileDesign);
 
   const perfScore        = (activeAudit?.performance_score  as number | null) ?? 0;
   const seoScore         = (activeAudit?.seo_score          as number | null) ?? 0;
@@ -243,25 +265,48 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   const projScore = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta = Math.max(0, projScore - overall);
-  const execSummary = `This ${biz.business_type?.toLowerCase() ?? "business"} in ${biz.city} has a strong opportunity to increase perceived trust and mobile usability significantly with a redesign.`;
-  const riskIndicators = getRiskIndicators(allIssues);
-  const proposalSummary = formatProposalSummary(
+
+  // Extract individual scores for both strategies
+  const mobilePerfScore  = (mobileAudit?.performance_score  as number | null) ?? null;
+  const desktopPerfScore = (desktopAudit?.performance_score as number | null) ?? null;
+  // Top findings for "Why Contact This Lead"
+  const topFindings = getTopFindings(allIssues as { title: string; detail: string; impact: string }[]);
+
+  // Build summary bullets from issues for Opportunity Summary
+  const opportunityBullets = allIssues.slice(0, 4).map((issue) => {
+    // Convert technical detail to business-oriented language
+    const t = issue.detail.toLowerCase();
+    if (/(lcp|fcp|tbt|cls|speed|load|performance|slow)/.test(t)) return "Mobile visitors likely experience friction.";
+    if (/(cta|button|hierarch|navigation|conversion)/.test(t)) return "Conversion paths are unclear for visitors.";
+    if (/(trust|secure|reputation|reviews|credibility|modern|outdat|design|visual|brand)/.test(t)) return "Trust signals are weak — visitors may hesitate to engage.";
+    if (/(seo|search|visibility|ranking|index)/.test(t)) return "Search visibility is limited, reducing organic traffic.";
+    if (/(content|readab|typograph|font)/.test(t)) return "Content readability needs improvement for engagement.";
+    return issue.detail;
+  });
+
+  // Build concise client call summary
+  const clientCallSummary = buildClientCallSummary(
     biz.name,
     biz.business_type ?? "business",
     biz.city,
-    execSummary,
     overall,
     projScore,
-    riskIndicators
+    opportunityDelta,
+    allIssues as { title: string; detail: string; impact: string }[],
+    mobilePerfScore,
+    desktopPerfScore,
+    biz.rating,
+    biz.review_count,
   );
 
-  const handleCopyProposalSummary = () => {
-    navigator.clipboard.writeText(proposalSummary).then(() => {
-      showToast("Proposal summary copied to clipboard");
-    });
-  };
+  // ── Handlers ────────────────────────────────────────────────────────────────
 
-  // Fix 1: Pipeline status dropdown handler
+  const handleCopyToClipboard = useCallback((text: string, label: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`${label} copied to clipboard`);
+    });
+  }, [showToast]);
+
   const handlePipelineChange = useCallback(async (newStatus: string) => {
     const prevStatus = currentPipelineStatus;
     setCurrentPipelineStatus(newStatus);
@@ -274,28 +319,25 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         console.error("[LEAD] Pipeline update failed:", data.error ?? res.status);
-        // Revert optimistic update on failure
         setCurrentPipelineStatus(prevStatus);
         showToast("Failed to update pipeline status");
       }
     } catch (err) {
       console.error("[LEAD] Pipeline update network error:", err);
-      // Revert optimistic update on network error
       setCurrentPipelineStatus(prevStatus);
       showToast("Network error — could not update pipeline");
     }
   }, [biz.id, currentPipelineStatus, showToast]);
 
-  // Fix 4: Generate pitch with error handling + console logging
   const handleGeneratePitch = useCallback(async () => {
     setGeneratingPitch(true);
     setPitchError(null);
     try {
-      console.log("[LEAD] Generating pitch:", { businessId: biz.id, tone: pitchTone, length: pitchLength, website_status: biz.website_status });
+      console.log("[LEAD] Generating pitch:", { businessId: biz.id, tone: pitchTone, length: pitchLength, channel: outreachChannel, website_status: biz.website_status });
       const res = await fetch("/api/pitch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, lead_type: biz.website_status }),
+        body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, channel: outreachChannel, lead_type: biz.website_status }),
       });
       if (res.status === 429) {
         const data = await res.json().catch(() => ({}));
@@ -304,11 +346,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         return;
       }
       const data = await res.json();
-      console.log("[LEAD] Pitch response data:", data);
-      console.log("[LEAD] Pitch nested object:", data.pitch);
-      console.log("[LEAD] Pitch subject type:", typeof data.pitch?.subject, "body type:", typeof data.pitch?.body);
       if (data.success && data.pitch && typeof data.pitch.subject === "string" && typeof data.pitch.body === "string") {
-        console.log("[LEAD] Setting pitchResult with:", { subject: data.pitch.subject, body: data.pitch.body });
         setPitchResult({ subject: data.pitch.subject, body: data.pitch.body });
       } else if (data.success && data.pitch) {
         console.warn("[LEAD] Pitch API returned unexpected format:", data.pitch);
@@ -322,9 +360,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     } finally {
       setGeneratingPitch(false);
     }
-  }, [biz.id, biz.website_status, pitchTone, pitchLength, startQuotaTimer]);
+  }, [biz.id, biz.website_status, pitchTone, pitchLength, outreachChannel, startQuotaTimer]);
 
-  // Fix 4: Copy pitch to clipboard
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) {
       showToast("Generate a pitch first");
@@ -335,7 +372,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     });
   }, [pitchResult, showToast]);
 
-  // Share link — create a public share link via /api/share, then copy the URL
   const handleShare = useCallback(async () => {
     try {
       const res = await fetch("/api/share", {
@@ -358,34 +394,15 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     }
   }, [biz.id, showToast]);
 
-  // Fix 6 + 7: Run audit — auto-adds to pipeline on first audit
   const handleRunAudit = useCallback(async () => {
     if (!biz.website) return;
     setRunningAudit(true);
-    const isFirstAudit = !biz.audited_at;
     try {
       await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ businessId: biz.id, website: biz.website }),
       });
-      if (isFirstAudit && !currentPipelineStatus) {
-        try {
-          const pipelineRes = await fetch("/api/pipeline", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ businessId: biz.id, status: "analysed" }),
-          });
-          if (pipelineRes.ok) {
-            setCurrentPipelineStatus("analysed");
-            showToast("Added to pipeline automatically");
-          } else {
-            console.warn("[LEAD] Auto-pipeline add failed:", await pipelineRes.text().catch(() => "unknown"));
-          }
-        } catch (pipelineErr) {
-          console.warn("[LEAD] Auto-pipeline add network error:", pipelineErr);
-        }
-      }
       router.refresh();
     } catch (err) {
       console.error("[LEAD] Audit failed:", err);
@@ -393,9 +410,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     } finally {
       setRunningAudit(false);
     }
-  }, [biz.id, biz.website, biz.audited_at, currentPipelineStatus, router, showToast]);
+  }, [biz.id, biz.website, router, showToast]);
 
-  // Fix 6: Run design analysis
   const handleRunDesign = useCallback(async () => {
     if (!biz.website) return;
     setRunningDesign(true);
@@ -405,7 +421,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ businessId: biz.id, website: biz.website }),
       });
-      // Read the NDJSON stream to check for quota errors
       if (res.ok && res.body) {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
@@ -442,89 +457,39 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     }
   }, [biz.id, biz.website, router, showToast, startQuotaTimer]);
 
-  // Fix 8: Re-analyse with completion toast + 429 handling
-  const handleReanalyse = useCallback(async () => {
-    if (!biz.website) return;
-    setReanalyzing(true);
-    try {
-      // Read analyze-design NDJSON stream for quota errors
-      const designRes = await fetch("/api/analyze-design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, website: biz.website, force: true }),
-      });
-      let isQuotaError = false;
-      if (designRes.ok && designRes.body) {
-        const reader = designRes.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const chunk = JSON.parse(line);
-              if (chunk.type === "error" && chunk.error === "AI_QUOTA_EXCEEDED") {
-                isQuotaError = true;
-              }
-            } catch { /* skip */ }
-          }
-        }
-      }
-      if (isQuotaError) {
-        setQuotaError("AI quota exceeded — please wait a moment and try again");
-        startQuotaTimer(60);
-        return;
-      }
-      // Run audit in parallel (no Gemini involved)
-      await fetch("/api/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, website: biz.website, force: true }),
-      });
-      showToast("Re-analysis complete");
-      router.refresh();
-    } catch (err) {
-      console.error("[LEAD] Re-analyse failed:", err);
-      showToast("Re-analysis failed — please try again.");
-    } finally {
-      setReanalyzing(false);
-    }
-  }, [biz.id, biz.website, router, showToast, startQuotaTimer]);
-
-  // ── Combined Full Analysis: Audit → Design → Pitch (chained streaming) ──
   const handleFullAnalysis = useCallback(async () => {
     if (!biz.website) return;
+    console.log("[LEAD] handleFullAnalysis START", { id: biz.id, website: biz.website });
     setRunningFullAnalysis(true);
     setPitchError(null);
     setCompletedKeys([]);
     setActiveKeys([]);
 
     try {
-      // ── Phase 1: stream from /api/audit ───────────────────────────────
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      const { signal } = abortController;
+
+      // Phase 1: Audit stream
+      console.log("[LEAD] Phase 1: fetching /api/audit...");
       const auditRes = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, website: biz.website, force: true }),
+        body: JSON.stringify({ businessId: biz.id, website: biz.website }),
+        signal,
       });
 
       if (auditRes.ok && auditRes.body) {
         const reader = auditRes.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
-
         while (true) {
+          if (signal.aborted) return;
           const { done, value } = await reader.read();
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
-
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
-
           for (const line of lines) {
             if (!line.trim()) continue;
             try {
@@ -541,27 +506,26 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         }
       }
 
-      // ── Phase 2: stream from /api/analyze-design ──────────────────────
+      // Phase 2: Design stream
+      console.log("[LEAD] Phase 2: fetching /api/analyze-design...");
       const designRes = await fetch("/api/analyze-design", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, website: biz.website, force: true }),
+        body: JSON.stringify({ businessId: biz.id, website: biz.website }),
+        signal,
       });
 
       if (designRes.ok && designRes.body) {
         const reader = designRes.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
-        let isQuotaError = false;
-
         while (true) {
+          if (signal.aborted) return;
           const { done, value } = await reader.read();
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
-
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
-
           for (const line of lines) {
             if (!line.trim()) continue;
             try {
@@ -572,612 +536,218 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               } else if (parsed.type === "result") {
                 setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
                 setActiveKeys([]);
-              } else if (parsed.type === "error" && parsed.error === "AI_QUOTA_EXCEEDED") {
-                isQuotaError = true;
+                setDesignError(null);
+              } else if (parsed.type === "error") {
+                const msg = (parsed.message as string) ?? "Design analysis failed";
+                setDesignError(msg);
+                setRunningFullAnalysis(false);
+                setCompletedKeys([]);
+                setActiveKeys([]);
+                showToast(msg);
+                return;
               }
             } catch { /* skip */ }
           }
-        }
-
-        if (isQuotaError) {
-          setQuotaError("AI quota exceeded — please wait a moment and try again");
-          startQuotaTimer(60);
-          setRunningFullAnalysis(false);
-          return;
         }
       }
 
       showToast("Analysis complete — scores updated");
 
-      // Auto-generate pitch with fresh data (non-blocking — scores refresh regardless)
-      try {
-        const pitchRes = await fetch("/api/pitch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, lead_type: biz.website_status }),
-        });
+      // Auto-generate pitch fire-and-forget
+      fetch("/api/pitch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, lead_type: biz.website_status }),
+      }).then(async (pitchRes) => {
         if (pitchRes.ok) {
           const pitchData = await pitchRes.json();
           if (pitchData.success && pitchData.pitch && typeof pitchData.pitch.subject === "string" && typeof pitchData.pitch.body === "string") {
             setPitchResult({ subject: pitchData.pitch.subject, body: pitchData.pitch.body });
             showToast("Fresh pitch generated with new data");
-          } else {
-            console.warn("[LEAD] Pitch API returned unexpected format:", pitchData);
           }
         }
-      } catch (pitchErr) {
-        console.warn("[LEAD] Pitch auto-generation failed (scores still updated):", pitchErr);
-      }
+      }).catch((pitchErr) => {
+        console.warn("[LEAD] Pitch auto-generation failed:", pitchErr);
+      });
 
-      // Refresh page to show updated scores from DB
       router.refresh();
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        console.log("[LEAD] handleFullAnalysis aborted by user");
+        return;
+      }
       console.error("[LEAD] Full analysis failed:", err);
       showToast("Analysis failed — please try again.");
     } finally {
       setRunningFullAnalysis(false);
+      abortControllerRef.current = null;
     }
-  }, [biz.id, biz.website, biz.website_status, pitchTone, pitchLength, router, showToast, startQuotaTimer]);
+  }, [biz.id, biz.website, biz.website_status, pitchTone, pitchLength, router, showToast]);
 
-  // ── Tab renderers ──────────────────────────────────────────────────────────
+  const handleCancelAnalysis = useCallback(() => {
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
+      abortControllerRef.current = null;
+    }
+    setRunningFullAnalysis(false);
+    setCompletedKeys([]);
+    setActiveKeys([]);
+    setDesignError(null);
+    showToast("Analysis cancelled");
+  }, [showToast]);
 
-  function renderOverview() {
-    const hasAudit  = !!biz.audited_at;
-    const hasDesign = !!biz.design_analyzed_at;
-    const hasWebsite = !!biz.website;
-    const isUnanalysed = !hasAudit && !hasDesign;
+  // ── Derived state ──────────────────────────────────────────────────────────
 
-    // ── Empty state for unanalysed leads ──────────────────────────────────
-    if (isUnanalysed) {
-      return (
-        <div className="space-y-6">
-          {/* Empty state card */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-10 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
-              <svg className="h-7 w-7 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              </svg>
+  const hasAudit  = !!biz.audited_at;
+  const hasDesign = !!biz.design_analyzed_at;
+  const hasWebsite = !!biz.website;
+  const isUnanalysed = !hasAudit && !hasDesign;
+
+  // ── Render: Empty State ─────────────────────────────────────────────────────
+
+  if (isUnanalysed) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-base)]">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          {/* Header */}
+          <Link
+            href="/dashboard/leads"
+            className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Leads
+          </Link>
+
+          <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
+              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">
+                {biz.name}
+              </h1>
             </div>
-            <h2 className="text-xl font-medium text-[var(--text-primary)]">This lead hasn't been analysed yet</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-tertiary)]">
-              Run an opportunity analysis to see scores, issues, and a generated pitch.
-            </p>
-            {hasWebsite && (
-              <div className="mt-6">
+            <div className="flex items-center gap-2 shrink-0">
+              {currentPipelineStatus ? (
+                <PipelineSelect
+                  value={currentPipelineStatus}
+                  onChange={handlePipelineChange}
+                  options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
+                />
+              ) : (
                 <button
-                  onClick={handleRunAudit}
-                  disabled={runningAudit}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => handlePipelineChange("new_lead")}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-sm font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white"
                 >
-                  {runningAudit ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                  {runningAudit ? "Analysing…" : "Analyse Opportunity →"}
+                  <TrendingUp className="h-4 w-4" /> Add to Pipeline
                 </button>
+              )}
+            </div>
+          </div>
+
+          {/* Location & Actions */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-sm text-[var(--text-secondary)]">
+              {biz.business_type} · {biz.city} · {biz.address}
+            </span>
+            <div className="flex items-center gap-2">
+              {biz.place_id && (
+                <a href={`https://www.google.com/maps/place/?q=place_id:${biz.place_id}`}
+                  target="_blank" rel="noreferrer"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
+                  <MapPin className="h-3.5 w-3.5" /> Map
+                </a>
+              )}
+              {biz.website && (
+                <a href={biz.website} target="_blank" rel="noreferrer"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
+                  <ExternalLink className="h-3.5 w-3.5" /> Website
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Empty state card */}
+          <div className="mt-8 space-y-6">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-10 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
+                <svg className="h-7 w-7 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
               </div>
-            )}
-          </div>
-
-          {/* Score Breakdown — always visible */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Score Breakdown</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <SubScore label="Performance"  score={null} />
-              <SubScore label="SEO"          score={null} />
-              <SubScore label="Mobile"       score={null} />
-              <SubScore label="UX / Design"  score={null} />
-              <SubScore label="Trust"        score={null} />
-              <SubScore label="Overall"      score={null} />
-            </div>
-          </div>
-
-          {/* Top Issues — shows Run a design analysis message */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Top Issues Impacting Score</h3>
-            <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to see issues.</p>
-          </div>
-
-          {/* AI Opportunity Summary */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
-            <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
-          </div>
-
-          {/* AI Generated Pitch — config box */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Generated Pitch</h3>
-            <div className="mb-3 flex flex-wrap gap-2">
-              <select disabled
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-tertiary)] outline-none">
-                <option>Professional</option>
-              </select>
-              <select disabled
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-tertiary)] outline-none">
-                <option>Short</option>
-              </select>
-              <button disabled
-                className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)] opacity-50">
-                Generate Pitch
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left */}
-        <div className="space-y-6">
-
-          {/* Executive summary */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Executive Summary</h3>
-            <p className="text-sm leading-6 text-[var(--text-secondary)]">{execSummary}</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity</p>
-                <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">{opportunityDelta > 0 ? `+${opportunityDelta}` : "—"}</p>
-                <p className="mt-1 text-xs text-[var(--text-secondary)]">Point improvement potential</p>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Meeting-ready takeaway</p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">Use this summary in a client call to align on trust, mobile usability, and design urgency.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Overall score card */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <button
-                onClick={() => setScreenshotStrategy("mobile")}
-                className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${screenshotStrategy === "mobile" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
-              >
-                Mobile
-              </button>
-              <button
-                onClick={() => setScreenshotStrategy("desktop")}
-                className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${screenshotStrategy === "desktop" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
-              >
-                Desktop
-              </button>
-            </div>
-            <div className="flex flex-col items-center gap-4 sm:flex-row">
-              <ScoreRingWithLabel score={overall} size={80} />
-              <div className="text-center sm:text-left">
-                <p className="text-sm text-[var(--text-secondary)]">
-                  Last analysed: {biz.audited_at ? new Date(biz.audited_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "Never"}
-                </p>
-                {/* Fix 6: Show appropriate action buttons */}
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {hasAudit && (
-                    <div className="relative inline-block">
-                      <button
-                        onClick={handleReanalyse}
-                        disabled={reanalyzing}
-                        className="inline-flex cursor-pointer items-center gap-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {reanalyzing ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
-                        {reanalyzing ? "Re-analysing…" : "Re-analyse"}
-                      </button>
-                      {reanalyzing && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
-                    </div>
-                  )}
-                  {!hasAudit && hasWebsite && (
-                    <div className="relative inline-block">
-                      <button
-                        onClick={handleRunAudit}
-                        disabled={runningAudit}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {runningAudit ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                        {runningAudit ? "Running Audit…" : "Run Audit"}
-                      </button>
-                      {runningAudit && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
-                    </div>
-                  )}
-                  {hasAudit && !hasDesign && hasWebsite && (
-                    <div className="relative inline-block">
-                      <button
-                        onClick={handleRunDesign}
-                        disabled={runningDesign}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {runningDesign ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                        {runningDesign ? "Analysing…" : "Run Design Analysis"}
-                      </button>
-                      {runningDesign && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
-                    </div>
-                  )}
-                  {!hasAudit && hasDesign && hasWebsite && (
-                    <div className="relative inline-block">
-                      <button
-                        onClick={handleRunAudit}
-                        disabled={runningAudit}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {runningAudit ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                        {runningAudit ? "Running Audit…" : "Run Audit"}
-                      </button>
-                      {runningAudit && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
-                    </div>
-                  )}
+              <h2 className="text-xl font-medium text-[var(--text-primary)]">This lead hasn&rsquo;t been analysed yet</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-tertiary)]">
+                Run an opportunity analysis to see scores, issues, and a generated pitch.
+              </p>
+              {hasWebsite && (
+                <div className="mt-6">
+                  <button
+                    onClick={handleRunAudit}
+                    disabled={runningAudit}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {runningAudit ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {runningAudit ? "Analysing…" : "Analyse Opportunity →"}
+                  </button>
                 </div>
-                {allIssues.length > 0 && (
-                  <p className="mt-2 text-sm font-medium text-[var(--score-good)]">
-                    Fixing top issues could improve to <strong>{projScore}+</strong>
-                  </p>
-                )}
+              )}
+            </div>
+
+            {/* Skeleton Score Breakdown */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Score Breakdown</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <SubScore label="Performance"  score={null} />
+                <SubScore label="SEO"          score={null} />
+                <SubScore label="Mobile"       score={null} />
+                <SubScore label="UX / Design"  score={null} />
+                <SubScore label="Trust"        score={null} />
+                <SubScore label="Overall"      score={null} />
               </div>
             </div>
-          </div>
 
-          {/* Top issues */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">
-              Top Issues Impacting Score
-            </h3>
-            {allIssues.length === 0 ? (
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Top Issues Impacting Score</h3>
               <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to see issues.</p>
-            ) : (
-              <div className="space-y-3">
-                {allIssues.slice(0, 3).map((issue, i) => (
-                  <div key={i} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{issue.title}</p>
-                        <p className="mt-1 text-xs text-[var(--text-tertiary)]">{issue.detail}</p>
-                      </div>
-                      <div className="flex shrink-0 flex-col items-end gap-1">
-                        <ImpactPill impact={issue.impact ?? "Medium"} />
-                        {issue.point_deduction && (
-                          <span className="text-xs font-bold text-[var(--score-high)]">−{issue.point_deduction}pts</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-        </div>
-
-        {/* Right */}
-        <div className="space-y-6">
-
-          {/* Score breakdown — Fix 2: updates with toggle */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Score Breakdown</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <SubScore label="Performance"  score={perfScore || null} />
-              <SubScore label="SEO"          score={seoScore || null} />
-              <SubScore label="Mobile"       score={mobileScore || null} />
-              <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
-              <SubScore label="Trust"        score={trustScoreVal || null} />
-              <SubScore label="Overall"      score={overall || null} />
             </div>
-          </div>
 
-          {/* Proposal ready section — moved up */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-base font-semibold text-[var(--text-primary)]">Proposal Ready</h3>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">One-click copyable proposal summary for client calls.</p>
-              </div>
-              <button
-                onClick={handleCopyProposalSummary}
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
-              >
-                <Copy className="h-4 w-4" /> Copy summary
-              </button>
-            </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-sm text-[var(--text-secondary)] whitespace-pre-line">
-              {proposalSummary}
-            </div>
-          </div>
-
-          {/* Before vs Potential */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Before vs Potential</h3>
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Current</p>
-                <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{overall}</p>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Potential</p>
-                <p className="mt-3 text-3xl font-semibold text-[var(--text-primary)]">{projScore}</p>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity</p>
-                <p className="mt-3 text-3xl font-semibold text-[var(--score-good)]">+{opportunityDelta}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Revenue Impact Estimate removed per request */}
-
-          {/* Impact timeline */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Impact Timeline</h3>
-            <div className="space-y-3">
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-tertiary)]">30 days</p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">Improve mobile speed, CTA clarity, and first impressions to capture more leads quickly.</p>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-tertiary)]">60 days</p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">Refresh visual design, content hierarchy, and trust signals to increase conversions.</p>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-tertiary)]">90 days</p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">Measure results, optimize conversion flow, and prepare a proposal to close the deal.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Business risk indicators */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Business Risk Indicators</h3>
-            <ul className="space-y-2">
-              {riskIndicators.map((risk) => (
-                <li key={risk} className="text-sm text-[var(--text-secondary)]">
-                  <span className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
-                  {risk}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-
-          {/* AI Opportunity summary */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
-            {allIssues.length === 0 ? (
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
               <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
-            ) : (
-              <ul className="space-y-2">
-                {allIssues.slice(0, 4).map((issue, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
-                    {issue.detail}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* AI Generated Pitch — Fix 4 */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Generated Pitch</h3>
-            <div className="mb-3 flex flex-wrap gap-2">
-              <select value={pitchTone} onChange={(e) => setPitchTone(e.target.value as typeof pitchTone)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
-                <option value="professional">Professional</option>
-                <option value="friendly">Friendly</option>
-                <option value="luxury">Luxury</option>
-              </select>
-              <select value={pitchLength} onChange={(e) => setPitchLength(e.target.value as typeof pitchLength)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
-                <option value="short">Short</option>
-                <option value="medium">Medium</option>
-                <option value="detailed">Detailed</option>
-              </select>
-              <div className="relative inline-block">
-                {hasAudit && hasDesign ? (
-                  <button
-                    onClick={handleGeneratePitch}
-                    disabled={generatingPitch}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {generatingPitch && <Loader2 className="h-3 w-3 animate-spin" />}
-                    {generatingPitch ? "Generating…" : "Generate Pitch"}
-                  </button>
-                ) : (
-                  <div
-                    className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
-                    title="Analyse this lead first to generate a pitch"
-                  >
-                    <Mail className="h-3 w-3" />
-                    Generate Pitch (analyse first)
-                  </div>
-                )}
-                {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
-              </div>
             </div>
-            {pitchError && (
-              <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
-                {pitchError}
-              </div>
-            )}
-            {(() => {
-              if (!pitchResult) {
-                return <p className="text-xs text-[var(--text-tertiary)]">Configure tone and length, then click Generate.</p>;
-              }
-              if (typeof pitchResult !== "object" || typeof pitchResult.subject !== "string" || typeof pitchResult.body !== "string") {
-                console.error("[LEAD] Invalid pitchResult state:", pitchResult);
-                return <p className="text-xs text-[var(--score-high)]">Pitch data error — please regenerate.</p>;
-              }
-              return (
-                <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
-                  <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)]">{pitchResult.body}</p>
-                  <button
-                    onClick={handleCopyPitch}
-                    className="mt-1 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-                  >
-                    <Copy className="h-3 w-3" /> Copy Pitch
-                  </button>
-                </div>
-              );
-            })()}
-          </div>
 
-          {/* Export — Fix 5 */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-            <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h3>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href={`/api/export/pdf?businessId=${biz.id}`}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-              >
-                <FileDown className="h-3.5 w-3.5" /> PDF Report
-              </a>
-              <button
-                onClick={handleShare}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-              >
-                <Share2 className="h-3.5 w-3.5" /> Share Link
-              </button>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h3>
+              <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate outreach copy.</p>
             </div>
           </div>
-
         </div>
+
+        {/* Quota error banner */}
+        {quotaError && (
+          <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-3.5 shadow-[var(--brand-shadow-lg)]">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--score-mid)]" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-400">{quotaError}</p>
+              {quotaRetryTimer > 0 && <p className="mt-0.5 text-xs text-amber-500">Retry available in {quotaRetryTimer}s</p>}
+            </div>
+            <button onClick={clearQuotaTimer}
+              className="cursor-pointer rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25">
+              {quotaRetryTimer > 0 ? `Wait ${quotaRetryTimer}s` : "Dismiss"}
+            </button>
+          </div>
+        )}
+
+        {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </div>
     );
   }
 
-  function renderAudit() {
-    const auditsToShow = [mobileAudit, desktopAudit].filter(Boolean) as Record<string, unknown>[];
-    if (auditsToShow.length === 0) {
-      return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text-tertiary)]">No audit data. Run an audit first.</p>
-        </div>
-      );
-    }
-    return (
-      <div className="grid gap-4 md:grid-cols-2">
-        {auditsToShow.map((audit) => {
-          const isMobile = audit.strategy === "mobile";
-          const StratIcon = isMobile ? Smartphone : Monitor;
-          return (
-            <div key={audit.id as string} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <StratIcon className="h-4 w-4 text-[var(--text-tertiary)]" />
-                <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  {isMobile ? "Mobile" : "Desktop"}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <SubScore label="Performance" score={audit.performance_score as number | null} />
-                <SubScore label="SEO"         score={audit.seo_score as number | null} />
-                {/* Fix 3: expanded metric names with descriptions and colour indicators */}
-                <div className="mt-3 space-y-2">
-                  {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((metric) => {
-                    const rawVal = (audit[metric] as string | null | undefined);
-                    const colorClass = metricColor(metric, rawVal);
-                    const meta = METRIC_META[metric];
-                    return (
-                      <div key={metric} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-[var(--text-primary)]">{meta.label}</p>
-                            <p className="mt-0.5 text-[10px] text-[var(--text-tertiary)]">{meta.subtitle}</p>
-                          </div>
-                          <span className={`shrink-0 text-sm font-bold ${colorClass}`}>
-                            {rawVal ?? "—"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  function renderIssues() {
-    if (allIssues.length === 0) {
-      return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text-tertiary)]">No issues found. Run a design analysis to identify issues.</p>
-        </div>
-      );
-    }
-    return (
-      <div className="space-y-3">
-        {allIssues.map((issue, i) => (
-          <div key={i} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{issue.title}</p>
-                  <ImpactPill impact={issue.impact ?? "Medium"} />
-                </div>
-                <p className="mt-1 text-xs text-[var(--text-tertiary)]">{issue.detail}</p>
-              </div>
-              {issue.point_deduction && (
-                <span className="shrink-0 text-sm font-bold text-[var(--score-high)]">−{issue.point_deduction}</span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  function renderHistory() {
-    const events: { date: string; label: string; score?: number }[] = [];
-    // Use the same computed scores as the Overview tab for consistency
-    const auditRows = (audits ?? []) as Record<string, unknown>[];
-    if (auditRows.length > 0) {
-      const latestAudit = auditRows.reduce((latest, a) =>
-        new Date(a.created_at as string).getTime() > new Date(latest.created_at as string).getTime() ? a : latest
-      );
-      events.push({ date: latestAudit.created_at as string, label: "Performance Audit", score: perfScore || undefined });
-    }
-    const designRows = (designAnalyses ?? []) as Record<string, unknown>[];
-    if (designRows.length > 0) {
-      const latestDesign = designRows.reduce((latest, a) =>
-        new Date(a.analyzed_at as string).getTime() > new Date(latest.analyzed_at as string).getTime() ? a : latest
-      );
-      events.push({ date: latestDesign.analyzed_at as string, label: "Design Analysis", score: uxDesignScoreVal || undefined });
-    }
-    events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    if (events.length === 0) {
-      return (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text-tertiary)]">No history yet.</p>
-        </div>
-      );
-    }
-    return (
-      <div className="space-y-3">
-        {events.map((ev, i) => {
-          const scoreColor = ev.score === undefined ? "" : ev.score >= 70 ? "text-[var(--score-good)]" : ev.score >= 40 ? "text-[var(--score-mid)]" : "text-[var(--score-high)]";
-          return (
-            <div key={i} className="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
-              <div className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-[var(--text-primary)]">{ev.label}</p>
-                <p className="text-xs text-[var(--text-tertiary)]">
-                  {new Date(ev.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                </p>
-              </div>
-              {ev.score !== undefined && (
-                <span className={`text-sm font-bold ${scoreColor}`}>{ev.score}</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render: Analysed Lead ─────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
 
-        {/* Header */}
+        {/* ── SECTION 1: HERO ──────────────────────────────────────────────── */}
         <div className="mb-6">
           <Link
             href="/dashboard/leads"
@@ -1185,126 +755,606 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
           >
             <ArrowLeft className="h-4 w-4" /> Back to Leads
           </Link>
+
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-[var(--text-primary)]">{biz.name}</h1>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
+              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] lg:max-w-[50vw] break-words [text-wrap:balance]">
+                {biz.name}
+              </h1>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 {biz.business_type} · {biz.city} · {biz.address}
               </p>
-              <div className="mt-2 flex items-center gap-2">
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 {biz.place_id && (
-                  <a
-                    href={`https://www.google.com/maps/place/?q=place_id:${biz.place_id}`}
+                  <a href={`https://www.google.com/maps/place/?q=place_id:${biz.place_id}`}
                     target="_blank" rel="noreferrer"
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]"
-                  >
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
                     <MapPin className="h-3.5 w-3.5" /> Map
                   </a>
                 )}
                 {biz.website && (
-                  <a
-                    href={biz.website} target="_blank" rel="noreferrer"
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]"
-                  >
+                  <a href={biz.website} target="_blank" rel="noreferrer"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
                     <ExternalLink className="h-3.5 w-3.5" /> Website
                   </a>
                 )}
               </div>
-            </div>
-            {/* Pipeline status dropdown + Analyse + Copy Pitch */}
-            <div className="flex flex-col items-end gap-3">
-              <div className="flex items-center gap-2">
-                {biz.website && (
-                  <button
-                    onClick={handleFullAnalysis}
-                    disabled={runningFullAnalysis}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {runningFullAnalysis ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="h-4 w-4" />
-                    )}
-                    {runningFullAnalysis ? "Analysing…" : (biz.audited_at ? "Re-analyse" : "Analyse Opportunity")}
-                  </button>
-                )}
-                <select
-                  value={currentPipelineStatus ?? "new_lead"}
-                  onChange={(e) => handlePipelineChange(e.target.value)}
-                  className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-sm text-[var(--text-secondary)] outline-none transition-colors duration-150 focus:border-[var(--accent)] hover:border-[var(--border-strong)]"
-                >
-                  {PIPELINE_STATUSES.map((s) => (
-                    <option key={s} value={s}>{PIPELINE_LABELS[s]}</option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleCopyPitch}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
-                >
-                  <Copy className="h-4 w-4" /> Copy Pitch
-                </button>
-              </div>
-
-              {/* Inline progress checklist */}
-              {(runningFullAnalysis || completedKeys.length > 0) && (
-                <div className="w-full max-w-md">
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3">
-                    <div className="space-y-0.5">
-                      {ANALYSE_STEPS.map((stepDef) => {
-                        const isDone   = completedKeys.includes(stepDef.key);
-                        const isActive = !isDone && activeKeys.includes(stepDef.key);
-                        return (
-                          <div key={stepDef.key} className="flex items-center gap-3 py-1">
-                            {isDone ? (
-                              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[var(--score-good)]" />
-                            ) : isActive ? (
-                              <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[var(--accent)]" />
-                            ) : (
-                              <Circle className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" />
-                            )}
-                            <span className={`text-xs ${
-                              isDone   ? "text-[var(--text-tertiary)] line-through" :
-                              isActive ? "font-medium text-[var(--text-primary)]" :
-                                         "text-[var(--text-tertiary)]"
-                            }`}>
-                              {stepDef.label}
-                            </span>
-                          </div>
-                        );
-                      })}
+              {/* Google Reviews */}
+              {(biz.rating != null || biz.review_count != null) && (
+                <div className="mt-3 flex items-center gap-3">
+                  {biz.rating != null && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-[var(--score-good)]">{biz.rating.toFixed(1)}</span>
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <svg key={star} className={`h-3.5 w-3.5 ${star <= Math.round(biz.rating!) ? "text-[var(--score-good)]" : "text-[var(--text-muted)]"}`} fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  {biz.review_count != null && (
+                    <span className="text-xs text-[var(--text-tertiary)]">{biz.review_count.toLocaleString()} reviews</span>
+                  )}
                 </div>
               )}
+            </div>
+
+            {/* Header actions: Pipeline + Analyse + Copy Pitch */}
+            <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2">
+                {hasWebsite && (
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={handleFullAnalysis}
+                      disabled={runningFullAnalysis}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {runningFullAnalysis ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-3.5 w-3.5" />
+                      )}
+                      {runningFullAnalysis ? "Analysing…" : (biz.audited_at ? "Re-analyse" : "Analyse")}
+                    </button>
+                    {runningFullAnalysis && (
+                      <button
+                        type="button"
+                        onClick={handleCancelAnalysis}
+                        className="cursor-pointer text-xs font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                )}
+                {currentPipelineStatus ? (
+                  <PipelineSelect
+                    value={currentPipelineStatus}
+                    onChange={handlePipelineChange}
+                    options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
+                  />
+                ) : (
+                  <button
+                    onClick={() => handlePipelineChange("new_lead")}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white"
+                  >
+                    <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-6 flex flex-wrap gap-0 border-b border-[var(--border)]">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`cursor-pointer px-4 py-3 text-sm font-medium transition-colors duration-150 ${
-                activeTab === tab.id
-                  ? "border-b-2 border-[var(--accent)] text-[var(--accent)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* ── OPPORTUNITY SCORE STRIP ─────────────────────────────────────── */}
+        <div className="mb-8">
+          {hasDesign ? (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-16 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 sm:px-8 py-6">
+              {/* Current Score */}
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Current Score</p>
+                <ScoreRingWithLabel score={overall} size={72} />
+              </div>
+
+              {/* Arrow */}
+              <div className="hidden sm:flex items-center">
+                <TrendingUp className="h-6 w-6 text-[var(--accent)]" />
+              </div>
+              <div className="flex sm:hidden text-[var(--text-tertiary)] text-xs">↓</div>
+
+              {/* Potential Score */}
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Potential Score</p>
+                <ScoreRingWithLabel score={projScore} size={72} />
+              </div>
+
+              {/* Arrow */}
+              <div className="hidden sm:flex items-center">
+                <TrendingUp className="h-6 w-6 text-[var(--accent)]" />
+              </div>
+              <div className="flex sm:hidden text-[var(--text-tertiary)] text-xs">↓</div>
+
+              {/* Opportunity */}
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity</p>
+                <span className="text-[clamp(2rem,5vw,3.5rem)] font-bold text-[var(--score-good)] leading-none">
+                  +{opportunityDelta}
+                </span>
+                <span className="text-xs text-[var(--text-tertiary)]">point{opportunityDelta !== 1 ? 's' : ''} to gain</span>
+              </div>
+            </div>
+          ) : hasAudit ? (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6">
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Current Score</p>
+                <ScoreRingWithLabel score={overall} size={72} />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-[var(--text-tertiary)]">Run a design analysis to see your improvement potential.</p>
+                {hasWebsite && (
+                  <button
+                    onClick={handleRunDesign}
+                    disabled={runningDesign}
+                    className="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {runningDesign ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                    {runningDesign ? "Analysing…" : "Analyse Design"}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 text-center">
+              <p className="text-sm text-[var(--text-tertiary)]">Run an audit to see scores.</p>
+            </div>
+          )}
         </div>
 
-        {/* Tab content */}
-        {activeTab === "overview"    && renderOverview()}
-        {activeTab === "audit"       && renderAudit()}
-        {activeTab === "issues"      && renderIssues()}
-        {activeTab === "history"     && renderHistory()}
+        {/* Full analysis progress banner */}
+        {runningFullAnalysis && (
+          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--accent)]" />
+              <span className="text-sm font-medium text-[var(--text-primary)]">Analysing...</span>
+            </div>
+            <div className="mt-2 h-[4px] w-full rounded-full bg-[var(--border)] overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--accent)] transition-all duration-500 ease-out"
+                style={{ width: `${(completedKeys.length / ANALYSE_STEPS.length) * 100}%` }}
+              />
+            </div>
+            {activeKeys.length > 0 && (
+              <p className="mt-1.5 text-xs text-[var(--text-tertiary)]">
+                {ANALYSE_STEPS.find((s) => s.key === activeKeys[activeKeys.length - 1])?.label ?? ""}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Design error banner */}
+        {designError && !runningFullAnalysis && (
+          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+            <p className="text-sm font-medium text-[var(--badge-red-text)]">Design analysis failed</p>
+            <p className="mt-1 text-xs text-[var(--text-tertiary)]">{designError}</p>
+            {biz.website && (
+              <button
+                type="button"
+                onClick={handleFullAnalysis}
+                className="mt-2 cursor-pointer text-xs font-medium text-[var(--accent)] underline-offset-2 hover:text-[var(--accent-hover)] underline transition-colors"
+              >
+                Try again
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ── DESKTOP TWO-COLUMN LAYOUT ───────────────────────────────────── */}
+        <div className="grid gap-6 lg:grid-cols-2">
+
+          {/* ════ LEFT COLUMN ════════════════════════════════════════════════ */}
+          <div className="space-y-6 order-2 lg:order-1">
+
+            {/* ── SECTION 2: WHY CONTACT THIS LEAD ────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why Contact This Lead</h3>
+              {topFindings.length === 0 ? (
+                <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to identify findings.</p>
+              ) : (
+                <ul className="space-y-3">
+                  {topFindings.map((finding, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-[10px] font-bold text-[var(--accent)]">
+                        {i + 1}
+                      </span>
+                      <span className="text-sm text-[var(--text-secondary)] leading-relaxed">{finding}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* ── SECTION 3: AI OPPORTUNITY SUMMARY ────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
+              {opportunityBullets.length === 0 ? (
+                <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {opportunityBullets.map((bullet, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* ── SECTION 5: TOP ISSUES IMPACTING SCORE ────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">
+                Top Issues Impacting Score
+              </h3>
+              {allIssues.length === 0 ? (
+                <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to see issues.</p>
+              ) : (
+                <div className="space-y-3">
+                  {allIssues.slice(0, 3).map((issue, i) => (
+                    <div key={i} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{issue.title}</p>
+                          <p className="mt-1 text-xs text-[var(--text-tertiary)]">{issue.detail}</p>
+                        </div>
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          <ImpactPill impact={issue.impact ?? "Medium"} />
+                          {issue.point_deduction && (
+                            <span className="text-xs font-bold text-[var(--score-high)]">−{issue.point_deduction}pts</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {allIssues.length > 3 && (
+                    <p className="text-xs text-[var(--text-tertiary)] text-center pt-1">
+                      +{allIssues.length - 3} more issues
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* ── SECTION 6: AUDIT DETAILS (collapsible) ────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                  {screenshotStrategy === "mobile" ? "Mobile" : "Desktop"} Audit
+                </h3>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setScreenshotStrategy("mobile")}
+                    className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${screenshotStrategy === "mobile" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
+                  >
+                    <Smartphone className="h-3 w-3 inline mr-1" />Mobile
+                  </button>
+                  <button
+                    onClick={() => setScreenshotStrategy("desktop")}
+                    className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${screenshotStrategy === "desktop" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
+                  >
+                    <Monitor className="h-3 w-3 inline mr-1" />Desktop
+                  </button>
+                </div>
+              </div>
+
+              {/* Score breakdown */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <SubScore label="Performance"  score={perfScore || null} />
+                <SubScore label="SEO"          score={seoScore || null} />
+                <SubScore label="Mobile"       score={mobileScore || null} />
+                <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
+                <SubScore label="Trust"        score={trustScoreVal || null} />
+                <SubScore label="Overall"      score={overall || null} />
+              </div>
+
+              {/* Collapsible technical details */}
+              <button
+                onClick={() => setShowTechDetails(!showTechDetails)}
+                className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--text-secondary)]"
+              >
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-150 ${showTechDetails ? "rotate-180" : ""}`} />
+                {showTechDetails ? "Hide" : "View"} Technical Details
+              </button>
+
+              {showTechDetails && (() => {
+                const auditsToShow = [mobileAudit, desktopAudit].filter(Boolean) as Record<string, unknown>[];
+                if (auditsToShow.length === 0) return null;
+                return (
+                  <div className="mt-3 space-y-3">
+                    {auditsToShow.map((audit) => {
+                      const isMobile = audit.strategy === "mobile";
+                      return (
+                        <div key={audit.id as string} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                          <p className="text-xs font-medium text-[var(--text-primary)] mb-2">
+                            {isMobile ? "Mobile" : "Desktop"} Web Vitals
+                          </p>
+                          <div className="space-y-2">
+                            {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((metric) => {
+                              const rawVal = (audit[metric] as string | null | undefined);
+                              const colorClass = metricColor(metric, rawVal);
+                              const meta = METRIC_META[metric];
+                              return (
+                                <div key={metric} className="flex items-center justify-between">
+                                  <div>
+                                    <p className="text-xs text-[var(--text-primary)]">{meta.label}</p>
+                                    <p className="text-[10px] text-[var(--text-tertiary)]">{meta.subtitle}</p>
+                                  </div>
+                                  <span className={`text-xs font-bold ${colorClass}`}>{rawVal ?? "—"}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* ── SECTION 8: HISTORY ────────────────────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">History</h3>
+              {(() => {
+                const events: { date: string; label: string; score?: number }[] = [];
+                const auditRows = (audits ?? []) as Record<string, unknown>[];
+                if (auditRows.length > 0) {
+                  const latestAudit = auditRows.reduce((latest, a) =>
+                    new Date(a.created_at as string).getTime() > new Date(latest.created_at as string).getTime() ? a : latest
+                  );
+                  events.push({ date: latestAudit.created_at as string, label: "Performance Audit", score: (latestAudit.performance_score as number | null) ?? undefined });
+                }
+                const designRows = (designAnalyses ?? []) as Record<string, unknown>[];
+                if (designRows.length > 0) {
+                  const latestDesign = designRows.reduce((latest, a) =>
+                    new Date(a.analyzed_at as string).getTime() > new Date(latest.analyzed_at as string).getTime() ? a : latest
+                  );
+                  events.push({ date: latestDesign.analyzed_at as string, label: "Design Analysis", score: (latestDesign.design_score as number | null) ?? undefined });
+                }
+                events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                if (events.length === 0) {
+                  return <p className="text-sm text-[var(--text-tertiary)]">No history yet.</p>;
+                }
+                return (
+                  <div className="space-y-2">
+                    {events.map((ev, i) => {
+                      const scoreColor = ev.score === undefined ? "" : ev.score >= 70 ? "text-[var(--score-good)]" : ev.score >= 40 ? "text-[var(--score-mid)]" : "text-[var(--score-high)]";
+                      return (
+                        <div key={i} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                          <div className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-[var(--text-primary)]">{ev.label}</p>
+                            <p className="text-[10px] text-[var(--text-tertiary)]">
+                              {new Date(ev.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          </div>
+                          {ev.score !== undefined && (
+                            <span className={`text-xs font-bold ${scoreColor}`}>{ev.score}</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+          </div>
+
+          {/* ════ RIGHT COLUMN ═══════════════════════════════════════════════ */}
+          <div className="space-y-6 order-1 lg:order-2">
+
+            {/* ── SECTION 4: READY-TO-SEND OUTREACH ────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h3>
+
+              {/* Channel tabs with contact status dots */}
+              <div className="mb-3 flex gap-1 rounded-lg bg-[var(--bg-elevated)] p-1">
+                {OUTREACH_CHANNELS.map((channel) => {
+                  const ChannelIcon = channel.icon;
+                  const contactLabel = channel.id === "email" ? contactInfo.email : contactInfo.phone;
+                  const hasContact = !!contactLabel;
+                  return (
+                    <button
+                      key={channel.id}
+                      onClick={() => setOutreachChannel(channel.id)}
+                      className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                        outreachChannel === channel.id
+                          ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--shadow-xs)]"
+                          : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${contactInfo.loading ? "bg-[var(--text-tertiary)] animate-pulse" : hasContact ? "bg-[var(--score-good)]" : "bg-[var(--text-tertiary)]"}`} />
+                      <ChannelIcon className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">{channel.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Contact info per channel */}
+              {!contactInfo.loading && (() => {
+                let contactLabel: string | null = null;
+                let contactAction: { label: string; url?: string } | null = null;
+                if (outreachChannel === "email") {
+                  if (contactInfo.email) {
+                    contactLabel = contactInfo.email;
+                    contactAction = { label: "Send via email", url: `mailto:${contactInfo.email}` };
+                  }
+                } else if (outreachChannel === "whatsapp") {
+                  if (contactInfo.phone) {
+                    contactLabel = contactInfo.phone;
+                    contactAction = { label: "Open WhatsApp", url: `https://wa.me/${contactInfo.phone.replace(/[^0-9]/g, "")}` };
+                  }
+                }
+                if (contactLabel) {
+                  return (
+                    <div className="mb-3 flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
+                      <span className="text-xs text-[var(--text-secondary)] truncate max-w-[60%]">{contactLabel}</span>
+                      {contactAction?.url && (
+                        <a href={contactAction.url} target="_blank" rel="noreferrer"
+                          className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-[var(--accent)] px-2.5 py-1 text-[10px] font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] shrink-0">
+                          <ExternalLink className="h-3 w-3" /> {contactAction.label}
+                        </a>
+                      )}
+                    </div>
+                  );
+                }
+                // Not found
+                if (outreachChannel === "email") {
+                  return (
+                    <div className="mb-3 space-y-2">
+                      <p className="text-xs text-[var(--text-tertiary)]">Couldn&rsquo;t find an email address on the website.</p>
+                      <div className="flex gap-2">
+                        <input
+                          type="email"
+                          value={manualEmail}
+                          onChange={(e) => setManualEmail(e.target.value)}
+                          placeholder="Paste email address manually..."
+                          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="mb-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
+                    <p className="text-xs text-[var(--text-tertiary)]">Couldn&rsquo;t find a phone number on the website.</p>
+                  </div>
+                );
+              })()}
+
+              {/* Pitch controls */}
+              <div className="mb-3 flex flex-wrap gap-2">
+                <PipelineSelect
+                  value={pitchTone}
+                  onChange={(v) => setPitchTone(v as typeof pitchTone)}
+                  options={[
+                    { value: "professional", label: "Professional" },
+                    { value: "friendly", label: "Friendly" },
+                    { value: "luxury", label: "Luxury" },
+                  ]}
+                />
+                <PipelineSelect
+                  value={pitchLength}
+                  onChange={(v) => setPitchLength(v as typeof pitchLength)}
+                  options={[
+                    { value: "short", label: "Short" },
+                    { value: "medium", label: "Medium" },
+                    { value: "detailed", label: "Detailed" },
+                  ]}
+                />
+                <div className="relative inline-block">
+                  {hasAudit && hasDesign ? (
+                    <button
+                      onClick={handleGeneratePitch}
+                      disabled={generatingPitch}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {generatingPitch && <Loader2 className="h-3 w-3 animate-spin" />}
+                      <Send className="h-3 w-3" />
+                      {generatingPitch ? "Generating…" : "Generate"}
+                    </button>
+                  ) : (
+                    <div
+                      className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
+                      title="Analyse this lead first to generate a pitch"
+                    >
+                      <Mail className="h-3 w-3" />
+                      Generate (analyse first)
+                    </div>
+                  )}
+                  {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
+                </div>
+              </div>
+
+              {pitchError && (
+                <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                  {pitchError}
+                </div>
+              )}
+
+              {pitchResult ? (
+                <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
+                  <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleCopyPitch}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                    >
+                      <Copy className="h-3 w-3" /> Copy
+                    </button>
+                    <button
+                      onClick={handleGeneratePitch}
+                      disabled={generatingPitch}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                      Regenerate
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-[var(--text-tertiary)]">Configure tone and length, then click Generate.</p>
+              )}
+            </div>
+
+            {/* ── SECTION 7: CLIENT CALL SUMMARY ─────────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h3>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">Read this 60 seconds before a sales call.</p>
+                </div>
+                <button
+                  onClick={() => handleCopyToClipboard(clientCallSummary, "Client call summary")}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] shrink-0"
+                >
+                  <Copy className="h-3.5 w-3.5" /> Copy
+                </button>
+              </div>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-xs text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
+                {clientCallSummary}
+              </div>
+            </div>
+
+            {/* ── EXPORT ──────────────────────────────────────────────────────── */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h3>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href={`/api/export/pdf?businessId=${biz.id}`}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                >
+                  <FileDown className="h-3.5 w-3.5" /> PDF Report
+                </a>
+                <button
+                  onClick={handleShare}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                >
+                  <Share2 className="h-3.5 w-3.5" /> Share Link
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
 
       </div>
-
 
       {/* Quota error banner */}
       {quotaError && (
@@ -1312,22 +1362,15 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
           <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--score-mid)]" />
           <div className="flex-1">
             <p className="text-sm font-medium text-amber-400">{quotaError}</p>
-            {quotaRetryTimer > 0 && (
-              <p className="mt-0.5 text-xs text-amber-500">
-                Retry available in {quotaRetryTimer}s
-              </p>
-            )}
+            {quotaRetryTimer > 0 && <p className="mt-0.5 text-xs text-amber-500">Retry available in {quotaRetryTimer}s</p>}
           </div>
-          <button
-            onClick={clearQuotaTimer}
-            className="cursor-pointer rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25"
-          >
+          <button onClick={clearQuotaTimer}
+            className="cursor-pointer rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25">
             {quotaRetryTimer > 0 ? `Wait ${quotaRetryTimer}s` : "Dismiss"}
           </button>
         </div>
       )}
 
-      {/* Toast notification */}
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );

@@ -1,8 +1,8 @@
-# Nearsited — AI Redesign Opportunity Intelligence
+# Nearsited — Find businesses that need websites
 
 **Find local businesses with weak websites. Audit their performance. Analyse their design. Generate a personalised pitch. All in under 2 minutes.**
 
-Nearsited is a **prospecting intelligence platform** built for web design agencies. It automates the entire business-development workflow: from discovering local businesses with poor web presence, to gathering hard evidence of their problems, to generating a personalised cold outreach pitch backed by real data.
+Nearsited finds local businesses with weak websites or no website at all, shows you exactly what's wrong, and writes the pitch — so agencies close redesign deals in minutes, not hours.
 
 ---
 
@@ -26,7 +26,7 @@ Nearsited is a **prospecting intelligence platform** built for web design agenci
 |---|---|
 | **Framework** | Next.js 16.2.6 (App Router, Turbopack) |
 | **Language** | TypeScript (strict) |
-| **Styling** | Tailwind CSS v4 (light theme, indigo-600 accent) |
+| **Styling** | Tailwind CSS v4 (dark theme, near-black navy #0a0e12, sage green accent #8A9777) |
 | **Database** | Supabase (Postgres 15 + Auth + Storage) |
 | **AI** | Gemini 3.5 Flash (vision + pitch generation) |
 | **Screenshots** | ScreenshotOne |
@@ -38,7 +38,6 @@ Nearsited is a **prospecting intelligence platform** built for web design agenci
 
 ```bash
 # 1. Install dependencies
-cd nearsited
 npm install
 
 # 2. Set up environment variables
@@ -62,7 +61,7 @@ npm run dev
 ## Project Structure
 
 ```
-nearsited/
+nearsited/                      # (c:/Projects/nearsited)
 ├── CLAUDE.md                    # Master rules for AI coding assistants
 ├── docs/
 │   ├── AGENTS.md                # Next.js agent rules
@@ -70,9 +69,10 @@ nearsited/
 │   ├── BUSINESS_GTM_STRATEGY.md # Go-to-market strategy
 │   ├── CONVENTIONS.md           # Coding conventions + decisions log
 │   ├── DESIGN_SYSTEM.md         # Design system specification
+│   ├── DISCOVER_PAGE_LOGIC.md   # Discover page filter/sort logic
+│   ├── MASTER_PROMPT.md         # Master context for AI coding sessions
 │   ├── PRD.md                   # Product requirements
-│   ├── SCHEMA.md                # Database schema + migrations
-│   └── reference/               # Brand guide + design references
+│   └── SCHEMA.md                # Database schema + migrations
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/              # Login, signup, OAuth callback
@@ -108,18 +108,20 @@ nearsited/
 
 ### V1 (Live)
 - Google Places discovery + website classification (5 statuses)
-- Performance audit (PageSpeed mobile + desktop, 7-day cache)
-- Design analysis (ScreenshotOne + Gemini 3.5 Flash vision, 7-day cache)
-- 6-core scoring model (Performance, SEO, Mobile, UX/Design, Trust, Overall)
-- Lead Detail: pipeline status dropdown, Mobile/Desktop reactive scores, expanded Core Web Vitals with colour indicators
-- Pitch generation (6 lead-type branches, tone/length, cites real audit data, clipboard copy)
-- Share Link (creates public share token + copies URL to clipboard)
+- Performance audit (PageSpeed mobile + desktop, 7-day DB cache)
+- Design analysis (ScreenshotOne + Gemini 3.5 Flash vision, 7-day DB cache)
+- 6-core scoring model (Performance, SEO, Mobile, UX/Design, Trust, Overall) + opportunity scoring
+- Lead Detail: pipeline status dropdown, Mobile/Desktop reactive scores, expanded Core Web Vitals with colour indicators, toast system
+- Pitch generation (6 lead-type branches, tone/length/focus, cites real audit data, clipboard copy)
+- Share Link (POST /api/share → creates token + copies URL to clipboard)
 - Auto-pipeline on first audit (sets status → "analysed" automatically)
-- Quick Site Audit standalone (step-by-step progress checklist, sessionStorage persistence, plain-English summaries)
-- Pipeline management (7 stages, optimistic updates)
-- PDF audit report export
-- Persistent sidebar navigation + light theme (indigo-600)
+- Opportunity Review standalone (step-by-step progress checklist, sessionStorage persistence, plain-English summaries, ephemeral pitch generation)
+- Pipeline management (7 canonical stages, optimistic updates)
+- PDF audit report export (jsPDF)
+- Persistent sidebar navigation (7 items, no Coming Soon section) + dark theme (sage green accent)
 - NDJSON streaming for long-running routes (discover, audit, analyze-design)
+- Saved searches (territories CRUD via /api/saved-searches)
+- 3 parallel Nearby Search queries per discover run (keyword, keyword+type, 1.5×radius)
 
 ### V2 (Planned)
 - UX interaction analysis (Playwright + queue worker + Supabase Storage)

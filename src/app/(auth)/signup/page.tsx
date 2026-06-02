@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
@@ -90,7 +91,7 @@ export default function SignupPage() {
           }}
         >
           <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/25 bg-[var(--accent-tint)]">
-            <img src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
+            <Image src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
           </span>
           <h1 className="text-xl font-medium tracking-tight text-[var(--text-primary)]">
             Check your email

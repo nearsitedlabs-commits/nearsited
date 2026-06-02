@@ -1,5 +1,5 @@
 # Nearsited — Business & Go-To-Market Strategy
-**Version:** 1.0 · **Date:** May 2026 · **Team:** Again Labs
+**Version:** 1.1 · **Date:** June 2026 · **Team:** Again Labs
 
 > This is the business-facing companion to the six technical documents. It covers market, positioning, pricing, marketing, and growth — readable on its own, without the engineering detail. Built for the real constraints: **no marketing budget, founder-led, written-first (low spoken-English dependency), INR-preferred, A-first-then-B strategy.**
 
@@ -47,7 +47,7 @@ Small web design / development agencies and freelancers, 1–20 people, who win 
 Turns 2 hours of manual prospecting per lead into 2 minutes: find businesses with weak sites, get hard evidence (performance, design, [v2] UX scores + ranked issues), and a personalised pitch already written and citing real numbers. **It makes a non-salesperson sell like a consultant.**
 
 ### 3.3 Positioning Statement
-*"Nearsited finds local businesses with bad websites, proves exactly what's wrong with hard data, and writes the pitch — so agencies close redesign deals in minutes, not hours."*
+*"Nearsited finds local businesses with weak websites or no website at all, shows you exactly what's wrong, and writes the pitch — so agencies close redesign deals in minutes, not hours."*
 
 ### 3.4 Competitive Landscape (how to talk about it)
 Agencies today cobble together: Google Maps (find businesses) + PageSpeed (manual audit) + a spreadsheet (track) + their own writing (pitch). Nearsited collapses all four into one workflow and adds the AI design/UX critique no manual process produces. You're not replacing one tool — you're replacing a tedious multi-tool habit. That's the pitch: **"the whole prospecting workflow in one place, with evidence and the email written for you."**

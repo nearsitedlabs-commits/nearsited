@@ -1,5 +1,5 @@
 # Nearsited — Conventions & Decisions Log
-**Version:** 2.1 · **Date:** May 2026
+**Version:** 2.2 · **Date:** June 2026
 
 ---
 
@@ -45,7 +45,7 @@ Every route/job logs with a `[ROUTENAME]` prefix. External calls log HTTP status
 Analysis logic lives in exported functions; the route handler validates + auths + calls. This is what lets `runAudit()` / `analyzeDesign()` move from a sync route to a queue worker without a rewrite. UX analysis depends on this — its logic runs in a worker, not a route.
 
 ### Rule 7 — Timeout Every External Call
-AbortController on everything: PageSpeed 60s, ScreenshotOne 30s, Gemini 30s, Playwright nav 30s / session 120s. Retry once on transient 500/429; never on 403/400/AbortError.
+AbortController on everything: PageSpeed **30s** (reduced from 60s), ScreenshotOne 30s, Gemini 30s, Playwright nav 30s / session 120s. Retry once on transient 500/429; never on 403/400/AbortError.
 
 ---
 

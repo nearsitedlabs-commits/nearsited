@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Search, Target, Mail, TrendingUp, Check,
   Zap, ExternalLink, DollarSign,
@@ -42,13 +44,13 @@ function SectionSub({ children, className = "" }: { children: React.ReactNode; c
 
 // ── Nav ──────────────────────────────────────────────────────────────────────
 
-function Nav() {
+function Nav({ navigate }: { navigate: (href: string) => void }) {
   return (
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-base)]/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-8">
         <a href="#" className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]" style={{ fontFamily: 'Switzer, Geist, sans-serif' }}>
-          <img src="/logo-icon.svg" alt="" width={36} height={20.6} className="block shrink-0" />
-          <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--text-primary)]">nearsited</span>
+          <Image src="/logo-icon.svg" alt="" width={36} height={21} className="block shrink-0" />
+          <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--text-primary)]">NearSited</span>
         </a>
 
         <ul className="hidden items-center gap-8 text-sm text-[var(--text-tertiary)] md:flex">
@@ -60,8 +62,8 @@ function Nav() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => window.location.href = "/login"}>Sign in</Button>
-          <Button variant="primary" onClick={() => window.location.href = "/signup"}>Start closing deals</Button>
+          <Button variant="ghost" onClick={() => navigate("/login")}>Sign in</Button>
+          <Button variant="primary" onClick={() => navigate("/signup")}>Get started free</Button>
         </div>
       </div>
     </nav>
@@ -70,7 +72,7 @@ function Nav() {
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 
-function Hero() {
+function Hero({ navigate }: { navigate: (href: string) => void }) {
   return (
     <section className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-20 pb-16 md:grid-cols-2 md:px-8 md:pt-24 md:pb-20 lg:px-10">
       <div className="pointer-events-none absolute -left-60 -top-60 h-[500px] w-[500px] rounded-full bg-[var(--accent)]/3 blur-[150px]" />
@@ -79,28 +81,27 @@ function Hero() {
       <div className="relative z-10 flex flex-col justify-center space-y-6">
         <div>
           <Badge color="indigo" dot>
-            Revenue intelligence for web agencies
+            Find businesses that need websites
           </Badge>
         </div>
 
         <div className="space-y-5">
           <h1 className="text-[clamp(2.8rem,5.5vw,5.5rem)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
-            Close more redesign deals
+            Find website opportunities
             <br />
-            <em className="italic not-italic">— without guessing.</em>
+            <em className="italic not-italic">before competitors do.</em>
           </h1>
           <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
-            Nearsited finds local businesses with weak websites, shows you exactly what to pitch,
-            and generates personalised outreach — so you spend less time prospecting and more time closing.
+            Nearsited finds local businesses with no website, social-only presence, or weak websites — shows you exactly what to pitch, and generates personalised outreach in under 2 minutes.
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Button
             variant="primary"
             icon={<Search className="h-4 w-4" />}
-            onClick={() => window.location.href = "/signup"}
-            className="px-6 py-3 text-base"
+            onClick={() => navigate("/signup")}
+            className="w-full px-6 py-3 text-base sm:w-auto"
           >
             Find your first opportunity
           </Button>
@@ -108,7 +109,7 @@ function Hero() {
             variant="secondary"
             icon={<ExternalLink className="h-4 w-4" />}
             onClick={() => document.getElementById("how")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-6 py-3 text-base"
+            className="w-full px-6 py-3 text-base sm:w-auto"
           >
             See how agencies win
           </Button>
@@ -121,64 +122,85 @@ function Hero() {
         </div>
       </div>
 
-      {/* Right: Opportunity card with revenue */}
+      {/* Right: Mixed opportunity feed */}
       <div className="relative flex items-center justify-center">
-        <div className="relative w-full max-w-[420px]">
+        <div className="relative w-full max-w-[440px]">
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunity · Dubai</p>
-                <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
-                <p className="mt-0.5 text-sm text-[var(--text-secondary)]">Jumeirah · brightsmile.ae</p>
-              </div>
-              <Badge color="amber">Pitch-ready</Badge>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunities · Dubai</p>
+              <Badge color="green" dot>Live scan</Badge>
             </div>
 
-            <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-              <div className="flex items-center gap-4">
-                <ScoreRing score={41} size={64} />
-                <div className="flex-1">
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">Opportunity Score</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--text-secondary)]">
-                    Poor mobile experience + weak SEO = clear pitch opening.
-                  </p>
+            {/* Opportunity rows */}
+            <div className="space-y-2.5">
+              {/* No Website */}
+              <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
+                  <span className="text-xs font-bold text-[var(--score-high)]">—</span>
                 </div>
-              </div>
-
-              <div className="mt-4 space-y-2.5 border-t border-[var(--border)] pt-4 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                    <DollarSign className="h-3.5 w-3.5 text-[var(--score-good)]" />
-                    Est. redesign value
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">Marina Legal Consultants</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Dubai Marina · Legal</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--score-high)]/30 bg-[var(--score-high)]/10 px-2 py-0.5 text-[10px] font-semibold text-[var(--score-high)]">
+                    No Website
                   </span>
-                  <span className="font-medium text-[var(--score-good)]">$1,000–$3,000</span>
+                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
+                    <DollarSign className="h-2.5 w-2.5" />$2,000–$6,000
+                  </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--text-secondary)]">Critical issues to fix</span>
-                  <span className="font-medium text-[var(--score-high)]">5</span>
+              </div>
+
+              {/* Social Only */}
+              <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10">
+                  <span className="text-xs font-bold text-amber-500">—</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--text-secondary)]">Pitch generated in</span>
-                  <span className="font-medium text-[var(--text-primary)]">1.4 seconds</span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">Blue Wave Restaurant</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">JBR · Food & Beverage</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
+                    Social Only
+                  </span>
+                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
+                    <DollarSign className="h-2.5 w-2.5" />$1,500–$4,000
+                  </span>
+                </div>
+              </div>
+
+              {/* Weak Website */}
+              <div className="flex items-center gap-3 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-3">
+                <ScoreRing score={41} size={32} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">Bright Smile Dental</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Jumeirah · Healthcare</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/10 px-2 py-0.5 text-[10px] font-semibold text-[var(--score-mid)]">
+                    Weak Website
+                  </span>
+                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
+                    <DollarSign className="h-2.5 w-2.5" />$1,000–$3,000
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-              <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
-                <span className="inline-flex items-center gap-2">
-                  <MessageSquare className="h-3 w-3 text-[var(--accent)]" />
-                  AI-generated pitch — ready to send
-                </span>
+            {/* Pitch preview */}
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+              <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
+                <MessageSquare className="h-3 w-3 text-[var(--accent)]" />
+                AI pitch — ready to send
               </div>
               <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                &ldquo;Hi Dr. Sameer — I analysed your site and found 5 critical issues costing you
-                patients: slow mobile load, weak local SEO, missing trust signals. A redesign
-                could recover an estimated $1,000–$3,000/month in missed revenue.&rdquo;
+                &ldquo;Hi — I noticed Marina Legal has great reviews but no website. You&rsquo;re invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries.&rdquo;
               </p>
-              <div className="mt-4 flex flex-wrap gap-3 border-t border-[var(--border)] pt-4">
-                <Button variant="secondary">View full report</Button>
-                <Button variant="primary" onClick={() => window.location.href = "/signup"}>Copy pitch →</Button>
+              <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--border)] pt-3">
+                <Button variant="secondary" className="flex-1 text-xs">View report</Button>
+                <Button variant="primary" onClick={() => navigate("/signup")} className="flex-1 text-xs">Copy pitch →</Button>
               </div>
             </div>
           </Card>
@@ -208,15 +230,15 @@ const HIERARCHY = [
   {
     number: "01",
     title: "Find opportunities",
-    desc: "Enter a city + business category. Nearsited surfaces every local business with a weak website — ranked by opportunity score, not alphabetically.",
+    desc: "Enter a city + business category. Nearsited surfaces businesses with no website, social-only presence, or weak websites — ranked by opportunity score, not alphabetically.",
     icon: Search,
     statKey: "Surface rate",
     statValue: "40–60% of local businesses qualify",
   },
   {
     number: "02",
-    title: "Understand weaknesses",
-    desc: "Every lead gets a full audit: performance, mobile UX, SEO, design, trust signals. You see exactly what's broken — and what to pitch.",
+    title: "Understand the gap",
+    desc: "Every lead gets a full assessment: website presence, performance, mobile UX, SEO, design, trust signals. You see exactly what's missing — and what to pitch.",
     icon: Target,
     statKey: "Issues per lead",
     statValue: "4–7 critical issues found",
@@ -224,15 +246,15 @@ const HIERARCHY = [
   {
     number: "03",
     title: "Generate outreach",
-    desc: "One click generates a personalised pitch that cites real problems from the audit. Adjust tone, copy, and send. No blank pages.",
+    desc: "One click generates a personalised pitch tailored to the opportunity type — website build, redesign, or improvement. Adjust tone, copy, and send.",
     icon: Mail,
     statKey: "Pitch generation",
     statValue: "Under 2 seconds",
   },
   {
     number: "04",
-    title: "Win redesign projects",
-    desc: "Track every lead through a pipeline: New → Contacted → Proposal → Won. No spreadsheets, no missed follow-ups.",
+    title: "Win more website projects",
+    desc: "Track every lead through a pipeline: New → Contacted → Proposal → Won. Whether it's a new build or a redesign, close it without spreadsheets.",
     icon: TrendingUp,
     statKey: "Pipeline close rate",
     statValue: "Agencies report 2–3× conversion",
@@ -245,7 +267,7 @@ function HowItWorks() {
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>The workflow</SectionLabel>
-          <SectionTitle className="text-center">Four steps to your next signed project.</SectionTitle>
+          <SectionTitle className="text-center">Four steps to your next website project.</SectionTitle>
           <SectionSub className="mx-auto text-center">
             From finding the right lead to closing the deal — every step is designed to remove friction and shorten your sales cycle.
           </SectionSub>
@@ -283,86 +305,312 @@ function HowItWorks() {
   );
 }
 
+// ── Why Nearsited ────────────────────────────────────────────────────────────
+
+const TRADITIONAL_CONS = [
+  "No way to find businesses that have no website at all",
+  "Cannot discover social-only or platform-only businesses",
+  "Manual website checking — one business at a time",
+  "No prioritisation — you guess who to contact first",
+  "Generic cold outreach with no supporting evidence",
+  "Hours of research before a single pitch is sent",
+];
+
+const NEARSITED_PROS = [
+  "Finds businesses with no website in your target area",
+  "Identifies social-only and platform-only businesses",
+  "Surfaces weak websites ranked by opportunity score",
+  "Prioritises opportunities automatically — highest value first",
+  "Generates evidence-based pitches citing real audit data",
+  "From search to pitch-ready lead in under 2 minutes",
+];
+
+function WhyNearsited() {
+  return (
+    <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="text-center max-w-3xl mx-auto">
+          <SectionLabel>Why Nearsited</SectionLabel>
+          <SectionTitle className="text-center">Traditional prospecting misses most of the market.</SectionTitle>
+          <SectionSub className="mx-auto text-center">
+            Searching Google Maps tells you who has a website. It can&rsquo;t tell you who doesn&rsquo;t — and those are often your best leads.
+          </SectionSub>
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {/* Traditional */}
+          <Card variant="default" padding="lg" className="border-[var(--score-high)]/20">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
+                <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+              </div>
+              <h3 className="text-base font-medium text-[var(--text-primary)]">Traditional prospecting</h3>
+            </div>
+            <ul className="space-y-3">
+              {TRADITIONAL_CONS.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                  <span className="mt-0.5 shrink-0 text-[var(--score-high)] font-bold">✕</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          {/* Nearsited */}
+          <Card variant="default" padding="lg" className="border-[var(--accent)]/30">
+            <div className="mb-5 flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-tint)]">
+                <Zap className="h-4 w-4 text-[var(--accent)]" />
+              </div>
+              <h3 className="text-base font-medium text-[var(--text-primary)]">Nearsited</h3>
+            </div>
+            <ul className="space-y-3">
+              {NEARSITED_PROS.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
+
+        {/* Lead type badges */}
+        <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
+          <p className="mb-4 text-center text-[0.7rem] uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
+            Three types of website opportunity
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-[var(--score-high)]" />
+              <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
+              <span className="text-xs text-[var(--text-tertiary)]">— biggest opportunity</span>
+            </div>
+            <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-amber-500" />
+              <span className="text-sm font-medium text-amber-400">Social Only</span>
+              <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
+            </div>
+            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-4 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-[var(--score-mid)]" />
+              <span className="text-sm font-medium text-[var(--score-mid)]">Weak Website</span>
+              <span className="text-xs text-[var(--text-tertiary)]">— redesign opportunity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── Sample Opportunity Report ────────────────────────────────────────────────
 
-function SampleReport() {
+type ReportTab = "weak" | "none" | "social";
+
+function SampleReport({ navigate }: { navigate: (href: string) => void }) {
+  const [activeTab, setActiveTab] = useState<ReportTab>("weak");
+
+  const tabs: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
+    { id: "weak",   label: "Weak Website",  badge: "Redesign",        badgeColor: "amber" },
+    { id: "none",   label: "No Website",    badge: "Website Build",   badgeColor: "red" },
+    { id: "social", label: "Social Only",   badge: "Website Opportunity", badgeColor: "indigo" },
+  ];
+
   return (
     <section id="report" className="border-t border-[var(--border)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="max-w-3xl">
           <SectionLabel>SAMPLE OPPORTUNITY REPORT</SectionLabel>
-          <SectionTitle>This is what your next lead looks like.</SectionTitle>
+          <SectionTitle>Every opportunity type, one platform.</SectionTitle>
           <SectionSub>
-            Every discovered business gets a full audit report. Here&rsquo;s what you see before you pitch.
+            Nearsited discovers all three kinds of website opportunity. Here&rsquo;s what each report looks like.
           </SectionSub>
         </div>
 
-        <Card variant="default" padding="lg" className="mt-10 border-[var(--border-strong)]">
-          {/* Report header */}
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] pb-6">
-            <div>
-              <div className="flex items-center gap-3">
-                <h3 className="text-xl font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
-                <Badge color="amber">Score: 41/100</Badge>
-              </div>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Estimated redesign value</p>
-              <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,000–$3,000 / month</p>
-            </div>
-          </div>
+        {/* Tab strip */}
+        <div className="mt-8 flex flex-wrap gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
+                  : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Score breakdown */}
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              { label: "Performance", score: 42, color: "var(--score-high)" },
-              { label: "Mobile UX", score: 39, color: "var(--score-high)" },
-              { label: "SEO", score: 48, color: "var(--score-high)" },
-              { label: "Design", score: 36, color: "var(--score-high)" },
-              { label: "Trust signals", score: 38, color: "var(--score-high)" },
-            ].map((item) => (
-              <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
-                <p className="mt-1 text-2xl font-bold text-[var(--text-primary)]" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                  {item.score}
+        <Card variant="default" padding="lg" className="mt-4 border-[var(--border-strong)]">
+
+          {/* ── Weak Website ───────────────────────────────────────── */}
+          {activeTab === "weak" && (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] pb-6">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
+                    <Badge color="amber">Score: 41/100</Badge>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
+                  <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,000–$3,000 / month</p>
+                </div>
+              </div>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                {[
+                  { label: "Performance", score: 42 },
+                  { label: "Mobile UX",   score: 39 },
+                  { label: "SEO",         score: 48 },
+                  { label: "Design",      score: 36 },
+                  { label: "Trust",       score: 38 },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                    <p className="mt-1 text-2xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                      {item.score}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+                  <span className="text-sm font-medium text-[var(--score-high)]">5 critical issues found</span>
+                </div>
+                <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
+                  {[
+                    { issue: "Slow mobile load time (LCP: 4.2s)", impact: "High", pitch: "Faster experience = more bookings" },
+                    { issue: "Missing local SEO schema", impact: "Medium", pitch: "Local SEO = free patient acquisition" },
+                    { issue: "No SSL certificate badge", impact: "High", pitch: "Trust signals = higher conversion" },
+                    { issue: "Outdated design (last updated 2021)", impact: "Medium", pitch: "Modern design = perceived quality" },
+                    { issue: "No clear CTA above the fold", impact: "High", pitch: "Clear CTA = measurable bookings" },
+                  ].map((item) => (
+                    <li key={item.issue} className="flex flex-col gap-1 rounded-lg bg-[var(--bg-surface)] p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="font-medium text-[var(--text-primary)]">{item.issue}</span>
+                        <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact}</span>
+                      </div>
+                      <span className="text-[var(--accent)] text-xs">Pitch: {item.pitch}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
+
+          {/* ── No Website ─────────────────────────────────────────── */}
+          {activeTab === "none" && (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] pb-6">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-medium text-[var(--text-primary)]">Marina Legal Consultants</h3>
+                    <Badge color="red">No Website</Badge>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
+                  <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$2,000–$6,000</p>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+                  <span className="text-sm font-medium text-[var(--score-high)]">No web presence detected</span>
+                </div>
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">
+                  This business has no website. All online visibility relies on a single Google Business listing — no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
                 </p>
               </div>
-            ))}
-          </div>
 
-          {/* Critical issues */}
-          <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-              <span className="text-sm font-medium text-[var(--score-high)]">5 critical issues found</span>
-            </div>
-            <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
-              {[
-                { issue: "Slow mobile load time (LCP: 4.2s)", impact: "High — 53% of mobile visitors bounce", pitch: "Pitch: faster experience = more bookings" },
-                { issue: "Missing local SEO schema", impact: "Medium — not appearing in local pack results", pitch: "Pitch: local SEO = free patient acquisition" },
-                { issue: "No SSL certificate badge", impact: "High — trust signal missing, 68% of users check", pitch: "Pitch: trust = conversion" },
-                { issue: "Outdated design (last updated 2021)", impact: "Medium — feels abandoned to visitors", pitch: "Pitch: modern design = perceived quality" },
-                { issue: "No clear CTA above the fold", impact: "High — visitors don't know what to do", pitch: "Pitch: clear CTA = measurable bookings" },
-              ].map((item) => (
-                <li key={item.issue} className="flex flex-col gap-1 rounded-lg bg-[var(--bg-surface)] p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="font-medium text-[var(--text-primary)]">{item.issue}</span>
-                    <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact.split("—")[0].trim()}</span>
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {[
+                  { label: "Google reviews", value: "4.7★ (38)", note: "Strong social proof" },
+                  { label: "In operation", value: "6+ years", note: "Established business" },
+                  { label: "Website", value: "None", note: "Highest-value opportunity" },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                    <p className="mt-1 text-base font-medium text-[var(--text-primary)]">{item.value}</p>
+                    <p className="mt-0.5 text-xs text-[var(--accent)]">{item.note}</p>
                   </div>
-                  <span className="text-[var(--accent)] text-xs">{item.pitch}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+                ))}
+              </div>
 
-          {/* CTA */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
+              <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
+                <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
+                  &ldquo;Hi — I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* ── Social Only ────────────────────────────────────────── */}
+          {activeTab === "social" && (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] pb-6">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-medium text-[var(--text-primary)]">Blue Wave Restaurant</h3>
+                    <Badge color="indigo">Social Only</Badge>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
+                  <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,500–$4,000</p>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm font-medium text-amber-400">Entire online presence is rented</span>
+                </div>
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">
+                  This business runs its entire online presence through Instagram. No website means no menu page, no reservation form, no SEO, no owned customer data. If Instagram changes its algorithm or bans the account, the business loses all digital visibility overnight.
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {[
+                  { label: "Instagram followers", value: "4,200", note: "Engaged audience, no website" },
+                  { label: "Booking method", value: "DMs only", note: "No reservation system" },
+                  { label: "Google findability", value: "Minimal", note: "No SEO footprint" },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                    <p className="mt-1 text-base font-medium text-[var(--text-primary)]">{item.value}</p>
+                    <p className="mt-0.5 text-xs text-[var(--accent)]">{item.note}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
+                <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
+                  &ldquo;Hi — Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website — you don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* CTA — shared */}
+          <div className="mt-6 flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Want to see reports like this for your city?</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-1">Enter any city + business type. Get ranked leads in under 3 seconds.</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Want to find opportunities like this in your city?</p>
+              <p className="mt-1 text-xs text-[var(--text-tertiary)]">Enter any city + business type. Get ranked leads in under 3 seconds.</p>
             </div>
-            <Button variant="primary" onClick={() => window.location.href = "/signup"} className="shrink-0">
+            <Button variant="primary" onClick={() => navigate("/signup")} className="w-full sm:w-auto">
               Try it now →
             </Button>
           </div>
@@ -374,32 +622,122 @@ function SampleReport() {
 
 // ── Sample Pitch ─────────────────────────────────────────────────────────────
 
-function SamplePitchSection() {
+type PitchTab = "weak" | "none" | "social";
+
+const PITCH_EXAMPLES: Record<PitchTab, {
+  label: string;
+  badgeColor: "amber" | "red" | "indigo";
+  meta: string;
+  body: React.ReactNode;
+}> = {
+  weak: {
+    label: "Weak Website",
+    badgeColor: "amber",
+    meta: "Tone: Professional · For: Bright Smile Dental · 1.4s",
+    body: (
+      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+        <p>Hi Dr. Sameer,</p>
+        <p>
+          I ran a quick audit of <span className="font-medium text-[var(--text-primary)]">brightsmile.ae</span> and found several issues quietly costing you new patients.
+        </p>
+        <ul className="list-disc space-y-1.5 pl-4">
+          <li><span className="text-[var(--score-high)]">4.2s mobile load time</span> — 53% of visitors leave before seeing your content</li>
+          <li><span className="text-[var(--score-high)]">No local SEO</span> — you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
+          <li><span className="text-[var(--score-high)]">Missing trust signals</span> — no SSL badge or social proof above the fold</li>
+        </ul>
+        <p>Fixing these could recover <span className="font-medium text-[var(--score-good)]">an estimated $1,000–$3,000/month</span> in missed revenue. Happy to walk you through the full audit?</p>
+      </div>
+    ),
+  },
+  none: {
+    label: "No Website",
+    badgeColor: "red",
+    meta: "Tone: Professional · For: Marina Legal Consultants · 1.2s",
+    body: (
+      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+        <p>Hi,</p>
+        <p>
+          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--text-primary)]">Marina Legal Consultants</span> — great Google reviews, but no website.
+        </p>
+        <p>Every day without a website, potential clients searching &ldquo;legal consultant Dubai Marina&rdquo; are going to competitors who have one. Your 4.7★ reputation deserves more than a Google listing.</p>
+        <ul className="list-disc space-y-1.5 pl-4">
+          <li>Clients can&rsquo;t find your services without calling first</li>
+          <li>No portfolio, no testimonials, no contact form</li>
+          <li>Zero Google search visibility outside Maps</li>
+        </ul>
+        <p>I build professional websites for legal firms. Would you be open to a quick chat about what this could mean for your enquiry volume?</p>
+      </div>
+    ),
+  },
+  social: {
+    label: "Social Only",
+    badgeColor: "indigo",
+    meta: "Tone: Friendly · For: Blue Wave Restaurant · 1.1s",
+    body: (
+      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+        <p>Hi Blue Wave team,</p>
+        <p>
+          Your <span className="font-medium text-[var(--text-primary)]">Instagram</span> looks incredible — 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
+        </p>
+        <ul className="list-disc space-y-1.5 pl-4">
+          <li>No website = no way to take online reservations</li>
+          <li>No Google search presence — invisible to people who don&rsquo;t already know you</li>
+          <li>If Instagram changes its algorithm, you lose everything overnight</li>
+        </ul>
+        <p>A website would turn your existing followers into bookings you control — with an online menu, reservation form, and Google visibility. Worth a 10-minute conversation?</p>
+      </div>
+    ),
+  },
+};
+
+function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) {
+  const [activeTab, setActiveTab] = useState<PitchTab>("weak");
+  const example = PITCH_EXAMPLES[activeTab];
+
   return (
     <section id="pitch" className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Left: Explanation */}
+          {/* Left */}
           <div>
-            <SectionLabel>Sample pitch</SectionLabel>
-            <SectionTitle>One click from audit to outreach.</SectionTitle>
+            <SectionLabel>Sample pitches</SectionLabel>
+            <SectionTitle>Every opportunity type gets a tailored pitch.</SectionTitle>
             <SectionSub>
-              Every pitch is generated from the actual audit data. No generic templates.
-              No &ldquo;I noticed your website&hellip;&rdquo; fluff. Real issues, real solutions.
+              Pitches are generated from real opportunity data — not templates. The angle changes completely depending on whether the business has no website, social-only, or a weak one.
             </SectionSub>
 
             <div className="mt-8 space-y-4">
               {[
-                { icon: Zap, text: "Pulls from 5 audit dimensions — not just PageSpeed" },
-                { icon: FileText, text: "Adjustable tone: direct, professional, or friendly" },
-                { icon: TrendingUp, text: "Includes estimated revenue impact for leverage" },
+                { icon: Zap,       text: "Angle adapts to the opportunity type — new build, social conversion, or improvement" },
+                { icon: FileText,  text: "Adjustable tone: professional, friendly, or luxury" },
+                { icon: TrendingUp, text: "Cites real data — performance scores, missing features, estimated impact" },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.text} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
-                    <Icon className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
                     <span>{item.text}</span>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Tab strip — left side */}
+            <div className="mt-8 flex flex-wrap gap-2">
+              {(["weak", "none", "social"] as PitchTab[]).map((id) => {
+                const tab = PITCH_EXAMPLES[id];
+                return (
+                  <button
+                    key={id}
+                    onClick={() => setActiveTab(id)}
+                    className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                      activeTab === id
+                        ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
+                        : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
                 );
               })}
             </div>
@@ -408,55 +746,34 @@ function SamplePitchSection() {
           {/* Right: Pitch card */}
           <div>
             <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-[var(--accent)]" />
                   <span className="text-sm font-medium text-[var(--text-primary)]">Generated pitch</span>
                 </div>
-                <Badge color="green" dot>Ready to send</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge color={example.badgeColor}>{example.label}</Badge>
+                  <Badge color="green" dot>Ready to send</Badge>
+                </div>
               </div>
 
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-                <div className="mb-4 flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-                  <span>Tone: Direct · professional</span>
-                  <span className="h-3 w-px bg-[var(--border)]" />
-                  <span>Generated in 1.4s</span>
-                  <span className="h-3 w-px bg-[var(--border)]" />
-                  <span>For: Bright Smile Dental</span>
-                </div>
+                <p className="mb-4 text-xs text-[var(--text-tertiary)]">{example.meta}</p>
+                {example.body}
 
-                <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
-                  <p>Hi Dr. Sameer,</p>
-                  <p>
-                    I ran a quick audit of <span className="text-[var(--text-primary)] font-medium">brightsmile.ae</span> and found
-                    several issues that are quietly costing you new patients.
-                  </p>
-                  <ul className="space-y-1.5 list-disc pl-4">
-                    <li><span className="text-[var(--score-high)]">4.2s mobile load time</span> — 53% of visitors leave before seeing your content</li>
-                    <li><span className="text-[var(--score-high)]">No local SEO</span> — you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
-                    <li><span className="text-[var(--score-high)]">No trust signals</span> — missing SSL badge and social proof above the fold</li>
-                  </ul>
-                  <p>
-                    A redesign addressing these issues could recover <span className="text-[var(--score-good)] font-medium">an estimated $1,000–$3,000/month</span> in missed revenue.
-                  </p>
-                  <p>
-                    I&rsquo;d love to walk you through the full audit. When works for a quick call?
-                  </p>
-                </div>
-
-                <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-                  <div className="flex gap-2">
-                    <Button variant="secondary">Edit tone</Button>
-                    <Button variant="secondary">Regenerate</Button>
+                <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="secondary" className="flex-1 sm:flex-none">Edit tone</Button>
+                    <Button variant="secondary" className="flex-1 sm:flex-none">Regenerate</Button>
                   </div>
-                  <Button variant="primary" onClick={() => window.location.href = "/signup"}>
+                  <Button variant="primary" onClick={() => navigate("/signup")} className="w-full sm:w-auto">
                     Copy pitch →
                   </Button>
                 </div>
               </div>
 
-              <p className="mt-4 text-xs text-[var(--text-tertiary)] text-center">
-                Every pitch is unique. No templates, no repetition, no &ldquo;I noticed your website could use some work&rdquo;.
+              <p className="mt-4 text-center text-xs text-[var(--text-tertiary)]">
+                Every pitch is unique. No templates — pitch angle, evidence, and tone are all generated from the opportunity.
               </p>
             </Card>
           </div>
@@ -472,21 +789,21 @@ const USE_CASES = [
   {
     icon: UserIcon,
     title: "Solo freelancers",
-    desc: "Stop spending 10 hours/week prospecting. Surface 20–60 qualified leads in 3 seconds, pitch with evidence, and close 2–3 redesigns per month without a sales team.",
+    desc: "Stop spending 10 hours/week prospecting. Surface 20–60 qualified leads in 3 seconds — no-website businesses, social-only, and weak websites — pitch with evidence, and close 2–3 new projects per month.",
     stat: "Avg. 3 new clients/month",
     cta: "Start as a solo",
   },
   {
     icon: Users,
     title: "Small agencies",
-    desc: "Replace cold email with warm, evidence-based outreach. Give your sales team a pipeline of scored leads with ready-to-send pitches. Close more, faster.",
+    desc: "Replace cold email with warm, evidence-based outreach. Give your team a pipeline of scored opportunities — new builds and redesigns — with ready-to-send pitches. Close more, faster.",
     stat: "2–3× faster sales cycle",
     cta: "Start as an agency",
   },
   {
     icon: Briefcase,
     title: "Web studios",
-    desc: "Scale your redesign pipeline without scaling your sales team. Bulk-discover opportunities across cities, assign to account managers, track everything.",
+    desc: "Scale your project pipeline without scaling your sales team. Bulk-discover all opportunity types across cities, assign to account managers, and track every deal from discovery to close.",
     stat: "10× prospecting capacity",
     cta: "Start as a studio",
   },
@@ -496,7 +813,7 @@ function UserIcon() {
   return <Users className="h-5 w-5" />;
 }
 
-function AgencyUseCases() {
+function AgencyUseCases({ navigate }: { navigate: (href: string) => void }) {
   return (
     <section className="border-t border-[var(--border)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
@@ -521,13 +838,46 @@ function AgencyUseCases() {
                 <p className="mt-2 flex-1 text-sm leading-7 text-[var(--text-secondary)]">{uc.desc}</p>
                 <div className="mt-6 border-t border-[var(--border)] pt-4">
                   <p className="text-xs text-[var(--accent)] font-medium mb-3">{uc.stat}</p>
-                  <Button variant="primary" className="w-full" onClick={() => window.location.href = "/signup"}>
+                  <Button variant="primary" className="w-full" onClick={() => navigate("/signup")}>
                     {uc.cta} →
                   </Button>
                 </div>
               </Card>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Founder Story ────────────────────────────────────────────────────────────
+
+function FounderStory() {
+  return (
+    <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+      <div className="mx-auto max-w-3xl px-6 md:px-8">
+        <div className="text-center">
+          <SectionLabel>The story</SectionLabel>
+        </div>
+        <div className="mt-8 space-y-5 text-base leading-8 text-[var(--text-secondary)]">
+          <p>
+            I run a web design agency. Finding clients who actually need a new website was always the hardest part.
+          </p>
+          <p>
+            I&rsquo;d spend hours browsing Google Maps, opening every business website, trying to figure out which ones were outdated. Most were fine. Some were terrible. A few had no website at all. But finding them was manual, slow, and I was always guessing.
+          </p>
+          <p>
+            So I built a tool that does it for me. Enter a city and business type. It finds the businesses with no website, social-only presence, or weak websites — ranks them by opportunity, audits the site, and writes the pitch.
+          </p>
+          <p>
+            It worked for my agency. So I turned it into a product.
+          </p>
+        </div>
+        <div className="mt-8 text-center">
+          <p className="text-sm text-[var(--text-tertiary)]">
+            Built by <a href="https://againlive.com" className="text-[var(--accent)] hover:underline" target="_blank" rel="noopener noreferrer">Again Labs</a>.
+          </p>
         </div>
       </div>
     </section>
@@ -551,22 +901,22 @@ const OBJECTIONS = [
   },
   {
     objection: "I can find leads myself on Google Maps.",
-    response: "You can find businesses on Google Maps — but you can't audit 50 websites in 3 seconds, rank them by opportunity, and generate personalised pitches. That's the difference between browsing and closing.",
-    answer: "How this helps you close more deals: What takes you 10 hours manually takes 3 minutes. That's 199× faster.",
+    response: "Google Maps shows you businesses that have websites. It can't show you businesses with no website, social-only presence, or platform-only listings — those are often your highest-value leads. And even for businesses with websites, you can't audit 50 in 3 seconds, rank them by opportunity, and generate personalised pitches.",
+    answer: "How this helps you close more deals: You find opportunities Google Maps literally cannot show you. That's a different market.",
   },
   {
     objection: "My clients aren't on page 1 of Google anyway.",
-    response: "Most local businesses don't need to rank #1 — they need a website that doesn't drive customers away. Nearsited finds businesses whose websites are actively losing them money. That's a much easier pitch than 'I'll get you to #1'.",
-    answer: "How this helps you close more deals: You're pitching revenue recovery, not SEO promises. Harder to say no to.",
+    response: "Some of your best prospects aren't on Google at all — they have no website, or they're running everything from an Instagram page. Nearsited finds those businesses too. For the ones that do have a website, you're pitching revenue recovery from real, measurable problems — not vague SEO promises.",
+    answer: "How this helps you close more deals: You're pitching a clear gap they already have. Much easier to say yes to than ranking promises.",
   },
   {
     objection: "I don't do cold outreach.",
-    response: "This isn't cold outreach. Every business on Nearsited has clear, measurable problems with their existing website. You're not guessing — you're responding to evidence they can see themselves. It's warm.",
+    response: "This isn't cold outreach. Every opportunity on Nearsited has a clear, measurable gap — whether that's a broken website or no website at all. You're not guessing — you're responding to evidence they can see themselves. It's warm.",
     answer: "How this helps you close more deals: Evidence-based outreach converts 3–5× better than cold email. You're helping, not selling.",
   },
 ];
 
-function ObjectionsSection() {
+function ObjectionsSection({ navigate }: { navigate: (href: string) => void }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -612,7 +962,7 @@ function ObjectionsSection() {
 
         <div className="mt-10 text-center">
           <p className="text-sm text-[var(--text-secondary)] mb-4">Still have objections? The best way to answer them is to try it.</p>
-          <Button variant="primary" onClick={() => window.location.href = "/signup"} className="px-8 py-3 text-base">
+          <Button variant="primary" onClick={() => navigate("/signup")} className="px-8 py-3 text-base">
             Try Nearsited free →
           </Button>
         </div>
@@ -623,7 +973,7 @@ function ObjectionsSection() {
 
 // ── Proof Blocks ─────────────────────────────────────────────────────────────
 
-function ProofBlocks() {
+function ProofBlocks({ navigate }: { navigate: (href: string) => void }) {
   return (
     <section className="border-t border-[var(--border)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
@@ -634,7 +984,7 @@ function ProofBlocks() {
             Nearsited is a new tool. We&rsquo;re working with our first 20 design agencies to refine the workflow before scaling. Join the early cohort — pricing is locked at the launch rate.
           </SectionSub>
           <div className="mt-8">
-            <Button variant="primary" onClick={() => window.location.href = "/signup"} className="px-8 py-3 text-base">
+            <Button variant="primary" onClick={() => navigate("/signup")} className="px-8 py-3 text-base">
               Start free →
             </Button>
           </div>
@@ -651,12 +1001,12 @@ function FAQ() {
 
   const faqs = [
     {
-      q: "How does Nearsited help me close more redesign deals?",
-      a: "It removes the three biggest bottlenecks in agency sales: finding leads that actually need you, knowing what to pitch, and writing outreach that gets replies. Instead of spending 10 hours prospecting, you spend 10 minutes — and pitch with evidence, not guesses.",
+      q: "How does Nearsited help me win more website projects?",
+      a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, and weak websites — then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
     },
     {
       q: "What kind of businesses does Nearsited find?",
-      a: "Local businesses with measurable website problems: slow performance, poor mobile experience, weak SEO, outdated design, missing trust signals. Dentists, restaurants, lawyers, gyms, hotels — 80+ categories across any city. If the website is losing them money, Nearsited finds it.",
+      a: "Three types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, hotels — 80+ categories across any city.",
     },
     {
       q: "How accurate is the opportunity score?",
@@ -668,11 +1018,11 @@ function FAQ() {
     },
     {
       q: "What if there are no good opportunities in my city?",
-      a: "That's extremely unlikely. Most cities have 40–60% of local businesses with below-average websites. But if you run a search and genuinely find nothing pitchable, email us and we'll refund your unused credits. No questions.",
+      a: "That's extremely unlikely. Most cities have 40–60% of local businesses with below-average websites — and many more with no website at all. But if you run a search and genuinely find nothing pitchable, email us and we'll refund your unused credits. No questions.",
     },
     {
       q: "How is this different from cold email tools?",
-      a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised from an actual audit of the business's website. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
+      a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, or a broken site. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
     },
   ];
 
@@ -721,7 +1071,7 @@ function FAQ() {
 
 // ── Final CTA ────────────────────────────────────────────────────────────────
 
-function CTA() {
+function CTA({ navigate }: { navigate: (href: string) => void }) {
   return (
     <section className="border-t border-[var(--border)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
@@ -729,19 +1079,18 @@ function CTA() {
           <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/5 blur-[100px]" />
 
           <div className="relative z-10">
-            <Badge color="indigo" dot>Start closing redesign deals today</Badge>
+            <Badge color="indigo" dot>Start finding website opportunities today</Badge>
             <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--text-primary)]">
-              Your next signed project is out there.
+              Your next client is out there — without a website.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
-              Enter a city and business type. Get ranked leads with audits, estimated revenue impact, 
-              and a ready-to-send pitch — all in under 3 minutes.
+              Enter a city and business type. Find businesses with no website, social-only presence, or weak websites — with a ready-to-send pitch for each one. All in under 3 minutes.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button variant="primary" icon={<Search className="h-4 w-4" />} onClick={() => window.location.href = "/signup"} className="px-8 py-3 text-base">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+              <Button variant="primary" icon={<Search className="h-4 w-4" />} onClick={() => navigate("/signup")} className="w-full px-8 py-3 text-base sm:w-auto">
                 Find your first opportunity
               </Button>
-              <Button variant="secondary" onClick={() => window.location.href = "/login"} className="px-8 py-3 text-base">
+              <Button variant="secondary" onClick={() => navigate("/login")} className="w-full px-8 py-3 text-base sm:w-auto">
                 Sign in
               </Button>
             </div>
@@ -765,11 +1114,11 @@ function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
         <div>
           <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]" style={{ fontFamily: 'Switzer, Geist, sans-serif' }}>
-            <img src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
-            <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">nearsited</span>
+            <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
+            <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">NearSited</span>
           </div>
           <p className="max-w-sm text-sm leading-7 text-[var(--text-tertiary)]">
-            Revenue intelligence for web agencies. Find, pitch, and win redesign projects.
+            Find businesses that need websites, redesigns, or a stronger online presence.
           </p>
         </div>
         <div>
@@ -807,21 +1156,26 @@ function Footer() {
 // ── Main Page ────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const router = useRouter();
+  const navigate = router.push.bind(router);
+
   return (
     <div className="relative min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
-      <Nav />
+      <Nav navigate={navigate} />
       <main className="pt-20">
-        <Hero />
+        <Hero navigate={navigate} />
         <TrustBar />
         <HowItWorks />
-        <SampleReport />
-        <SamplePitchSection />
-        <AgencyUseCases />
+        <WhyNearsited />
+        <SampleReport navigate={navigate} />
+        <SamplePitchSection navigate={navigate} />
+        <AgencyUseCases navigate={navigate} />
+        <FounderStory />
         {/* ROI examples removed */}
-        <ObjectionsSection />
-        <ProofBlocks />
+        <ObjectionsSection navigate={navigate} />
+        <ProofBlocks navigate={navigate} />
         <FAQ />
-        <CTA />
+        <CTA navigate={navigate} />
         <Footer />
       </main>
     </div>

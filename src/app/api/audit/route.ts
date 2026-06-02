@@ -28,7 +28,7 @@ type AuditResponse = {
 };
 
 const PAGESPEED_URL = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";
-const REQUEST_TIMEOUT_MS = 90000;
+const REQUEST_TIMEOUT_MS = 30000;
 
 /** Write an NDJSON line to the stream. */
 function writeJson(

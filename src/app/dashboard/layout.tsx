@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -16,10 +17,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Brand — clicking logo goes to landing page */}
         <Link href="/" className="flex h-16 items-center gap-2.5 border-b border-[var(--border)] px-5 transition-colors hover:bg-white/[0.02]" style={{ fontFamily: 'Switzer, Geist, sans-serif' }}>
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--accent)]/25 bg-[var(--bg-elevated)]">
-            <img src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
+            <Image src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
           </div>
           <span className="text-xl font-normal tracking-tight text-[var(--text-primary)]">
-            nearsited
+            NearSited
           </span>
         </Link>
 

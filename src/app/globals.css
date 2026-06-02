@@ -99,6 +99,11 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-weight: 400;
+}
+
+/* Enforce design font on all form elements including <select> + <option> */
+input, select, textarea, button, option {
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 

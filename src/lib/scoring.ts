@@ -283,3 +283,39 @@ export function opportunityBadgeVariant(
   if (opportunityScore >= 25) return 'indigo';
   return 'red';
 }
+
+// ── Pre-Audit Estimated Opportunity Score ─────────────────────────────────────
+
+/**
+ * Estimates a business's opportunity score BEFORE an audit exists.
+ * Uses website_status and URL patterns as a redesign probability signal,
+ * and review count + rating as a viability signal.
+ *
+ * Returns 0–100. Used on the Discover page to show a preliminary
+ * opportunity estimate until the user clicks "Analyse Opportunity".
+ */
+export function estimatedOpportunity(business: {
+  website_status: string;
+  website: string | null;
+  rating: number | null;
+  user_ratings_total: number | null;
+}): number {
+  const reviews = business.user_ratings_total ?? 0;
+  const rating = business.rating ?? 0;
+  let viability = 0.15;
+  if (reviews >= 50 && rating >= 4.0) viability = 1.0;
+  else if (reviews >= 20) viability = 0.7;
+  else if (reviews >= 5) viability = 0.4;
+
+  let redesign = 0.5;
+  const url = (business.website ?? "").toLowerCase();
+  if (business.website_status === "has_website") {
+    if (url.startsWith("http://") && !url.startsWith("https://")) redesign = 0.9;
+    else if (/wixsite\.com|squarespace\.com|godaddysites\.com|weebly\.com|business\.site/.test(url)) redesign = 0.8;
+    else redesign = 0.5;
+  } else if (business.website_status === "platform_only") redesign = 0.7;
+  else if (business.website_status === "no_website") redesign = 0.4;
+  else if (business.website_status === "social_only") redesign = 0.5;
+
+  return Math.round(viability * redesign * 100);
+}

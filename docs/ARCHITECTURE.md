@@ -1,5 +1,5 @@
 # Nearsited — Architecture
-**Version:** 2.1 · **Date:** May 2026
+**Version:** 2.2 · **Date:** June 2026
 
 ---
 
@@ -12,7 +12,8 @@ Nearsited runs across **two runtime environments** because the workloads have fu
 │  RUNTIME A — Vercel (Next.js serverless)         [v1 + v2]    │
 │  • UI (App Router pages)                                      │
 │  • All v1 API routes: discover, audit, analyze-design, pitch  │
-│    pipeline, export/pdf, saved-searches, gemini-test          │
+│    pipeline, export/pdf, saved-searches, gemini-test,         │
+│    cities/search, contact-info                                │
 │  • Auth, RLS-bound reads/writes                               │
 │  • Anything that completes in < 60s                           │
 └─────────────────────────────────────────────────────────────┘
@@ -39,9 +40,9 @@ Nearsited runs across **two runtime environments** because the workloads have fu
 
 | Layer | Technology | Runtime | Notes |
 |---|---|---|---|
-| Framework | Next.js 16.2.6 (App Router, Turbopack) | A | Root: `C:\projects\nearsited\nearsited` — `cd nearsited` before `npm`. |
+| Framework | Next.js 16.2.6 (App Router, Turbopack) | A | Root: `c:/Projects/nearsited` — all npm commands run here. |
 | Language | TypeScript (strict) | A + B | |
-| Styling | Tailwind CSS | A | Light theme (indigo-600 primary), CSS variables in `globals.css`. ✅ Migrated. |
+| Styling | Tailwind CSS v4 | A | **Dark theme** (near-black navy `#0a0e12`, sage green accent `#8A9777`), CSS variables in `globals.css`. |
 | DB + Auth + Storage | Supabase (Postgres 15, GoTrue, Storage) | — | Free → Pro at ~500 users. |
 | AI (vision + pitch + UX) | Gemini 3.5 Flash | A + B | `gemini-3.5-flash`. Multimodal. |
 | Static screenshots | ScreenshotOne | A | v1. Swap for self-hosted Playwright at scale. |
@@ -79,7 +80,8 @@ nearsited/                              # Runtime A (Next.js)
         analyze-ux/route.ts             # 🟦 ENQUEUE a UX job, return job id     [v2, async]
         webhooks/queue/route.ts         # 🟦 queue callback → reads results       [v2]
       dashboard/
-        layout.tsx                      # ✅ Sidebar nav + credits widget + user info
+        layout.tsx                      # ✅ Sidebar nav layout
+        sidebar-nav.tsx                 # ✅ 7 nav items (no Coming Soon section)
         page.tsx                        # ✅ Dashboard home (stat cards + recent + pipeline)
         dashboard-client.tsx            # ✅ Dashboard client component
         sign-out-button.tsx             # ✅ Sign out button
@@ -99,7 +101,7 @@ nearsited/                              # Runtime A (Next.js)
       scoring.ts                        # ✅ The ONE place scores are computed
       analysis-context.tsx              # ✅ Analysis progress tracking context
       data/ cities.ts  cities.json  businessTypes.ts
-  middleware.ts                         # ✅ Auth session guard
+  middleware.ts                         # ✅ Auth session guard (restricted to /dashboard/* and /(auth)/*)
   globals.css                           # ✅ Light theme CSS variables
 
 worker/                                 # Runtime B (v2) — separate deploy
@@ -122,7 +124,7 @@ worker/                                 # Runtime B (v2) — separate deploy
 
 | Route | Method | Runtime | Sync/Async | Purpose | Status |
 |---|---|---|---|---|---|
-| `/api/discover` | POST | A | **NDJSON stream** | 3 parallel queries + enrichment, streamed | ✅ Live |
+| `/api/discover` | POST | A | **NDJSON stream** | 3 parallel queries + enrichment, batched upserts (50/batch) | ✅ Live |
 | `/api/audit` | POST | A | **NDJSON stream** | PageSpeed audit with progress steps, 7d cache | ✅ Live |
 | `/api/analyze-design` | POST | A | **NDJSON stream** | ScreenshotOne + Gemini, progress steps, 7d cache | ✅ Live |
 | `/api/pitch` | POST | A | sync | Pitch generation (lead-type branched, cites real data) | ✅ Rebuilt |
@@ -150,9 +152,9 @@ export async function POST(req: NextRequest) {
 
 ### 4.2 API Route Details
 
-**`/api/discover`** — Geocodes city → **3 parallel Nearby Search queries** (keyword, keyword+type mapped via `BUSINESS_TYPE_TO_PLACES_TYPE`, 1.5× radius) → dedup by `place_id` → streams results via **NDJSON**: `results` (immediate, with cached enrichment) → `enrichment` (batched Place Details updates, 10/batch) → `done` (final upserted businesses). `places_cache` 90-day TTL. Website classification (`classifyWebsite()`). Logged with `[DISCOVER]`. Multi-query log: `[DISCOVER] multi-query: X from keyword, Y from keyword+type, Z from expanded-radius, N unique after dedup`.
+**`/api/discover`** — Geocodes city → **3 parallel Nearby Search queries** (keyword, keyword+type mapped via `BUSINESS_TYPE_TO_PLACES_TYPE`, 1.5× radius) → dedup by `place_id` → streams results via **NDJSON**: `results` (immediate, with cached enrichment) → `enrichment` (batched Place Details updates, **25/batch**, with **batched `places_cache` upserts**) → `done` (final upserted businesses). **Business upserts are batched (50/batch)** instead of one-at-a-time, reducing 180+ sequential DB calls to ~4. `places_cache` 90-day TTL. Website classification (`classifyWebsite()`). Logged with `[DISCOVER]`.
 
-**`/api/audit`** — PageSpeed Insights for mobile + desktop concurrently. Requests both `category=performance` and `category=seo`. **Streams progress via NDJSON**: `fetching` → `mobile` → `desktop` → `complete` → `result` → `done`. **7-day audit cache**: checks `audits` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately (regular JSON); cache miss runs live PageSpeed. `force: true` bypasses cache. Extracts metrics via `extractMetrics()`. Inserts 2 rows via admin client. Updates businesses `performance_score`, `audited_at`, `flagged_for_outreach`. 60s AbortController timeout. Retries once on 500/429. Logged with `[AUDIT]`.
+**`/api/audit`** — PageSpeed Insights for mobile + desktop concurrently. Requests both `category=performance` and `category=seo`. **Streams progress via NDJSON**: `fetching` → `mobile` → `desktop` → `complete` → `result` → `done`. **7-day audit cache**: checks `audits` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately (regular JSON); cache miss runs live PageSpeed. `force: true` bypasses cache. Extracts metrics via `extractMetrics()`. Inserts 2 rows via admin client. Updates businesses `performance_score`, `audited_at`, `flagged_for_outreach`. **30s** AbortController timeout (reduced from 60s). Retries once on 500/429. Logged with `[AUDIT]`.
 
 **`/api/analyze-design`** — ScreenshotOne full-page screenshot → Gemini 3.5 Flash vision critique. **Streams progress via NDJSON**: `mobile-screenshot` → `mobile-analysis` → `desktop-analysis` → `persisting` → `complete` → `result` → `done`. **7-day design cache**: checks `design_analyses` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately. `force: true` bypasses cache. Returns structured JSON: `{ design_score, criteria_scores: {...}, issues: [{title,detail,point_deduction,impact}] }`. Mobile + desktop run concurrently. Inserts via admin client, updates businesses. 30s timeout per external call. Logged with `[DESIGN]`.
 
@@ -163,6 +165,10 @@ export async function POST(req: NextRequest) {
 **`/api/export/pdf`** — Generates PDF via jsPDF with business name, performance/SEO/mobile/design scores, top issues with point deductions. Returns downloadable `<business-name>-audit.pdf`.
 
 **`/api/saved-searches`** — CRUD for `territories` table. Saved city+business_type search queries.
+
+**`/api/cities/search`** — Server-side city search that replaces the **29MB client-side `cities.json`**. Caches all cities in memory on first request, returns max 200 results sorted by popularity. Accepts optional `?q=` search parameter for search-as-you-type. Logged with `[CITIES SEARCH]`.
+
+**`/api/contact-info`** — Fetches phone number and email for a business from the `businesses` table. Used by lead detail pages to show contact info and determine pitch channel. Logged with `[CONTACT INFO]`.
 
 ### 4.3 The Async Pattern (UX analysis, v2)
 UX analysis cannot return inline (30–120s). Flow:
@@ -208,9 +214,9 @@ UI gets completion via **Supabase Realtime** subscription on the `ux_analyses` t
 | Place Details (website field) | `maps.googleapis.com/maps/api/place/details/json` | ₹0.25/req |
 | PageSpeed Insights | `googleapis.com/pagespeedonline/v5/runPagespeed` | Free (huge daily quota) |
 
-**PageSpeed returns performance ONLY by default.** For SEO add `&category=performance&category=seo`. ✅ Both categories are now requested in [`src/app/api/audit/route.ts`](nearsited/src/app/api/audit/route.ts:43-44). Run mobile + desktop concurrently (`Promise.allSettled`), 60s timeout each.
+**PageSpeed returns performance ONLY by default.** For SEO add `&category=performance&category=seo`. ✅ Both categories are now requested in [`src/app/api/audit/route.ts`](nearsited/src/app/api/audit/route.ts:43-44). Run mobile + desktop concurrently (`Promise.allSettled`), **30s** timeout each (reduced from 60s/90s).
 
-### 6.2 Gemini — `gemini-3.5-flash` (verified May 2026)
+### 6.2 Gemini — `gemini-3.5-flash` (verified June 2026)
 - Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`
 - Auth: **header** `x-goog-api-key: <GEMINI_API_KEY>` (NOT query param). Key from Google AI Studio.
 - Define once: `const GEMINI_MODEL = 'gemini-3.5-flash'`.
@@ -352,19 +358,12 @@ Login and signup with email/password + Google OAuth. Dashboard sidebar includes 
 │                                                               │
 │ MAIN                                                          │
 │   Dashboard                                                   │
-│   Leads                                                       │
-│   Business Discovery                                          │
-│   AI Audit                                                    │
+│   Opportunities                                               │
+│   Opportunity Discovery                                       │
+│   Opportunity Review                                          │
 │   Pipeline                                                    │
-│   Pitches                    [v2]                             │
-│   Settings                   [v2]                             │
-│                                                               │
-│ Coming Soon                                                   │
-│   Radar                  [v2 — disabled]                      │
-│   Templates              [v2 — disabled]                      │
-│   Campaigns              [v2 — disabled]                      │
-│   Reports                [v2 — disabled]                      │
-│   Integrations           [v2 — disabled]                      │
+│   Pitches                                                     │
+│   Settings                                                    │
 │                                                               │
 │ USAGE                                                         │
 │ Credits 100/100 · Resets in 30 days · [Buy More — disabled]  │
@@ -483,14 +482,14 @@ The worker server, queue, and storage are introduced **together** for UX analysi
 
 | File | Purpose |
 |---|---|
-| [`src/lib/scoring.ts`](nearsited/src/lib/scoring.ts) | All score math: computeOverall, uxDesignScore, trustScore, uxInteractionScore, projection, blendedQuality, scoreLabel, scoreColor, scoreColorClasses |
-| [`src/lib/types.ts`](nearsited/src/lib/types.ts) | WebsiteStatus enum, classifyWebsite() with 50+ domain entries |
-| [`src/lib/analysis-context.tsx`](nearsited/src/lib/analysis-context.tsx) | React context for tracking audit/design analysis progress (deduplication, abort, status) |
-| [`src/lib/supabase/admin.ts`](nearsited/src/lib/supabase/admin.ts) | Singleton admin client (service role, bypasses RLS, never in browser) |
-| [`src/lib/supabase/server.ts`](nearsited/src/lib/supabase/server.ts) | Server client (session-aware auth + RLS reads) |
-| [`src/lib/supabase/client.ts`](nearsited/src/lib/supabase/client.ts) | Browser client (anon key, RLS enforced) |
-| [`components/ui/SearchableSelect.tsx`](nearsited/src/components/ui/SearchableSelect.tsx) | Reusable searchable dropdown (used in discover page) |
-| [`scripts/run-migrations.mjs`](nearsited/scripts/run-migrations.mjs) | Migration runner for SCHEMA.md §5 SQL |
+| [`src/lib/scoring.ts`](src/lib/scoring.ts) | All score math: computeOverall, uxDesignScore, trustScore, uxInteractionScore, projection, blendedQuality, scoreLabel, scoreColor, scoreColorClasses |
+| [`src/lib/types.ts`](src/lib/types.ts) | WebsiteStatus enum, classifyWebsite() with 50+ domain entries |
+| [`src/lib/ui-constants.ts`](src/lib/ui-constants.ts) | PIPELINE_LABELS, OPPORTUNITY_INDICATORS, PITCH_STATUS_LABELS, LEAD_TYPE_LABELS |
+| [`src/lib/supabase/admin.ts`](src/lib/supabase/admin.ts) | Singleton admin client (service role, bypasses RLS, never in browser) |
+| [`src/lib/supabase/server.ts`](src/lib/supabase/server.ts) | Server client (session-aware auth + RLS reads) |
+| [`src/lib/supabase/client.ts`](src/lib/supabase/client.ts) | Browser client (anon key, RLS enforced) |
+| [`src/components/ui/SearchableSelect.tsx`](src/components/ui/SearchableSelect.tsx) | Reusable searchable dropdown (used in discover page) |
+| [`scripts/run-migrations.mjs`](scripts/run-migrations.mjs) | Migration runner for SCHEMA.md §5 SQL |
 
 ---
 

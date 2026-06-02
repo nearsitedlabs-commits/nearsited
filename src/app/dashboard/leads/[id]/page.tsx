@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { detectLeadWorkflow } from "@/lib/lead-types";
 import LeadDetailClient from "./lead-detail-client";
-import type { WebsiteStatus } from "@/lib/types";
+import SocialOpportunityPage from "./components/social-opportunity-page";
+import NoDigitalPresencePage from "./components/no-digital-presence-page";
+
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -31,6 +34,9 @@ export default async function LeadDetailPage({ params }: PageProps) {
     );
   }
 
+  // Detect lead workflow from website_status
+  const workflow = detectLeadWorkflow(business as { website_status: string; website: string | null });
+
   // Fetch latest audits
   const { data: audits } = await supabase
     .from("audits")
@@ -55,12 +61,31 @@ export default async function LeadDetailPage({ params }: PageProps) {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  return (
-    <LeadDetailClient
-      business={business as Record<string, unknown>}
-      audits={(audits ?? []) as Record<string, unknown>[]}
-      designAnalyses={(designRows ?? []) as Record<string, unknown>[]}
-      pipelineStatus={pipelineRow?.status ?? null}
-    />
-  );
+  // Route to the appropriate workflow page
+  switch (workflow) {
+    case "social_only":
+      return (
+        <SocialOpportunityPage
+          business={business as Record<string, unknown>}
+          pipelineStatus={pipelineRow?.status ?? null}
+        />
+      );
+    case "no_digital_presence":
+      return (
+        <NoDigitalPresencePage
+          business={business as Record<string, unknown>}
+          pipelineStatus={pipelineRow?.status ?? null}
+        />
+      );
+    case "website":
+    default:
+      return (
+        <LeadDetailClient
+          business={business as Record<string, unknown>}
+          audits={(audits ?? []) as Record<string, unknown>[]}
+          designAnalyses={(designRows ?? []) as Record<string, unknown>[]}
+          pipelineStatus={pipelineRow?.status ?? null}
+        />
+      );
+  }
 }

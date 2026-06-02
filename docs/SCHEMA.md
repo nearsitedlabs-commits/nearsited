@@ -1,5 +1,5 @@
 # Nearsited — Database Schema (Authoritative)
-**Version:** 3.1 · **Date:** May 2026 · **Database:** Supabase / PostgreSQL 15 + Supabase Storage
+**Version:** 3.2 · **Date:** June 2026 · **Database:** Supabase / PostgreSQL 15 + Supabase Storage
 
 ---
 
@@ -487,7 +487,7 @@ type UxAction = "scroll" | "click" | "fill_form" | "hover" | "navigate";
 
 ## 5. Migrations (Run In This Exact Order)
 
-> Migration SQL is available in [`scripts/migrate.sql`](nearsided/scripts/migrate.sql) and can be run automatically via [`scripts/run-migrations.mjs`](nearsited/scripts/run-migrations.mjs) (supports direct PostgreSQL connection or Management API fallback). Alternatively, paste each block below into the Supabase SQL Editor in order.
+> Migration SQL is available in [`scripts/migrate.sql`](scripts/migrate.sql) and can be run automatically via [`scripts/run-migrations.mjs`](scripts/run-migrations.mjs) (supports direct PostgreSQL connection or Management API fallback). Alternatively, paste each block below into the Supabase SQL Editor in order.
 
 ### 5.1 — Businesses cleanup (RUN FIRST)
 ```sql

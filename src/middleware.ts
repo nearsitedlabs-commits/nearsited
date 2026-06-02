@@ -1,6 +1,8 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+// Only run middleware on pages that need auth — skip API routes (they do their own auth),
+// static assets, Next.js internals, and public files to reduce server load.
 export async function middleware(request: NextRequest) {
   return await updateSession(request);
 }
@@ -8,11 +10,14 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Only match dashboard pages and auth pages — NOT:
+     * - _next/static, _next/image (Next.js internals)
+     * - /api/* (API routes handle auth themselves)
+     * - /share/* (public share pages)
+     * - Static files: favicon.ico, *.svg, *.png, *.jpg, *.webp, *.ico
+     * - / (landing page is public)
      */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/dashboard/:path*",
+    "/(auth)/:path*",
   ],
 };

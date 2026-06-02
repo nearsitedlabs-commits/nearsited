@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { classifyWebsite, type WebsiteStatus } from "@/lib/types";
+import { classifyWebsite } from "@/lib/types";
 
 /**
  * Maps Nearsited business_type values to Google Places Nearby Search `type` values.
@@ -433,7 +433,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const preDedupCount = allPlaces.length;
     const postDedupCount = uniquePlaces.length;
 
     // Log multi-query stats
@@ -487,6 +486,7 @@ export async function POST(request: NextRequest) {
           const needsFetch: { place_id: string; index: number }[] = [];
           const enrichedWebsites: (string | null)[] = new Array(uniquePlaces.length).fill(null);
           const enrichedStatuses: string[] = new Array(uniquePlaces.length).fill("unknown");
+          const enrichedPhones: (string | null)[] = new Array(uniquePlaces.length).fill(null);
           let cacheHits = 0;
 
           // Generate stable IDs upfront so the client has them for pipeline/actions
@@ -542,14 +542,14 @@ export async function POST(request: NextRequest) {
             writeProgress(controller, encoder, "enriching", `Fetching Place Details for ${needsFetch.length} places`);
 
             let detailsCalls = 0;
-            const BATCH_SIZE = 10;
+            const BATCH_SIZE = 25;
 
             for (let batchStart = 0; batchStart < needsFetch.length; batchStart += BATCH_SIZE) {
               const batch = needsFetch.slice(batchStart, batchStart + BATCH_SIZE);
 
               const batchResults = await Promise.allSettled(
                 batch.map(async ({ place_id, index }) => {
-                  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=website&key=${apiKey}`;
+                  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=website,formatted_phone_number&key=${apiKey}`;
                   const detailsResult = await fetchGoogleApi(detailsUrl, 10000);
                   if (!detailsResult.ok) {
                     throw new Error(detailsResult.error ?? "Place Details request failed");
@@ -557,44 +557,49 @@ export async function POST(request: NextRequest) {
 
                   const data = detailsResult.data as {
                     status: string;
-                    result?: { website?: string };
+                    result?: { website?: string; formatted_phone_number?: string };
                   };
                   if (data.status !== "OK") throw new Error(`API status: ${data.status}`);
 
                   const website: string | null = data.result?.website ?? null;
+                  const phone: string | null = data.result?.formatted_phone_number ?? null;
                   const websiteStatus = classifyWebsite(website);
 
-                  return { place_id, index, website, websiteStatus };
+                  return { place_id, index, website, phone, websiteStatus };
                 }),
               );
 
-              const enriched: { id: string; website: string | null; website_status: string }[] = [];
+              const enriched: { id: string; website: string | null; phone: string | null; website_status: string }[] = [];
+              // Collect successful results for batched cache upsert
+              const cacheBatch: { place_id: string; website: string | null; website_status: string; details_fetched_at: string }[] = [];
 
               for (const result of batchResults) {
                 if (result.status === "fulfilled") {
-                  const { place_id, index, website, websiteStatus } = result.value;
+                  const { place_id, index, website, phone, websiteStatus } = result.value;
                   enrichedWebsites[index] = website;
                   enrichedStatuses[index] = websiteStatus;
-                  enriched.push({ id: businessIds[index], website, website_status: websiteStatus });
+                  enrichedPhones[index] = phone;
+                  enriched.push({ id: businessIds[index], website, phone, website_status: websiteStatus });
                   detailsCalls++;
 
-                  // Upsert into places_cache
-                  try {
-                    await (adminClient.from("places_cache") as ReturnType<typeof adminClient.from>)
-                      .upsert(
-                        {
-                          place_id,
-                          website,
-                          website_status: websiteStatus,
-                          details_fetched_at: new Date().toISOString(),
-                        },
-                        { onConflict: "place_id" },
-                      );
-                  } catch (err) {
-                    console.error("[DISCOVER] places_cache upsert failed for", place_id, err);
-                  }
+                  cacheBatch.push({
+                    place_id,
+                    website,
+                    website_status: websiteStatus,
+                    details_fetched_at: new Date().toISOString(),
+                  });
                 } else {
                   console.log("[DISCOVER] details fetch failed for a place");
+                }
+              }
+
+              // Batch upsert into places_cache (reduces N round-trips to 1 per batch)
+              if (cacheBatch.length > 0) {
+                try {
+                  await (adminClient.from("places_cache") as ReturnType<typeof adminClient.from>)
+                    .upsert(cacheBatch, { onConflict: "place_id" });
+                } catch (err) {
+                  console.error("[DISCOVER] places_cache batch upsert failed:", err);
                 }
               }
 
@@ -609,60 +614,64 @@ export async function POST(request: NextRequest) {
             console.log("[DISCOVER] enrichment — cache hits:", cacheHits, "details calls:", detailsCalls, "total:", uniquePlaces.length);
           }
 
-          // ---- Step D: Upsert all businesses to the DB ----
+          // ---- Step D: Upsert all businesses to the DB (BATCHED) ----
           writeProgress(controller, encoder, "persisting", `Upserting ${uniquePlaces.length} businesses`);
 
           const supabase = await createClient();
           const upsertedBusinesses: Record<string, unknown>[] = [];
 
+          // Build the full list of business rows first
+          const businessRows: Record<string, unknown>[] = [];
           for (let i = 0; i < uniquePlaces.length; i++) {
             const place = uniquePlaces[i] as Record<string, unknown>;
             const enrichedWebsite = enrichedWebsites[i];
-            const enrichedStatus = enrichedStatuses[i];
+            const enrichedPhone = enrichedPhones[i];
 
-            // Classify the website URL to get the canonical status
             const websiteStatus = classifyWebsite(enrichedWebsite);
-
             const id = businessIds[i];
-
-            // Determine outreach flag based on website status
             const isFlagged = websiteStatus === "no_website" || websiteStatus === "social_only" || websiteStatus === "platform_only";
             const outreachReason = isFlagged ? websiteStatus : null;
 
+            businessRows.push({
+              id,
+              user_id: userId,
+              place_id: place.place_id,
+              name: place.name,
+              address: place.vicinity ?? place.formatted_address,
+              website: enrichedWebsite ?? place.website ?? null,
+              phone: enrichedPhone ?? "",
+              website_status: websiteStatus,
+              flagged_for_outreach: isFlagged,
+              outreach_reason: outreachReason,
+              rating: place.rating ?? null,
+              review_count: place.user_ratings_total ?? 0,
+              city,
+              business_type: businessType,
+              discovered_at: new Date().toISOString(),
+            });
+          }
+
+          // Batch upsert — reduces N sequential round-trips to N/BATCH_SIZE
+          const BATCH_SIZE = 50;
+          for (let batchStart = 0; batchStart < businessRows.length; batchStart += BATCH_SIZE) {
+            const batch = businessRows.slice(batchStart, batchStart + BATCH_SIZE);
             const { data: upserted, error: upsertError } = await supabase
               .from("businesses")
-              .upsert(
-                {
-                  id,
-                  user_id: userId,
-                  place_id: place.place_id,
-                  name: place.name,
-                  address: place.vicinity ?? place.formatted_address,
-                  website: enrichedWebsite ?? place.website ?? null,
-                  phone: "",
-                  website_status: websiteStatus,
-                  flagged_for_outreach: isFlagged,
-                  outreach_reason: outreachReason,
-                  rating: place.rating ?? null,
-                  review_count: place.user_ratings_total ?? 0,
-                  city,
-                  business_type: businessType,
-                  discovered_at: new Date().toISOString(),
-                },
-                {
-                  onConflict: "place_id,user_id",
-                  ignoreDuplicates: false,
-                },
-              )
-              .select()
-              .single();
+              .upsert(batch, {
+                onConflict: "place_id,user_id",
+                ignoreDuplicates: false,
+              })
+              .select();
 
             if (upsertError) {
-              console.error("[DISCOVER] Failed to upsert business:", upsertError);
-              continue;
+              console.error("[DISCOVER] Batch upsert failed:", upsertError);
+              // Still add the rows we intended to upsert so the client gets partial results
+              for (const row of batch) {
+                upsertedBusinesses.push(row as Record<string, unknown>);
+              }
+            } else if (upserted) {
+              upsertedBusinesses.push(...(upserted as Record<string, unknown>[]));
             }
-
-            upsertedBusinesses.push(upserted);
           }
 
           // ---- Step E: Final summary ----
