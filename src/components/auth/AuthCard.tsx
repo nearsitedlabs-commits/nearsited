@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 
 export type AuthMode = "login" | "signup";
@@ -10,6 +11,11 @@ type AuthCardProps = {
   children: ReactNode;
   error?: string | null;
 };
+
+const TRUST_INDICATORS = [
+  "100 free audits included",
+  "No credit card required",
+];
 
 export default function AuthCard({ mode, children, error }: AuthCardProps) {
   const isLogin = mode === "login";
@@ -31,10 +37,10 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
             </span>
           </Link>
           <h1 className="mt-4 text-2xl font-medium tracking-[-0.04em] text-[var(--text-primary)]">
-            {isLogin ? "Sign in" : "Create an account"}
+            {isLogin ? "Sign in" : "Find your first opportunity"}
           </h1>
           <p className="mt-1.5 text-sm text-[var(--text-tertiary)]">
-            {isLogin ? "Welcome back to Nearsited" : "Get started with Nearsited"}
+            {isLogin ? "Welcome back" : "Discover website opportunities in under 3 minutes"}
           </p>
         </div>
 
@@ -63,6 +69,19 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
           )}
 
           {children}
+
+          {/* ── Trust indicators ──────────────────────────────────────── */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-[var(--border)] pt-5">
+            {TRUST_INDICATORS.map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"
+              >
+                <Check className="h-3 w-3 text-[var(--accent)]" />
+                {item}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* ── Footer link ─────────────────────────────────────────────── */}
@@ -71,7 +90,7 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
             <>
               Don&rsquo;t have an account?{" "}
               <a href="/signup" className="font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent-hover)]">
-                Create account
+                Find opportunities
               </a>
             </>
           ) : (

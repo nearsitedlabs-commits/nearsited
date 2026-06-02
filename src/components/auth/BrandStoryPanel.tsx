@@ -4,10 +4,10 @@ import { Search, BarChart3, Mail, ListFilter, Check } from "lucide-react";
 import OpportunityPreviewCard from "./OpportunityPreviewCard";
 
 const FEATURES = [
-  { icon: Search, text: "Discover local businesses ready for redesign" },
-  { icon: BarChart3, text: "AI-powered website audits with actionable scores" },
-  { icon: Mail, text: "Personalised outreach pitches in one click" },
-  { icon: ListFilter, text: "Opportunity tracking pipeline from lead to won" },
+  { icon: Search, text: "Discover businesses with weak, social-only, or no website" },
+  { icon: BarChart3, text: "Audit performance, mobile, SEO, design, and trust signals" },
+  { icon: Mail, text: "Generate personalised outreach pitches in one click" },
+  { icon: ListFilter, text: "Track every opportunity from discovery to won project" },
 ] as const;
 
 export default function BrandStoryPanel() {
@@ -17,7 +17,7 @@ export default function BrandStoryPanel() {
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-            AI-Powered Opportunity Intelligence
+            Find website opportunities
           </span>
         </div>
 
@@ -27,9 +27,10 @@ export default function BrandStoryPanel() {
             <em className="italic text-[var(--accent)] not-italic">overlook.</em>
           </h1>
           <p className="max-w-md text-base leading-7 text-[var(--text-secondary)]">
-            Nearsited helps agencies discover redesign opportunities,
-            understand weaknesses, generate personalised outreach, and win
-            more projects.
+            Nearsited finds businesses that need a stronger online presence —
+            whether they have a weak website, social-only presence, or no
+            website at all. Discover opportunities, understand what&rsquo;s
+            missing, and generate personalised outreach — all in one place.
           </p>
         </div>
 
