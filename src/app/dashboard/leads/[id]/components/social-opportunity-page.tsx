@@ -9,6 +9,7 @@ import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { detectSocialPlatforms, getSocialImpactEstimates, getSocialOpportunityReasons } from "@/lib/lead-types";
 import type { WebsiteStatus } from "@/lib/types";
+import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -50,6 +51,16 @@ export default function SocialOpportunityPage({ business, pipelineStatus }: Prop
       .then((r) => r.json())
       .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
       .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
+  }, [biz.id]);
+
+  // Background rating refresh — fire-and-forget, never blocks render
+  useEffect(() => {
+    if (!biz.id) return;
+    fetch("/api/refresh-ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ businessId: biz.id }),
+    }).catch(() => { /* silent — background only */ });
   }, [biz.id]);
 
   const handlePipelineChange = useCallback(async (newStatus: string) => {
@@ -176,6 +187,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus }: Prop
                   {biz.review_count != null && (
                     <span className="text-xs text-[var(--text-tertiary)]">{biz.review_count.toLocaleString()} reviews</span>
                   )}
+                  <PoweredByGoogle />
                 </div>
               )}
             </div>

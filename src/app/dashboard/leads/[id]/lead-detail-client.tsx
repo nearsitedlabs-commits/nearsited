@@ -10,6 +10,7 @@ import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES, IMPACT_PILL_STYLES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
+import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -231,6 +232,17 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
       .catch(() => {
         setContactInfo((prev) => ({ ...prev, loading: false }));
       });
+  }, [business]);
+
+  // Background rating refresh — fire-and-forget, never blocks render
+  useEffect(() => {
+    const bizId = (business as Record<string, unknown>).id as string | undefined;
+    if (!bizId) return;
+    fetch("/api/refresh-ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ businessId: bizId }),
+    }).catch(() => { /* silent — background only */ });
   }, [business]);
 
   const biz = business as {
@@ -798,6 +810,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   {biz.review_count != null && (
                     <span className="text-xs text-[var(--text-tertiary)]">{biz.review_count.toLocaleString()} reviews</span>
                   )}
+                  <PoweredByGoogle />
                 </div>
               )}
             </div>

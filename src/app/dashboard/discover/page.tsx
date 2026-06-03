@@ -11,6 +11,7 @@ import {
   Info,
   ListFilter,
   MapPin,
+  Phone,
   Search,
   ChevronDown,
   Shuffle,
@@ -25,7 +26,8 @@ import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { Toast } from "@/components/ui/Toast";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
-import { estimatedOpportunity } from "@/lib/scoring";
+import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -50,6 +52,7 @@ type BusinessResult = {
   address: string;
   place_id?: string;
   website?: string;
+  phone?: string | null;
   rating?: number;
   review_count?: number;
   website_status: WebsiteStatus;
@@ -69,10 +72,14 @@ const STORAGE_KEY_AUDITED = "nearsited_discover_audited";
 const STORAGE_KEY_ANALYSED = "nearsited_discover_analysed";
 const STORAGE_KEY_PIPELINE = "nearsited_discover_pipeline";
 
-function saveToSession(key: string, data: unknown) {
+function saveToSession(key: string, data: unknown, onQuotaExceeded?: () => void) {
   try {
     sessionStorage.setItem(key, JSON.stringify(data));
-  } catch {}
+  } catch (err) {
+    if (err instanceof DOMException && (err.name === "QuotaExceededError" || err.name === "NS_ERROR_DOM_QUOTA_REACHED")) {
+      onQuotaExceeded?.();
+    }
+  }
 }
 function loadFromSession<T>(key: string): T | null {
   try {
@@ -106,8 +113,10 @@ type FilterTab = {
 
 const FILTER_TABS: FilterTab[] = [
   { value: "all", label: "All" },
-  { value: "has_website", label: "Has website" },
-  { value: "no_website", label: "No real website" },
+  { value: "has_website", label: "Has Website" },
+  { value: "platform_only", label: "Platform Only" },
+  { value: "social_only", label: "Social Only" },
+  { value: "no_website", label: "No Website" },
 ];
 
 // ─── Muted reason tags when no audit/design actions are available ──────────
@@ -375,20 +384,23 @@ export default function DiscoverPage() {
   const processedResults = useMemo(() => {
     const filtered = results.filter((b) => {
       if (websiteFilter === "all") return true;
-      if (websiteFilter === "has_website")
-        return b.website_status === "has_website" || b.website_status === "platform_only";
-      if (websiteFilter === "no_website")
-        return b.website_status === "no_website" || b.website_status === "social_only";
-      return true;
+      return b.website_status === websiteFilter;
     });
 
     const sorted = [...filtered].sort((a, b) => {
       switch (sortOption) {
         case "opportunity-desc": {
-          // Use verified audit score if available, otherwise estimate
+          // Both branches return an opportunity score (high = hot lead).
+          // Audited: convert quality score → opportunity score so sort direction is consistent.
           const getScore = (business: BusinessResult) => {
             const verified = business.audit?.mobile?.performance_score;
-            if (verified != null) return verified;
+            if (verified != null) {
+              return computeOpportunityScore(
+                verified,
+                business.review_count ?? 0,
+                business.rating ?? 0,
+              );
+            }
             return estimatedOpportunity({
               website_status: business.website_status,
               website: business.website ?? null,
@@ -833,7 +845,9 @@ export default function DiscoverPage() {
             const initialBusinesses = (chunk.data as BusinessResult[]) ?? [];
 
             setResults(initialBusinesses);
-            saveToSession(STORAGE_KEY_RESULTS, initialBusinesses);
+            saveToSession(STORAGE_KEY_RESULTS, initialBusinesses, () =>
+              setToastMessage("Too many results to save locally — refresh will reset this page.")
+            );
             setVisibleCount(30);
             setFetchingResults(false);
             setSubmitting(false);
@@ -846,6 +860,7 @@ export default function DiscoverPage() {
               (chunk.updated as {
                 id: string;
                 website: string | null;
+                phone: string | null;
                 website_status: string;
               }[]) ?? [];
             if (updated.length > 0) {
@@ -857,6 +872,7 @@ export default function DiscoverPage() {
                     return {
                       ...b,
                       website: enrichment.website ?? b.website,
+                      phone: enrichment.phone ?? b.phone,
                       website_status:
                         enrichment.website_status as WebsiteStatus,
                     };
@@ -871,7 +887,9 @@ export default function DiscoverPage() {
           if (type === "done") {
             const doneBusinesses = (chunk.businesses as BusinessResult[]) ?? [];
             setResults(doneBusinesses);
-            saveToSession(STORAGE_KEY_RESULTS, doneBusinesses);
+            saveToSession(STORAGE_KEY_RESULTS, doneBusinesses, () =>
+              setToastMessage("Too many results to save locally — refresh will reset this page.")
+            );
 
             if (doneBusinesses.length > 0) {
               fetchPersistedAudits(
@@ -1211,7 +1229,7 @@ export default function DiscoverPage() {
                   <span className="relative group inline-flex items-center">
                     <Info className="size-3 cursor-help opacity-60" />
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-surface-3)] text-[var(--text-primary)] text-xs rounded-xl px-3 py-2.5 w-64 shadow-xl z-50 leading-relaxed pointer-events-none">
-                      Businesses are flagged as outreach candidates when they have no website, rely only on social media or a third-party platform page, or score below 50 on performance or design after auditing.
+                      Businesses are flagged as outreach candidates when they have no website, rely only on social media or a third-party platform page, or score as a high opportunity after analysis.
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-surface-3)]" />
                     </div>
                   </span>
@@ -1271,9 +1289,12 @@ export default function DiscoverPage() {
             </div>
 
             {/* Helper note about estimated scores */}
-            <p className="text-xs text-[var(--text-tertiary)] px-1">
-              ~ Estimated opportunity. Analyse any business for the verified score.
-            </p>
+            <div className="flex items-center justify-between px-1">
+              <p className="text-xs text-[var(--text-tertiary)]">
+                ~ Estimated opportunity. Analyse any business for the verified opportunity score.
+              </p>
+              <PoweredByGoogle />
+            </div>
 
             {/* Business rows */}
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
@@ -1307,9 +1328,14 @@ export default function DiscoverPage() {
                           <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
                         </div>
                       ) : (() => {
-                        const verifiedScore = business.audit?.mobile?.performance_score ?? null;
-                        if (verifiedScore != null) {
-                          return <ScoreRing score={verifiedScore} size={44} variant="verified" />;
+                        const verifiedPerf = business.audit?.mobile?.performance_score ?? null;
+                        if (verifiedPerf != null) {
+                          const oppScore = computeOpportunityScore(
+                            verifiedPerf,
+                            business.review_count ?? 0,
+                            business.rating ?? 0,
+                          );
+                          return <ScoreRing score={oppScore} size={44} variant="opportunity" />;
                         }
                         const est = estimatedOpportunity({
                           website_status: business.website_status,
@@ -1368,8 +1394,8 @@ export default function DiscoverPage() {
                             {business.outreach_reason ? (OUTREACH_REASONS[business.outreach_reason] ?? "Outreach") : "Outreach"}
                           </span>
                         )}
-                        {/* Fixed-width icon container so MapPin stays in same column */}
-                        <div className="flex items-center gap-2.5 w-[38px] justify-end">
+                        {/* Fixed-width icon container — MapPin, Globe, Phone */}
+                        <div className="flex items-center gap-2.5 w-[52px] justify-end">
                           {business.place_id ? (
                             <a
                               href={`https://www.google.com/maps/place/?q=place_id:${business.place_id}`}
@@ -1380,7 +1406,7 @@ export default function DiscoverPage() {
                             >
                               <MapPin className="size-[15px]" />
                             </a>
-                          ) : null}
+                          ) : <div className="size-[15px]" />}
                           {business.website ? (
                             <a
                               href={business.website}
@@ -1392,7 +1418,18 @@ export default function DiscoverPage() {
                               <Globe className="size-[15px]" />
                             </a>
                           ) : (
-                            <div className="size-[15px]" /> /* invisible placeholder keeps MapPin aligned */
+                            <div className="size-[15px]" />
+                          )}
+                          {business.phone ? (
+                            <a
+                              href={`tel:${business.phone}`}
+                              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
+                              title={business.phone}
+                            >
+                              <Phone className="size-[15px]" />
+                            </a>
+                          ) : (
+                            <div className="size-[15px]" />
                           )}
                         </div>
                       </div>
@@ -1443,7 +1480,17 @@ export default function DiscoverPage() {
                               className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[120px] text-center"
                             >Analyse Opportunity</button>
                           );
-                          // No site to analyse — show muted reason tag
+                          // No site to analyse — show "View" link for non-website lead types
+                          if (business.website_status === "no_website" || business.website_status === "social_only") {
+                            return (
+                              <Link
+                                href={`/dashboard/leads/${business.id}`}
+                                className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[120px] text-center"
+                              >
+                                View Opportunity
+                              </Link>
+                            );
+                          }
                           return (
                             <span className="text-[11px] italic text-[var(--text-tertiary)] w-[120px] text-center leading-tight">
                               {NO_ACTION_LABEL[business.website_status] ?? ""}
@@ -1594,7 +1641,7 @@ function SaveSearchDialog({
             autoComplete="off"
           />
           <p className="text-xs text-[var(--text-tertiary)]">
-            Saved searches appear in Settings under Saved Searches.
+            Saved searches appear in the search bar above.
           </p>
           <div className="flex items-center justify-end gap-2 pt-1">
             <button

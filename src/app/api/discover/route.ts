@@ -469,10 +469,18 @@ export async function POST(request: NextRequest) {
           // ---- Step A: Batched cache lookup ----
           writeProgress(controller, encoder, "cache-lookup", `Looking up ${placeIds.length} place_ids in cache`);
 
-          type CacheRow = { place_id: string; website: string | null; website_status: string | null; details_fetched_at: string | null };
+          type CacheRow = {
+            place_id: string;
+            website: string | null;
+            website_status: string | null;
+            details_fetched_at: string | null;
+            rating: number | null;
+            review_count: number | null;
+            ratings_fetched_at: string | null;
+          };
           const { data: cachedRows } = await adminClient
             .from("places_cache")
-            .select("place_id, website, website_status, details_fetched_at")
+            .select("place_id, website, website_status, details_fetched_at, rating, review_count, ratings_fetched_at")
             .in("place_id", placeIds) as unknown as { data: CacheRow[] | null };
 
           const cacheMap = new Map<string, CacheRow>();
@@ -480,8 +488,8 @@ export async function POST(request: NextRequest) {
             cacheMap.set(row.place_id, row);
           }
 
-          const ninetyDaysAgo = new Date();
-          ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
           const needsFetch: { place_id: string; index: number }[] = [];
           const enrichedWebsites: (string | null)[] = new Array(uniquePlaces.length).fill(null);
@@ -492,6 +500,12 @@ export async function POST(request: NextRequest) {
           // Generate stable IDs upfront so the client has them for pipeline/actions
           const businessIds: string[] = uniquePlaces.map(() => crypto.randomUUID());
 
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+          // Cache hits whose rating data is stale — refresh from Nearby Search data (no extra API call)
+          const staleRatingBatch: { place_id: string; rating: number | null; review_count: number | null; ratings_fetched_at: string }[] = [];
+
           for (let i = 0; i < uniquePlaces.length; i++) {
             const place = uniquePlaces[i] as Record<string, unknown>;
             const pid = place.place_id as string | undefined;
@@ -499,15 +513,34 @@ export async function POST(request: NextRequest) {
 
             const cached = cacheMap.get(pid);
 
-            if (cached && cached.details_fetched_at && new Date(cached.details_fetched_at) >= ninetyDaysAgo) {
-              // Fresh cache hit
+            if (cached && cached.details_fetched_at && new Date(cached.details_fetched_at) >= thirtyDaysAgo) {
+              // Fresh cache hit — website data is current
               enrichedWebsites[i] = cached.website;
               enrichedStatuses[i] = cached.website_status ?? "unknown";
               cacheHits++;
+
+              // Refresh rating if stale (Nearby Search already returned fresh data)
+              if (!cached.ratings_fetched_at || new Date(cached.ratings_fetched_at) < sevenDaysAgo) {
+                staleRatingBatch.push({
+                  place_id: pid,
+                  rating: (place.rating as number) ?? null,
+                  review_count: (place.user_ratings_total as number) ?? null,
+                  ratings_fetched_at: new Date().toISOString(),
+                });
+              }
             } else {
               // Needs fetch — leave as null/"unknown" for now
               needsFetch.push({ place_id: pid, index: i });
             }
+          }
+
+          // Fire-and-forget: update stale ratings for cache hits (no awaited, doesn't block stream)
+          if (staleRatingBatch.length > 0) {
+            (adminClient.from("places_cache") as ReturnType<typeof adminClient.from>)
+              .upsert(staleRatingBatch, { onConflict: "place_id" })
+              .then(({ error }: { error: unknown }) => {
+                if (error) console.error("[DISCOVER] stale rating batch update failed:", error);
+              });
           }
 
           // ---- Step B: Stream initial results (immediate) ----
@@ -571,7 +604,7 @@ export async function POST(request: NextRequest) {
 
               const enriched: { id: string; website: string | null; phone: string | null; website_status: string }[] = [];
               // Collect successful results for batched cache upsert
-              const cacheBatch: { place_id: string; website: string | null; website_status: string; details_fetched_at: string }[] = [];
+              const cacheBatch: { place_id: string; website: string | null; website_status: string; details_fetched_at: string; rating: number | null; review_count: number | null; ratings_fetched_at: string }[] = [];
 
               for (const result of batchResults) {
                 if (result.status === "fulfilled") {
@@ -582,11 +615,15 @@ export async function POST(request: NextRequest) {
                   enriched.push({ id: businessIds[index], website, phone, website_status: websiteStatus });
                   detailsCalls++;
 
+                  const srcPlace = uniquePlaces[index] as Record<string, unknown>;
                   cacheBatch.push({
                     place_id,
                     website,
                     website_status: websiteStatus,
                     details_fetched_at: new Date().toISOString(),
+                    rating: (srcPlace.rating as number) ?? null,
+                    review_count: (srcPlace.user_ratings_total as number) ?? null,
+                    ratings_fetched_at: new Date().toISOString(),
                   });
                 } else {
                   console.log("[DISCOVER] details fetch failed for a place");
