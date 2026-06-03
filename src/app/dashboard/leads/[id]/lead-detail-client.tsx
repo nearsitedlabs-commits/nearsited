@@ -737,12 +737,12 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               {hasWebsite && (
                 <div className="mt-6">
                   <button
-                    onClick={handleRunAudit}
-                    disabled={runningAudit}
+                    onClick={handleFullAnalysis}
+                    disabled={runningFullAnalysis}
                     className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {runningAudit ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {runningAudit ? "Analysing…" : "Analyse Opportunity →"}
+                    {runningFullAnalysis ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {runningFullAnalysis ? "Analysing…" : "Analyse Opportunity →"}
                   </button>
                 </div>
               )}
