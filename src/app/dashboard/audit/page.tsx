@@ -341,6 +341,8 @@ export default function AuditPage() {
   const quotaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
   const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const urlRef = useRef("");
+  const pendingAutoRunRef = useRef<string | null>(null);
 
   // Read hasCompletedAudit from localStorage on mount — useEffect is required for SSR safety
   useEffect(() => {
@@ -376,11 +378,23 @@ export default function AuditPage() {
     [],
   );
 
-  // ── Cleanup on unmount ───────────────────────────────────────────────────────
+  // ── Keep refs in sync so the cleanup closure always sees fresh values ─────────
+  const runningRef = useRef(false);
+  useEffect(() => { runningRef.current = running; }, [running]);
+  useEffect(() => { urlRef.current = url; }, [url]);
+
+  // ── Cleanup on unmount — flag interrupted if still running ───────────────────
   useEffect(() => {
     return () => {
       mountedRef.current = false;
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
+      if (runningRef.current && urlRef.current) {
+        try {
+          const stored = sessionStorage.getItem(STORAGE_KEY);
+          const base = stored ? (JSON.parse(stored) as Record<string, unknown>) : {};
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...base, url: urlRef.current, interrupted: true, interruptedAt: Date.now() }));
+        } catch { /* ignore */ }
+      }
     };
   }, []);
 
@@ -394,15 +408,35 @@ export default function AuditPage() {
         auditResult?: { mobile: StrategyResult; desktop: StrategyResult };
         designResult?: { mobile: DesignResult; desktop: DesignResult };
         timestamp?: number;
+        interrupted?: boolean;
+        interruptedAt?: number;
       };
+
+      // If interrupted recently (< 15 min), auto-restart — handled by the effect below handleRun
+      const interruptedRecently = parsed.interrupted && parsed.interruptedAt
+        && (Date.now() - parsed.interruptedAt < 15 * 60 * 1000);
+      if (interruptedRecently && parsed.url) {
+        sessionStorage.removeItem(STORAGE_KEY);
+        pendingAutoRunRef.current = parsed.url;
+        urlRef.current = parsed.url;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUrl(parsed.url);
+        return;
+      }
+
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.url) setUrl(parsed.url);
       if (parsed.auditResult) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAuditResult(parsed.auditResult);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setStep("done");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCompletedKeys(ALL_STEPS.map((s) => s.key));
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.designResult) setDesignResult(parsed.designResult);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.timestamp) setSavedTimestamp(parsed.timestamp);
     } catch {
       // ignore parse errors
@@ -434,10 +468,10 @@ export default function AuditPage() {
     setQuotaRetryTimer(0);
   }, []);
 
-  const handleRun = async () => {
-    if (!url.trim()) return;
-
-    const trimmedUrl = url.trim();
+  const handleRun = async (urlOverride?: string) => {
+    const trimmedUrl = (urlOverride ?? url).trim();
+    if (!trimmedUrl) return;
+    if (urlOverride) setUrl(urlOverride);
 
     async function readStream(
       response: Response,
@@ -606,6 +640,16 @@ export default function AuditPage() {
     setStep("done");
     setRunning(false);
   };
+
+  // Auto-restart if a previous audit was interrupted (pendingAutoRunRef set in restore effect above)
+  useEffect(() => {
+    if (pendingAutoRunRef.current) {
+      const u = pendingAutoRunRef.current;
+      pendingAutoRunRef.current = null;
+      void handleRun(u);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const showProgress = running || completedKeys.length > 0;
 
@@ -783,7 +827,7 @@ export default function AuditPage() {
                 />
               </div>
               <button
-                onClick={handleRun}
+                onClick={() => handleRun()}
                 disabled={running || !url.trim()}
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -971,7 +1015,7 @@ export default function AuditPage() {
               />
             </div>
             <button
-              onClick={handleRun}
+              onClick={() => handleRun()}
               disabled={running || !url.trim()}
               className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -1055,7 +1099,7 @@ export default function AuditPage() {
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <button
-                onClick={handleRun}
+                onClick={() => handleRun()}
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
               >
                 <Loader2 className="h-4 w-4" />
