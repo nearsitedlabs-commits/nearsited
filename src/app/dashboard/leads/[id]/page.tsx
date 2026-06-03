@@ -53,13 +53,13 @@ export default async function LeadDetailPage({ params }: PageProps) {
     .order("analyzed_at", { ascending: false })
     .limit(2);
 
-  // Fetch pipeline status
-  const { data: pipelineRow } = await supabase
-    .from("pipeline")
-    .select("status")
-    .eq("business_id", id)
-    .eq("user_id", user.id)
-    .maybeSingle();
+  // Fetch pipeline status + latest saved pitch in parallel
+  const [{ data: pipelineRow }, { data: pitchRows }] = await Promise.all([
+    supabase.from("pipeline").select("status").eq("business_id", id).eq("user_id", user.id).maybeSingle(),
+    supabase.from("pitches").select("id, subject, body, tone").eq("business_id", id).eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
+  ]);
+
+  const savedPitch = pitchRows?.[0] ?? null;
 
   // Route to the appropriate workflow page
   switch (workflow) {
@@ -68,6 +68,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
         <SocialOpportunityPage
           business={business as Record<string, unknown>}
           pipelineStatus={pipelineRow?.status ?? null}
+          savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />
       );
     case "no_digital_presence":
@@ -75,6 +76,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
         <NoDigitalPresencePage
           business={business as Record<string, unknown>}
           pipelineStatus={pipelineRow?.status ?? null}
+          savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />
       );
     case "website":
@@ -85,6 +87,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           audits={(audits ?? []) as Record<string, unknown>[]}
           designAnalyses={(designRows ?? []) as Record<string, unknown>[]}
           pipelineStatus={pipelineRow?.status ?? null}
+          savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />
       );
   }

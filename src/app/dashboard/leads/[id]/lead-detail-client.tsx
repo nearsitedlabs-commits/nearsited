@@ -42,11 +42,14 @@ const ANALYSE_STEPS: { key: string; label: string }[] = [
   { key: "design_complete",    label: "Analysis complete" },
 ];
 
+type SavedPitch = { id: string; subject: string; body: string; tone: string };
+
 type Props = {
   business: Record<string, unknown>;
   audits: Record<string, unknown>[];
   designAnalyses: Record<string, unknown>[];
   pipelineStatus: string | null;
+  savedPitch: SavedPitch | null;
 };
 
 // ── Animation constants ───────────────────────────────────────────────────────
@@ -193,10 +196,12 @@ function buildClientCallSummary(
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus }: Props) {
+export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch }: Props) {
   const [screenshotStrategy, setScreenshotStrategy] = useState<"mobile" | "desktop">("mobile");
   const [generatingPitch, setGeneratingPitch] = useState(false);
-  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(null);
+  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(
+    savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
+  );
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("professional");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("medium");

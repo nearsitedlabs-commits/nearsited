@@ -12,17 +12,22 @@ import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+type SavedPitch = { id: string; subject: string; body: string; tone: string };
+
 type Props = {
   business: Record<string, unknown>;
   pipelineStatus: string | null;
+  savedPitch: SavedPitch | null;
 };
 
 // ── No Digital Presence Page ─────────────────────────────────────────────────
 
-export default function NoDigitalPresencePage({ business, pipelineStatus }: Props) {
+export default function NoDigitalPresencePage({ business, pipelineStatus, savedPitch }: Props) {
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [generatingPitch, setGeneratingPitch] = useState(false);
-  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(null);
+  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(
+    savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
+  );
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
