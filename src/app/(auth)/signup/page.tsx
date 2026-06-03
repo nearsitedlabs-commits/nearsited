@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import AuthCard from "@/components/auth/AuthCard";
@@ -18,7 +18,7 @@ const BrandStoryPanel = dynamic(
   { ssr: false }
 );
 
-export default function SignupPage() {
+function SignupPageContent() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -262,5 +262,13 @@ export default function SignupPage() {
         </AuthCard>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupPageContent />
+    </Suspense>
   );
 }
