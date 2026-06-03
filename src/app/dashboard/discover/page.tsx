@@ -19,6 +19,7 @@ import {
   Globe,
   Compass,
   Loader2,
+  Flag,
 } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -1456,12 +1457,14 @@ export default function DiscoverPage() {
                         </div>
                       </div>
 
-                      {/* Outreach badge + icon links — fixed width, right-aligned */}
+                      {/* Icon links — fixed width, right-aligned */}
                       <div className="flex-shrink-0 w-[168px] flex items-center justify-end gap-3">
                         {business.flagged_for_outreach && (
-                          <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-2 py-1 text-[11px] font-medium text-[var(--accent)] whitespace-nowrap">
-                            <span className="h-1 w-1 rounded-full bg-[var(--accent)]" />
-                            {business.outreach_reason ? (OUTREACH_REASONS[business.outreach_reason] ?? "Outreach") : "Outreach"}
+                          <span
+                            title={business.outreach_reason ? (OUTREACH_REASONS[business.outreach_reason] ?? "Flagged for outreach") : "Flagged for outreach"}
+                            className="flex-shrink-0"
+                          >
+                            <Flag className="size-[13px] text-[var(--accent)]" />
                           </span>
                         )}
                         {/* Icon links — only rendered when data exists */}

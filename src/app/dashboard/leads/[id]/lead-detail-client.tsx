@@ -1124,9 +1124,9 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
               {/* Score breakdown */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <SubScore label="Performance"  score={perfScore || null} />
+                <SubScore label={screenshotStrategy === "mobile" ? "Mobile Perf" : "Desktop Perf"} score={perfScore || null} />
                 <SubScore label="SEO"          score={seoScore || null} />
-                <SubScore label="Mobile"       score={mobileScore || null} />
+                <SubScore label={screenshotStrategy === "desktop" ? "Mobile Perf" : "Desktop Perf"} score={(screenshotStrategy === "desktop" ? mobileScore : desktopPerfScore) || null} />
                 <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
                 <SubScore label="Trust"        score={trustScoreVal || null} />
                 <SubScore label="Overall"      score={overall || null} />
