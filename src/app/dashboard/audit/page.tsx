@@ -46,12 +46,13 @@ const ALL_STEPS: { key: string; label: string }[] = [
 
 // ── Example data ───────────────────────────────────────────────────────────────
 
-type ExampleTab = "weak_website" | "no_website" | "social_only";
+type ExampleTab = "weak_website" | "no_website" | "social_only" | "platform_only";
 
 const EXAMPLE_TABS: { key: ExampleTab; label: string }[] = [
-  { key: "weak_website", label: "Weak Website" },
-  { key: "no_website",   label: "No Website" },
-  { key: "social_only",  label: "Social Only" },
+  { key: "weak_website",  label: "Weak Website" },
+  { key: "no_website",    label: "No Website" },
+  { key: "social_only",   label: "Social Only" },
+  { key: "platform_only", label: "Platform Only" },
 ];
 
 type ExampleInfo = {
@@ -90,6 +91,15 @@ const EXAMPLE_DATA: Record<ExampleTab, ExampleInfo> = {
       "Active social presence",
       "No dedicated website",
       "Limited search visibility",
+    ],
+  },
+  platform_only: {
+    businessLabel: "Serene Spa & Wellness",
+    opportunityText: "High Opportunity",
+    findings: [
+      "Listed on Fresha / Booksy only",
+      "No owned web presence",
+      "Dependent on third-party platform",
     ],
   },
 };
@@ -854,6 +864,8 @@ export default function AuditPage() {
                   <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                     {exampleTab === "no_website"
                       ? "This business has no digital presence — missed visibility and lead generation."
+                      : exampleTab === "platform_only"
+                      ? "Listed on a booking platform — no owned site, fully dependent on a third party."
                       : "Active on social platforms but no owned website for search and credibility."}
                   </p>
                 </div>
