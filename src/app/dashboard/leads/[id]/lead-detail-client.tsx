@@ -200,6 +200,9 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("professional");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("medium");
+  const [pitchFocus, setPitchFocus] = useState("all");
+  const [pitchOpening, setPitchOpening] = useState("direct");
+  const [pitchUrgency, setPitchUrgency] = useState("medium");
   const [runningAudit, setRunningAudit] = useState(false);
   const [runningDesign, setRunningDesign] = useState(false);
   const [runningFullAnalysis, setRunningFullAnalysis] = useState(false);
@@ -391,7 +394,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
       const res = await fetch("/api/pitch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, channel: outreachChannel, lead_type: biz.website_status }),
+        body: JSON.stringify({ businessId: biz.id, tone: pitchTone, length: pitchLength, channel: outreachChannel, lead_type: biz.website_status, focus: pitchFocus, opening: pitchOpening, urgency: pitchUrgency }),
       });
       if (res.status === 429) {
         const data = await res.json().catch(() => ({}));
@@ -414,7 +417,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     } finally {
       setGeneratingPitch(false);
     }
-  }, [biz.id, biz.website_status, pitchTone, pitchLength, outreachChannel, startQuotaTimer]);
+  }, [biz.id, biz.website_status, pitchTone, pitchLength, outreachChannel, pitchFocus, pitchOpening, pitchUrgency, startQuotaTimer]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) {
@@ -1313,25 +1316,61 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               })()}
 
               {/* Pitch controls */}
-              <div className="mb-3 flex flex-wrap gap-2">
-                <PipelineSelect
-                  value={pitchTone}
-                  onChange={(v) => setPitchTone(v as typeof pitchTone)}
-                  options={[
-                    { value: "professional", label: "Professional" },
-                    { value: "friendly", label: "Friendly" },
-                    { value: "luxury", label: "Luxury" },
-                  ]}
-                />
-                <PipelineSelect
-                  value={pitchLength}
-                  onChange={(v) => setPitchLength(v as typeof pitchLength)}
-                  options={[
-                    { value: "short", label: "Short" },
-                    { value: "medium", label: "Medium" },
-                    { value: "detailed", label: "Detailed" },
-                  ]}
-                />
+              <div className="mb-3 space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  <PipelineSelect
+                    value={pitchTone}
+                    onChange={(v) => setPitchTone(v as typeof pitchTone)}
+                    options={[
+                      { value: "professional", label: "Professional" },
+                      { value: "friendly", label: "Friendly" },
+                      { value: "luxury", label: "Luxury" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchLength}
+                    onChange={(v) => setPitchLength(v as typeof pitchLength)}
+                    options={[
+                      { value: "short", label: "Short" },
+                      { value: "medium", label: "Medium" },
+                      { value: "detailed", label: "Detailed" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchFocus}
+                    onChange={(v) => setPitchFocus(v)}
+                    options={[
+                      { value: "all", label: "All angles" },
+                      { value: "performance", label: "Performance" },
+                      { value: "design", label: "Design" },
+                      { value: "trust", label: "Trust" },
+                      { value: "seo", label: "SEO" },
+                      { value: "revenue", label: "Revenue" },
+                    ]}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <PipelineSelect
+                    value={pitchOpening}
+                    onChange={(v) => setPitchOpening(v)}
+                    options={[
+                      { value: "direct", label: "Direct" },
+                      { value: "question", label: "Question-led" },
+                      { value: "empathy", label: "Empathy" },
+                      { value: "data", label: "Data-led" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchUrgency}
+                    onChange={(v) => setPitchUrgency(v)}
+                    options={[
+                      { value: "low", label: "Low-key" },
+                      { value: "medium", label: "Medium" },
+                      { value: "high", label: "High urgency" },
+                    ]}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
                 <div className="relative inline-block">
                   {hasAudit && hasDesign ? (
                     <button
@@ -1353,6 +1392,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     </div>
                   )}
                   {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
+                </div>
                 </div>
               </div>
 
