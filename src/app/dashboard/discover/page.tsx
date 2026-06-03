@@ -419,35 +419,29 @@ export default function DiscoverPage() {
       return b.website_status === websiteFilter;
     });
 
+    const getScore = (business: BusinessResult) => {
+      const verified = business.audit?.mobile?.performance_score;
+      if (verified != null) {
+        return computeOpportunityScore(verified, business.review_count ?? 0, business.rating ?? 0);
+      }
+      return estimatedOpportunity({
+        website_status: business.website_status,
+        website: business.website ?? null,
+        rating: business.rating ?? null,
+        user_ratings_total: business.review_count ?? null,
+      });
+    };
+
     const sorted = [...filtered].sort((a, b) => {
       switch (sortOption) {
-        case "opportunity-desc": {
-          // Both branches return an opportunity score (high = hot lead).
-          // Audited: convert quality score → opportunity score so sort direction is consistent.
-          const getScore = (business: BusinessResult) => {
-            const verified = business.audit?.mobile?.performance_score;
-            if (verified != null) {
-              return computeOpportunityScore(
-                verified,
-                business.review_count ?? 0,
-                business.rating ?? 0,
-              );
-            }
-            return estimatedOpportunity({
-              website_status: business.website_status,
-              website: business.website ?? null,
-              rating: business.rating ?? null,
-              user_ratings_total: business.review_count ?? null,
-            });
-          };
+        case "opportunity-desc":
           return getScore(b) - getScore(a);
-        }
         case "rating-desc":
           return (b.rating ?? 0) - (a.rating ?? 0);
         case "outreach-first":
           if (a.flagged_for_outreach && !b.flagged_for_outreach) return -1;
           if (!a.flagged_for_outreach && b.flagged_for_outreach) return 1;
-          return (b.rating ?? 0) - (a.rating ?? 0);
+          return getScore(b) - getScore(a);
         default:
           return 0;
       }
@@ -1393,16 +1387,14 @@ export default function DiscoverPage() {
                         idx < Math.min(visibleCount, processedResults.length) - 1 ? "border-b border-[var(--border)]" : ""
                       }`}
                     >
-                      {/* Thin accent bar — only visible during analysis */}
-                      {isAnalyseLoading ? (
-                        <div className="w-[2px] self-stretch flex-shrink-0 bg-[var(--accent)]" />
-                      ) : (
-                        <div className="w-[2px] self-stretch flex-shrink-0 bg-transparent" />
-                      )}
+                      {/* Thin accent bar — analysis or outreach-flagged */}
+                      <div className={`w-[2px] self-stretch flex-shrink-0 ${
+                        isAnalyseLoading || business.flagged_for_outreach ? "bg-[var(--accent)]" : "bg-transparent"
+                      }`} />
 
                       {/* Score ring — spinner during analysis, estimate/verified otherwise */}
                       {isAnalyseLoading ? (
-                        <div className="flex items-center justify-center w-[44px] h-[44px] flex-shrink-0">
+                        <div className="flex items-center justify-center w-[52px] h-[52px] flex-shrink-0">
                           <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
                         </div>
                       ) : (() => {
@@ -1413,7 +1405,7 @@ export default function DiscoverPage() {
                             business.review_count ?? 0,
                             business.rating ?? 0,
                           );
-                          return <AnimatedScoreRing score={oppScore} size={44} variant="opportunity" />;
+                          return <AnimatedScoreRing score={oppScore} size={52} variant="opportunity" />;
                         }
                         const est = estimatedOpportunity({
                           website_status: business.website_status,
@@ -1421,7 +1413,7 @@ export default function DiscoverPage() {
                           rating: business.rating ?? null,
                           user_ratings_total: business.review_count ?? null,
                         });
-                        return <AnimatedScoreRing score={est} size={44} variant="estimate" />;
+                        return <AnimatedScoreRing score={est} size={52} variant="estimate" />;
                       })()}
 
                       {/* Website-status badge — neutral, just states the fact */}
@@ -1466,7 +1458,7 @@ export default function DiscoverPage() {
 
                       {/* Outreach badge + icon links — fixed width, right-aligned */}
                       <div className="flex-shrink-0 w-[168px] flex items-center justify-end gap-3">
-                        {business.flagged_for_outreach && business.outreach_reason !== business.website_status && (
+                        {business.flagged_for_outreach && (
                           <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-2 py-1 text-[11px] font-medium text-[var(--accent)] whitespace-nowrap">
                             <span className="h-1 w-1 rounded-full bg-[var(--accent)]" />
                             {business.outreach_reason ? (OUTREACH_REASONS[business.outreach_reason] ?? "Outreach") : "Outreach"}

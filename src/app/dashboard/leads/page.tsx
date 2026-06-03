@@ -888,7 +888,7 @@ export default function LeadsPage() {
                           {/* Opportunity score ring / Web-presence badge */}
                           <td className="px-5 py-4">
                             {showScoreRing
-                              ? <ScoreRing score={ringScore} size={44} variant={lead.audited_at ? "opportunity" : "estimate"} />
+                              ? <ScoreRing score={ringScore} size={52} variant={lead.audited_at ? "opportunity" : "estimate"} />
                               : <WebPresenceBadge status={lead.website_status} />
                             }
                           </td>
@@ -948,7 +948,7 @@ export default function LeadsPage() {
                         {/* Opportunity score ring / Web-presence badge */}
                         <div className="flex-shrink-0 pt-0.5">
                           {showScoreRing
-                            ? <ScoreRing score={ringScore} size={44} variant={lead.audited_at ? "opportunity" : "estimate"} />
+                            ? <ScoreRing score={ringScore} size={52} variant={lead.audited_at ? "opportunity" : "estimate"} />
                             : <WebPresenceBadge status={lead.website_status} />
                           }
                         </div>
