@@ -124,10 +124,7 @@ export default function SettingsPage() {
         {/* Sign out */}
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[var(--badge-red-text)]">Sign out</p>
-              <p className="text-xs text-[var(--badge-red-text)]/80">Sign out of your Nearsited account</p>
-            </div>
+            <p className="text-sm text-[var(--badge-red-text)]/80">Sign out of your Nearsited account</p>
             <SignOutButton />
           </div>
         </div>

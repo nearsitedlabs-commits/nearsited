@@ -27,13 +27,14 @@ type Pitch = {
   } | { name: string; website_status?: string; website?: string; performance_score?: number | null; design_score?: number | null }[];
 };
 
-type FilterKey = "all" | "has_website" | "no_website" | "social_only";
+type FilterKey = "all" | "has_website" | "no_website" | "social_only" | "platform_only";
 
 const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: "all",         label: "All" },
-  { key: "has_website", label: "Weak Website" },
-  { key: "no_website",  label: "No Website" },
-  { key: "social_only", label: "Social Only" },
+  { key: "all",          label: "All" },
+  { key: "has_website",  label: "Weak Website" },
+  { key: "no_website",   label: "No Website" },
+  { key: "social_only",  label: "Social Only" },
+  { key: "platform_only", label: "Platform Only" },
 ];
 
 // Future-proofing: channel-based filter chips (currently show count, filter ready)
@@ -71,6 +72,7 @@ function getOpportunityContext(pitch: Pitch): string | null {
     return "Weak Website Opportunity — performance issues identified";
   }
   if (wf === "social_only") return "Social Presence Opportunity — no owned website yet";
+  if (biz.website_status === "platform_only") return "Platform Dependency — no owned website, reliant on third party";
   return "No Website Opportunity — no digital presence detected";
 }
 
