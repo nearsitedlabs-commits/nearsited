@@ -6,7 +6,7 @@ import {
   Search, Target, Mail, TrendingUp, Check,
   Zap, ExternalLink,
   ArrowUpRight, AlertTriangle,
-  FileText, MessageSquare, Users, Briefcase,
+  FileText, MessageSquare, Users,
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -919,13 +919,6 @@ const USE_CASES = [
     stat: "2–3× faster sales cycle",
     cta: "Start as an agency",
   },
-  {
-    icon: Briefcase,
-    title: "Web studios",
-    desc: "Scale your project pipeline without scaling your sales team. Bulk-discover all opportunity types across cities, assign to account managers, and track every deal from discovery to close.",
-    stat: "10× prospecting capacity",
-    cta: "Start as a studio",
-  },
 ];
 
 function UserIcon() {
@@ -940,12 +933,12 @@ function AgencyUseCases({ navigate }: { navigate: (href: string) => void }) {
           <SectionLabel>Who it&rsquo;s for</SectionLabel>
           <SectionTitle className="text-center">Agency use cases that close deals.</SectionTitle>
           <SectionSub className="mx-auto text-center">
-            Whether you&rsquo;re a solo freelancer or a 20-person studio, the workflow is the same.
+            Whether you&rsquo;re a solo freelancer or running a small agency, the workflow is the same.
             The scale is different.
           </SectionSub>
         </div>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 md:max-w-3xl md:mx-auto">
           {USE_CASES.map((uc) => {
             const Icon = uc.icon;
             return (

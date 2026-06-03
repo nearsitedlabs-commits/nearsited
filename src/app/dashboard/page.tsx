@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PageTransition } from "@/lib/motion";
 import DashboardClient from "./dashboard-client";
 
 export default async function DashboardPage() {
@@ -56,7 +55,6 @@ export default async function DashboardPage() {
     .limit(5);
 
   return (
-    <PageTransition>
     <DashboardClient
       firstName={firstName}
       totalLeads={totalLeads ?? 0}
@@ -67,6 +65,5 @@ export default async function DashboardPage() {
       pipelineCounts={pipelineCounts}
       recentLeads={(recentLeads ?? []) as Record<string, unknown>[]}
     />
-    </PageTransition>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { SkeletonLoader } from "@/lib/motion";
 
 export default function AuditLoading() {

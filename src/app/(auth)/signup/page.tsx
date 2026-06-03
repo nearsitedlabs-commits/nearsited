@@ -63,7 +63,10 @@ function SignupPageContent() {
     const { error: signUpError } = await supabase.auth.signUp({
       email: actualEmail,
       password: actualPassword,
-      options: { data: { full_name: actualName || fullName } },
+      options: {
+        data: { full_name: actualName || fullName },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
     if (signUpError) {
       setError(signUpError.message);
@@ -99,9 +102,7 @@ function SignupPageContent() {
             backdropFilter: "blur(4px)",
           }}
         >
-          <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/25 bg-[var(--accent-tint)]">
-            <Image src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
-          </span>
+          <Image src="/logo-icon.svg" alt="" width={44} height={25} className="mx-auto block" />
           <h1 className="text-xl font-medium tracking-tight text-[var(--text-primary)]">
             Verify your email
           </h1>
