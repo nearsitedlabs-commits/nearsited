@@ -34,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <span className="text-xs text-[var(--text-tertiary)]">Full access</span>
             </div>
             <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-              Paid plans launching soon &middot; <a href="/pricing" className="text-[var(--accent)] hover:underline">See pricing</a>
+              Paid plans launching soon &middot; <a href="/pricing" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">See pricing</a>
             </p>
           </div>
         </div>
