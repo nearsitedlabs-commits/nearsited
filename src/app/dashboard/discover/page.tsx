@@ -1472,9 +1472,9 @@ export default function DiscoverPage() {
                             {business.outreach_reason ? (OUTREACH_REASONS[business.outreach_reason] ?? "Outreach") : "Outreach"}
                           </span>
                         )}
-                        {/* Fixed-width icon container — MapPin, Globe, Phone */}
-                        <div className="flex items-center gap-2.5 w-[52px] justify-end">
-                          {business.place_id ? (
+                        {/* Icon links — only rendered when data exists */}
+                        <div className="flex items-center gap-2.5 justify-end">
+                          {business.place_id && (
                             <a
                               href={`https://www.google.com/maps/place/?q=place_id:${business.place_id}`}
                               target="_blank"
@@ -1484,8 +1484,8 @@ export default function DiscoverPage() {
                             >
                               <MapPin className="size-[15px]" />
                             </a>
-                          ) : <div className="size-[15px]" />}
-                          {business.website ? (
+                          )}
+                          {business.website && (
                             <a
                               href={business.website}
                               target="_blank"
@@ -1495,10 +1495,8 @@ export default function DiscoverPage() {
                             >
                               <Globe className="size-[15px]" />
                             </a>
-                          ) : (
-                            <div className="size-[15px]" />
                           )}
-                          {business.phone ? (
+                          {business.phone && (
                             <a
                               href={`tel:${business.phone}`}
                               className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
@@ -1506,8 +1504,6 @@ export default function DiscoverPage() {
                             >
                               <Phone className="size-[15px]" />
                             </a>
-                          ) : (
-                            <div className="size-[15px]" />
                           )}
                         </div>
                       </div>

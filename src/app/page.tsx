@@ -160,6 +160,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />249 business types</span>
         </motion.div>
       </div>
 
@@ -707,7 +708,7 @@ function SampleReport({ navigate }: { navigate: (href: string) => void }) {
           <div className="mt-6 flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--text-primary)]">Want to find opportunities like this in your city?</p>
-              <p className="mt-1 text-xs text-[var(--text-tertiary)]">Enter any city + business type. Get ranked leads in under 3 seconds.</p>
+              <p className="mt-1 text-xs text-[var(--text-tertiary)]">Choose from 249 business types across 16 industries. Get ranked leads in under 3 seconds.</p>
             </div>
             <Button variant="primary" onClick={() => navigate("/signup")} className="w-full sm:w-auto">
               Try it now →
@@ -1118,7 +1119,7 @@ function FAQ() {
     },
     {
       q: "What kind of businesses does Nearsited find?",
-      a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, hotels — 80+ categories across any city.",
+      a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels — 249 business types across 16 industries in any city.",
     },
     {
       q: "How accurate is the opportunity score?",
