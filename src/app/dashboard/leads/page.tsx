@@ -503,8 +503,17 @@ export default function LeadsPage() {
       });
     }
 
-    if (activePipelineTab !== "all_pipeline") {
-      result = result.filter((l) => pipelineMap.get(l.id) === activePipelineTab);
+    const PIPELINE_TAB_TO_STATUS: Record<string, string> = {
+      pipeline_prospect:        "new_lead",
+      pipeline_contacted:       "contacted",
+      pipeline_in_conversation: "in_conversation",
+      pipeline_won:             "won",
+    };
+    if (activePipelineTab === "all_pipeline") {
+      result = result.filter((l) => pipelineMap.has(l.id));
+    } else {
+      const dbStatus = PIPELINE_TAB_TO_STATUS[activePipelineTab];
+      result = result.filter((l) => dbStatus && pipelineMap.get(l.id) === dbStatus);
     }
 
     if (filterAudited)   result = result.filter((l) => l.audited_at !== null);
