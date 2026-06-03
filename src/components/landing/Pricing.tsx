@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -12,12 +14,12 @@ export type PricingProps = {
   mode?: "inline" | "page";
 };
 
-// ── Plans ─────────────────────────────────────────────────────────────────────
-
 type Plan = {
   id: string;
   name: string;
-  price: string;
+  monthlyPrice: string;
+  annualPrice: string;
+  annualNote: string;
   description: string;
   features: string[];
   featured: boolean;
@@ -25,12 +27,15 @@ type Plan = {
   badge?: string;
 };
 
-// Three differentiating bullets per plan only — shared features listed below cards.
+// ── Plans ─────────────────────────────────────────────────────────────────────
+
 const PLANS: Plan[] = [
   {
     id: "starter",
     name: "Starter",
-    price: "$19/mo",
+    monthlyPrice: "$19/mo",
+    annualPrice: "$15/mo",
+    annualNote: "billed $180/yr",
     description: "For solo freelancers and independent web designers.",
     features: [
       "50 opportunity audits per month",
@@ -44,7 +49,9 @@ const PLANS: Plan[] = [
   {
     id: "agency",
     name: "Agency",
-    price: "$49/mo",
+    monthlyPrice: "$49/mo",
+    annualPrice: "$39/mo",
+    annualNote: "billed $468/yr",
     description: "For small agencies and growing web design teams.",
     features: [
       "200 opportunity audits per month",
@@ -65,17 +72,47 @@ const SHARED_FEATURES = [
   "Shareable report links",
 ];
 
+// ── Animation config ──────────────────────────────────────────────────────────
+
+const ease = [0.25, 0.1, 0.25, 1] as const;
+const viewport = { once: true, margin: "-40px" as const };
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease } },
+};
+
+const cardContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const cardItem: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease } },
+};
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const shouldReduce = useReducedMotion();
+
   return (
     <section
       id="pricing"
       className={mode === "page" ? "py-16 sm:py-24" : "border-t border-[var(--border)] py-24"}
     >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
+
         {/* Header */}
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+        >
           {mode === "inline" && (
             <div className="mb-4 inline-flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--accent)]">
               <span className="block h-px w-6 bg-[var(--accent)]" />
@@ -88,65 +125,178 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
             Try any plan free for 14 days. No credit card required.
           </p>
-        </div>
+        </motion.div>
 
         {/* Beta pricing banner */}
-        <div className="mt-6 mx-auto max-w-2xl rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-3 text-center text-sm">
+        <motion.div
+          className="mt-6 mx-auto max-w-2xl rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-3 text-center text-sm"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+        >
           <span className="font-medium text-[var(--accent)]">Beta pricing</span>
           <span className="mx-2 text-[var(--text-tertiary)]">·</span>
           <span className="text-[var(--text-secondary)]">Your rate is locked for 12 months. No surprise increases.</span>
-        </div>
+        </motion.div>
 
-        {/* Plan cards — 2 column */}
-        <div className="mt-6 grid gap-6 md:grid-cols-2 md:max-w-3xl md:mx-auto">
-          {PLANS.map((plan) => (
-            <Card
-              key={plan.id}
-              variant={plan.featured ? "interactive" : "default"}
-              padding="lg"
-              className={`flex flex-col ${
-                plan.featured
-                  ? "border-[var(--accent)]/30 ring-1 ring-[var(--accent)]/10 md:scale-105"
-                  : ""
-              }`}
-            >
-              {plan.badge && (
-                <Badge color={plan.featured ? "amber" : "indigo"} className="mb-4 self-start">
-                  {plan.badge}
-                </Badge>
-              )}
-              <h3 className="text-xl font-medium text-[var(--text-primary)]">{plan.name}</h3>
-              <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{plan.description}</p>
-              <p className="mt-6 text-3xl font-medium tracking-tight text-[var(--text-primary)]">
-                {plan.price}
-              </p>
-              <ul className="mt-6 flex-1 space-y-3">
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 text-sm text-[var(--text-secondary)]"
-                  >
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                variant={plan.featured ? "primary" : "secondary"}
-                onClick={() => navigate("/signup")}
-                className="mt-8 w-full"
+        {/* Monthly / Annual toggle */}
+        <motion.div
+          className="mt-8 flex justify-center"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+        >
+          <div className="relative flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] p-1 text-sm">
+            {(["monthly", "annual"] as const).map((b) => (
+              <button
+                key={b}
+                onClick={() => setBilling(b)}
+                className={`relative rounded-full px-5 py-2 font-medium transition-colors duration-150 ${
+                  billing === b
+                    ? "text-[var(--text-primary)]"
+                    : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                }`}
               >
-                {plan.cta}
-              </Button>
-              <p className="mt-3 text-center text-xs font-medium text-[var(--text-secondary)]">
-                No credit card required
-              </p>
-            </Card>
-          ))}
-        </div>
+                {billing === b && (
+                  <motion.div
+                    layoutId="billing-pill"
+                    className="absolute inset-0 rounded-full bg-[var(--bg-surface)] shadow-sm"
+                    transition={
+                      shouldReduce
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 400, damping: 35 }
+                    }
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {b === "monthly" ? "Monthly" : "Annual"}
+                  {b === "annual" && (
+                    <span className="text-[0.6rem] font-semibold tracking-wide text-[var(--accent)]">
+                      SAVE 20%
+                    </span>
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
-        {/* Shared features — shown once below cards */}
-        <div className="mt-8 mx-auto max-w-3xl rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-5">
+        {/* Plan cards */}
+        <motion.div
+          className="mt-6 grid gap-6 md:grid-cols-2 md:max-w-3xl md:mx-auto"
+          variants={cardContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+        >
+          {PLANS.map((plan) => (
+            <motion.div
+              key={plan.id}
+              variants={cardItem}
+              whileHover={
+                shouldReduce
+                  ? undefined
+                  : {
+                      y: -4,
+                      boxShadow: "0 20px 48px rgba(0,0,0,0.22)",
+                      transition: { duration: 0.2, ease },
+                    }
+              }
+              className="relative flex flex-col"
+            >
+              {/* Glow pulse — featured card only */}
+              {plan.featured && !shouldReduce && (
+                <motion.div
+                  className="pointer-events-none absolute inset-0 rounded-xl"
+                  animate={{
+                    boxShadow: [
+                      "0 0 0px 0px rgba(138,151,119,0)",
+                      "0 0 28px 6px rgba(138,151,119,0.22)",
+                      "0 0 0px 0px rgba(138,151,119,0)",
+                    ],
+                  }}
+                  transition={{
+                    duration: 1.8,
+                    repeat: Infinity,
+                    repeatDelay: 6.2,
+                    ease: "easeInOut",
+                    delay: 1.5,
+                  }}
+                />
+              )}
+
+              <Card
+                variant={plan.featured ? "interactive" : "default"}
+                padding="lg"
+                className={`flex h-full flex-col ${
+                  plan.featured
+                    ? "border-[var(--accent)]/30 ring-1 ring-[var(--accent)]/10"
+                    : ""
+                }`}
+              >
+                {plan.badge && (
+                  <Badge color={plan.featured ? "amber" : "indigo"} className="mb-4 self-start">
+                    {plan.badge}
+                  </Badge>
+                )}
+                <h3 className="text-xl font-medium text-[var(--text-primary)]">{plan.name}</h3>
+                <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{plan.description}</p>
+
+                {/* Price — cross-fades on billing change */}
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={`${plan.id}-${billing}`}
+                    initial={shouldReduce ? false : { opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduce ? undefined : { opacity: 0, y: 8 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    className="mt-6"
+                  >
+                    <p className="text-3xl font-medium tracking-tight text-[var(--text-primary)]">
+                      {billing === "monthly" ? plan.monthlyPrice : plan.annualPrice}
+                    </p>
+                    {billing === "annual" && (
+                      <p className="mt-1 text-xs text-[var(--text-tertiary)]">{plan.annualNote}</p>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                <ul className="mt-6 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-3 text-sm text-[var(--text-secondary)]"
+                    >
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  variant={plan.featured ? "primary" : "secondary"}
+                  onClick={() => navigate("/signup")}
+                  className="mt-8 w-full"
+                >
+                  {plan.cta}
+                </Button>
+                <p className="mt-3 text-center text-xs font-medium text-[var(--text-secondary)]">
+                  No credit card required
+                </p>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Shared features */}
+        <motion.div
+          className="mt-8 mx-auto max-w-3xl rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-5"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+        >
           <p className="mb-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[var(--text-tertiary)] text-center">
             Everything included on all plans
           </p>
@@ -158,11 +308,17 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
 
         {/* Trust row — page mode only */}
         {mode === "page" && (
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-tertiary)]">
+          <motion.div
+            className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-tertiary)]"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+          >
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
               Cancel anytime during trial
@@ -175,7 +331,7 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
               Built by an agency, for agencies
             </span>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

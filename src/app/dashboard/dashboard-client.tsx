@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   Search, ListFilter, Target, Mail, BarChart3, Activity,
   ArrowRight, MessageSquare, FileText, Compass, Zap, TrendingUp,
@@ -49,6 +50,32 @@ function timeAgo(dateStr: string, now: number | null): string {
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return `${Math.floor(diff / 86400)}d ago`;
+}
+
+// ── CountUp — animates from 0 to target once on mount ─────────────────────────
+
+function CountUp({ value, duration = 600 }: { value: number; duration?: number }) {
+  const [display, setDisplay] = useState(0);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (hasAnimated.current) { setDisplay(value); return; }
+    hasAnimated.current = true;
+    const start = performance.now();
+    const from = 0;
+    const diff = value - from;
+    function tick(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(from + diff * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }, [value, duration]);
+
+  return <>{display}</>;
 }
 
 // ── Opportunity type badges ────────────────────────────────────────────────────
@@ -263,41 +290,79 @@ export default function DashboardClient({
           )}
 
           {/* ── KPI Cards — action-first hierarchy ────────────────────── */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <motion.div
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 1 },
+              visible: { transition: { staggerChildren: 0.06 } },
+            }}
+          >
             {/* 1. Ready to Pitch — highest signal of progress */}
-            <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-4">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-4"
+            >
               <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--accent-tint)]">
                 <Mail className="h-4 w-4 text-[var(--accent)]" />
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none">{flaggedLeads}</p>
+              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+                <CountUp value={flaggedLeads} />
+              </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Ready to Pitch</p>
-            </div>
+            </motion.div>
 
             {/* 2. In Pipeline — deals in motion */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+            >
               <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
                 <BarChart3 className="h-4 w-4 text-[var(--text-secondary)]" />
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none">{totalPipeline}</p>
+              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+                <CountUp value={totalPipeline} />
+              </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">In Pipeline</p>
-            </div>
+            </motion.div>
 
             {/* 3. Active Conversations — warmest deals */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+            >
               <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
                 <MessageSquare className="h-4 w-4 text-[var(--text-secondary)]" />
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none">{activeConversations}</p>
+              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+                <CountUp value={activeConversations} />
+              </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Active Conversations</p>
-            </div>
+            </motion.div>
 
             {/* 4. Leads — de-emphasized collection metric with context */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+            >
               <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
                 <Target className="h-4 w-4 text-[var(--text-tertiary)]" />
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none">
-                {totalLeads}
+              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+                <CountUp value={totalLeads} />
                 {unanalysedLeads > 0 && (
                   <span className="ml-2 text-sm font-normal text-[var(--text-tertiary)]">
                     ({unanalysedLeads} unanalysed)
@@ -305,8 +370,8 @@ export default function DashboardClient({
                 )}
               </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Leads</p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* ── Secondary actions (if available) ──────────────────────── */}
           {secondaryActions.length > 0 && (
@@ -350,14 +415,26 @@ export default function DashboardClient({
                 </Link>
               </div>
             ) : (
-              <div className="space-y-1.5">
+              <motion.div
+                className="space-y-1.5"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.04 } },
+                }}
+              >
                 {leads.map((lead) => {
                   const score = lead.performance_score ?? lead.design_score;
                   const isAnalysed = score !== null;
 
                   return (
-                    <div
+                    <motion.div
                       key={lead.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 8 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] } },
+                      }}
                       onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
                       className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-[var(--bg-elevated)] p-3 text-left transition-colors duration-150 hover:border-[var(--border)] hover:bg-[var(--bg-surface)]"
                     >
@@ -407,10 +484,10 @@ export default function DashboardClient({
                           </span>
                         );
                       })()}
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </div>
 
@@ -499,9 +576,11 @@ export default function DashboardClient({
                         <span className={`text-sm font-semibold ${stage.textColor}`}>{count}</span>
                       </div>
                       <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${stage.barColor}`}
-                          style={{ width: `${pct}%` }}
+                        <motion.div
+                          className={`h-full rounded-full ${stage.barColor}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                         />
                       </div>
                     </div>

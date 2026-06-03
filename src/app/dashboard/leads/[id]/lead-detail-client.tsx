@@ -1,6 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useReducedMotion,
+  animate as motionAnimate,
+} from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowLeft, ChevronDown, Copy, ExternalLink, FileDown, Loader2, Mail, MapPin, Monitor, Phone, RefreshCw, Send, Share2, Smartphone, TrendingUp } from "lucide-react";
@@ -44,13 +49,49 @@ type Props = {
   pipelineStatus: string | null;
 };
 
+// ── Animation constants ───────────────────────────────────────────────────────
+
+const EASE_OUT = [0.25, 0.1, 0.25, 1] as const;
+
+const sectionContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+};
+
+const sectionCard = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE_OUT } },
+};
+
+const issueContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
+const issueItem = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: EASE_OUT } },
+};
+
 // ── Sub-components ──────────────────────────────────────────────────────────
 
 function ScoreRingWithLabel({ score, size = 56, label }: { score: number; size?: number; label?: string }) {
+  const [display, setDisplay] = useState(0);
+  const shouldReduce = useReducedMotion();
+
+  useEffect(() => {
+    const controls = motionAnimate(0, score, {
+      duration: shouldReduce ? 0 : 0.7,
+      ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+      onUpdate: (v: number) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [score, shouldReduce]);
+
   const stroke = size >= 70 ? 5 : size <= 42 ? 3 : 4;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;
-  const offset = circumference - (Math.min(100, Math.max(0, score)) / 100) * circumference;
+  const offset = circumference - (Math.min(100, Math.max(0, display)) / 100) * circumference;
   const color = score <= 55 ? "var(--score-high)" : score <= 74 ? "var(--score-mid)" : "var(--score-good)";
   const lbl = label ?? scoreLabel(score);
   return (
@@ -64,7 +105,7 @@ function ScoreRingWithLabel({ score, size = 56, label }: { score: number; size?:
             strokeDasharray={circumference} strokeDashoffset={offset} />
         </svg>
         <span className={`absolute font-bold ${size >= 70 ? "text-xl" : "text-sm"} text-[var(--text-primary)]`}>
-          {score}
+          {display}
         </span>
       </div>
       <span className="text-center text-xs font-medium text-[var(--text-secondary)]">{lbl}</span>
@@ -169,6 +210,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const [toast, setToast] = useState<string | null>(null);
   const [quotaError, setQuotaError] = useState<string | null>(null);
   const [quotaRetryTimer, setQuotaRetryTimer] = useState(0);
+  const shouldReduce = useReducedMotion();
   const [outreachChannel, setOutreachChannel] = useState<OutreachChannel>("email");
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [contactInfo, setContactInfo] = useState<{
@@ -863,7 +905,12 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         </div>
 
         {/* ── OPPORTUNITY SCORE STRIP ─────────────────────────────────────── */}
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={shouldReduce ? {} : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: EASE_OUT }}
+        >
           {hasDesign ? (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-16 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 sm:px-8 py-6">
               {/* Current Score */}
@@ -924,7 +971,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               <p className="text-sm text-[var(--text-tertiary)]">Run an audit to see scores.</p>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Full analysis progress banner */}
         {runningFullAnalysis && (
@@ -968,10 +1015,15 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         <div className="grid gap-6 lg:grid-cols-2">
 
           {/* ════ LEFT COLUMN ════════════════════════════════════════════════ */}
-          <div className="space-y-6 order-2 lg:order-1">
+          <motion.div
+            className="space-y-6 order-2 lg:order-1"
+            variants={sectionContainer}
+            initial={shouldReduce ? "visible" : "hidden"}
+            animate="visible"
+          >
 
             {/* ── SECTION 2: WHY CONTACT THIS LEAD ────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why Contact This Lead</h3>
               {topFindings.length === 0 ? (
                 <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to identify findings.</p>
@@ -987,10 +1039,10 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   ))}
                 </ul>
               )}
-            </div>
+            </motion.div>
 
             {/* ── SECTION 3: AI OPPORTUNITY SUMMARY ────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
               {opportunityBullets.length === 0 ? (
                 <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
@@ -1004,19 +1056,24 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   ))}
                 </ul>
               )}
-            </div>
+            </motion.div>
 
             {/* ── SECTION 5: TOP ISSUES IMPACTING SCORE ────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">
                 Top Issues Impacting Score
               </h3>
               {allIssues.length === 0 ? (
                 <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to see issues.</p>
               ) : (
-                <div className="space-y-3">
+                <motion.div
+                  className="space-y-3"
+                  variants={issueContainer}
+                  initial={shouldReduce ? "visible" : "hidden"}
+                  animate="visible"
+                >
                   {allIssues.slice(0, 3).map((issue, i) => (
-                    <div key={i} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                    <motion.div key={i} variants={issueItem} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-[var(--text-primary)]">{issue.title}</p>
@@ -1029,19 +1086,19 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                           )}
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                   {allIssues.length > 3 && (
                     <p className="text-xs text-[var(--text-tertiary)] text-center pt-1">
                       +{allIssues.length - 3} more issues
                     </p>
                   )}
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
 
             {/* ── SECTION 6: AUDIT DETAILS (collapsible) ────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-semibold text-[var(--text-primary)]">
                   {screenshotStrategy === "mobile" ? "Mobile" : "Desktop"} Audit
@@ -1115,10 +1172,10 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   </div>
                 );
               })()}
-            </div>
+            </motion.div>
 
             {/* ── SECTION 8: HISTORY ────────────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
+            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">History</h3>
               {(() => {
                 const events: { date: string; label: string; score?: number }[] = [];
@@ -1163,12 +1220,17 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   </div>
                 );
               })()}
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
 
           {/* ════ RIGHT COLUMN ═══════════════════════════════════════════════ */}
-          <div className="space-y-6 order-1 lg:order-2">
+          <motion.div
+            className="space-y-6 order-1 lg:order-2"
+            variants={sectionContainer}
+            initial={shouldReduce ? "visible" : "hidden"}
+            animate="visible"
+          >
 
             {/* ── SECTION 4: READY-TO-SEND OUTREACH ────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
@@ -1364,7 +1426,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               </div>
             </div>
 
-          </div>
+          </motion.div>
         </div>
 
       </div>

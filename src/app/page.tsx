@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Search, Target, Mail, TrendingUp, Check,
-  Zap, ExternalLink, DollarSign,
+  Zap, ExternalLink,
   ArrowUpRight, AlertTriangle,
   FileText, MessageSquare, Users, Briefcase,
   ChevronDown,
@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import Pricing from "@/components/landing/Pricing";
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 // ── Section helpers ──────────────────────────────────────────────────────────
@@ -73,20 +74,59 @@ function Nav({ navigate }: { navigate: (href: string) => void }) {
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 
+function AnimatedBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className="absolute -left-60 -top-60 h-[600px] w-[600px] rounded-full bg-[var(--accent)]/4 blur-[180px]"
+        animate={{
+          x: [0, 40, -20, 0],
+          y: [0, -30, 20, 0],
+        }}
+        transition={{
+          duration: 25,
+          ease: "easeInOut",
+          repeat: Infinity,
+        }}
+      />
+      <motion.div
+        className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-[var(--score-mid)]/3 blur-[160px]"
+        animate={{
+          x: [0, -30, 20, 0],
+          y: [0, 30, -20, 0],
+        }}
+        transition={{
+          duration: 30,
+          ease: "easeInOut",
+          repeat: Infinity,
+        }}
+      />
+    </div>
+  );
+}
+
 function Hero({ navigate }: { navigate: (href: string) => void }) {
+  const easeOut = [0.25, 0.1, 0.25, 1] as const;
+  const fadeUp = (delay: number) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.4, delay, ease: easeOut },
+  });
+
   return (
     <section className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-20 pb-16 md:grid-cols-2 md:px-8 md:pt-24 md:pb-20 lg:px-10">
-      <div className="pointer-events-none absolute -left-60 -top-60 h-[500px] w-[500px] rounded-full bg-[var(--accent)]/3 blur-[150px]" />
+      <AnimatedBackground />
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
-        <div>
+        <motion.div {...fadeUp(0)}>
           <Badge color="indigo" dot>
             Find businesses that need websites
           </Badge>
-        </div>
+        </motion.div>
 
-        <div className="space-y-5">
+        <motion.div {...fadeUp(0.1)} className="space-y-5">
           <h1 className="text-[clamp(2.8rem,5.5vw,5.5rem)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
             Find website opportunities
             <br />
@@ -95,9 +135,9 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
           <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
             Nearsited finds local businesses with <strong className="text-[var(--text-primary)] font-medium">no website</strong>, social-only presence, platform-only listings, or weak websites — ranks them by opportunity score, and generates a tailored pitch for each type in under 2 minutes.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+        <motion.div {...fadeUp(0.2)} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Button
             variant="primary"
             icon={<Search className="h-4 w-4" />}
@@ -114,17 +154,23 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
           >
             See how agencies win
           </Button>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
+        <motion.div {...fadeUp(0.3)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right: Mixed opportunity feed */}
-      <div className="relative flex items-center justify-center">
+      <motion.div
+        className="relative z-10 flex items-center justify-center"
+        initial={{ opacity: 0, x: 60 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <div className="relative w-full max-w-[440px]">
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
             <div className="mb-4 flex items-center justify-between">
@@ -147,9 +193,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
                   <span className="inline-flex items-center gap-1 rounded-full border border-[var(--score-high)]/30 bg-[var(--score-high)]/10 px-2 py-0.5 text-[10px] font-semibold text-[var(--score-high)]">
                     No Website
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
-                    <DollarSign className="h-2.5 w-2.5" />$2,000–$6,000
-                  </span>
+                  <span className="text-[10px] text-[var(--score-good)]">$2,000–$6,000</span>
                 </div>
               </div>
 
@@ -166,9 +210,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
                   <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
                     Social Only
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
-                    <DollarSign className="h-2.5 w-2.5" />$1,500–$4,000
-                  </span>
+                  <span className="text-[10px] text-[var(--score-good)]">$1,500–$4,000</span>
                 </div>
               </div>
 
@@ -183,9 +225,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
                   <span className="inline-flex items-center gap-1 rounded-full border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/10 px-2 py-0.5 text-[10px] font-semibold text-[var(--score-mid)]">
                     Weak Website
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] text-[var(--score-good)]">
-                    <DollarSign className="h-2.5 w-2.5" />$1,000–$3,000
-                  </span>
+                  <span className="text-[10px] text-[var(--score-good)]">$1,000–$3,000</span>
                 </div>
               </div>
             </div>
@@ -206,7 +246,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
             </div>
           </Card>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -383,25 +423,25 @@ function WhyNearsited() {
           <p className="mb-4 text-center text-[0.7rem] uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
             Four types of website opportunity — all found in one search
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
-              <span className="h-2 w-2 rounded-full bg-[var(--score-high)]" />
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-high)]" />
               <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
               <span className="text-xs text-[var(--text-tertiary)]">— biggest opportunity</span>
             </div>
             <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-2.5">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
+              <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" />
               <span className="text-sm font-medium text-amber-400">Social Only</span>
               <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
             </div>
             <div className="flex items-center gap-2.5 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-4 py-2.5">
-              <span className="h-2 w-2 rounded-full bg-[var(--badge-indigo-text)]" />
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--badge-indigo-text)]" />
               <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
               <span className="text-xs text-[var(--text-tertiary)]">— dependent on third-party</span>
             </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-4 py-2.5">
-              <span className="h-2 w-2 rounded-full bg-[var(--score-mid)]" />
-              <span className="text-sm font-medium text-[var(--score-mid)]">Weak Website</span>
+            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-4 py-2.5">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
+              <span className="text-sm font-medium text-[var(--accent)]">Weak Website</span>
               <span className="text-xs text-[var(--text-tertiary)]">— redesign opportunity</span>
             </div>
           </div>
@@ -413,15 +453,16 @@ function WhyNearsited() {
 
 // ── Sample Opportunity Report ────────────────────────────────────────────────
 
-type ReportTab = "weak" | "none" | "social";
+type ReportTab = "weak" | "none" | "social" | "platform";
 
 function SampleReport({ navigate }: { navigate: (href: string) => void }) {
   const [activeTab, setActiveTab] = useState<ReportTab>("weak");
 
   const tabs: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
-    { id: "weak",   label: "Weak Website",  badge: "Redesign",        badgeColor: "amber" },
-    { id: "none",   label: "No Website",    badge: "Website Build",   badgeColor: "red" },
-    { id: "social", label: "Social Only",   badge: "Website Opportunity", badgeColor: "indigo" },
+    { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
+    { id: "none",     label: "No Website",     badge: "Website Build",       badgeColor: "red" },
+    { id: "social",   label: "Social Only",    badge: "Website Opportunity", badgeColor: "indigo" },
+    { id: "platform", label: "Platform Only",  badge: "Website Build",       badgeColor: "indigo" },
   ];
 
   return (
@@ -431,7 +472,7 @@ function SampleReport({ navigate }: { navigate: (href: string) => void }) {
           <SectionLabel>SAMPLE OPPORTUNITY REPORT</SectionLabel>
           <SectionTitle>Every opportunity type, one platform.</SectionTitle>
           <SectionSub>
-            Nearsited discovers all three kinds of website opportunity. Here&rsquo;s what each report looks like.
+            Nearsited discovers all four kinds of website opportunity. Here&rsquo;s what each report looks like.
           </SectionSub>
         </div>
 
@@ -612,6 +653,56 @@ function SampleReport({ navigate }: { navigate: (href: string) => void }) {
             </>
           )}
 
+          {/* ── Platform Only ──────────────────────────────────────── */}
+          {activeTab === "platform" && (
+            <>
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] pb-6">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</h3>
+                    <Badge color="indigo">Platform Only</Badge>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
+                  <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,200–$3,500</p>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-4 w-4 text-[var(--badge-indigo-text)]" />
+                  <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Entire online presence is on a third-party platform</span>
+                </div>
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">
+                  This business exists only as a listing on Fresha. No website means no brand story, no portfolio, no SEO footprint, and no direct bookings. If Fresha changes its fee structure or removes the listing, the business loses all online discoverability overnight.
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {[
+                  { label: "Online presence",  value: "Fresha only",  note: "No owned web property" },
+                  { label: "Google findability", value: "Minimal",    note: "No SEO outside the platform" },
+                  { label: "Direct bookings",  value: "Platform only", note: "Pays % on every appointment" },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                    <p className="mt-1 text-base font-medium text-[var(--text-primary)]">{item.value}</p>
+                    <p className="mt-0.5 text-xs text-[var(--accent)]">{item.note}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
+                <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
+                  &ldquo;Hi — I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform — you&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
+                </p>
+              </div>
+            </>
+          )}
+
           {/* CTA — shared */}
           <div className="mt-6 flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -630,7 +721,7 @@ function SampleReport({ navigate }: { navigate: (href: string) => void }) {
 
 // ── Sample Pitch ─────────────────────────────────────────────────────────────
 
-type PitchTab = "weak" | "none" | "social";
+type PitchTab = "weak" | "none" | "social" | "platform";
 
 const PITCH_EXAMPLES: Record<PitchTab, {
   label: string;
@@ -696,6 +787,26 @@ const PITCH_EXAMPLES: Record<PitchTab, {
       </div>
     ),
   },
+  platform: {
+    label: "Platform Only",
+    badgeColor: "indigo",
+    meta: "Tone: Professional · For: Bloom Spa & Wellness · 1.3s",
+    body: (
+      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+        <p>Hi,</p>
+        <p>
+          I found <span className="font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</span> on Fresha — great reviews, but no website of your own.
+        </p>
+        <p>Right now every booking goes through Fresha&rsquo;s platform. That means you&rsquo;re paying a commission on every appointment, you don&rsquo;t own your client list, and if Fresha changes its terms you lose everything overnight.</p>
+        <ul className="list-disc space-y-1.5 pl-4">
+          <li>No Google search presence outside the Fresha listing</li>
+          <li>No direct bookings — every client goes through a third party</li>
+          <li>No brand story, no portfolio, no SEO you control</li>
+        </ul>
+        <p>A professional website would give you direct bookings, your own client database, and visibility on Google. Would you be open to a quick call?</p>
+      </div>
+    ),
+  },
 };
 
 function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) {
@@ -711,7 +822,7 @@ function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) 
             <SectionLabel>Sample pitches</SectionLabel>
             <SectionTitle>Every opportunity type gets a tailored pitch.</SectionTitle>
             <SectionSub>
-              Pitches are generated from real opportunity data — not templates. The angle changes completely depending on whether the business has no website, social-only, or a weak one.
+              Pitches are generated from real opportunity data — not templates. The angle changes completely depending on whether the business has no website, social-only, platform-only, or a weak one.
             </SectionSub>
 
             <div className="mt-8 space-y-4">
@@ -732,7 +843,7 @@ function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) 
 
             {/* Tab strip — left side */}
             <div className="mt-8 flex flex-wrap gap-2">
-              {(["weak", "none", "social"] as PitchTab[]).map((id) => {
+              {(["weak", "none", "social", "platform"] as PitchTab[]).map((id) => {
                 const tab = PITCH_EXAMPLES[id];
                 return (
                   <button
@@ -797,7 +908,7 @@ const USE_CASES = [
   {
     icon: UserIcon,
     title: "Solo freelancers",
-    desc: "Stop spending 10 hours/week prospecting. Surface 20–60 qualified leads in 3 seconds — no-website businesses, social-only, and weak websites — pitch with evidence, and close 2–3 new projects per month.",
+    desc: "Stop spending 10 hours/week prospecting. Surface 20–60 qualified leads in 3 seconds — no-website businesses, social-only, platform-only, and weak websites — pitch with evidence, and close 2–3 new projects per month.",
     stat: "Avg. 3 new clients/month",
     cta: "Start as a solo",
   },
@@ -1010,11 +1121,11 @@ function FAQ() {
   const faqs = [
     {
       q: "How does Nearsited help me win more website projects?",
-      a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, and weak websites — then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
+      a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, platform-only listings, and weak websites — then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
     },
     {
       q: "What kind of businesses does Nearsited find?",
-      a: "Three types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, hotels — 80+ categories across any city.",
+      a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, hotels — 80+ categories across any city.",
     },
     {
       q: "How accurate is the opportunity score?",
@@ -1030,7 +1141,7 @@ function FAQ() {
     },
     {
       q: "How is this different from cold email tools?",
-      a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, or a broken site. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
+      a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
     },
   ];
 

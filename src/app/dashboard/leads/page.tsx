@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Info, Compass, Target, Lightbulb, Eye, Phone } from "lucide-react";
@@ -119,33 +119,76 @@ function getOpportunityContext(lead: LeadRow): { text: string; color: string } {
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function TabTooltip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [open]);
+
   return (
-    <span className="relative group inline-flex items-center">
-      <Info className="ml-1 size-3.5 cursor-help opacity-50 group-hover:opacity-80 transition-opacity" />
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-elevated)] text-[var(--text-primary)] text-xs rounded-lg px-3 py-2.5 w-64 shadow-[var(--brand-shadow-lg)] z-50 leading-relaxed pointer-events-none border border-[var(--border)]">
-        {text}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-elevated)]" />
-      </div>
+    <span ref={ref} className="relative inline-flex items-center">
+      <button
+        type="button"
+        aria-label="More info"
+        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        className="ml-1 inline-flex cursor-pointer items-center opacity-50 transition-opacity hover:opacity-90"
+      >
+        <Info className="size-3.5" />
+      </button>
+      {open && (
+        <div className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-xs leading-relaxed text-[var(--text-primary)] shadow-[var(--brand-shadow-lg)]">
+          {text}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-elevated)]" />
+        </div>
+      )}
     </span>
   );
 }
 
-/** Score column replacement for non-has_website leads */
+/** Score column replacement for non-has_website leads — matches ScoreRing dimensions */
 function WebPresenceBadge({ status }: { status: WebsiteStatus }) {
-  const configs: Partial<Record<WebsiteStatus, { abbr: string; title: string; className: string }>> = {
-    no_website:    { abbr: "NW", title: "No Website",    className: "border-[var(--score-high)]/30 bg-[var(--score-high-tint)] text-[var(--score-high)]" },
-    social_only:   { abbr: "SO", title: "Social Only",   className: "border-[var(--score-mid)]/30  bg-[var(--score-mid-tint)]  text-[var(--score-mid)]" },
-    platform_only: { abbr: "PO", title: "Platform Only", className: "border-[var(--border)]         bg-[var(--bg-elevated)]     text-[var(--text-tertiary)]" },
-  };
-  const cfg = configs[status];
-  if (!cfg) return null;
+  const color =
+    status === "no_website"    ? "var(--score-high)" :
+    status === "social_only"   ? "var(--score-mid)" :
+    status === "platform_only" ? "var(--badge-indigo-text)" :
+    "var(--text-tertiary)";
+
+  const R = 18;
+  const DIM = 44;
+
   return (
-    <div
-      title={cfg.title}
-      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border text-[10px] font-bold ${cfg.className}`}
-    >
-      {cfg.abbr}
-    </div>
+    <svg width={DIM} height={DIM} viewBox={`0 0 ${DIM} ${DIM}`} className="flex-shrink-0">
+      {/* Dashed track */}
+      <circle
+        cx="22" cy="22" r={R}
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeDasharray="3 3"
+        opacity="0.35"
+      />
+      {/* Dash symbol */}
+      <text
+        x="22" y="26" textAnchor="middle"
+        fontSize="14" fontWeight="600"
+        fill={color}
+        fontFamily="var(--font-sans, Geist)"
+      >
+        —
+      </text>
+    </svg>
   );
 }
 
@@ -153,14 +196,14 @@ function WebPresenceBadge({ status }: { status: WebsiteStatus }) {
 function PipelineStatusBadge({ status }: { status: string | undefined }) {
   if (!status) {
     return (
-      <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)]">
-        Not Tracked
+      <span className="inline-block whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-tertiary)]">
+        Not tracked
       </span>
     );
   }
   const badgeClass = PIPELINE_BADGE_STYLES[status] ?? "bg-[var(--bg-elevated)] text-[var(--text-tertiary)] border border-[var(--border)]";
   return (
-    <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${badgeClass}`}>
+    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium ${badgeClass}`}>
       {PIPELINE_LABELS[status] ?? status}
     </span>
   );
@@ -672,19 +715,18 @@ export default function LeadsPage() {
           {/* Group 1 — Opportunity quality */}
           <div className="flex flex-wrap items-center gap-1.5">
             {OPPORTUNITY_FILTER_OPTIONS.map((tab) => (
-              <span key={tab.value} className="inline-flex items-center">
-                <button
-                  onClick={() => { setActiveOpportunityTab(tab.value); setPage(1); }}
-                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                    activeOpportunityTab === tab.value
-                      ? "bg-[var(--accent)] text-white"
-                      : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
-                  }`}
-                >
-                  {tab.label}
-                </button>
+              <button
+                key={tab.value}
+                onClick={() => { setActiveOpportunityTab(tab.value); setPage(1); }}
+                className={`inline-flex cursor-pointer items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                  activeOpportunityTab === tab.value
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                {tab.label}
                 {tab.tooltip && <TabTooltip text={tab.tooltip} />}
-              </span>
+              </button>
             ))}
           </div>
 

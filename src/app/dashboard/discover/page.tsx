@@ -28,6 +28,12 @@ import { Toast } from "@/components/ui/Toast";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
 import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  animate as motionAnimate,
+} from "framer-motion";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -213,6 +219,31 @@ function extractCity(address: string): string {
   return address?.split(",")[0]?.trim() ?? address;
 }
 
+// ─── AnimatedScoreRing ───────────────────────────────────────────────────────
+
+type AnimScoreProps = {
+  score: number | null | undefined;
+  size?: number;
+  variant?: "verified" | "opportunity" | "estimate";
+};
+
+function AnimatedScoreRing({ score, variant = "opportunity", size = 44 }: AnimScoreProps) {
+  const [display, setDisplay] = useState(0);
+  const shouldReduce = useReducedMotion();
+
+  useEffect(() => {
+    if (score == null) return;
+    const controls = motionAnimate(0, score, {
+      duration: shouldReduce ? 0 : 0.8,
+      ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+      onUpdate: (v: number) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [score, shouldReduce]);
+
+  return <ScoreRing score={score == null ? null : display} variant={variant} size={size} />;
+}
+
 // ─── MAIN PAGE COMPONENT ─────────────────────────────────────────────────────
 
 export default function DiscoverPage() {
@@ -257,6 +288,7 @@ export default function DiscoverPage() {
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [savedSearches, setSavedSearches] = useState<{ id: string; name: string; city: string; business_type: string; radius?: number }[]>([]);
   const [savedSearchesOpen, setSavedSearchesOpen] = useState(false);
+  const [resultsKey, setResultsKey] = useState(0);
   const savedSearchesRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
 
@@ -851,6 +883,7 @@ export default function DiscoverPage() {
             setVisibleCount(30);
             setFetchingResults(false);
             setSubmitting(false);
+            setResultsKey((k) => k + 1);
             hasReceivedInitialResults = true;
             continue;
           }
@@ -1101,8 +1134,29 @@ export default function DiscoverPage() {
                 disabled={!!(submitting || loadingAuth)}
                 className="inline-flex h-11 flex-shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Search className="h-4 w-4" />
-                {submitting ? "Finding…" : "Find Businesses"}
+                <AnimatePresence mode="wait" initial={false}>
+                  {submitting ? (
+                    <motion.span
+                      key="loading"
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      transition={{ duration: 0.12 }}
+                    >
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Finding…
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="idle"
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      transition={{ duration: 0.12 }}
+                    >
+                      <Search className="h-4 w-4" />
+                      Find Businesses
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </button>
               <button
                 type="button"
@@ -1247,8 +1301,15 @@ export default function DiscoverPage() {
                     Sort
                     <ChevronDown className={`h-3 w-3 transition-transform duration-150 ${sortDropdownOpen ? "rotate-180" : ""}`} />
                   </button>
+                  <AnimatePresence>
                   {sortDropdownOpen && (
-                    <div className="absolute right-0 top-full z-40 mt-1.5 w-52 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden">
+                    <motion.div
+                      className="absolute right-0 top-full z-40 mt-1.5 w-52 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
                       {SORT_OPTIONS.map((opt) => (
                         <button
                           key={opt.value}
@@ -1264,8 +1325,9 @@ export default function DiscoverPage() {
                           {opt.label}
                         </button>
                       ))}
-                    </div>
+                    </motion.div>
                   )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Filter pills */}
@@ -1275,13 +1337,20 @@ export default function DiscoverPage() {
                       key={tab.value}
                       type="button"
                       onClick={() => setWebsiteFilter(tab.value)}
-                      className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150 whitespace-nowrap ${
+                      className={`relative cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 ${
                         websiteFilter === tab.value
-                          ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-[var(--brand-shadow-xs)] font-semibold"
+                          ? "text-[var(--text-primary)] font-semibold"
                           : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                       }`}
                     >
-                      {tab.label}
+                      {websiteFilter === tab.value && (
+                        <motion.div
+                          layoutId="discover-filter-active"
+                          className="absolute inset-0 rounded-lg bg-[var(--bg-surface)] shadow-[var(--brand-shadow-xs)]"
+                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                        />
+                      )}
+                      <span className="relative z-10">{tab.label}</span>
                     </button>
                   ))}
                 </div>
@@ -1298,7 +1367,12 @@ export default function DiscoverPage() {
 
             {/* Business rows */}
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
-              <div>
+              <motion.div
+                key={resultsKey}
+                initial="hidden"
+                animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}
+              >
                 {processedResults.slice(0, visibleCount).map((business, idx) => {
                   const ap = analyseProgress.get(business.id);
                   const isAnalyseDone = auditedIds.has(business.id) && analysedIds.has(business.id);
@@ -1309,8 +1383,12 @@ export default function DiscoverPage() {
                   const typeDisplay = business.business_type ?? getBusinessTypeLabel(selectedBusinessType);
 
                   return (
-                    <div
+                    <motion.div
                       key={business.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 8 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] as [number,number,number,number] } },
+                      }}
                       className={`relative w-full flex items-center gap-4 px-5 py-0 min-h-[52px] transition-colors duration-150 hover:bg-[var(--bg-elevated)] cursor-default ${
                         idx < Math.min(visibleCount, processedResults.length) - 1 ? "border-b border-[var(--border)]" : ""
                       }`}
@@ -1335,7 +1413,7 @@ export default function DiscoverPage() {
                             business.review_count ?? 0,
                             business.rating ?? 0,
                           );
-                          return <ScoreRing score={oppScore} size={44} variant="opportunity" />;
+                          return <AnimatedScoreRing score={oppScore} size={44} variant="opportunity" />;
                         }
                         const est = estimatedOpportunity({
                           website_status: business.website_status,
@@ -1343,7 +1421,7 @@ export default function DiscoverPage() {
                           rating: business.rating ?? null,
                           user_ratings_total: business.review_count ?? null,
                         });
-                        return <ScoreRing score={est} size={44} variant="estimate" />;
+                        return <AnimatedScoreRing score={est} size={44} variant="estimate" />;
                       })()}
 
                       {/* Website-status badge — neutral, just states the fact */}
@@ -1530,10 +1608,10 @@ export default function DiscoverPage() {
                         )}
                       </div>
 
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </div>
 
             {/* Load more */}
