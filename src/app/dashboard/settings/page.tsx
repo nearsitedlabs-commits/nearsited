@@ -87,16 +87,21 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Free Plan</p>
-              <p className="text-xs text-[var(--text-tertiary)]">Basic features, 100 credits/month</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Free Beta</p>
+              <p className="text-xs text-[var(--text-tertiary)]">Full access &middot; Paid plans launching soon</p>
             </div>
             <span className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
-              Active
+              Beta
             </span>
           </div>
-          <p className="mt-4 text-xs text-[var(--text-tertiary)]">
-            Upgrade options coming soon. Contact us for enterprise plans.
-          </p>
+          <div className="mt-4">
+            <a
+              href="/pricing"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            >
+              See upcoming plans
+            </a>
+          </div>
         </div>
 
         {/* Integrations */}
@@ -107,21 +112,13 @@ export default function SettingsPage() {
             </div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Integrations</h2>
           </div>
-          <div className="space-y-2">
-            {[
-              { name: "Google APIs",  status: "Configured" },
-              { name: "Gemini AI",    status: "Configured" },
-              { name: "ScreenshotOne",status: "Configured" },
-              { name: "Supabase",     status: "Connected" },
-            ].map((api) => (
-              <div key={api.name} className="flex items-center justify-between rounded-lg bg-[var(--bg-elevated)] px-3 py-2">
-                <span className="text-sm text-[var(--text-secondary)]">{api.name}</span>
-                <span className={`text-xs font-medium ${api.status === "Configured" || api.status === "Connected" ? "text-[var(--score-good)]" : "text-[var(--text-tertiary)]"}`}>
-                  {api.status}
-                </span>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+            Nearsited connects to Google APIs (Places &amp; PageSpeed), Gemini AI, ScreenshotOne, and Supabase. These integrations are managed by the platform and require no configuration from you.
+          </p>
+          <p className="mt-3 text-xs text-[var(--text-tertiary)]">
+            If you experience issues with discovery, audits, or pitch generation, contact{" "}
+            <a href="mailto:nearsitedlabs@gmail.com" className="text-[var(--accent)] hover:underline">nearsitedlabs@gmail.com</a>.
+          </p>
         </div>
 
         {/* Sign out */}

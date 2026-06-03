@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Info, Compass, Target, Lightbulb, Eye } from "lucide-react";
+import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Info, Compass, Target, Lightbulb, Eye, Phone } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import { computeOpportunityScore } from "@/lib/scoring";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
@@ -34,6 +34,7 @@ type LeadRow = {
   city: string;
   place_id: string | null;
   website: string | null;
+  phone: string | null;
   website_status: WebsiteStatus;
   rating: number | null;
   review_count: number | null;
@@ -56,8 +57,8 @@ const PAGE_SIZE = 25;
 
 const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string; tooltip?: string }[] = [
   { value: "all",               label: "All" },
-  { value: "needs_improvement", label: "Needs Improvement", tooltip: "Leads with a performance or design score between 40–69" },
-  { value: "strong_opportunity",label: "Strong Opportunity", tooltip: "Leads with score ≥ 70, or businesses with no website, social-only, or platform-only presence" },
+  { value: "needs_improvement", label: "Needs Improvement", tooltip: "Businesses with a website scoring 40–69 — already have a site, but it needs work" },
+  { value: "strong_opportunity",label: "Strong Opportunity", tooltip: "Businesses with no website, social-only, or platform-only presence — plus websites scoring below 40 (very weak)" },
 ];
 
 const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [
@@ -285,7 +286,7 @@ export default function LeadsPage() {
 
       const { data, error: fetchError } = await supabase
         .from("businesses")
-        .select("id, name, business_type, address, city, place_id, website, website_status, rating, review_count, performance_score, design_score, opportunity_score, audited_at, design_analyzed_at, discovered_at, flagged_for_outreach, outreach_reason")
+        .select("id, name, business_type, address, city, place_id, website, phone, website_status, rating, review_count, performance_score, design_score, opportunity_score, audited_at, design_analyzed_at, discovered_at, flagged_for_outreach, outreach_reason")
         .eq("user_id", user.id)
         .order("discovered_at", { ascending: false });
 
@@ -302,6 +303,7 @@ export default function LeadsPage() {
 
       setLeads((data ?? []).map((lead) => ({
         ...lead,
+        phone: (lead as Record<string, unknown>).phone as string | null ?? null,
         issues_count: issuesCountMap.get(lead.id) ?? 0,
         opportunity_score: (lead as Record<string, unknown>).opportunity_score as number | null ?? null,
       })));
@@ -454,7 +456,7 @@ export default function LeadsPage() {
         return l.website_status === "no_website"
           || l.website_status === "social_only"
           || l.website_status === "platform_only"
-          || (s !== null && s >= 70);
+          || (s !== null && s < 40);
       });
     }
 
@@ -479,12 +481,7 @@ export default function LeadsPage() {
       } else if (sortBy === "score") {
         cmp = (effectiveScore(a) ?? -1) - (effectiveScore(b) ?? -1);
       } else if (sortBy === "opportunity") {
-        const aScore = effectiveScore(a);
-        const bScore = effectiveScore(b);
-        if (aScore === null && bScore === null) cmp = 0;
-        else if (aScore === null) cmp = -1;
-        else if (bScore === null) cmp = 1;
-        else cmp = aScore - bScore;
+        cmp = effectiveOpportunityScore(a) - effectiveOpportunityScore(b);
         if (cmp === 0) cmp = (a.flagged_for_outreach ? 1 : 0) - (b.flagged_for_outreach ? 1 : 0);
       } else {
         cmp = new Date(a.discovered_at).getTime() - new Date(b.discovered_at).getTime();
@@ -828,7 +825,7 @@ export default function LeadsPage() {
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)] bg-[var(--bg-elevated)]">
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Score</th>
+                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Opportunity</th>
                       <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Business</th>
                       <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Website</th>
                       <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Last Analysed</th>
@@ -838,18 +835,18 @@ export default function LeadsPage() {
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
                     {paginated.map((lead) => {
-                      const score          = effectiveScore(lead);
                       const pipelineStatus = pipelineMap.get(lead.id);
                       const oppCtx         = getOpportunityContext(lead);
                       const showScoreRing  = lead.website_status === "has_website" || lead.website_status === "unknown";
+                      const ringScore      = showScoreRing ? effectiveOpportunityScore(lead) : null;
 
                       return (
                         <tr key={lead.id} className="transition-colors duration-150 hover:bg-[var(--bg-elevated)]">
 
-                          {/* Score / Web-presence badge */}
+                          {/* Opportunity score ring / Web-presence badge */}
                           <td className="px-5 py-4">
                             {showScoreRing
-                              ? <ScoreRing score={score} size={44} />
+                              ? <ScoreRing score={ringScore} size={44} variant={lead.audited_at ? "opportunity" : "estimate"} />
                               : <WebPresenceBadge status={lead.website_status} />
                             }
                           </td>
@@ -859,6 +856,11 @@ export default function LeadsPage() {
                             {/* dir="auto" enables correct RTL rendering for Arabic/Persian/Hebrew */}
                             <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
                             <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
+                            {lead.phone && (
+                              <a href={`tel:${lead.phone}`} className="mt-0.5 inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]">
+                                <Phone className="h-3 w-3" />{lead.phone}
+                              </a>
+                            )}
                             <p className={`mt-1 text-xs font-medium ${oppCtx.color}`}>{oppCtx.text}</p>
                           </td>
 
@@ -893,18 +895,18 @@ export default function LeadsPage() {
             <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] md:hidden">
               <div className="divide-y divide-[var(--border)]">
                 {paginated.map((lead) => {
-                  const score          = effectiveScore(lead);
                   const pipelineStatus = pipelineMap.get(lead.id);
                   const oppCtx         = getOpportunityContext(lead);
                   const showScoreRing  = lead.website_status === "has_website" || lead.website_status === "unknown";
+                  const ringScore      = showScoreRing ? effectiveOpportunityScore(lead) : null;
 
                   return (
                     <div key={lead.id} className="p-4">
                       <div className="flex items-start gap-3">
-                        {/* Score / Web-presence badge */}
+                        {/* Opportunity score ring / Web-presence badge */}
                         <div className="flex-shrink-0 pt-0.5">
                           {showScoreRing
-                            ? <ScoreRing score={score} size={44} />
+                            ? <ScoreRing score={ringScore} size={44} variant={lead.audited_at ? "opportunity" : "estimate"} />
                             : <WebPresenceBadge status={lead.website_status} />
                           }
                         </div>
@@ -913,6 +915,11 @@ export default function LeadsPage() {
                           {/* Business info */}
                           <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
                           <p className="text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
+                          {lead.phone && (
+                            <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]">
+                              <Phone className="h-3 w-3" />{lead.phone}
+                            </a>
+                          )}
                           <p className={`mt-0.5 text-xs font-medium ${oppCtx.color}`}>{oppCtx.text}</p>
 
                           {/* Badges */}

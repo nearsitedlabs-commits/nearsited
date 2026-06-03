@@ -296,6 +296,7 @@ export async function POST(request: NextRequest) {
     let promptRating: number | null = null;
     let promptReviewCount: number | null = null;
     let leadType: WebsiteStatus = "has_website";
+    let resolvedPerfScore: number | null = null;
     let auditContext = "No audit data available.";
     let designContext = "No design analysis available.";
     let shouldPersist = false;
@@ -391,6 +392,7 @@ export async function POST(request: NextRequest) {
       const designData = (designRows?.[0] ?? null) as DesignAnalysisRow | null;
 
       const perfScore = desktopAudit?.performance_score ?? mobileAudit?.performance_score ?? null;
+      resolvedPerfScore = perfScore;
       auditContext = perfScore !== null
         ? `Performance score: ${perfScore}/100. LCP: ${desktopAudit?.lcp ?? mobileAudit?.lcp ?? "N/A"}. FCP: ${desktopAudit?.fcp ?? mobileAudit?.fcp ?? "N/A"}.`
         : "No audit data available.";
@@ -405,12 +407,14 @@ export async function POST(request: NextRequest) {
         const desktopAudit = audit.desktop as StrategyResult;
         const mobileAudit = audit?.mobile as StrategyResult | undefined;
         const perfScore = desktopAudit.performance_score ?? mobileAudit?.performance_score ?? null;
+        resolvedPerfScore = perfScore;
         auditContext = perfScore !== null
           ? `Performance score: ${perfScore}/100. LCP: ${desktopAudit.lcp ?? mobileAudit?.lcp ?? "N/A"}. FCP: ${desktopAudit.fcp ?? mobileAudit?.fcp ?? "N/A"}.`
           : "No audit data available.";
       } else if (typeof audit?.mobile === "object" && audit.mobile !== null) {
         const mobileAudit = audit.mobile as StrategyResult;
         const perfScore = mobileAudit.performance_score ?? null;
+        resolvedPerfScore = perfScore;
         auditContext = perfScore !== null
           ? `Performance score: ${perfScore}/100. LCP: ${mobileAudit.lcp ?? "N/A"}. FCP: ${mobileAudit.fcp ?? "N/A"}.`
           : "No audit data available.";
@@ -428,18 +432,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { angle, painPoint } = buildAngle(leadType, (() => {
-      const parsedPerformance = audit?.desktop?.performance_score ?? audit?.mobile?.performance_score ?? null;
-      return parsedPerformance !== undefined ? parsedPerformance : null;
-    })());
+    const { angle, painPoint } = buildAngle(leadType, resolvedPerfScore);
+
+    // ── Workflow-specific prompts (social_only, no_digital_presence) do NOT
+    //     require audit/design data. Check this FIRST so we can skip data validation. ──
+    let workflowPromptBuilt = false;
+    if (workflow === "social_only" || workflow === "no_digital_presence") {
+      workflowPromptBuilt = true;
+    }
 
     // ── Determine which data sources are available (based on context strings
     //     that were populated in the persisted/ephemeral branches above) ─────
     const hasAuditData = auditContext !== "No audit data available.";
     const hasDesignData = designContext !== "No design analysis available.";
 
-    if (!hasAuditData && !hasDesignData) {
-      console.log("[PITCH] No audit or design data — cannot generate pitch");
+    if (!hasAuditData && !hasDesignData && !workflowPromptBuilt) {
+      console.log("[PITCH] No audit or design data — cannot generate pitch for website lead");
       return NextResponse.json(
         { error: "No audit or design data available for this lead. Run an audit first to generate a pitch." },
         { status: 400 },
@@ -459,7 +467,7 @@ export async function POST(request: NextRequest) {
       : `Website: ${promptWebsite}`;
 
     // ── Workflow-aware prompt override (social_only, no_digital_presence) ──
-    const prompt = (workflow === "social_only" || workflow === "no_digital_presence")
+    const prompt = workflowPromptBuilt
       ? buildWorkflowPrompt(promptBusinessName, promptBusinessType, promptLocation, workflow ?? "no_digital_presence", socialPlatforms ?? [], tone, length, channel, promptRating, promptReviewCount)
       : hasAuditData && hasDesignData
       ? // ── Full prompt — both audit + design data available ──

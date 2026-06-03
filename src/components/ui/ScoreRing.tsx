@@ -3,9 +3,10 @@
 type ScoreRingProps = {
   score: number | null | undefined;
   size?: number;
-  /** "verified" = solid ring with full opacity colors (existing behavior).
-   *  "estimate" = thinner dashed track + colored progress arc at 0.65 opacity + ~ prefix. */
-  variant?: "verified" | "estimate";
+  /** "verified"    = solid ring, quality-score thresholds (≤55 red, ≤74 amber, 75+ green). Lead Detail / Audit / Share.
+   *  "opportunity" = solid ring, opportunity-score thresholds (<40 red, <70 amber, 70+ green). Discover / Leads list.
+   *  "estimate"    = dashed track + 0.65 opacity arc + ~ prefix, opportunity thresholds. Pre-audit discovery. */
+  variant?: "verified" | "opportunity" | "estimate";
 };
 
 const R = 18;
@@ -106,7 +107,31 @@ export function ScoreRing({
     );
   }
 
-  // ── Verified variant (existing behaviour) ─────────────────────────────
+  // ── Opportunity variant — solid ring, opportunity-score thresholds ───
+  if (variant === "opportunity") {
+    const oppColor =
+      clamped < 40  ? "var(--score-high)"
+      : clamped < 70 ? "var(--score-mid)"
+      : "var(--score-good)";
+    const oppOffset = CIRCUMFERENCE - (clamped / 100) * CIRCUMFERENCE;
+    return (
+      <svg width={size} height={size} viewBox={`0 0 ${DIM} ${DIM}`} className="flex-shrink-0">
+        <circle cx="22" cy="22" r={R} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="3.5" />
+        <circle
+          cx="22" cy="22" r={R} fill="none"
+          stroke={oppColor} strokeWidth="3.5"
+          strokeDasharray={CIRCUMFERENCE} strokeDashoffset={oppOffset}
+          strokeLinecap="round" transform="rotate(-90 22 22)"
+        />
+        <text x="22" y="26" textAnchor="middle" fontSize="11" fontWeight="500"
+          fill="var(--text-primary)" fontFamily="var(--font-sans, Geist)">
+          {clamped}
+        </text>
+      </svg>
+    );
+  }
+
+  // ── Verified variant (quality-score thresholds — Lead Detail / Audit / Share) ──
   const offset = CIRCUMFERENCE - (clamped / 100) * CIRCUMFERENCE;
   const verifiedColor =
     clamped <= 55

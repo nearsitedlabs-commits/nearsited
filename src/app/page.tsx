@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
+import Pricing from "@/components/landing/Pricing";
 import { useState } from "react";
 
 // ── Section helpers ──────────────────────────────────────────────────────────
@@ -57,7 +58,7 @@ function Nav({ navigate }: { navigate: (href: string) => void }) {
           <li><a href="#how" className="transition hover:text-[var(--text-primary)]">How it works</a></li>
           <li><a href="#report" className="transition hover:text-[var(--text-primary)]">Sample report</a></li>
           <li><a href="#pitch" className="transition hover:text-[var(--text-primary)]">Sample pitch</a></li>
-          
+          <li><a href="/pricing" className="transition hover:text-[var(--text-primary)]">Pricing</a></li>
           <li><a href="#faq" className="transition hover:text-[var(--text-primary)]">FAQ</a></li>
         </ul>
 
@@ -92,7 +93,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
             <em className="italic not-italic">before competitors do.</em>
           </h1>
           <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
-            Nearsited finds local businesses with no website, social-only presence, or weak websites — shows you exactly what to pitch, and generates personalised outreach in under 2 minutes.
+            Nearsited finds local businesses with <strong className="text-[var(--text-primary)] font-medium">no website</strong>, social-only presence, platform-only listings, or weak websites — ranks them by opportunity score, and generates a tailored pitch for each type in under 2 minutes.
           </p>
         </div>
 
@@ -117,7 +118,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
 
         <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 100 businesses free</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
         </div>
       </div>
@@ -173,7 +174,7 @@ function Hero({ navigate }: { navigate: (href: string) => void }) {
 
               {/* Weak Website */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-3">
-                <ScoreRing score={41} size={32} />
+                <ScoreRing score={87} size={32} variant="opportunity" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Bright Smile Dental</p>
                   <p className="text-xs text-[var(--text-tertiary)]">Jumeirah · Healthcare</p>
@@ -217,7 +218,7 @@ function TrustBar() {
     <div className="border-y border-[var(--border)] bg-[var(--bg-surface)]">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 px-6 py-5 text-sm text-[var(--text-tertiary)] md:px-8">
         <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-        <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 100 businesses free</span>
+        <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
         <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
       </div>
     </div>
@@ -313,15 +314,17 @@ const TRADITIONAL_CONS = [
   "Manual website checking — one business at a time",
   "No prioritisation — you guess who to contact first",
   "Generic cold outreach with no supporting evidence",
+  "No built-in pipeline — spreadsheets or external CRM required",
   "Hours of research before a single pitch is sent",
 ];
 
 const NEARSITED_PROS = [
-  "Finds businesses with no website in your target area",
-  "Identifies social-only and platform-only businesses",
-  "Surfaces weak websites ranked by opportunity score",
-  "Prioritises opportunities automatically — highest value first",
+  "Finds businesses with no website, social-only, and platform-only presence",
+  "Surfaces weak websites ranked by opportunity score — not quality score",
+  "Opportunity score weighs both site weakness AND business viability",
+  "Pitch angle changes completely per lead type — not one generic template",
   "Generates evidence-based pitches citing real audit data",
+  "Built-in pipeline — track every lead from discovery to closed deal",
   "From search to pitch-ready lead in under 2 minutes",
 ];
 
@@ -331,9 +334,9 @@ function WhyNearsited() {
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Why Nearsited</SectionLabel>
-          <SectionTitle className="text-center">Traditional prospecting misses most of the market.</SectionTitle>
+          <SectionTitle className="text-center">Other tools find bad websites. Nearsited finds every opportunity.</SectionTitle>
           <SectionSub className="mx-auto text-center">
-            Searching Google Maps tells you who has a website. It can&rsquo;t tell you who doesn&rsquo;t — and those are often your best leads.
+            Most tools show you which sites score low. Nearsited goes further — it finds the businesses with <em>no website at all</em>, ranks by who&rsquo;s worth approaching (not just who has problems), and writes a different pitch for every lead type.
           </SectionSub>
         </div>
 
@@ -378,7 +381,7 @@ function WhyNearsited() {
         {/* Lead type badges */}
         <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
           <p className="mb-4 text-center text-[0.7rem] uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
-            Three types of website opportunity
+            Four types of website opportunity — all found in one search
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
@@ -390,6 +393,11 @@ function WhyNearsited() {
               <span className="h-2 w-2 rounded-full bg-amber-500" />
               <span className="text-sm font-medium text-amber-400">Social Only</span>
               <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
+            </div>
+            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-4 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-[var(--badge-indigo-text)]" />
+              <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
+              <span className="text-xs text-[var(--text-tertiary)]">— dependent on third-party</span>
             </div>
             <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-4 py-2.5">
               <span className="h-2 w-2 rounded-full bg-[var(--score-mid)]" />
@@ -453,7 +461,7 @@ function SampleReport({ navigate }: { navigate: (href: string) => void }) {
                 <div>
                   <div className="flex items-center gap-3">
                     <h3 className="text-xl font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
-                    <Badge color="amber">Score: 41/100</Badge>
+                    <Badge color="green">Opportunity: 87/100</Badge>
                   </div>
                   <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
                 </div>
@@ -1010,7 +1018,7 @@ function FAQ() {
     },
     {
       q: "How accurate is the opportunity score?",
-      a: "The score combines PageSpeed data, design analysis, SEO signals, and trust indicators into a single 0–100 number. It's not perfect — but it's consistent. Agencies report that leads scoring below 50 convert at 3× the rate of leads above 70. Use it to prioritise, not to disqualify.",
+      a: "The opportunity score combines website weakness and business viability into a single 0–100 number — higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Agencies report that leads with an opportunity score above 70 convert at 3× the rate of those below 30. Use it to prioritise, not to disqualify.",
     },
     {
       q: "Do I need technical skills to use it?",
@@ -1096,7 +1104,7 @@ function CTA({ navigate }: { navigate: (href: string) => void }) {
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--text-tertiary)]">
               <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-              <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 100 businesses free</span>
+              <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
               <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
             </div>
           </div>
@@ -1127,21 +1135,20 @@ function Footer() {
             <li><a href="#how" className="transition hover:text-[var(--text-primary)]">How it works</a></li>
             <li><a href="#report" className="transition hover:text-[var(--text-primary)]">Sample report</a></li>
             <li><a href="#pitch" className="transition hover:text-[var(--text-primary)]">Sample pitch</a></li>
-            
+            <li><a href="/pricing" className="transition hover:text-[var(--text-primary)]">Pricing</a></li>
           </ul>
         </div>
         <div>
           <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Company</div>
           <ul className="space-y-3 text-sm text-[var(--text-tertiary)]">
-            <li><a href="#" className="transition hover:text-[var(--text-primary)]">Blog</a></li>
-            <li><a href="#" className="transition hover:text-[var(--text-primary)]">Contact</a></li>
+            <li><a href="mailto:nearsitedlabs@gmail.com" className="transition hover:text-[var(--text-primary)]">Contact</a></li>
           </ul>
         </div>
         <div>
           <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Legal</div>
           <ul className="space-y-3 text-sm text-[var(--text-tertiary)]">
-            <li><a href="#" className="transition hover:text-[var(--text-primary)]">Terms</a></li>
-            <li><a href="#" className="transition hover:text-[var(--text-primary)]">Privacy</a></li>
+            <li><a href="/terms" className="transition hover:text-[var(--text-primary)]">Terms</a></li>
+            <li><a href="/privacy" className="transition hover:text-[var(--text-primary)]">Privacy</a></li>
           </ul>
         </div>
       </div>
@@ -1175,6 +1182,7 @@ export default function Home() {
         <ObjectionsSection navigate={navigate} />
         <ProofBlocks navigate={navigate} />
         <FAQ />
+        <Pricing navigate={navigate} />
         <CTA navigate={navigate} />
         <Footer />
       </main>

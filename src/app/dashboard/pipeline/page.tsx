@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Phone } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import { PIPELINE_BADGE_STYLES, PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { detectLeadWorkflow } from "@/lib/lead-types";
+import { computeOpportunityScore } from "@/lib/scoring";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -19,6 +20,7 @@ type PipelineBusiness = {
   name: string;
   address: string;
   website: string | null;
+  phone: string | null;
   website_status: WebsiteStatus;
   rating: number | null;
   review_count: number | null;
@@ -55,11 +57,15 @@ const NEXT_ACTIONS: Record<string, string> = {
 function getOpportunityContext(item: PipelineBusiness): string {
   const wf = detectLeadWorkflow({ website_status: item.website_status, website: item.website });
   if (wf === "website") {
-    if (item.performance_score != null && item.performance_score < 70) {
-      const potential = Math.min(95, item.performance_score + 25);
-      return `Score ${item.performance_score} → ${potential} · +${potential - item.performance_score} pts`;
+    if (item.performance_score != null) {
+      const opp = computeOpportunityScore(
+        item.performance_score,
+        item.review_count ?? 0,
+        item.rating ?? 0,
+      );
+      const label = opp >= 70 ? "High opportunity" : opp >= 45 ? "Good opportunity" : "Moderate opportunity";
+      return `${label} · site score ${item.performance_score}/100`;
     }
-    if (item.performance_score != null) return `Score: ${item.performance_score}/100`;
     return "Website opportunity";
   }
   if (wf === "social_only") return "Social presence — no website yet";
@@ -71,7 +77,7 @@ function getOpportunityContext(item: PipelineBusiness): string {
 const PIPELINE_QUERY = `
   id, status, created_at,
   businesses:business_id (
-    id, name, address, website, website_status,
+    id, name, address, website, phone, website_status,
     rating, review_count, city, business_type, performance_score
   )
 `;
@@ -86,6 +92,7 @@ function mapPipelineRow(row: Record<string, unknown>): PipelineBusiness {
     name:             (biz?.name as string) ?? "Unknown",
     address:          (biz?.address as string) ?? "",
     website:          (biz?.website as string | null) ?? null,
+    phone:            (biz?.phone as string | null) ?? null,
     website_status:   (biz?.website_status as WebsiteStatus) ?? "unknown",
     rating:           (biz?.rating as number | null) ?? null,
     review_count:     (biz?.review_count as number | null) ?? null,
@@ -224,6 +231,11 @@ export default function PipelinePage() {
                         <td className="px-5 py-4">
                           <p className="font-medium text-[var(--text-primary)]" dir="auto">{item.name}</p>
                           <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{item.business_type} · {item.city}</p>
+                          {item.phone && (
+                            <a href={`tel:${item.phone}`} className="mt-0.5 inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]">
+                              <Phone className="h-3 w-3" />{item.phone}
+                            </a>
+                          )}
                         </td>
 
                         {/* Opportunity Type Badge */}

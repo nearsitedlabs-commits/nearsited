@@ -307,15 +307,21 @@ export function estimatedOpportunity(business: {
   else if (reviews >= 20) viability = 0.7;
   else if (reviews >= 5) viability = 0.4;
 
-  let redesign = 0.5;
+  // Redesign signal ranked by opportunity value, consistent with product positioning:
+  // no_website > social_only > platform_only > bad_website > generic_website
+  let redesign = 0.4;
   const url = (business.website ?? "").toLowerCase();
-  if (business.website_status === "has_website") {
-    if (url.startsWith("http://") && !url.startsWith("https://")) redesign = 0.9;
-    else if (/wixsite\.com|squarespace\.com|godaddysites\.com|weebly\.com|business\.site/.test(url)) redesign = 0.8;
-    else redesign = 0.5;
-  } else if (business.website_status === "platform_only") redesign = 0.7;
-  else if (business.website_status === "no_website") redesign = 0.4;
-  else if (business.website_status === "social_only") redesign = 0.5;
+  if (business.website_status === "no_website") {
+    redesign = 0.95;
+  } else if (business.website_status === "social_only") {
+    redesign = 0.85;
+  } else if (business.website_status === "platform_only") {
+    redesign = 0.75;
+  } else if (business.website_status === "has_website") {
+    if (url.startsWith("http://") && !url.startsWith("https://")) redesign = 0.65;
+    else if (/wixsite\.com|squarespace\.com|godaddysites\.com|weebly\.com|business\.site/.test(url)) redesign = 0.60;
+    else redesign = 0.40;
+  }
 
   return Math.round(viability * redesign * 100);
 }

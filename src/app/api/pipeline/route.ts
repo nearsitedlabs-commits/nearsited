@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -118,7 +119,8 @@ export async function POST(request: NextRequest) {
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
 
-    const { error: insertError } = await supabase.from("pipeline").insert({
+    const adminClient = createAdminClient();
+    const { error: insertError } = await (adminClient.from("pipeline") as ReturnType<typeof adminClient.from>).insert({
       id,
       user_id: user.id,
       business_id: targetBusinessId,
@@ -161,7 +163,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const validStatuses = ["new_lead", "analysed", "contacted", "in_conversation", "won", "lost"];
+    const validStatuses = ["new_lead", "analysed", "pitch_generated", "contacted", "in_conversation", "won", "lost"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` },
@@ -223,7 +225,8 @@ export async function PATCH(request: NextRequest) {
 
     // Create a pipeline row when one does not exist yet for this business and user.
     const id = crypto.randomUUID();
-    const { error: insertError } = await supabase.from("pipeline").insert({
+    const patchAdminClient = createAdminClient();
+    const { error: insertError } = await (patchAdminClient.from("pipeline") as ReturnType<typeof patchAdminClient.from>).insert({
       id,
       user_id: user.id,
       business_id: businessId,
@@ -271,14 +274,11 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const query = supabase.from("pipeline").delete().eq("user_id", user.id);
-    if (businessId) {
-      query.eq("business_id", businessId);
-    } else {
-      query.eq("id", pipelineId);
-    }
-
-    const { error: deleteError } = await query;
+    const { error: deleteError } = await supabase
+      .from("pipeline")
+      .delete()
+      .eq("user_id", user.id)
+      .eq(businessId ? "business_id" : "id", (businessId ?? pipelineId) as string);
     if (deleteError) {
       console.error("Pipeline delete error:", deleteError);
       return NextResponse.json(

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import AuthCard from "@/components/auth/AuthCard";
 
@@ -27,6 +28,8 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
   const supabase = createClient();
   const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+  const needsVerification = searchParams.get("verify") === "1";
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -47,6 +50,12 @@ export default function SignupPage() {
 
     if (!actualEmail || !actualPassword) {
       setError("Please fill in all fields.");
+      setLoading(false);
+      return;
+    }
+
+    if (actualPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
       setLoading(false);
       return;
     }
@@ -78,8 +87,8 @@ export default function SignupPage() {
     }
   }
 
-  // ── Success state ────────────────────────────────────────────────────────────
-  if (success) {
+  // ── Success / needs-verification state ──────────────────────────────────────
+  if (success || needsVerification) {
     return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
         <AuthBackground />
@@ -94,11 +103,13 @@ export default function SignupPage() {
             <Image src="/logo-icon.svg" alt="" width={22} height={13} className="block" />
           </span>
           <h1 className="text-xl font-medium tracking-tight text-[var(--text-primary)]">
-            Check your email
+            Verify your email
           </h1>
           <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
-            We&rsquo;ve sent a confirmation link to{" "}
-            <strong className="text-[var(--text-primary)]">{email}</strong>.
+            {needsVerification && !success
+              ? "Please click the confirmation link we sent to your email address before accessing the dashboard."
+              : <>We&rsquo;ve sent a confirmation link to{" "}<strong className="text-[var(--text-primary)]">{email}</strong>. Click it to activate your account.</>
+            }
           </p>
           <a
             href="/login"
