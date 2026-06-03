@@ -123,7 +123,9 @@ export default function DashboardClient({
   const hasUnanalysedLeads = unanalysedLeads > 0;
   const hasAnalysedLeads = totalLeads - unanalysedLeads > 0;
 
-  const greeting = firstName ? `Welcome back, ${firstName}.` : "Welcome back.";
+  const greeting = totalLeads === 0
+    ? (firstName ? `Welcome, ${firstName}.` : "Welcome.")
+    : (firstName ? `Welcome back, ${firstName}.` : "Welcome back.");
 
   // ── Determine next best action ──────────────────────────────────────────
   type Action = {
