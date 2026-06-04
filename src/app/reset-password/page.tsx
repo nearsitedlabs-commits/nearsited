@@ -4,11 +4,13 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock, Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -41,18 +43,15 @@ export default function ResetPasswordPage() {
     setTimeout(() => router.push("/dashboard"), 2000);
   }
 
+  const inputClass = "h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-11 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)]";
+  const eyeClass = "absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors";
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-[var(--bg-base)] px-4"
-    >
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)] px-4">
       <div
         className="w-full max-w-sm space-y-6 rounded-[20px] border px-8 py-10 shadow-[var(--brand-shadow-lg)]"
-        style={{
-          borderColor: "rgba(255,255,255,0.08)",
-          background: "rgba(18,23,30,0.95)",
-        }}
+        style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(18,23,30,0.95)" }}
       >
-        {/* Logo */}
         <div className="flex justify-center">
           <Image src="/logo-icon.svg" alt="" width={44} height={25} className="block" />
         </div>
@@ -78,16 +77,19 @@ export default function ResetPasswordPage() {
                   <Lock className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     autoComplete="new-password"
                     autoFocus
-                    className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)]"
+                    className={inputClass}
                     style={{ borderColor: "rgba(255,255,255,0.08)" }}
                   />
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} className={eyeClass}>
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -99,15 +101,18 @@ export default function ResetPasswordPage() {
                   <Lock className="pointer-events-none absolute left-3.5 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
                   <input
                     id="confirm"
-                    type="password"
+                    type={showConfirm ? "text" : "password"}
                     required
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                     placeholder="••••••••"
                     autoComplete="new-password"
-                    className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)]"
+                    className={inputClass}
                     style={{ borderColor: "rgba(255,255,255,0.08)" }}
                   />
+                  <button type="button" onClick={() => setShowConfirm((v) => !v)} className={eyeClass}>
+                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
