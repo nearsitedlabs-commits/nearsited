@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
         style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(18,23,30,0.95)" }}
       >
         <div className="flex justify-center">
-          <Image src="/logo-icon.svg" alt="" width={44} height={25} className="block" />
+          <Image src="/logo-icon.svg" alt="" width={60} height={34} className="mx-auto block outline-none" />
         </div>
 
         {done ? (

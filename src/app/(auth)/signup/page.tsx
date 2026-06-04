@@ -109,7 +109,7 @@ function SignupPageContent() {
             backdropFilter: "blur(4px)",
           }}
         >
-          <Image src="/logo-icon.svg" alt="" width={44} height={25} className="mx-auto block" />
+          <Image src="/logo-icon.svg" alt="" width={60} height={34} className="mx-auto block outline-none" />
           <h1 className="text-xl font-medium tracking-tight text-[var(--text-primary)]">
             Verify your email
           </h1>
