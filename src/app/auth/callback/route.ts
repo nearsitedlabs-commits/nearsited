@@ -18,10 +18,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (!error) {
-      // Password reset — send to reset page, not dashboard
-      if (type === "recovery") {
-        return NextResponse.redirect(`${origin}/reset-password`);
-      }
       return NextResponse.redirect(`${origin}${next}`);
     }
 
