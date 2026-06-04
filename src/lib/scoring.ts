@@ -304,8 +304,12 @@ export function estimatedOpportunity(business: {
   const rating = business.rating ?? 0;
   let viability = 0.15;
   if (reviews >= 50 && rating >= 4.0) viability = 1.0;
-  else if (reviews >= 20) viability = 0.7;
+  else if (reviews >= 50) viability = 0.75;
+  else if (reviews >= 20 && rating >= 4.0) viability = 0.75;
+  else if (reviews >= 20) viability = 0.6;
+  else if (reviews >= 5 && rating >= 4.0) viability = 0.55;
   else if (reviews >= 5) viability = 0.4;
+  else if (rating >= 4.0) viability = 0.25;
 
   // Redesign signal ranked by opportunity value, consistent with product positioning:
   // no_website > social_only > platform_only > bad_website > generic_website
