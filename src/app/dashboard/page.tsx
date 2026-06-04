@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       firstName={firstName}
       totalLeads={totalLeads ?? 0}
       flaggedLeads={flaggedLeads ?? 0}
-      totalPitches={totalPitches ?? 0}
+      _totalPitches={totalPitches ?? 0}
       unanalysedLeads={unanalysedLeads ?? 0}
       activeConversations={activeConversations}
       pipelineCounts={pipelineCounts}

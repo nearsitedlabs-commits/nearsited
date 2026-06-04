@@ -25,6 +25,8 @@ type Plan = {
   featured: boolean;
   cta: string;
   badge?: string;
+  monthlyProductId: string;
+  annualProductId: string;
 };
 
 // ── Plans ─────────────────────────────────────────────────────────────────────
@@ -43,7 +45,9 @@ const PLANS: Plan[] = [
       "Single user",
     ],
     featured: false,
-    cta: "Start 14-day free trial →",
+    monthlyProductId: "pdt_0NgKrmYBX9pAp9NhbeMqp",
+    annualProductId: "pdt_0NgKs5x6MXKvmMOQemKP2",
+    cta: "Get started →",
     badge: "Most popular",
   },
   {
@@ -59,7 +63,9 @@ const PLANS: Plan[] = [
       "Up to 3 team seats",
     ],
     featured: true,
-    cta: "Start 14-day free trial →",
+    monthlyProductId: "pdt_0NgKsF0ROmm9U603GRqMm",
+    annualProductId: "pdt_0NgKsQO5UXCVGZskhrv89",
+    cta: "Get started →",
     badge: "Best value",
   },
 ];
@@ -123,7 +129,7 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
             Start finding clients this week.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
-            Try any plan free for 14 days. No credit card required.
+            Start with 10 free audits — no credit card needed to get started.
           </p>
         </motion.div>
 
@@ -276,14 +282,11 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
                 </ul>
                 <Button
                   variant={plan.featured ? "primary" : "secondary"}
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate(`/signup?plan=${billing === "monthly" ? plan.monthlyProductId : plan.annualProductId}`)}
                   className="mt-8 w-full"
                 >
                   {plan.cta}
                 </Button>
-                <p className="mt-3 text-center text-xs font-medium text-[var(--text-secondary)]">
-                  No credit card required
-                </p>
               </Card>
             </motion.div>
           ))}

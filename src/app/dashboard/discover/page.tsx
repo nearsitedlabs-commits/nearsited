@@ -1072,9 +1072,9 @@ export default function DiscoverPage() {
         </div>
 
         {/* ── SEARCH CARD ── */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 shadow-[var(--brand-shadow-sm)]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 sm:p-5 shadow-[var(--brand-shadow-sm)]">
           <form ref={formRef} onSubmit={handleSubmit}>
-            <div className="flex flex-wrap gap-2.5 items-center min-w-0">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-2.5 sm:items-end">
               <div className="relative flex-1 min-w-0">
                 <label className="sr-only">City</label>
                 <MapPin className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
@@ -1103,9 +1103,11 @@ export default function DiscoverPage() {
                   inputClassName="!pl-10 !h-11 !rounded-xl !border-[var(--border)] !bg-[var(--bg-elevated)] !text-sm !text-[var(--text-primary)] !shadow-none placeholder:!text-[var(--text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
                 />
               </div>
-              <div className="flex-shrink-0 min-w-[160px]">
+              <div className="flex-1 sm:flex-shrink-0 sm:min-w-[140px]">
                 <label className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--text-tertiary)]">
-                  <span>Radius: {radiusMeters >= 1000 ? `${(radiusMeters / 1000).toFixed(0)} km` : `${radiusMeters} m`}</span>
+                  <span className="hidden sm:inline">Radius:</span>
+                  <span className="sm:hidden">R:</span>
+                  <span>{radiusMeters >= 1000 ? `${(radiusMeters / 1000).toFixed(0)} km` : `${radiusMeters} m`}</span>
                   <span className="relative group inline-flex items-center">
                     <Info className="size-3 cursor-help opacity-60" />
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-surface-3)] text-[var(--text-primary)] text-xs font-normal normal-case tracking-normal rounded-xl px-3 py-2.5 w-64 shadow-xl z-50 leading-relaxed pointer-events-none">
@@ -1124,44 +1126,47 @@ export default function DiscoverPage() {
                   className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--bg-elevated)] accent-[var(--accent)] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--accent)] [&::-webkit-slider-thumb]:shadow-[var(--brand-shadow-sm)] [&::-webkit-slider-thumb]:cursor-pointer"
                 />
               </div>
-              <button
-                type="submit"
-                disabled={!!(submitting || loadingAuth)}
-                className="inline-flex h-11 flex-shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {submitting ? (
-                    <motion.span
-                      key="loading"
-                      className="flex items-center gap-2"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      transition={{ duration: 0.12 }}
-                    >
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Finding…
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="idle"
-                      className="flex items-center gap-2"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      transition={{ duration: 0.12 }}
-                    >
-                      <Search className="h-4 w-4" />
-                      Find Businesses
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </button>
-              <button
-                type="button"
-                onClick={handleRandomize}
-                disabled={!!(submitting || loadingAuth)}
-                title="Random city + business type"
-                className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent)]/50 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <Shuffle className="h-4 w-4" />
-              </button>
+              <div className="flex gap-2.5">
+                <button
+                  type="submit"
+                  disabled={!!(submitting || loadingAuth)}
+                  className="flex-1 sm:flex-shrink-0 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 sm:px-5 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {submitting ? (
+                      <motion.span
+                        key="loading"
+                        className="flex items-center gap-2"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        transition={{ duration: 0.12 }}
+                      >
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="hidden sm:inline">Finding…</span>
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="idle"
+                        className="flex items-center gap-2"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        transition={{ duration: 0.12 }}
+                      >
+                        <Search className="h-4 w-4" />
+                        <span className="hidden sm:inline">Find Businesses</span>
+                        <span className="sm:hidden">Find</span>
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRandomize}
+                  disabled={!!(submitting || loadingAuth)}
+                  title="Random city + business type"
+                  className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent)]/50 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Shuffle className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </form>
 

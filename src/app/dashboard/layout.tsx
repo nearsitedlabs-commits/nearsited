@@ -12,8 +12,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user.email_confirmed_at) redirect("/signup?verify=1");
 
   return (
-    <div className="flex min-h-screen bg-[var(--bg-base)]">
-      <aside className="flex w-60 shrink-0 flex-col border-r border-[var(--border)] bg-[var(--bg-surface-2)]">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-[var(--bg-base)]">
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-[var(--border)] bg-[var(--bg-surface-2)]">
 
         {/* Brand — clicking logo goes to landing page */}
         <Link href="/" className="flex h-16 items-center gap-2.5 border-b border-[var(--border)] px-5 transition-colors hover:bg-white/[0.02]" style={{ fontFamily: 'Switzer, Geist, sans-serif' }}>
@@ -56,7 +56,28 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
 
       </aside>
-      <main className="flex-1 overflow-auto bg-[var(--bg-base)]">{children}</main>
+
+      {/* Mobile header + main content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile header — visible only on small screens */}
+        <header className="lg:hidden border-b border-[var(--border)] bg-[var(--bg-surface-2)] px-4 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 transition-colors hover:bg-white/[0.02]">
+            <Image src="/logo-icon.svg" alt="" width={32} height={18} className="block shrink-0" />
+            <span className="text-lg font-normal tracking-tight text-[var(--text-primary)]">
+              NearSited
+            </span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-xs font-bold text-[var(--accent)]">
+              {user.email?.charAt(0).toUpperCase() ?? "U"}
+            </div>
+            <SignOutButton compact={true} />
+          </div>
+        </header>
+
+        {/* Main content area */}
+        <main className="flex-1 overflow-auto bg-[var(--bg-base)]">{children}</main>
+      </div>
     </div>
   );
 }

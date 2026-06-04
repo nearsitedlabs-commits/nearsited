@@ -12,6 +12,19 @@ type UserData = {
   created_at: string | null;
 };
 
+type SubData = {
+  tier: "free" | "starter" | "agency";
+  audits_used: number;
+  audits_limit: number;
+};
+
+const TIER_LABELS: Record<string, string> = { free: "Free", starter: "Starter", agency: "Agency" };
+const TIER_COLORS: Record<string, string> = {
+  free:    "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  starter: "border-blue-500/30 bg-blue-500/10 text-blue-400",
+  agency:  "border-purple-500/30 bg-purple-500/10 text-purple-400",
+};
+
 type ClearScope = "leads" | "pipeline" | "pitches" | "saved_searches";
 
 const DANGER_ACTIONS: { scope: ClearScope; label: string; description: string }[] = [
@@ -27,6 +40,8 @@ export default function SettingsPage() {
   const supabase = createClient();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sub, setSub] = useState<SubData | null>(null);
+  const [upgrading, setUpgrading] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<ClearScope | null>(null);
   const [clearing, setClearing] = useState(false);
   const [clearMsg, setClearMsg] = useState<string | null>(null);
@@ -53,14 +68,28 @@ export default function SettingsPage() {
     async function fetchData() {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) { setLoading(false); return; }
-      const { data: profile } = await supabase
-        .from("profiles").select("email, full_name, created_at")
-        .eq("id", authUser.id).single();
+      const [{ data: profile }, { data: subRow }] = await Promise.all([
+        supabase.from("profiles").select("email, full_name, created_at").eq("id", authUser.id).single(),
+        supabase.from("subscriptions").select("tier, audits_used, audits_limit").eq("user_id", authUser.id).maybeSingle(),
+      ]);
       setUser((profile as UserData) ?? { email: authUser.email ?? null, full_name: null, created_at: null });
+      setSub(subRow as SubData ?? { tier: "free", audits_used: 0, audits_limit: 10 });
       setLoading(false);
     }
     fetchData();
   }, [supabase]);
+
+  async function handleUpgrade(productId: string) {
+    setUpgrading(productId);
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    });
+    const json = await res.json();
+    setUpgrading(null);
+    if (json.url) window.location.href = json.url;
+  }
 
   if (loading) {
     return (
@@ -117,21 +146,42 @@ export default function SettingsPage() {
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Free Beta</p>
-              <p className="text-xs text-[var(--text-tertiary)]">Full access &middot; Paid plans launching soon</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                {sub?.audits_used ?? 0} / {sub?.audits_limit ?? 10} audits used this month
+              </p>
             </div>
-            <span className="rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
-              Beta
+            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>
+              {TIER_LABELS[sub?.tier ?? "free"]}
             </span>
           </div>
-          <div className="mt-4">
-            <a
-              href="/pricing"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-            >
-              See upcoming plans
-            </a>
+          {/* Usage bar */}
+          <div className="mt-3 h-1.5 w-full rounded-full bg-[var(--bg-elevated)]">
+            <div
+              className="h-1.5 rounded-full bg-[var(--accent)] transition-all"
+              style={{ width: `${Math.min(100, ((sub?.audits_used ?? 0) / (sub?.audits_limit ?? 10)) * 100)}%` }}
+            />
           </div>
+          {(!sub || sub.tier === "free") && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
+                disabled={upgrading !== null}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:opacity-50"
+              >
+                {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                Upgrade to Starter — $19/mo
+              </button>
+              <button
+                onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
+                disabled={upgrading !== null}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:opacity-50"
+              >
+                {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                Upgrade to Agency — $49/mo
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Integrations */}

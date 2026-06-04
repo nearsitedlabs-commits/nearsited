@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { FREE_AUDIT_LIMIT } from "@/lib/dodo";
+
+async function ensureSubscription(userId: string) {
+  const admin = createAdminClient();
+  await admin.from("subscriptions").upsert(
+    { user_id: userId, tier: "free", audits_limit: FREE_AUDIT_LIMIT, audits_used: 0 },
+    { onConflict: "user_id", ignoreDuplicates: true }
+  );
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -12,12 +22,13 @@ export async function GET(request: NextRequest) {
 
   // Handle email confirmation links (token_hash + type)
   if (tokenHash && type) {
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
       type: type as "email" | "signup" | "recovery" | "invite" | "magiclink",
     });
 
     if (!error) {
+      if (data.user) await ensureSubscription(data.user.id);
       return NextResponse.redirect(`${origin}${next}`);
     }
 
@@ -26,9 +37,10 @@ export async function GET(request: NextRequest) {
 
   // Handle OAuth callback (code)
   if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      if (data.user) await ensureSubscription(data.user.id);
       return NextResponse.redirect(`${origin}${next}`);
     }
 

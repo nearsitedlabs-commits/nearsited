@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Search, ListFilter, Target, Mail, BarChart3, Activity,
-  ArrowRight, MessageSquare, FileText, Compass, Zap, TrendingUp,
+  Search, Target, Mail, BarChart3, Activity,
+  ArrowRight, MessageSquare, Compass, TrendingUp,
 } from "lucide-react";
 import { opportunityLabel, opportunityBadgeVariant, computeOpportunityScore } from "@/lib/scoring";
 import { ScoreRing } from "@/components/ui/ScoreRing";
@@ -34,7 +34,7 @@ type Props = {
   firstName: string;
   totalLeads: number;
   flaggedLeads: number;
-  totalPitches: number;
+  _totalPitches: number;
   unanalysedLeads: number;
   activeConversations: number;
   pipelineCounts: Record<string, number>;
@@ -101,7 +101,7 @@ const DASHBOARD_PIPELINE_STAGES = [
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export default function DashboardClient({
-  firstName, totalLeads, flaggedLeads, totalPitches,
+  firstName, totalLeads, flaggedLeads, _totalPitches,
   unanalysedLeads, activeConversations, pipelineCounts, recentLeads,
 }: Props) {
   const [now, setNow] = useState<number | null>(null);
