@@ -9,7 +9,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowLeft, ChevronDown, Copy, ExternalLink, FileDown, Loader2, Mail, MapPin, Monitor, Phone, RefreshCw, Send, Share2, Smartphone, TrendingUp } from "lucide-react";
-import { scoreLabel, computeOverall, uxDesignScore, trustScore, projection } from "@/lib/scoring";
+import { scoreLabel, computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore } from "@/lib/scoring";
+import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
 import type { WebsiteStatus } from "@/lib/types";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES, IMPACT_PILL_STYLES } from "@/lib/ui-constants";
@@ -140,13 +141,6 @@ function ImpactPill({ impact }: { impact: string }) {
 }
 
 
-
-/** Extract the top 3 highest-impact findings for "Why Contact This Lead" */
-function getTopFindings(issues: { title: string; detail: string; impact: string }[]): string[] {
-  const impactOrder: Record<string, number> = { High: 0, Medium: 1, Low: 2 };
-  const sorted = [...issues].sort((a, b) => (impactOrder[a.impact] ?? 2) - (impactOrder[b.impact] ?? 2));
-  return sorted.slice(0, 3).map((i) => i.title);
-}
 
 /** Build a concise client call summary from available data */
 function buildClientCallSummary(
@@ -299,7 +293,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     id: string; name: string; business_type: string; address: string; city: string;
     place_id: string | null; website: string | null; website_status: WebsiteStatus;
     rating: number | null; review_count: number | null; performance_score: number | null;
-    design_score: number | null; audited_at: string | null; design_analyzed_at: string | null;
+    design_score: number | null; opportunity_score: number | null;
+    audited_at: string | null; design_analyzed_at: string | null;
   };
 
   const mobileAudit   = audits?.find((a) => a.strategy === "mobile")  as Record<string, unknown> | undefined;
@@ -333,27 +328,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   const projScore = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta = Math.max(0, projScore - overall);
-  // Top findings for "Why Contact This Lead"
-  const topFindings = getTopFindings(allIssues as { title: string; detail: string; impact: string }[]);
-
-  // Build summary bullets from issues — one unique bullet per category, up to 4
-  const opportunityBullets: string[] = [];
-  const _seenBullets = new Set<string>();
-  for (const issue of allIssues) {
-    const t = issue.detail.toLowerCase();
-    let bullet: string;
-    if (/(lcp|fcp|tbt|cls|speed|load|performance|slow)/.test(t))                                      bullet = "Mobile visitors likely experience friction.";
-    else if (/(cta|button|hierarch|navigation|conversion)/.test(t))                                   bullet = "Conversion paths are unclear for visitors.";
-    else if (/(trust|secure|reputation|reviews|credibility|modern|outdat|design|visual|brand)/.test(t)) bullet = "Trust signals are weak — visitors may hesitate to engage.";
-    else if (/(seo|search|visibility|ranking|index)/.test(t))                                          bullet = "Search visibility is limited, reducing organic traffic.";
-    else if (/(content|readab|typograph|font)/.test(t))                                                bullet = "Content readability needs improvement for engagement.";
-    else                                                                                               bullet = issue.detail;
-    if (!_seenBullets.has(bullet)) {
-      _seenBullets.add(bullet);
-      opportunityBullets.push(bullet);
-    }
-    if (opportunityBullets.length >= 4) break;
-  }
+  const effectiveOpportunityScore = biz.opportunity_score ??
+    computeOpportunityScore(overall || biz.performance_score || biz.design_score || 50, biz.review_count ?? 0, biz.rating ?? 0);
 
   // Build concise client call summary
   const clientCallSummary = buildClientCallSummary(
@@ -1021,40 +997,20 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             animate="visible"
           >
 
-            {/* ── SECTION 2: WHY CONTACT THIS LEAD ────────────────────────── */}
-            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why Contact This Lead</h3>
-              {topFindings.length === 0 ? (
-                <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to identify findings.</p>
-              ) : (
-                <ul className="space-y-3">
-                  {topFindings.map((finding, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-[10px] font-bold text-[var(--accent)]">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm text-[var(--text-secondary)] leading-relaxed">{finding}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </motion.div>
-
-            {/* ── SECTION 3: AI OPPORTUNITY SUMMARY ────────────────────────── */}
-            <motion.div variants={sectionCard} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h3>
-              {opportunityBullets.length === 0 ? (
-                <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
-              ) : (
-                <ul className="space-y-2">
-                  {opportunityBullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            {/* ── SECTION 2: OPPORTUNITY SCORE EXPLANATION ─────────────────── */}
+            <motion.div variants={sectionCard}>
+              <OpportunityScoreExplanation
+                websiteStatus={biz.website_status}
+                overallScore={overall}
+                opportunityScore={effectiveOpportunityScore}
+                reviewCount={biz.review_count}
+                rating={biz.rating}
+                hasAudit={hasAudit}
+                hasDesign={hasDesign}
+                contactAvailable={!contactInfo.loading && (contactInfo.email !== null || contactInfo.phone !== null)}
+                businessType={biz.business_type}
+                issues={allIssues}
+              />
             </motion.div>
 
             {/* ── SECTION 5: TOP ISSUES IMPACTING SCORE ────────────────────── */}

@@ -36,7 +36,7 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 
 ```ts
 WebsiteStatus  = "has_website" | "no_website" | "social_only" | "platform_only" | "unknown"
-PipelineStatus = "new_lead" | "analysed" | "pitch_generated" | "contacted" | "in_conversation" | "won" | "lost"
+PipelineStatus = "new_lead" | "analysed" | "contacted" | "in_conversation" | "won" | "lost"
 Strategy       = "mobile" | "desktop"          // audits, design_analyses, ux_analyses
 PitchTone      = "professional" | "friendly" | "luxury"
 ImpactLevel    = "High" | "Medium" | "Low"     // design + ux issues
@@ -49,11 +49,13 @@ UxAction       = "scroll" | "click" | "fill_form" | "hover" | "navigate"   // [v
 
 ## UI Constants — Labels (from [`src/lib/ui-constants.ts`](src/lib/ui-constants.ts))
 ```ts
-PIPELINE_LABELS:      new_lead → "New Lead", analysed → "Analysed", pitch_generated → "Pitch Generated",
-                      contacted → "Contacted", in_conversation → "In Conversation", won → "Won", lost → "Lost"
+PIPELINE_LABELS:      new_lead → "Prospect", analysed → "Analysed", contacted → "Contacted",
+                      in_conversation → "In Conversation", won → "Won", lost → "Lost"
+PIPELINE_SALES_STATUSES: ["new_lead", "contacted", "in_conversation", "won", "lost"]  (hides product events)
 PITCH_STATUS_LABELS:  draft → "Draft", sent → "Sent", replied → "Replied"
-LEAD_TYPE_LABELS:     has_website → "Has Website", no_website → "No Website", social_only → "Social Only",
-                      platform_only → "Platform Only", unknown → "Unknown"
+LEAD_TYPE_LABELS:     has_website → "Has site", no_website → "No site", social_only → "Social only",
+                      platform_only → "Platform only", unknown → "Unknown"
+WEBSITE_STATUS_LABELS: same as LEAD_TYPE_LABELS
 ```
 
 ## Sidebar Nav (7 items, no Coming Soon)
@@ -116,11 +118,12 @@ businesses       id, user_id, name, place_id, business_type, address, city, phon
                  website, website_status, rating, review_count,
                  performance_score, design_score, ux_score,          ← ux_score nullable (v2)
                  opportunity_score,                                 ← weakness×viability, 0–100
-                 flagged_for_outreach, outreach_reason,
+                 flagged_for_outreach, outreach_reason, contact_info,          ← JSONB
                  discovered_at, audited_at, design_analyzed_at, ux_analyzed_at
-                 → 23 cols. Orphans dropped: website_url, gmb_place_id, gmb_rating,
+                 → 24 cols. Orphans dropped: website_url, gmb_place_id, gmb_rating,
                    gmb_review_count, category, website_type, country, cached_at
-places_cache     place_id(PK), website, website_status, details_fetched_at      [shared, admin-write]
+places_cache     place_id(PK), website, website_status, rating, review_count,
+                 ratings_fetched_at, details_fetched_at                          [shared, admin-write]
 audits           id, business_id, user_id, strategy, performance_score, seo_score,
                  fcp, lcp, tbt, cls, has_ssl, audit_data, created_at             [2 rows/run]
 design_analyses  id, business_id, user_id, strategy, design_score,
@@ -171,14 +174,47 @@ Match hostname, case-insensitive, strip `www.`/`m.`, match subdomains. Extensive
 
 ---
 
+## Three-Workflow Opportunity Detail Architecture
+The Lead Detail page at `/dashboard/leads/[id]` routes to **three different components** based on business `website_status` (determined by [`detectLeadWorkflow()`](src/lib/lead-types.ts:21)):
+
+| Workflow | website_status | Component | File |
+|---|---|---|---|
+| `website` | `has_website`, `platform_only` | `LeadDetailClient` | [`lead-detail-client.tsx`](src/app/dashboard/leads/[id]/lead-detail-client.tsx) |
+| `social_only` | `social_only` | `SocialOpportunityPage` | [`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx) |
+| `no_digital_presence` | `no_website`, `unknown` | `NoDigitalPresencePage` | [`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx) |
+
+Routing happens server-side in [`page.tsx`](src/app/dashboard/leads/[id]/page.tsx:65) via a `switch` on the workflow type. All three components receive the same props shape (`business`, `pipelineStatus`, `savedPitch`) but the `website` workflow additionally receives `audits` and `designAnalyses` arrays.
+
+**Website workflow** (`lead-detail-client.tsx`): Full audit/design analysis with scores, Core Web Vitals, issue tracking, pipeline management, pitch generation, export. ~1492 lines.
+
+**Social-only workflow** ([`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx)): Detects social platforms from `business.website` via `detectSocialPlatforms()`, shows Digital Presence Analysis card, Website Opportunity Impact estimates (Trust/Lead Capture/Search/Brand Control), channel-specific outreach tabs (WhatsApp/Instagram DM/Facebook Message/Email), social-aware pitch generation via `/api/pitch` with `workflow:"social_only"` + `socialPlatforms[]`. No audit/design scores shown.
+
+**No-digital-presence workflow** ([`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx)): Shows "Why This Is An Opportunity" reasons, Website Opportunity benefits (Visibility/Trust/Lead Gen/Customer Experience), phone-based outreach, pitch via `/api/pitch` with `workflow:"no_digital_presence"`. No audit/design analysis.
+
+All three workflows share: contact info fetch (`/api/contact-info`), background rating refresh (`/api/refresh-ratings`), pipeline status dropdown, pitch generation with tone/length controls, PDF export, Share Link, toast system.
+
+---
+
 ## Pitch Generation — [`/api/pitch`](src/app/api/pitch/route.ts)
-✅ **Rebuilt.** Branch angle by `lead_type` (= business `website_status`):
+✅ **Enhanced.** Branch angle by `workflow` (from [`lead-types.ts`](src/lib/lead-types.ts)) + `lead_type` (= business `website_status`):
+
+**Workflow-based branching** (new in v1 — overrides lead_type when present):
+- `workflow:"social_only"` — References detected social platforms, never mentions audits/scores. Focus: "Your Instagram and Facebook presence is strong. Here's what a website could add..."
+- `workflow:"no_digital_presence"` — Focuses on visibility gap. Never mentions audits/website issues. Focus: "Limited online presence means customers may not find you..."
+
+**Legacy lead_type branching** (when workflow is `"website"` or unset):
 - `has_website` <50 → "your site is costing you customers, here's the proof" (cite LCP, design issues)
 - `has_website` 50–69 → "real potential held back by fixable issues"
 - `has_website` ≥70 → "solid site, specific wins worth chasing"
 - `no_website` → "no web presence — here's what you're leaving on the table"
 - `social_only` → "Facebook isn't a website — here's what a real one does"
 - `platform_only` → "you're renting space on someone else's platform — here's the risk"
+
+**Channel-specific formatting** (new in v1):
+- `channel:"email"` → subject + body, ~150 words (default)
+- `channel:"whatsapp"` → body only, ~60 words, conversational, no formatting
+
+**Request body:** `businessId`, `tone` (professional/friendly/luxury), `length` (short/medium/detailed), `channel` (email/whatsapp), `workflow` (website/social_only/no_digital_presence), `socialPlatforms[]`, `focus`, `opening` (direct/question/empathy/data), `urgency` (low/medium/high).
 
 Pulls real data: latest `audits` (perf, lcp, fcp) + latest `design_analyses` (design_score, top-3 issues) + [v2] `ux_analyses` (ux issues). Honours tone/length/focus. Saves to `pitches` with `lead_type`+`tone`. Model: `gemini-3.5-flash`, header auth. JSON only response.
 
@@ -203,9 +239,11 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 | `/api/discover` | [`src/app/api/discover/route.ts`](src/app/api/discover/route.ts) | ✅ Live | **3 parallel Nearby Search queries** (keyword, keyword+type, 1.5×radius), dedup by place_id, **NDJSON streaming** (results→enrichment→done), places_cache enrichment, website classification, businesses upsert |
 | `/api/audit` | [`src/app/api/audit/route.ts`](src/app/api/audit/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (fetching→mobile→desktop→complete→result→done), **7-day audit cache** with `force` param, PageSpeed mobile+desktop, SEO category, AbortController timeout (60s), retry on 500/429, admin client writes, businesses score update |
 | `/api/analyze-design` | [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (screenshot→analysis→persisting→complete→result→done), **7-day design cache** with `force` param, ScreenshotOne + Gemini 3.5 Flash, point_deduction+impact in prompt, mobile+desktop concurrent, admin client writes |
-| `/api/pitch` | [`src/app/api/pitch/route.ts`](src/app/api/pitch/route.ts) | ✅ Rebuilt | gemini-3.5-flash, header auth, 6 lead-type angles, real data citation, tone/length/focus, saves to pitches (admin) |
-| `/api/pipeline` | [`src/app/api/pipeline/route.ts`](src/app/api/pipeline/route.ts) | ✅ Live | POST add, PATCH update status, canonical status validation |
+| `/api/pitch` | [`src/app/api/pitch/route.ts`](src/app/api/pitch/route.ts) | ✅ Enhanced | gemini-3.5-flash, header auth, 6 lead-type angles, real data citation, tone/length/focus, **workflow param** (`website`/`social_only`/`no_digital_presence`), **channel param** (`email`/`whatsapp`), **socialPlatforms[]** for contextual prompts, saves to pitches (admin) |
+| `/api/pipeline` | [`src/app/api/pipeline/route.ts`](src/app/api/pipeline/route.ts) | ✅ Live | POST add, PATCH update status, **6 canonical statuses** (pitch_generated removed) |
 | `/api/export/pdf` | [`src/app/api/export/pdf/route.ts`](src/app/api/export/pdf/route.ts) | ✅ Live | jsPDF, business name+scores+issues, downloadable `<business>-audit.pdf` |
+| `/api/contact-info` | [`src/app/api/contact-info/route.ts`](src/app/api/contact-info/route.ts) | ✅ Live | Scrapes website for email (mailto regex, 5s timeout), returns phone from `businesses.phone`, caches to `contact_info` JSONB column, 30-day cache TTL, admin client write |
+| `/api/refresh-ratings` | [`src/app/api/refresh-ratings/route.ts`](src/app/api/refresh-ratings/route.ts) | ✅ Live | Background fire-and-forget, Google Places Place Details fetch, updates `places_cache.rating`+`review_count`+`ratings_fetched_at`, admin client write, 7-day cache, 10s timeout |
 | `/api/saved-searches` | [`src/app/api/saved-searches/route.ts`](src/app/api/saved-searches/route.ts) | ✅ Live | CRUD for territories, session client, canonical business_type |
 | `/api/share` | [`src/app/api/share/route.ts`](src/app/api/share/route.ts) | ✅ Live | Creates share token (admin client), returns URL |
 | `/api/gemini-test` | [`src/app/api/gemini-test/route.ts`](src/app/api/gemini-test/route.ts) | ✅ Live | Smoke test for Gemini model connectivity |
@@ -214,8 +252,11 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 | Page | Route | File(s) | Status | Key Features |
 |---|---|---|---|---|
 | Dashboard | `/dashboard` | [`page.tsx`](src/app/dashboard/page.tsx) + [`dashboard-client.tsx`](src/app/dashboard/dashboard-client.tsx) | ✅ Live | 4 stat cards, recent leads, pipeline funnel, empty state, full-width layout |
-| Opportunities | `/dashboard/leads` | [`page.tsx`](src/app/dashboard/leads/page.tsx) | ✅ Live | Full table, search, 4 filter tabs, score rings, website badges, pagination 25/page, filter panel |
-| Lead Detail | `/dashboard/leads/[id]` | [`page.tsx`](src/app/dashboard/leads/[id]/page.tsx) + [`lead-detail-client.tsx`](src/app/dashboard/leads/[id]/lead-detail-client.tsx) | ✅ Live | Overview/Audit/Issues/History tabs, 6 sub-scores (reactive to Mobile/Desktop toggle), expanded Core Web Vitals, top issues with point deductions, AI pitch generation (tone/length + error display), **Copy Pitch**, **Share Link**, PDF export, **pipeline status dropdown**, **Run Audit / Run Design Analysis** buttons, **auto-pipeline on first audit** (toast), **toast system** (fixed bottom-right) |
+| Leads | `/dashboard/leads` | [`page.tsx`](src/app/dashboard/leads/page.tsx) | ✅ Live | Full table, search, 4 filter tabs, score rings, website badges, pagination 25/page, filter panel |
+| Lead Detail | `/dashboard/leads/[id]` | — **Three-Workflow Routing** (see § below) — | ✅ Live | Routes by `detectLeadWorkflow()` based on `website_status` |
+| Lead Detail (Website) | `/dashboard/leads/[id]` | [`lead-detail-client.tsx`](src/app/dashboard/leads/[id]/lead-detail-client.tsx) | ✅ Live | Overview/Audit/Issues/History tabs, 6 sub-scores (reactive to Mobile/Desktop toggle), expanded Core Web Vitals, top issues with point deductions, AI pitch generation (tone/length + error display), **Copy Pitch**, **Share Link**, PDF export, **pipeline status dropdown**, **Run Audit / Run Design Analysis** buttons, **auto-pipeline** on first audit (toast), **toast system** (fixed bottom-right), **contact info fetch**, **channel selection** (email/whatsapp) |
+| Lead Detail (Social Only) | `/dashboard/leads/[id]` | [`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx) | ✅ Live | Social platform badges, Digital Presence Analysis card, Website Opportunity Impact estimates, channel tabs (WhatsApp/Instagram/Facebook/Email), social-aware pitch gen, Client Call Summary |
+| Lead Detail (No Digital Presence) | `/dashboard/leads/[id]` | [`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx) | ✅ Live | No Digital Presence badge, Why This Is An Opportunity, Website Opportunity benefits, Ready-to-Send Outreach (phone/channel), Client Call Summary, PDF export, Share Link |
 | Discover | `/dashboard/discover` | [`page.tsx`](src/app/dashboard/discover/page.tsx) | ✅ Live | City/business type search, radius slider, Save Search, **NDJSON streaming**, **progress panels**, audit/design analysis, pipeline add, session storage, client-side filters |
 | Opportunity Review | `/dashboard/audit` | [`page.tsx`](src/app/dashboard/audit/page.tsx) | ✅ Live | URL input, **9-step progress checklist**, **sessionStorage persistence**, **expanded Core Web Vitals**, **plain English summaries**, **Save as Lead** banner, ephemeral pitch generation, 90s timeout |
 | Pipeline | `/dashboard/pipeline` | [`page.tsx`](src/app/dashboard/pipeline/page.tsx) | ✅ Live | Table, status dropdown with optimistic updates, 7 canonical stages |
@@ -231,7 +272,9 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 |---|---|
 | [`src/lib/scoring.ts`](src/lib/scoring.ts) | Scores: computeOverall, uxDesignScore, trustScore, uxInteractionScore, projection, blendedQuality, scoreLabel, scoreColor, scoreColorClasses |
 | [`src/lib/types.ts`](src/lib/types.ts) | WebsiteStatus enum, classifyWebsite() with extensive SOCIAL_DOMAINS + PLATFORM_DOMAINS lists |
-| [`src/lib/ui-constants.ts`](src/lib/ui-constants.ts) | PIPELINE_LABELS, OPPORTUNITY_INDICATORS, PITCH_STATUS_LABELS, LEAD_TYPE_LABELS, badge styles |
+| [`src/lib/ui-constants.ts`](src/lib/ui-constants.ts) | PIPELINE_LABELS (6 statuses, pitch_generated removed), PIPELINE_SALES_STATUSES, OPPORTUNITY_INDICATORS, PITCH_STATUS_LABELS, LEAD_TYPE_LABELS, WEBSITE_STATUS_LABELS, badge styles, IMPACT_PILL_STYLES, getOpportunityLevel() |
+| [`src/lib/lead-types.ts`](src/lib/lead-types.ts) | **NEW** — `LeadWorkflow` type (`website`/`social_only`/`no_digital_presence`), `detectLeadWorkflow()`, `detectSocialPlatforms()`, `getSocialOpportunityReasons()`, `getNoDigitalOpportunityReasons()`, `getSocialImpactEstimates()`, `getDigitalFoundationRecommendations()` |
+| [`src/lib/metric-meta.ts`](src/lib/metric-meta.ts) | **NEW** — `METRIC_META` registry (FCP/LCP/TBT/CLS with labels, thresholds, `toCanonical` parser), `metricColor()` helper. Shared by lead-detail and audit pages. Single source of truth for Core Web Vitals display. |
 | [`src/lib/analysis-context.tsx`](src/lib/analysis-context.tsx) | React context tracking audit/design analysis progress across pages |
 | [`src/lib/supabase/admin.ts`](src/lib/supabase/admin.ts) | Singleton admin client (service role, bypasses RLS, never browser) |
 | [`src/lib/supabase/server.ts`](src/lib/supabase/server.ts) | Server client (auth + RLS-safe reads) |
@@ -302,6 +345,8 @@ All v1 phases are now COMPLETE. Specific items:
 - Leads page: "Audited" / "Analysed" filter tabs (audited_at / design_analyzed_at IS NOT NULL)
 - Leads page: pagination position restored on back-navigation (sessionStorage)
 - Leads page: filter tab tooltips (ⓘ with plain-English explanations)
+- `/api/pitch` DB persistence: `channel` column migration not yet run — pitches always store `channel: "email"` for now
+- `/api/contact-info`: `contact_info` JSONB column migration not yet run — fire-and-forget cache write fails silently if column missing
 
 **V2:** UX analysis (Playwright+queue+worker+Storage — build these together), Radar/decay monitoring, Competitor tab, mockup generation, Stripe/credits, Campaigns/Templates/Reports/Integrations, Pitch Deck + Loom export, vertical packs. Job queue added with first async feature.
 
@@ -343,8 +388,8 @@ Both `/api/audit` and `/api/analyze-design` cache results for **7 days**:
 
 ## UI Patterns (established — reuse these)
 
-### METRIC_META — Core Web Vitals display
-Defined identically in `lead-detail-client.tsx` and `audit/page.tsx`. Extract to a shared lib if used in a third place.
+### METRIC_META — Core Web Vitals display (shared lib)
+Defined once in [`src/lib/metric-meta.ts`](src/lib/metric-meta.ts), imported by both `lead-detail-client.tsx` and `audit/page.tsx`.
 ```ts
 // Each entry: label (full name), subtitle (plain English), thresholds [good, warn], toCanonical (parse raw string → canonical unit)
 // FCP/LCP thresholds in seconds; TBT in ms; CLS unitless.
@@ -383,6 +428,11 @@ Both audit and design APIs send `{ type:"progress", step:"complete" }` at the en
 10. **[v2]** Running UX analysis synchronously in an API route (→ queue-only, it's 30–120s).
 11. Inline score computation instead of importing from `scoring.ts`.
 12. Writing `category` instead of `business_type` on territories/businesses.
+13. Using `LeadDetailClient` for all lead types — route via `detectLeadWorkflow()` in `page.tsx` instead (social_only → `SocialOpportunityPage`, no_website → `NoDigitalPresencePage`).
+14. Scraping contact info synchronously in the response — use `GET /api/contact-info` with 5s timeout + fire-and-forget admin cache write instead.
+15. Forgetting `contact_info` JSONB column migration — cache write fails silently without it (no-op if column missing, but data is lost).
+16. Hardcoding pipeline statuses — always import from `ui-constants.ts`; `pitch_generated` is removed from canonical enum.
+17. Inlining Core Web Vitals display logic — import `METRIC_META` + `metricColor()` from `metric-meta.ts` instead.
 
 ---
 *Update this file the moment a schema, enum, model name, runtime, or convention changes.*

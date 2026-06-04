@@ -1,11 +1,12 @@
 import DodoPayments from "dodopayments";
 
 // Singleton Dodo client
+// Env vars: DODO_API_KEY (bearer token), DODO_WEBHOOK_SECRET (webhook signature key)
 let _client: DodoPayments | null = null;
 export function getDodoClient(): DodoPayments {
   if (!_client) {
     _client = new DodoPayments({
-      bearerToken: process.env.DODO_API_KEY!,
+      bearerToken: process.env.DODO_API_KEY,
       webhookKey: process.env.DODO_WEBHOOK_SECRET ?? null,
     });
   }

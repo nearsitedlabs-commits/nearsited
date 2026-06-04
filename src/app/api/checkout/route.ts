@@ -30,19 +30,21 @@ export async function POST(req: NextRequest) {
   try {
     const dodo = getDodoClient();
     const session = await dodo.checkoutSessions.create({
-      product_id: productId,
-      quantity: 1,
-      payment_link: true,
-      redirect_url: `${origin}/dashboard/settings?upgraded=1`,
+      product_cart: [{ product_id: productId, quantity: 1 }],
+      return_url: `${origin}/dashboard/settings?upgraded=1`,
       customer: {
         email: profile?.email ?? user.email ?? "",
-        name: profile?.full_name ?? undefined,
-        create_new_customer: false,
+        name: profile?.full_name ?? null,
       },
       metadata: { user_id: user.id },
-    } as unknown as Parameters<typeof dodo.checkoutSessions.create>[0]);
+    });
 
-    console.log(`[CHECKOUT] Created session for user=${user.id} product=${productId}`);
+    if (!session.checkout_url) {
+      console.error("[CHECKOUT] No checkout_url in response for user=%s product=%s", user.id, productId);
+      return NextResponse.json({ error: "No checkout URL returned" }, { status: 502 });
+    }
+
+    console.log("[CHECKOUT] Created session for user=%s product=%s", user.id, productId);
     return NextResponse.json({ url: session.checkout_url });
   } catch (err) {
     console.error("[CHECKOUT] Error creating session:", err);

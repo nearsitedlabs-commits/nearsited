@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Compass, Target, Lightbulb, Eye, Phone } from "lucide-react";
@@ -9,6 +10,11 @@ import { computeOpportunityScore } from "@/lib/scoring";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { PIPELINE_LABELS, PIPELINE_BADGE_STYLES } from "@/lib/ui-constants";
+import { FilterPanel } from "@/components/filters/FilterPanel";
+import {
+  FilterState, DEFAULT_FILTERS, countActiveFilters,
+  filtersToParams, paramsToFilters, applyFilters, trackFilter,
+} from "@/lib/filters";
 
 // ── Analyse Steps ──────────────────────────────────────────────────────────────
 
@@ -121,23 +127,20 @@ function WebPresenceBadge({ status }: { status: WebsiteStatus }) {
     status === "platform_only" ? "var(--badge-indigo-text)" :
     "var(--text-tertiary)";
 
-  const R = 18;
-  const DIM = 44;
+  const DIM = 52;
 
   return (
     <svg width={DIM} height={DIM} viewBox={`0 0 ${DIM} ${DIM}`} className="flex-shrink-0">
-      {/* Dashed track */}
       <circle
-        cx="22" cy="22" r={R}
+        cx="26" cy="26" r="20"
         fill="none"
         stroke={color}
         strokeWidth="2"
         strokeDasharray="3 3"
         opacity="0.35"
       />
-      {/* Dash symbol */}
       <text
-        x="22" y="26" textAnchor="middle"
+        x="26" y="31" textAnchor="middle"
         fontSize="14" fontWeight="600"
         fill={color}
         fontFamily="var(--font-sans, Geist)"
@@ -266,16 +269,11 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [activeOpportunityTab, setActiveOpportunityTab] = useState<OpportunityTab>("all");
+  const router = useRouter();
+  const [filters, setFiltersState] = useState<FilterState>(DEFAULT_FILTERS);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [activePipelineTab, setActivePipelineTab] = useState<PipelineTab>("all_pipeline");
   const [searchQuery, setSearchQuery] = useState("");
-  const [scoreRange, setScoreRange] = useState<[number, number]>([0, 100]);
-  const [sortBy, setSortBy] = useState<string>("opportunity");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [showFilters, setShowFilters] = useState(false);
-  const [filterAudited, setFilterAudited] = useState(false);
-  const [filterAnalysed, setFilterAnalysed] = useState(false);
-  const [includeArchived, setIncludeArchived] = useState(false);
   const [page, setPage] = useState(() => {
     try { return parseInt(sessionStorage.getItem("nearsited_leads_page") ?? "1", 10); } catch { return 1; }
   });
@@ -452,58 +450,31 @@ export default function LeadsPage() {
     }
   }, [readStream]);
 
+  // ── URL sync ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFiltersState(paramsToFilters(new URLSearchParams(window.location.search)));
+    }
+  }, []);
+
+  const setFilters = useCallback((f: FilterState) => {
+    setFiltersState(f);
+    setPage(1);
+    const params = filtersToParams(f);
+    router.replace(`${window.location.pathname}${params.toString() ? `?${params}` : ""}`, { scroll: false });
+  }, [router]);
+
+  // ── Derived data ──────────────────────────────────────────────────────────
+  const businessTypes = useMemo(() => {
+    return [...new Set(leads.map(l => l.business_type).filter((t): t is string => !!t))].sort();
+  }, [leads]);
+
+  const activeFilterCount = countActiveFilters(filters);
+
   // ── Filtering + Smart Sorting ─────────────────────────────────────────────
   const filtered = useMemo(() => {
-    let result = [...leads];
-
-    if (activeOpportunityTab === "no_website") {
-      result = result.filter((l) => l.website_status === "no_website");
-    } else if (activeOpportunityTab === "has_website") {
-      result = result.filter((l) => l.website_status === "has_website");
-    } else if (activeOpportunityTab === "social_platform") {
-      result = result.filter((l) => l.website_status === "social_only" || l.website_status === "platform_only");
-    } else if (activeOpportunityTab === "flagged") {
-      result = result.filter((l) => l.flagged_for_outreach);
-    }
-
-    const PIPELINE_TAB_TO_STATUS: Record<string, string> = {
-      pipeline_prospect:        "new_lead",
-      pipeline_contacted:       "contacted",
-      pipeline_in_conversation: "in_conversation",
-      pipeline_won:             "won",
-    };
-    if (activePipelineTab === "all_pipeline") {
-      result = result.filter((l) => pipelineMap.has(l.id));
-    } else {
-      const dbStatus = PIPELINE_TAB_TO_STATUS[activePipelineTab];
-      result = result.filter((l) => dbStatus && pipelineMap.get(l.id) === dbStatus);
-    }
-
-    if (filterAudited)   result = result.filter((l) => l.audited_at !== null);
-    if (filterAnalysed)  result = result.filter((l) => l.design_analyzed_at !== null);
-    if (!includeArchived) result = result.filter((l) => { const s = pipelineMap.get(l.id); return !s || (s !== "won" && s !== "lost"); });
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter((l) => l.name.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.business_type?.toLowerCase().includes(q));
-    }
-    result = result.filter((l) => { const s = effectiveScore(l) ?? 0; return s >= scoreRange[0] && s <= scoreRange[1]; });
-
-    result.sort((a, b) => {
-      let cmp = 0;
-      if (sortBy === "name") {
-        cmp = a.name.localeCompare(b.name);
-      } else if (sortBy === "score") {
-        cmp = (effectiveScore(a) ?? -1) - (effectiveScore(b) ?? -1);
-      } else if (sortBy === "opportunity") {
-        cmp = effectiveOpportunityScore(a) - effectiveOpportunityScore(b);
-        if (cmp === 0) cmp = (a.flagged_for_outreach ? 1 : 0) - (b.flagged_for_outreach ? 1 : 0);
-      } else {
-        cmp = new Date(a.discovered_at).getTime() - new Date(b.discovered_at).getTime();
-      }
-      return sortOrder === "asc" ? cmp : -cmp;
-    });
-    return result;
-  }, [leads, activeOpportunityTab, activePipelineTab, searchQuery, scoreRange, sortBy, sortOrder, pipelineMap, filterAudited, filterAnalysed, includeArchived]);
+    return applyFilters(leads, filters, searchQuery, pipelineMap, activePipelineTab);
+  }, [leads, filters, searchQuery, pipelineMap, activePipelineTab]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -681,30 +652,41 @@ export default function LeadsPage() {
           ))}
         </div>
 
-        {/* Two-group filter bar */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          {/* Group 1 — Opportunity quality */}
+        {/* Filter + search bar */}
+        <div className="mb-4 space-y-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            {OPPORTUNITY_FILTER_OPTIONS.map((tab) => (
-              <button
-                key={tab.value}
-                onClick={() => { setActiveOpportunityTab(tab.value); setPage(1); }}
-                className={`inline-flex cursor-pointer items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                  activeOpportunityTab === tab.value
-                    ? "bg-[var(--accent)] text-white"
-                    : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+            {OPPORTUNITY_FILTER_OPTIONS.map((tab) => {
+              const isActive =
+                tab.value === "all"
+                  ? filters.websiteStatus.length === 0 && !filters.flaggedOnly
+                  : tab.value === "flagged"
+                  ? filters.flaggedOnly
+                  : tab.value === "social_platform"
+                  ? filters.websiteStatus.length > 0 && filters.websiteStatus.every(s => s === "social_only" || s === "platform_only")
+                  : filters.websiteStatus.length === 1 && filters.websiteStatus[0] === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => {
+                    setPage(1);
+                    if (tab.value === "all")                  setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+                    else if (tab.value === "flagged")         setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
+                    else if (tab.value === "social_platform") setFilters({ ...filters, websiteStatus: ["social_only", "platform_only"], flaggedOnly: false });
+                    else                                      setFilters({ ...filters, websiteStatus: [tab.value], flaggedOnly: false });
+                  }}
+                  className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                    isActive
+                      ? "bg-[var(--accent)] text-white"
+                      : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
 
-          {/* Divider */}
-          <div className="hidden h-5 w-px bg-[var(--border)] sm:block" />
+            <div className="hidden h-5 w-px bg-[var(--border)] sm:block" />
 
-          {/* Group 2 — Pipeline stage */}
-          <div className="flex flex-wrap items-center gap-1.5">
             {PIPELINE_FILTER_OPTIONS.map((tab) => (
               <button
                 key={tab.value}
@@ -718,24 +700,20 @@ export default function LeadsPage() {
                 {tab.label}
               </button>
             ))}
+
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className={`ml-auto cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                activeFilterCount > 0
+                  ? "bg-[var(--accent)] text-white"
+                  : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"
+              }`}
+            >
+              <Filter className="mr-1.5 inline h-3.5 w-3.5" />Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+            </button>
           </div>
 
-          {/* Filters toggle */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`ml-auto cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-              showFilters
-                ? "bg-[var(--accent)] text-white"
-                : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"
-            }`}
-          >
-            <Filter className="mr-1.5 inline h-3.5 w-3.5" />Filters
-          </button>
-        </div>
-
-        {/* Search + sort bar */}
-        <div className="mb-4 flex items-center gap-3">
-          <div className="relative flex-1">
+          <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
             <input
               type="text"
@@ -745,80 +723,30 @@ export default function LeadsPage() {
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
             />
           </div>
-          <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-            <span className="hidden sm:inline">Sorted by</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
-            >
-              <option value="opportunity">Opportunity</option>
-              <option value="score">Raw Score</option>
-              <option value="name">Name</option>
-              <option value="discovered_at">Discovered</option>
-            </select>
-            <button
-              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-              className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 text-xs text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface)]"
-            >
-              {sortOrder === "desc" ? "↓ Desc" : "↑ Asc"}
-            </button>
-          </div>
         </div>
 
-        {/* Advanced filter panel */}
-        {showFilters && (
-          <div className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">Order</label>
-                <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
-                  <option value="desc">Highest First</option>
-                  <option value="asc">Lowest First</option>
-                </select>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">Sort by</label>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
-                  <option value="opportunity">Opportunity Score</option>
-                  <option value="score">Raw Score</option>
-                  <option value="name">Name</option>
-                  <option value="discovered_at">Discovered</option>
-                </select>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">
-                  Score Range — {scoreRange[0]}–{scoreRange[1]}
-                </label>
-                <input type="range" min={0} max={100} value={scoreRange[0]}
-                  onChange={(e) => setScoreRange([Number(e.target.value), scoreRange[1]])}
-                  className="w-full accent-[var(--accent)]" />
-              </div>
-              <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-[var(--border)] pt-4 sm:col-span-4">
-                {[
-                  { checked: filterAudited,   onChange: setFilterAudited,   label: "Show only audited" },
-                  { checked: filterAnalysed,  onChange: setFilterAnalysed,  label: "Show only analysed" },
-                  { checked: includeArchived, onChange: setIncludeArchived, label: "Include archived" },
-                ].map(({ checked, onChange, label }) => (
-                  <label key={label} className="flex cursor-pointer items-center gap-2 text-xs text-[var(--text-secondary)]">
-                    <input type="checkbox" checked={checked}
-                      onChange={(e) => { onChange(e.target.checked); setPage(1); }}
-                      className="accent-[var(--accent)] rounded" />
-                    {label}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Filter drawer */}
+        <FilterPanel
+          filters={filters}
+          onChange={setFilters}
+          onReset={() => setFilters(DEFAULT_FILTERS)}
+          businessTypes={businessTypes}
+          mobileOpen={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        />
 
         {/* ── Results ──────────────────────────────────────────────────────────── */}
         {paginated.length === 0 ? (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
             <OpportunitiesEmptyState
-              activeTab={activePipelineTab !== "all_pipeline" ? activePipelineTab : activeOpportunityTab}
+              activeTab={
+                activePipelineTab !== "all_pipeline" ? activePipelineTab :
+                filters.flaggedOnly ? "flagged" :
+                filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "no_website" ? "no_website" :
+                filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "has_website" ? "has_website" :
+                filters.websiteStatus.length > 0 ? "social_platform" :
+                "all"
+              }
               searchQuery={searchQuery}
             />
           </div>
@@ -830,12 +758,12 @@ export default function LeadsPage() {
                 <table className="w-full text-left text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)] bg-[var(--bg-elevated)]">
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Opportunity</th>
+                      <th className="w-16 px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Opportunity</th>
                       <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Business</th>
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Website</th>
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Last Analysed</th>
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Status</th>
-                      <th className="px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Actions</th>
+                      <th className="w-28 px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Website</th>
+                      <th className="w-28 px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Last Analysed</th>
+                      <th className="w-32 px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Status</th>
+                      <th className="w-44 px-5 py-3 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
@@ -849,7 +777,7 @@ export default function LeadsPage() {
                         <tr key={lead.id} className="transition-colors duration-150 hover:bg-[var(--bg-elevated)]">
 
                           {/* Opportunity score ring / Web-presence badge */}
-                          <td className="px-5 py-4">
+                          <td className="w-16 px-5 py-4 align-top">
                             {showScoreRing
                               ? <ScoreRing score={ringScore} size={52} variant={lead.audited_at ? "opportunity" : "estimate"} />
                               : <WebPresenceBadge status={lead.website_status} />
@@ -857,8 +785,7 @@ export default function LeadsPage() {
                           </td>
 
                           {/* Business name + type + city + opportunity context */}
-                          <td className="px-5 py-4">
-                            {/* dir="auto" enables correct RTL rendering for Arabic/Persian/Hebrew */}
+                          <td className="px-5 py-4 align-top">
                             <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
                             <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
                             {lead.phone && (
@@ -870,22 +797,22 @@ export default function LeadsPage() {
                           </td>
 
                           {/* Website status */}
-                          <td className="px-5 py-4">
+                          <td className="w-28 px-5 py-4 align-top">
                             <WebsiteBadge status={lead.website_status} />
                           </td>
 
                           {/* Last analysed date */}
-                          <td className="px-5 py-4 text-sm text-[var(--text-secondary)]">
+                          <td className="w-28 px-5 py-4 align-top text-sm text-[var(--text-secondary)]">
                             {formatDate(lead.audited_at ?? lead.design_analyzed_at)}
                           </td>
 
                           {/* Pipeline status badge */}
-                          <td className="px-5 py-4">
+                          <td className="w-32 px-5 py-4 align-top">
                             <PipelineStatusBadge status={pipelineStatus} />
                           </td>
 
                           {/* Context-aware actions */}
-                          <td className="px-5 py-4">
+                          <td className="w-44 px-5 py-4 align-top">
                             {renderActions(lead)}
                           </td>
                         </tr>

@@ -1,0 +1,380 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { CheckCircle2, ChevronDown, Info } from "lucide-react";
+import { websiteWeakness } from "@/lib/scoring";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type Confidence = "High" | "Medium" | "Low";
+
+export type OpportunityScoreExplanationProps = {
+  websiteStatus: string;
+  overallScore: number;
+  opportunityScore: number;
+  reviewCount: number | null;
+  rating: number | null;
+  hasAudit: boolean;
+  hasDesign: boolean;
+  contactAvailable: boolean;
+  businessType: string | null;
+  issues: Array<{ title: string; impact: string; point_deduction?: number }>;
+};
+
+// ── Pure helpers ───────────────────────────────────────────────────────────────
+
+function getConfidence(hasAudit: boolean, hasDesign: boolean, reviewCount: number | null): Confidence {
+  const r = reviewCount ?? 0;
+  if (hasAudit && hasDesign && r >= 10) return "High";
+  if (hasAudit || hasDesign || r >= 5)  return "Medium";
+  return "Low";
+}
+
+function getSummary(
+  websiteStatus: string,
+  overallScore: number,
+  opportunityScore: number,
+  reviewCount: number | null,
+  rating: number | null,
+  businessType: string | null,
+): string {
+  const r   = reviewCount ?? 0;
+  const rat = rating ?? 0;
+  const t   = businessType ?? "business";
+
+  if (websiteStatus === "no_website") {
+    return r >= 20 && rat >= 4.0
+      ? `This ${t} has an active local presence and strong reputation, but no website — a clear opportunity to build their digital foundation.`
+      : `This ${t} has no website, creating a direct opportunity for web design and digital presence services.`;
+  }
+  if (websiteStatus === "social_only") {
+    return `This ${t} relies entirely on social media. A website would add search visibility and direct lead capture that social profiles can't provide.`;
+  }
+  if (websiteStatus === "platform_only") {
+    return `This ${t} uses a third-party platform. A custom website would give them brand control and better conversion capabilities.`;
+  }
+  if (opportunityScore >= 70) {
+    return r >= 20
+      ? `This active ${t} has a website with significant improvement potential. Strong customer engagement signals a business ready to invest.`
+      : `This ${t}'s website has major performance and design gaps — a strong redesign candidate.`;
+  }
+  if (opportunityScore >= 45) {
+    return `This ${t} has a website with fixable issues. Addressing performance, design, and conversion improvements could meaningfully grow their results.`;
+  }
+  return `This ${t} has a functional website with specific optimisation opportunities that could enhance their search visibility and conversions.`;
+}
+
+function getSignals(
+  websiteStatus: string,
+  overallScore: number,
+  reviewCount: number | null,
+  rating: number | null,
+  contactAvailable: boolean,
+  issues: Array<{ title: string; impact: string }>,
+): string[] {
+  const r   = reviewCount ?? 0;
+  const rat = rating ?? 0;
+  const sigs: string[] = [];
+
+  if (websiteStatus === "no_website")    sigs.push("No website found — full build opportunity");
+  else if (websiteStatus === "social_only")   sigs.push("Social media only — no website to capture leads");
+  else if (websiteStatus === "platform_only") sigs.push("Third-party platform — limited brand control");
+  else if (overallScore < 50)  sigs.push("Website has significant room for improvement");
+  else if (overallScore < 70)  sigs.push("Website has fixable performance and design issues");
+
+  if (r >= 100)     sigs.push(`Highly active — ${r.toLocaleString()} customer reviews`);
+  else if (r >= 20) sigs.push(`Active business with ${r} reviews`);
+  else if (r >= 5)  sigs.push(`Established with ${r} reviews`);
+
+  if (rat >= 4.0 && r >= 10) sigs.push(`Strong local reputation — ${rat.toFixed(1)} star rating`);
+
+  if (contactAvailable) sigs.push("Contact details available — direct outreach possible");
+
+  const highCount = issues.filter(i => i.impact === "High").length;
+  if (highCount >= 2) sigs.push(`${highCount} high-impact improvements identified`);
+
+  return sigs.slice(0, 5);
+}
+
+function getTypes(
+  websiteStatus: string,
+  overallScore: number,
+  issues: Array<{ title: string; impact: string }>,
+): string[] {
+  const types: string[] = [];
+
+  if      (websiteStatus === "no_website")    types.push("Website Needed");
+  else if (websiteStatus === "social_only")   types.push("Digital Presence Gap");
+  else if (websiteStatus === "platform_only") types.push("Website Upgrade");
+  else if (overallScore < 50)                 types.push("Redesign Candidate");
+  else                                        types.push("Performance Opportunity");
+
+  const hasSEO  = issues.some(i => /(seo|search|meta|keyword)/i.test(i.title));
+  const hasCTA  = issues.some(i => /(cta|conversion|button|lead|contact form)/i.test(i.title));
+
+  if (hasSEO)  types.push("SEO Opportunity");
+  if (hasCTA)  types.push("Conversion Optimisation");
+
+  return types.slice(0, 3);
+}
+
+function getServices(
+  websiteStatus: string,
+  overallScore: number,
+  issues: Array<{ title: string; impact: string }>,
+): string[] {
+  if (websiteStatus === "no_website")    return ["Website Design", "Google Business Setup", "Local SEO"];
+  if (websiteStatus === "social_only")   return ["Website Development", "Social Integration", "Lead Capture"];
+  if (websiteStatus === "platform_only") return ["Custom Website", "Brand Identity", "SEO Setup"];
+
+  const svcs: string[] = [overallScore < 50 ? "Website Redesign" : "Website Optimisation"];
+
+  if (issues.some(i => /(speed|performance|lcp|fcp|slow|mobile)/i.test(i.title))) svcs.push("Performance Optimisation");
+  if (issues.some(i => /(seo|search|meta)/i.test(i.title)))                        svcs.push("Local SEO");
+  if (issues.some(i => /(cta|conversion|lead|button)/i.test(i.title)))              svcs.push("Conversion Optimisation");
+  if (issues.some(i => /(trust|review|credib)/i.test(i.title)))                     svcs.push("Trust & Credibility");
+
+  if (svcs.length < 2) svcs.push("Local SEO");
+  return svcs.slice(0, 3);
+}
+
+type Driver = { label: string; score: number; description: string };
+
+function getDrivers(
+  websiteStatus: string,
+  overallScore: number,
+  reviewCount: number | null,
+  rating: number | null,
+  contactAvailable: boolean,
+): Driver[] {
+  const r   = reviewCount ?? 0;
+  const rat = rating ?? 0;
+
+  const digitalGap =
+    websiteStatus === "no_website"    ? 100 :
+    websiteStatus === "social_only"   ? 85  :
+    websiteStatus === "platform_only" ? 70  :
+    websiteWeakness(overallScore);
+
+  const activityScore =
+    r >= 100 ? 100 : r >= 50 ? 90 : r >= 20 ? 75 : r >= 10 ? 60 : r >= 5 ? 45 : r >= 1 ? 30 : 20;
+
+  const reputationScore =
+    rat >= 4.5 ? 100 : rat >= 4.0 ? 85 : rat >= 3.5 ? 65 : rat >= 3.0 ? 40 : rat > 0 ? 25 : 50;
+
+  const contactScore = contactAvailable ? 100 : 50;
+
+  return [
+    {
+      label: "Digital Presence Gap",
+      score: digitalGap,
+      description:
+        websiteStatus === "no_website"    ? "No website exists — full digital transformation opportunity." :
+        websiteStatus === "social_only"   ? "Only social media detected — website creation opportunity." :
+        websiteStatus === "platform_only" ? "Relies on a third-party platform — custom website opportunity." :
+        overallScore < 50                 ? "Website has performance and design issues needing significant work." :
+        overallScore < 70                 ? "Website needs improvements to reach its potential." :
+        "Website performs well — targeted enhancements could add value.",
+    },
+    {
+      label: "Business Activity",
+      score: activityScore,
+      description:
+        r >= 50 ? "Highly active — a business investing in customers is likely to invest in its website." :
+        r >= 20 ? "Consistent customer engagement indicates an established, operating business." :
+        r >= 5  ? "Some review history suggests an operating business." :
+        r >= 1  ? "Limited review history — business may be newer or less established." :
+        "No review data available.",
+    },
+    {
+      label: "Local Reputation",
+      score: reputationScore,
+      description:
+        rat >= 4.0 ? "Strong rating signals a quality business worth investing in a website." :
+        rat >= 3.5 ? "Above-average rating — a professional website could amplify their reputation." :
+        rat >= 3.0 ? "Average rating — digital improvements could help strengthen customer perception." :
+        rat >  0   ? "Lower rating — a professional online presence could help address trust issues." :
+        "Rating data not available.",
+    },
+    {
+      label: "Contact Accessibility",
+      score: contactScore,
+      description: contactAvailable
+        ? "Contact information is available — direct outreach is straightforward."
+        : "Contact details may need research — outreach will require extra effort.",
+    },
+  ];
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+const TYPE_STYLES: Record<string, string> = {
+  "Website Needed":          "border-[var(--score-good)]/30 bg-[var(--score-good-tint)] text-[var(--score-good)]",
+  "Digital Presence Gap":    "border-[var(--score-good)]/30 bg-[var(--score-good-tint)] text-[var(--score-good)]",
+  "Redesign Candidate":      "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  "Website Upgrade":         "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  "Performance Opportunity": "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  "SEO Opportunity":         "border-blue-500/30 bg-blue-500/10 text-blue-400",
+  "Conversion Optimisation": "border-amber-500/30 bg-amber-500/10 text-amber-400",
+};
+
+function DriverBar({ label, score, description }: Driver) {
+  const color =
+    score >= 70 ? "var(--score-good)" :
+    score >= 40 ? "var(--score-mid)"  :
+    "var(--text-tertiary)";
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-[var(--text-secondary)]">{label}</span>
+        <span className="text-xs font-bold tabular-nums" style={{ color }}>{score}/100</span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-base)]">
+        <div
+          className="h-full rounded-full transition-all duration-700 ease-out"
+          style={{ width: `${score}%`, backgroundColor: color }}
+        />
+      </div>
+      <p className="text-[11px] leading-relaxed text-[var(--text-tertiary)]">{description}</p>
+    </div>
+  );
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
+
+export function OpportunityScoreExplanation({
+  websiteStatus,
+  overallScore,
+  opportunityScore,
+  reviewCount,
+  rating,
+  hasAudit,
+  hasDesign,
+  contactAvailable,
+  businessType,
+  issues,
+}: OpportunityScoreExplanationProps) {
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen]     = useState(false);
+  const tracked = useRef(false);
+
+  useEffect(() => {
+    if (tracked.current) return;
+    tracked.current = true;
+    if (process.env.NODE_ENV === "development") console.log("[ANALYTICS] opportunity_explanation_viewed");
+  }, []);
+
+  const confidence     = getConfidence(hasAudit, hasDesign, reviewCount);
+  const summary        = getSummary(websiteStatus, overallScore, opportunityScore, reviewCount, rating, businessType);
+  const signals        = getSignals(websiteStatus, overallScore, reviewCount, rating, contactAvailable, issues);
+  const types          = getTypes(websiteStatus, overallScore, issues);
+  const services       = getServices(websiteStatus, overallScore, issues);
+  const drivers        = getDrivers(websiteStatus, overallScore, reviewCount, rating, contactAvailable);
+
+  const confColor =
+    confidence === "High"   ? "text-[var(--score-good)]" :
+    confidence === "Medium" ? "text-[var(--score-mid)]"  :
+    "text-[var(--text-tertiary)]";
+
+  return (
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden">
+      <div className="p-5 sm:p-6">
+
+        {/* Header row */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h3>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Type tags */}
+            {types.map(t => (
+              <span
+                key={t}
+                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]"}`}
+              >
+                {t}
+              </span>
+            ))}
+
+            {/* Confidence badge */}
+            <div className="relative flex items-center gap-1">
+              <span className={`text-xs font-semibold ${confColor}`}>{confidence} Confidence</span>
+              <button
+                onClick={() => setTooltipOpen(v => !v)}
+                className="cursor-pointer text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
+              >
+                <Info className="h-3 w-3" />
+              </button>
+              {tooltipOpen && (
+                <div className="absolute right-0 top-full z-20 mt-1.5 w-48 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-lg">
+                  <p className="text-[11px] leading-relaxed text-[var(--text-secondary)]">
+                    Reflects how much verified data was available when calculating this score.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Summary */}
+        <p className="mb-4 text-sm leading-relaxed text-[var(--text-secondary)]">{summary}</p>
+
+        {/* Two-column: signals + services */}
+        <div className="grid gap-4 sm:grid-cols-2">
+
+          {/* Signals */}
+          <ul className="space-y-2">
+            {signals.map((s, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--score-good)]" />
+                <span className="text-xs leading-relaxed text-[var(--text-secondary)]">{s}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Services */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
+              Recommended Services
+            </p>
+            <ul className="space-y-1">
+              {services.map((s, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-2 text-xs text-[var(--text-secondary)]"
+                  onClick={() => {
+                    if (process.env.NODE_ENV === "development") console.log("[ANALYTICS] recommendation_clicked", s);
+                  }}
+                >
+                  <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Expandable score breakdown */}
+      <button
+        onClick={() => {
+          setBreakdownOpen(v => !v);
+          if (!breakdownOpen && process.env.NODE_ENV === "development") {
+            console.log("[ANALYTICS] score_breakdown_expanded");
+          }
+        }}
+        className="flex w-full cursor-pointer items-center justify-between border-t border-[var(--border)] px-5 sm:px-6 py-3 text-left transition-colors hover:bg-[var(--bg-elevated)]"
+      >
+        <span className="text-xs font-medium text-[var(--text-tertiary)]">Score Breakdown</span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 text-[var(--text-tertiary)] transition-transform duration-200 ${breakdownOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {breakdownOpen && (
+        <div className="space-y-4 border-t border-[var(--border)] px-5 sm:px-6 py-4">
+          {drivers.map(d => <DriverBar key={d.label} {...d} />)}
+        </div>
+      )}
+    </div>
+  );
+}
