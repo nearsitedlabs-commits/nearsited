@@ -208,10 +208,10 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const [pitchFocus, setPitchFocus] = useState("all");
   const [pitchOpening, setPitchOpening] = useState("direct");
   const [pitchUrgency, setPitchUrgency] = useState("medium");
-  const [runningAudit, setRunningAudit] = useState(false);
   const [runningDesign, setRunningDesign] = useState(false);
   const [runningFullAnalysis, setRunningFullAnalysis] = useState(false);
   const [completedKeys, setCompletedKeys] = useState<string[]>([]);
+  const [showAllIssues, setShowAllIssues] = useState(false);
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [designError, setDesignError] = useState<string | null>(null);
@@ -307,18 +307,24 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const mobileDesign  = designAnalyses?.find((a) => a.strategy === "mobile")  as Record<string, unknown> | undefined;
   const desktopDesign = designAnalyses?.find((a) => a.strategy === "desktop") as Record<string, unknown> | undefined;
 
-  const activeAudit  = screenshotStrategy === "mobile" ? (mobileAudit  ?? desktopAudit)  : (desktopAudit  ?? mobileAudit);
   const activeDesign = screenshotStrategy === "mobile" ? (mobileDesign ?? desktopDesign) : (desktopDesign ?? mobileDesign);
 
-  const perfScore        = (activeAudit?.performance_score  as number | null) ?? 0;
-  const seoScore         = (activeAudit?.seo_score          as number | null) ?? 0;
-  const mobileScore      = (mobileAudit?.performance_score  as number | null) ?? 0;
   const designScore      = biz.design_score ?? 0;
   const criteria         = activeDesign?.criteria_scores as Record<string, number> | undefined;
   const uxDesignScoreVal = criteria ? uxDesignScore(criteria as { modernity: number; readability: number; cta: number; hierarchy: number; trust: number }) : 0;
   const trustScoreVal    = criteria ? trustScore(criteria as { trust: number }) : 0;
 
-  const overall  = computeOverall({ performance: perfScore, seo: seoScore, mobile: mobileScore, uxDesign: uxDesignScoreVal, trust: trustScoreVal });
+  // Extract individual scores for both strategies
+  const mobilePerfScore  = (mobileAudit?.performance_score  as number | null) ?? null;
+  const desktopPerfScore = (desktopAudit?.performance_score as number | null) ?? null;
+
+  const overall  = computeOverall({
+    performance: desktopPerfScore ?? 0,
+    seo:         (desktopAudit?.seo_score as number | null) ?? 0,
+    mobile:      mobilePerfScore ?? 0,
+    uxDesign:    uxDesignScoreVal,
+    trust:       trustScoreVal,
+  });
 
   const allIssues = [
     ...((mobileDesign?.issues  as { title: string; detail: string; point_deduction?: number; impact: "High" | "Medium" | "Low" }[]) ?? []),
@@ -327,24 +333,27 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   const projScore = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta = Math.max(0, projScore - overall);
-
-  // Extract individual scores for both strategies
-  const mobilePerfScore  = (mobileAudit?.performance_score  as number | null) ?? null;
-  const desktopPerfScore = (desktopAudit?.performance_score as number | null) ?? null;
   // Top findings for "Why Contact This Lead"
   const topFindings = getTopFindings(allIssues as { title: string; detail: string; impact: string }[]);
 
-  // Build summary bullets from issues for Opportunity Summary
-  const opportunityBullets = allIssues.slice(0, 4).map((issue) => {
-    // Convert technical detail to business-oriented language
+  // Build summary bullets from issues — one unique bullet per category, up to 4
+  const opportunityBullets: string[] = [];
+  const _seenBullets = new Set<string>();
+  for (const issue of allIssues) {
     const t = issue.detail.toLowerCase();
-    if (/(lcp|fcp|tbt|cls|speed|load|performance|slow)/.test(t)) return "Mobile visitors likely experience friction.";
-    if (/(cta|button|hierarch|navigation|conversion)/.test(t)) return "Conversion paths are unclear for visitors.";
-    if (/(trust|secure|reputation|reviews|credibility|modern|outdat|design|visual|brand)/.test(t)) return "Trust signals are weak — visitors may hesitate to engage.";
-    if (/(seo|search|visibility|ranking|index)/.test(t)) return "Search visibility is limited, reducing organic traffic.";
-    if (/(content|readab|typograph|font)/.test(t)) return "Content readability needs improvement for engagement.";
-    return issue.detail;
-  });
+    let bullet: string;
+    if (/(lcp|fcp|tbt|cls|speed|load|performance|slow)/.test(t))                                      bullet = "Mobile visitors likely experience friction.";
+    else if (/(cta|button|hierarch|navigation|conversion)/.test(t))                                   bullet = "Conversion paths are unclear for visitors.";
+    else if (/(trust|secure|reputation|reviews|credibility|modern|outdat|design|visual|brand)/.test(t)) bullet = "Trust signals are weak — visitors may hesitate to engage.";
+    else if (/(seo|search|visibility|ranking|index)/.test(t))                                          bullet = "Search visibility is limited, reducing organic traffic.";
+    else if (/(content|readab|typograph|font)/.test(t))                                                bullet = "Content readability needs improvement for engagement.";
+    else                                                                                               bullet = issue.detail;
+    if (!_seenBullets.has(bullet)) {
+      _seenBullets.add(bullet);
+      opportunityBullets.push(bullet);
+    }
+    if (opportunityBullets.length >= 4) break;
+  }
 
   // Build concise client call summary
   const clientCallSummary = buildClientCallSummary(
@@ -455,24 +464,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
       showToast("Network error — could not create share link");
     }
   }, [biz.id, showToast]);
-
-  const handleRunAudit = useCallback(async () => {
-    if (!biz.website) return;
-    setRunningAudit(true);
-    try {
-      await fetch("/api/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId: biz.id, website: biz.website }),
-      });
-      router.refresh();
-    } catch (err) {
-      console.error("[LEAD] Audit failed:", err);
-      showToast("Audit failed — please try again.");
-    } finally {
-      setRunningAudit(false);
-    }
-  }, [biz.id, biz.website, router, showToast]);
 
   const handleRunDesign = useCallback(async () => {
     if (!biz.website) return;
@@ -1080,7 +1071,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   initial={shouldReduce ? "visible" : "hidden"}
                   animate="visible"
                 >
-                  {allIssues.slice(0, 3).map((issue, i) => (
+                  {(showAllIssues ? allIssues : allIssues.slice(0, 3)).map((issue, i) => (
                     <motion.div key={i} variants={issueItem} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
@@ -1097,9 +1088,12 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     </motion.div>
                   ))}
                   {allIssues.length > 3 && (
-                    <p className="text-xs text-[var(--text-tertiary)] text-center pt-1">
-                      +{allIssues.length - 3} more issues
-                    </p>
+                    <button
+                      onClick={() => setShowAllIssues((v) => !v)}
+                      className="w-full cursor-pointer pt-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]"
+                    >
+                      {showAllIssues ? "Show less" : `+${allIssues.length - 3} more issue${allIssues.length - 3 !== 1 ? "s" : ""}`}
+                    </button>
                   )}
                 </motion.div>
               )}
@@ -1129,9 +1123,9 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
               {/* Score breakdown */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <SubScore label={screenshotStrategy === "mobile" ? "Mobile Perf" : "Desktop Perf"} score={perfScore || null} />
-                <SubScore label="SEO"          score={seoScore || null} />
-                <SubScore label={screenshotStrategy === "desktop" ? "Mobile Perf" : "Desktop Perf"} score={(screenshotStrategy === "desktop" ? mobileScore : desktopPerfScore) || null} />
+                <SubScore label="Desktop Perf" score={desktopPerfScore} />
+                <SubScore label="SEO"          score={(desktopAudit?.seo_score as number | null) ?? null} />
+                <SubScore label="Mobile Perf"  score={mobilePerfScore} />
                 <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
                 <SubScore label="Trust"        score={trustScoreVal || null} />
                 <SubScore label="Overall"      score={overall || null} />

@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Info, Compass, Target, Lightbulb, Eye, Phone } from "lucide-react";
+import { ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, Compass, Target, Lightbulb, Eye, Phone } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/types";
 import { computeOpportunityScore } from "@/lib/scoring";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
@@ -49,16 +49,18 @@ type LeadRow = {
   opportunity_score: number | null;
 };
 
-type OpportunityTab = "all" | "needs_improvement" | "strong_opportunity";
+type OpportunityTab = "all" | "no_website" | "has_website" | "social_platform" | "flagged";
 type PipelineTab = "all_pipeline" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
 type TabFilter = OpportunityTab | PipelineTab;
 
 const PAGE_SIZE = 25;
 
-const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string; tooltip?: string }[] = [
-  { value: "all",               label: "All" },
-  { value: "needs_improvement", label: "Needs Improvement", tooltip: "Businesses with a website scoring 40–69 — already have a site, but it needs work" },
-  { value: "strong_opportunity",label: "Strong Opportunity", tooltip: "Businesses with no website, social-only, or platform-only presence — plus websites scoring below 40 (very weak)" },
+const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string }[] = [
+  { value: "all",            label: "All" },
+  { value: "no_website",     label: "No Website" },
+  { value: "has_website",    label: "Has Website" },
+  { value: "social_platform",label: "Social / Platform" },
+  { value: "flagged",        label: "Flagged" },
 ];
 
 const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [
@@ -68,14 +70,6 @@ const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [
   { value: "pipeline_in_conversation", label: "In Conversation" },
   { value: "pipeline_won",             label: "Won" },
 ];
-
-const WEBSITE_FILTER_OPTIONS = [
-  { value: "all",          label: "All" },
-  { value: "has_website",  label: "Opportunity Found" },
-  { value: "no_website",   label: "Website Opportunity" },
-  { value: "social_only",  label: "Social Presence" },
-  { value: "platform_only",label: "Platform Presence" },
-] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -118,44 +112,6 @@ function getOpportunityContext(lead: LeadRow): { text: string; color: string } {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function TabTooltip({ text }: { text: string }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function handleOutside(e: MouseEvent | TouchEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleOutside);
-    document.addEventListener("touchstart", handleOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleOutside);
-      document.removeEventListener("touchstart", handleOutside);
-    };
-  }, [open]);
-
-  return (
-    <span ref={ref} className="relative inline-flex items-center">
-      <button
-        type="button"
-        aria-label="More info"
-        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
-        className="ml-1 inline-flex cursor-pointer items-center opacity-50 transition-opacity hover:opacity-90"
-      >
-        <Info className="size-3.5" />
-      </button>
-      {open && (
-        <div className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-xs leading-relaxed text-[var(--text-primary)] shadow-[var(--brand-shadow-lg)]">
-          {text}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-elevated)]" />
-        </div>
-      )}
-    </span>
-  );
-}
 
 /** Score column replacement for non-has_website leads — matches ScoreRing dimensions */
 function WebPresenceBadge({ status }: { status: WebsiteStatus }) {
@@ -222,15 +178,25 @@ const EMPTY_MESSAGES: Record<TabFilter, { icon: typeof Compass; title: string; d
     title: "No leads in pipeline",
     description: "Add discovered opportunities to your pipeline to start tracking them from prospect to won deal.",
   },
-  needs_improvement: {
-    icon: Target,
-    title: "No opportunities need improvement",
-    description: "All your scored leads are already in good shape — or you haven't scored any yet.",
-  },
-  strong_opportunity: {
+  no_website: {
     icon: Lightbulb,
-    title: "No strong signals yet",
-    description: "Score more leads to surface the strongest redesign candidates.",
+    title: "No leads without a website",
+    description: "Discover businesses in your area to find opportunities with no web presence.",
+  },
+  has_website: {
+    icon: Target,
+    title: "No leads with a website",
+    description: "Discover businesses that have a website you could audit and improve.",
+  },
+  social_platform: {
+    icon: Target,
+    title: "No social or platform-only leads",
+    description: "Discover businesses whose only presence is a social profile or third-party platform.",
+  },
+  flagged: {
+    icon: Lightbulb,
+    title: "No flagged leads",
+    description: "Leads flagged for outreach will appear here.",
   },
   pipeline_prospect: {
     icon: Target,
@@ -303,7 +269,6 @@ export default function LeadsPage() {
   const [activeOpportunityTab, setActiveOpportunityTab] = useState<OpportunityTab>("all");
   const [activePipelineTab, setActivePipelineTab] = useState<PipelineTab>("all_pipeline");
   const [searchQuery, setSearchQuery] = useState("");
-  const [websiteFilter, setWebsiteFilter] = useState<string>("all");
   const [scoreRange, setScoreRange] = useState<[number, number]>([0, 100]);
   const [sortBy, setSortBy] = useState<string>("opportunity");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -491,16 +456,14 @@ export default function LeadsPage() {
   const filtered = useMemo(() => {
     let result = [...leads];
 
-    if (activeOpportunityTab === "needs_improvement") {
-      result = result.filter((l) => { const s = effectiveScore(l); return s !== null && s >= 40 && s <= 69; });
-    } else if (activeOpportunityTab === "strong_opportunity") {
-      result = result.filter((l) => {
-        const s = effectiveScore(l);
-        return l.website_status === "no_website"
-          || l.website_status === "social_only"
-          || l.website_status === "platform_only"
-          || (s !== null && s < 40);
-      });
+    if (activeOpportunityTab === "no_website") {
+      result = result.filter((l) => l.website_status === "no_website");
+    } else if (activeOpportunityTab === "has_website") {
+      result = result.filter((l) => l.website_status === "has_website");
+    } else if (activeOpportunityTab === "social_platform") {
+      result = result.filter((l) => l.website_status === "social_only" || l.website_status === "platform_only");
+    } else if (activeOpportunityTab === "flagged") {
+      result = result.filter((l) => l.flagged_for_outreach);
     }
 
     const PIPELINE_TAB_TO_STATUS: Record<string, string> = {
@@ -523,7 +486,6 @@ export default function LeadsPage() {
       const q = searchQuery.toLowerCase();
       result = result.filter((l) => l.name.toLowerCase().includes(q) || l.city?.toLowerCase().includes(q) || l.business_type?.toLowerCase().includes(q));
     }
-    if (websiteFilter !== "all") result = result.filter((l) => l.website_status === websiteFilter);
     result = result.filter((l) => { const s = effectiveScore(l) ?? 0; return s >= scoreRange[0] && s <= scoreRange[1]; });
 
     result.sort((a, b) => {
@@ -541,7 +503,7 @@ export default function LeadsPage() {
       return sortOrder === "asc" ? cmp : -cmp;
     });
     return result;
-  }, [leads, activeOpportunityTab, activePipelineTab, searchQuery, websiteFilter, scoreRange, sortBy, sortOrder, pipelineMap, filterAudited, filterAnalysed, includeArchived]);
+  }, [leads, activeOpportunityTab, activePipelineTab, searchQuery, scoreRange, sortBy, sortOrder, pipelineMap, filterAudited, filterAnalysed, includeArchived]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -734,7 +696,6 @@ export default function LeadsPage() {
                 }`}
               >
                 {tab.label}
-                {tab.tooltip && <TabTooltip text={tab.tooltip} />}
               </button>
             ))}
           </div>
@@ -808,14 +769,7 @@ export default function LeadsPage() {
         {/* Advanced filter panel */}
         {showFilters && (
           <div className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
-            <div className="grid gap-4 sm:grid-cols-4">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">Website</label>
-                <select value={websiteFilter} onChange={(e) => setWebsiteFilter(e.target.value)}
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
-                  {WEBSITE_FILTER_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-[var(--text-tertiary)]">Order</label>
                 <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}

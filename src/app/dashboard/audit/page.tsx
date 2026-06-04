@@ -343,6 +343,8 @@ export default function AuditPage() {
   const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const urlRef = useRef("");
   const pendingAutoRunRef = useRef<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const cancelledRef = useRef(false);
 
   // Read hasCompletedAudit from localStorage on mount — useEffect is required for SSR safety
   useEffect(() => {
@@ -468,6 +470,25 @@ export default function AuditPage() {
     setQuotaRetryTimer(0);
   }, []);
 
+  const handleCancel = () => {
+    cancelledRef.current = true;
+    abortControllerRef.current?.abort();
+    if (saveIntervalRef.current) { clearInterval(saveIntervalRef.current); saveIntervalRef.current = null; }
+    // Remove interrupted flag so auto-restart doesn't trigger on the next mount
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...parsed, interrupted: false }));
+      }
+    } catch { /* ignore */ }
+    setRunning(false);
+    setStep("idle");
+    setCompletedKeys([]);
+    setActiveKeys([]);
+    setError(null);
+  };
+
   const handleRun = async (urlOverride?: string) => {
     const trimmedUrl = (urlOverride ?? url).trim();
     if (!trimmedUrl) return;
@@ -512,6 +533,9 @@ export default function AuditPage() {
       }
     }
 
+    cancelledRef.current = false;
+    abortControllerRef.current = new AbortController();
+
     sessionStorage.removeItem(STORAGE_KEY);
     setSavedTimestamp(null);
 
@@ -531,15 +555,19 @@ export default function AuditPage() {
     let designError: string | null = null;
     let isQuotaError = false;
 
+    const signal = abortControllerRef.current!.signal;
+
     const auditResponsePromise = fetch("/api/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ website: trimmedUrl }),
+      signal,
     });
     const designResponsePromise = fetch("/api/analyze-design", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ website: trimmedUrl }),
+      signal,
     });
 
     const progressiveSave = () => {
@@ -569,6 +597,7 @@ export default function AuditPage() {
           },
         );
       } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return;
         auditError = err instanceof Error ? err.message : "Audit failed";
       }
     })();
@@ -598,6 +627,7 @@ export default function AuditPage() {
           },
         );
       } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return;
         designError = err instanceof Error ? err.message : "Design analysis failed";
       }
     })();
@@ -608,6 +638,8 @@ export default function AuditPage() {
       clearInterval(saveIntervalRef.current);
       saveIntervalRef.current = null;
     }
+
+    if (cancelledRef.current) return;
 
     if (!mountedRef.current) {
       progressiveSave();
@@ -679,7 +711,10 @@ export default function AuditPage() {
         throw new Error(data.error ?? "AI service is busy. Please try again.");
       }
 
-      setPitchResult(data.pitch ?? "No pitch could be generated.");
+      const p = data.pitch;
+      const subject = typeof p === "object" && p?.subject ? String(p.subject) : "";
+      const body    = typeof p === "object" && p?.body    ? String(p.body)    : typeof p === "string" ? p : "No pitch could be generated.";
+      setPitchResult(subject ? `${subject}\n\n${body}` : body);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to generate pitch. Please try again.";
       setPitchResult(message);
@@ -1028,6 +1063,16 @@ export default function AuditPage() {
           {showProgress && (
             <div className="mt-4">
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
+                {running && (
+                  <div className="mb-3 flex justify-end">
+                    <button
+                      onClick={handleCancel}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
+                    >
+                      <X className="h-3.5 w-3.5" /> Cancel
+                    </button>
+                  </div>
+                )}
                 <div className="space-y-0.5">
                   {ALL_STEPS.map((stepDef) => {
                     const isDone   = completedKeys.includes(stepDef.key);

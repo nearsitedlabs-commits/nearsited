@@ -733,7 +733,6 @@ ${channelInstruction(channel, tone, length, promptBusinessName)}`;
         subject: parsedPitch.subject,
         body: parsedPitch.body,
         tone,
-        channel,
         lead_type: leadType,
         pitch_status: "draft",
         created_at: now,
