@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import SignOutButton from "./sign-out-button";
 import SidebarNav from "./sidebar-nav";
 import MobileBottomNav from "./mobile-nav";
+import CreditsWidget from "@/components/ui/CreditsWidget";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -27,17 +28,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Nav — client component for active state */}
         <SidebarNav />
 
-        {/* Beta access widget */}
+        {/* Credits widget */}
         <div className="border-t border-[var(--border)] px-4 py-3">
-          <div className="rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[var(--accent)]">Free Beta</span>
-              <span className="text-xs text-[var(--text-tertiary)]">Full access</span>
-            </div>
-            <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-              Paid plans launching soon &middot; <a href="/pricing" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">See pricing</a>
-            </p>
-          </div>
+          <CreditsWidget />
         </div>
 
         {/* User row */}

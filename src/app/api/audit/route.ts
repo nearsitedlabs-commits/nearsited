@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { computeOpportunityScore } from "@/lib/scoring";
+import { checkCredit, deductCredit } from "@/lib/credits";
 
 type AuditRequestBody = {
   businessId?: string;
@@ -201,7 +202,16 @@ export async function POST(request: NextRequest) {
 
     console.log("[AUDIT] Authenticated user:", user.id);
 
-    // 3. Get API key
+    // 3. Credit check — runs before any external API calls
+    const credit = await checkCredit(user.id);
+    if (!credit.allowed) {
+      return NextResponse.json(
+        { error: "Audit limit reached. Upgrade your plan to run more audits.", code: "CREDIT_LIMIT", retryAfter: 0 },
+        { status: 429 },
+      );
+    }
+
+    // 4. Get API key
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
     if (!apiKey) {
       console.log("[AUDIT] Missing GOOGLE_PLACES_API_KEY");
@@ -411,7 +421,10 @@ export async function POST(request: NextRequest) {
             console.log("[AUDIT] Audit complete — ephemeral (not persisted)");
           }
 
-          // 8. Stream result + done
+          // 8. Deduct credit for fresh (non-cached) audit
+          await deductCredit(user.id);
+
+          // 9. Stream result + done
           const responseBody: AuditResponse = {
             mobile: mobileMetrics,
             desktop: desktopMetrics,
