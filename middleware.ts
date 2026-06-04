@@ -18,6 +18,7 @@ export const config = {
      * - / (landing page is public)
      */
     "/dashboard/:path*",
+    "/admin/:path*",
     "/(auth)/:path*",
   ],
 };
