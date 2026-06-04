@@ -12,6 +12,8 @@ import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer
 export type PricingProps = {
   navigate: (href: string) => void;
   mode?: "inline" | "page";
+  /** If provided, called instead of navigating to /signup when a plan is selected. */
+  onPlanSelect?: (productId: string) => void;
 };
 
 type Plan = {
@@ -100,7 +102,7 @@ const cardItem: Variants = {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
+export default function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const shouldReduce = useReducedMotion();
 
@@ -282,7 +284,11 @@ export default function Pricing({ navigate, mode = "inline" }: PricingProps) {
                 </ul>
                 <Button
                   variant={plan.featured ? "primary" : "secondary"}
-                  onClick={() => navigate(`/signup?plan=${billing === "monthly" ? plan.monthlyProductId : plan.annualProductId}`)}
+                  onClick={() => {
+                    const productId = billing === "monthly" ? plan.monthlyProductId : plan.annualProductId;
+                    if (onPlanSelect) onPlanSelect(productId);
+                    else navigate(`/signup?plan=${productId}`);
+                  }}
                   className="mt-8 w-full"
                 >
                   {plan.cta}

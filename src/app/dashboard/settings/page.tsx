@@ -73,8 +73,20 @@ export default function SettingsPage() {
         supabase.from("subscriptions").select("tier, audits_used, audits_limit").eq("user_id", authUser.id).maybeSingle(),
       ]);
       setUser((profile as UserData) ?? { email: authUser.email ?? null, full_name: null, created_at: null });
-      setSub(subRow as SubData ?? { tier: "free", audits_used: 0, audits_limit: 10 });
+      const resolvedSub = (subRow as SubData) ?? { tier: "free", audits_used: 0, audits_limit: 10 };
+      setSub(resolvedSub);
       setLoading(false);
+
+      // Auto-trigger checkout if user arrived here after selecting a plan while logged out
+      if (resolvedSub.tier === "free") {
+        try {
+          const pending = localStorage.getItem("pendingUpgradePlan");
+          if (pending) {
+            localStorage.removeItem("pendingUpgradePlan");
+            handleUpgrade(pending);
+          }
+        } catch { /* ignore */ }
+      }
     }
     fetchData();
   }, [supabase]);

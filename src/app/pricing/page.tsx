@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Pricing from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/Button";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Search } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 const viewport = { once: true, margin: "-40px" as const };
@@ -49,6 +51,27 @@ export default function PricingPage() {
   const router = useRouter();
   const navigate = router.push.bind(router);
   const shouldReduce = useReducedMotion();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setIsLoggedIn(!!user));
+  }, [supabase]);
+
+  async function handlePlanSelect(productId: string) {
+    if (!isLoggedIn) {
+      try { localStorage.setItem("pendingUpgradePlan", productId); } catch { /* ignore */ }
+      navigate("/signup");
+      return;
+    }
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    });
+    const json = await res.json();
+    if (json.url) window.location.href = json.url;
+  }
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
@@ -85,7 +108,7 @@ export default function PricingPage() {
           transition={{ duration: 0.35, ease }}
         >
           {/* Pricing cards — animated internally */}
-          <Pricing navigate={navigate} mode="page" />
+          <Pricing navigate={navigate} mode="page" onPlanSelect={handlePlanSelect} />
 
           {/* How Credits Work */}
           <motion.section
