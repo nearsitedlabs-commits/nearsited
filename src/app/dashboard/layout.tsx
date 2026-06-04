@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import SignOutButton from "./sign-out-button";
 import SidebarNav from "./sidebar-nav";
+import MobileBottomNav from "./mobile-nav";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -75,9 +76,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </header>
 
-        {/* Main content area */}
-        <main className="flex-1 overflow-auto bg-[var(--bg-base)]">{children}</main>
+        {/* Main content area — pb-16 on mobile reserves space for the bottom nav */}
+        <main className="flex-1 overflow-auto bg-[var(--bg-base)] pb-16 lg:pb-0">{children}</main>
       </div>
+
+      <MobileBottomNav />
     </div>
   );
 }

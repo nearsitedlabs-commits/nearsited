@@ -5,7 +5,8 @@ import { FREE_AUDIT_LIMIT } from "@/lib/dodo";
 
 async function ensureSubscription(userId: string) {
   const admin = createAdminClient();
-  await admin.from("subscriptions").upsert(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin as any).from("subscriptions").upsert(
     { user_id: userId, tier: "free", audits_limit: FREE_AUDIT_LIMIT, audits_used: 0 },
     { onConflict: "user_id", ignoreDuplicates: true }
   );

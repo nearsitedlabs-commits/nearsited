@@ -69,26 +69,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subTable = (admin as any).from("subscriptions");
+
     if (isCancelled) {
-      const { error } = await admin
-        .from("subscriptions")
-        .update({ tier: "free", audits_limit: FREE_AUDIT_LIMIT, dodo_subscription_id: sub.subscription_id } as any)
+      const { error } = await subTable
+        .update({ tier: "free", audits_limit: FREE_AUDIT_LIMIT, dodo_subscription_id: sub.subscription_id })
         .eq("user_id", userId);
       if (error) console.error("[DODO/WEBHOOK] Cancel update error", error);
     } else if (isActive && productInfo) {
       const now = new Date();
       const resetAt = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
-      const { error } = await admin
-        .from("subscriptions")
-        .upsert({
-          user_id: userId,
-          dodo_customer_id: sub.customer_id,
-          dodo_subscription_id: sub.subscription_id,
-          tier: productInfo.tier,
-          audits_limit: productInfo.limit,
-          audits_used: 0,
-          credits_reset_at: resetAt,
-        } as any, { onConflict: "user_id" });
+      const { error } = await subTable.upsert({
+        user_id: userId,
+        dodo_customer_id: sub.customer_id,
+        dodo_subscription_id: sub.subscription_id,
+        tier: productInfo.tier,
+        audits_limit: productInfo.limit,
+        audits_used: 0,
+        credits_reset_at: resetAt,
+      }, { onConflict: "user_id" });
       if (error) console.error("[DODO/WEBHOOK] Upsert error", error);
       else console.log(`[DODO/WEBHOOK] Subscription updated: user=${userId} tier=${productInfo.tier}`);
     }
