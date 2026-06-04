@@ -45,6 +45,10 @@ export default function SettingsPage() {
   const [confirming, setConfirming] = useState<ClearScope | null>(null);
   const [clearing, setClearing] = useState(false);
   const [clearMsg, setClearMsg] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [savingName, setSavingName] = useState(false);
+  const [nameMsg, setNameMsg] = useState<string | null>(null);
 
   async function handleClear(scope: ClearScope) {
     setClearing(true);
@@ -135,16 +139,88 @@ export default function SettingsPage() {
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Profile</h2>
           </div>
           <div className="space-y-3">
-            {[
-              { label: "Email",        value: user?.email },
-              { label: "Name",         value: user?.full_name },
-              { label: "Member since", value: user?.created_at ? new Date(user.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null },
-            ].filter((r) => r.value).map((row) => (
-              <div key={row.label} className="flex justify-between border-b border-[var(--border)] pb-2">
-                <span className="text-sm text-[var(--text-secondary)]">{row.label}</span>
-                <span className="text-sm font-medium text-[var(--text-primary)]">{row.value ?? "—"}</span>
+            {/* Email (read-only) */}
+            <div className="flex justify-between border-b border-[var(--border)] pb-2">
+              <span className="text-sm text-[var(--text-secondary)]">Email</span>
+              <span className="text-sm font-medium text-[var(--text-primary)]">{user?.email ?? "—"}</span>
+            </div>
+
+            {/* Name (editable) */}
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+              <span className="text-sm text-[var(--text-secondary)]">Name</span>
+              <div className="flex items-center gap-2">
+                {editingName ? (
+                  <>
+                    <input
+                      type="text"
+                      value={nameInput}
+                      onChange={(e) => setNameInput(e.target.value)}
+                      className="w-40 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                      placeholder="Your name"
+                      autoFocus
+                      disabled={savingName}
+                    />
+                    <button
+                      onClick={async () => {
+                        if (!nameInput.trim() || savingName) return;
+                        setSavingName(true);
+                        setNameMsg(null);
+                        const { error } = await supabase
+                          .from("profiles")
+                          .update({ full_name: nameInput.trim() })
+                          .eq("id", (await supabase.auth.getUser()).data.user?.id);
+                        setSavingName(false);
+                        if (error) {
+                          setNameMsg("Failed to save — please try again.");
+                        } else {
+                          setUser((prev) => prev ? { ...prev, full_name: nameInput.trim() } : prev);
+                          setEditingName(false);
+                          setNameMsg("Name updated.");
+                          setTimeout(() => setNameMsg(null), 2500);
+                        }
+                      }}
+                      disabled={savingName || !nameInput.trim()}
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {savingName ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+                    </button>
+                    <button
+                      onClick={() => { setEditingName(false); setNameMsg(null); }}
+                      disabled={savingName}
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-sm font-medium text-[var(--text-primary)]">{user?.full_name ?? "—"}</span>
+                    <button
+                      onClick={() => { setNameInput(user?.full_name ?? ""); setEditingName(true); }}
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                    >
+                      Edit
+                    </button>
+                  </>
+                )}
               </div>
-            ))}
+            </div>
+
+            {nameMsg && (
+              <p className={`text-xs ${nameMsg === "Name updated." ? "text-[var(--score-good)]" : "text-red-400"}`}>
+                {nameMsg}
+              </p>
+            )}
+
+            {/* Member since (read-only) */}
+            {user?.created_at && (
+              <div className="flex justify-between border-b border-[var(--border)] pb-2">
+                <span className="text-sm text-[var(--text-secondary)]">Member since</span>
+                <span className="text-sm font-medium text-[var(--text-primary)]">
+                  {new Date(user.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

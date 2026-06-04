@@ -71,7 +71,7 @@ Settings      /dashboard/settings  ✅
 
 ---
 
-## External APIs (verified June 2026)
+## External APIs (verified July 2026)
 
 ### Gemini — `gemini-3.5-flash`
 - ⚠️ `gemini-1.5-flash` and `gemini-2.x` are dead/legacy. Stable ID is exactly `gemini-3.5-flash`. Define once: `const GEMINI_MODEL = "gemini-3.5-flash"`.
@@ -280,6 +280,9 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 | [`src/lib/supabase/server.ts`](src/lib/supabase/server.ts) | Server client (auth + RLS-safe reads) |
 | [`src/lib/supabase/client.ts`](src/lib/supabase/client.ts) | Browser client (client components) |
 | [`src/lib/supabase/middleware.ts`](src/lib/supabase/middleware.ts) | Session cookie middleware |
+| [`src/lib/db-types.ts`](src/lib/db-types.ts) | **NEW** — Database row TypeScript interfaces (BusinessRow, AuditRow, DesignAnalysisRow, DesignIssue, PipelineRow, PitchRow, etc.) — replaces `Record<string, unknown>` casts |
+| [`src/lib/shared-hooks.ts`](src/lib/shared-hooks.ts) | **NEW** — Shared React hooks: `useCountUp()`, `useAccordion()`, `useToast()` |
+| [`src/lib/ndjson.ts`](src/lib/ndjson.ts) | **NEW** — Shared NDJSON stream reader `readNdjsonStream<T>()` |
 
 ### ✅ Infrastructure
 | Item | Details |
@@ -345,8 +348,8 @@ All v1 phases are now COMPLETE. Specific items:
 - Leads page: "Audited" / "Analysed" filter tabs (audited_at / design_analyzed_at IS NOT NULL)
 - Leads page: pagination position restored on back-navigation (sessionStorage)
 - Leads page: filter tab tooltips (ⓘ with plain-English explanations)
-- `/api/pitch` DB persistence: `channel` column migration not yet run — pitches always store `channel: "email"` for now
-- `/api/contact-info`: `contact_info` JSONB column migration not yet run — fire-and-forget cache write fails silently if column missing
+- ✅ `/api/pitch` DB persistence: `channel` column migration created at [`scripts/migrate-vibecode-fixes.sql`](scripts/migrate-vibecode-fixes.sql) — run via Supabase SQL editor
+- ✅ `/api/contact-info`: `contact_info` JSONB column migration created at [`scripts/migrate-vibecode-fixes.sql`](scripts/migrate-vibecode-fixes.sql) — run via Supabase SQL editor
 
 **V2:** UX analysis (Playwright+queue+worker+Storage — build these together), Radar/decay monitoring, Competitor tab, mockup generation, Stripe/credits, Campaigns/Templates/Reports/Integrations, Pitch Deck + Loom export, vertical packs. Job queue added with first async feature.
 
@@ -415,6 +418,79 @@ Both audit and design APIs send `{ type:"progress", step:"complete" }` at the en
 
 ---
 
+## Canonical File Structure (AI — Follow This)
+
+Every page must follow this structure to stay AI-maintainable:
+
+### Page Composition Pattern
+```
+src/app/dashboard/<page>/
+├── page.tsx              ← Thin composition, <200 lines. Imports components, composes layout.
+└── components/
+    ├── types.ts           ← Page-specific types (if needed beyond db-types.ts)
+    ├── <Page>Form.tsx     ← Search/input forms
+    ├── <Page>Card.tsx     ← Result/item cards
+    ├── <Page>Panel.tsx    ← Progress/status panels
+    └── <Page>Dialog.tsx   ← Modals and dialogs
+```
+
+### Landing Page Pattern
+```
+src/components/landing/
+├── SectionLabel.tsx      ← Shared helpers
+├── SectionTitle.tsx
+├── SectionSub.tsx
+├── LandingNav.tsx        ← Each section = one file
+├── LandingHero.tsx
+├── TrustBar.tsx
+├── HowItWorksSection.tsx
+├── WhyNearsitedSection.tsx
+├── SampleReportSection.tsx
+├── SamplePitchSection.tsx
+├── AgencyUseCasesSection.tsx
+├── FounderStorySection.tsx
+├── ObjectionsSection.tsx  ← Uses useAccordion()
+├── ProofBlocksSection.tsx
+├── LandingFAQ.tsx         ← Uses useAccordion()
+├── CTASection.tsx
+├── LandingFooter.tsx
+└── Pricing.tsx            ← Only legacy file kept
+```
+
+### Three-Workflow Lead Detail Pattern
+```
+src/app/dashboard/leads/[id]/
+├── page.tsx                                    ← Server component, detectLeadWorkflow(), routes
+├── lead-detail-client.tsx                      ← Website workflow (~360 lines, imports components)
+├── components/
+│   ├── social-opportunity-page.tsx             ← Social-only workflow
+│   ├── no-digital-presence-page.tsx            ← No-digital-presence workflow
+│   ├── opportunity-score-explanation.tsx       ← Shared score breakdown
+│   ├── ScoreRingWithLabel.tsx                  ← Animated SVG ring
+│   ├── SubScore.tsx                            ← Label + value
+│   ├── ImpactPill.tsx                          ← Colored impact badge
+│   ├── OpportunityBullets.tsx                  ← buildClientCallSummary() helper
+│   ├── LeadHeroSection.tsx                     ← Business info + actions
+│   ├── LeadOutreachSection.tsx                 ← Pitch generation + channel UI
+│   ├── LeadExportSection.tsx                   ← PDF + Share
+│   └── QuotaErrorBanner.tsx                    ← Fixed bottom banner
+```
+
+## AI-Friendly Patterns (for vibecoding sessions)
+
+These patterns ensure future AI iterations can work with the codebase without breaking types or creating duplicates:
+
+1. **Import DB types, don't cast.** Never use `as Record<string, unknown>`. Import `BusinessRow`, `AuditRow` etc. from [`src/lib/db-types.ts`](src/lib/db-types.ts).
+2. **Use shared hooks.** Before writing `useState + useEffect` combo, check [`src/lib/shared-hooks.ts`](src/lib/shared-hooks.ts) for `useCountUp()`, `useAccordion()`, `useToast()`.
+3. **Use shared NDJSON reader.** For streaming API responses, use `readNdjsonStream()` from [`src/lib/ndjson.ts`](src/lib/ndjson.ts) — not inline stream readers.
+4. **One file per section.** No file should exceed ~400 lines. Extract sections into `components/<page>/`.
+5. **Named exports only.** Use `export function ComponentName()` — not `export default`. Makes tree-shaking and imports predictable.
+6. **Prefix all error logs.** Every `console.error` must include a `[PREFIX]` tag matching the route name (e.g., `[LEAD-DETAIL]`, `[DISCOVER]`).
+7. **Don't add packages without importing them.** If a dependency is added to `package.json`, it must be imported in `src/` within the same session.
+8. **Run `npx tsc --noEmit` before finishing.** Verify TypeScript passes before marking done.
+
+---
+
 ## Don't Repeat These (each a real past bug)
 1. Writing `website_url`/`gmb_*`/`category` (DROPPED → `website`/`place_id`/`rating`/`review_count`/`business_type`).
 2. `gemini-1.5-flash` (SHUT DOWN → `gemini-3.5-flash`).
@@ -433,6 +509,9 @@ Both audit and design APIs send `{ type:"progress", step:"complete" }` at the en
 15. Forgetting `contact_info` JSONB column migration — cache write fails silently without it (no-op if column missing, but data is lost).
 16. Hardcoding pipeline statuses — always import from `ui-constants.ts`; `pitch_generated` is removed from canonical enum.
 17. Inlining Core Web Vitals display logic — import `METRIC_META` + `metricColor()` from `metric-meta.ts` instead.
+18. Creating duplicate CountUp/accordion/toast hooks — import from `src/lib/shared-hooks.ts` instead.
+19. Writing inline NDJSON stream readers — use `readNdjsonStream()` from `src/lib/ndjson.ts`.
+20. Using `as Record<string, unknown>` — define and import proper types from `src/lib/db-types.ts`.
 
 ---
 *Update this file the moment a schema, enum, model name, runtime, or convention changes.*

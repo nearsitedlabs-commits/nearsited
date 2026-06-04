@@ -55,7 +55,10 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     fetch(`/api/contact-info?businessId=${biz.id}`)
       .then((r) => r.json())
       .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
-      .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
+      .catch((err) => {
+        console.error("[SOCIAL-PAGE] contact-info fetch failed:", err);
+        setContactInfo((p) => ({ ...p, loading: false }));
+      });
   }, [biz.id]);
 
   // Background rating refresh — fire-and-forget, never blocks render
@@ -65,7 +68,9 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ businessId: biz.id }),
-    }).catch(() => { /* silent — background only */ });
+    }).catch((err) => {
+      console.error("[SOCIAL-PAGE] refresh-ratings failed:", err);
+    });
   }, [biz.id]);
 
   const handlePipelineChange = useCallback(async (newStatus: string) => {

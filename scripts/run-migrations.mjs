@@ -116,6 +116,23 @@ const MIGRATIONS = [
         add column if not exists ux_analyzed_at timestamptz;
     `,
   },
+  // §5.12 — Add contact_info JSONB column to businesses (vibecode fixes)
+  {
+    name: "5.12 — Add contact_info JSONB column to businesses",
+    sql: `
+      alter table public.businesses add column if not exists contact_info jsonb default '{}'::jsonb;
+    `,
+  },
+  // §5.13 — Add channel column to pitches (vibecode fixes)
+  {
+    name: "5.13 — Add channel column with CHECK constraint to pitches",
+    sql: `
+      alter table public.pitches add column if not exists channel text default 'email';
+      alter table public.pitches drop constraint if exists pitches_channel_check;
+      alter table public.pitches add constraint pitches_channel_check check (channel in ('email', 'whatsapp'));
+      update public.pitches set channel = 'email' where channel is null;
+    `,
+  },
 ];
 
 // ── Run via direct PostgreSQL connection ─────────────────────────────────────
