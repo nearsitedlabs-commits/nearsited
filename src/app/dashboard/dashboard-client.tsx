@@ -453,7 +453,7 @@ export default function DashboardClient({
                         </Link>
                       ) : (() => {
                         const oppScore = lead.opportunity_score
-                          ?? computeOpportunityScore(score!, lead.review_count ?? 0, lead.rating ?? 0);
+                          ?? computeOpportunityScore(score!, lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined);
                         const label = opportunityLabel(oppScore);
                         const variant = opportunityBadgeVariant(oppScore);
                         const map: Record<string, string> = {

@@ -129,7 +129,7 @@ export default function DiscoverPage() {
     const f = results.filter((b) => filter === "all" || b.website_status === filter);
     const score = (b: BusinessResult) => {
       const v = b.audit?.mobile?.performance_score;
-      return v != null ? computeOpportunityScore(v, b.review_count ?? 0, b.rating ?? 0) : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
+      return v != null ? computeOpportunityScore(v, b.review_count ?? 0, b.rating ?? 0, b.business_type ?? undefined) : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
     };
     return [...f].sort((a, b) => {
       if (sort === "rating-desc") return (b.rating ?? 0) - (a.rating ?? 0);

@@ -114,7 +114,8 @@ export function ResultCard({
           const oppScore = computeOpportunityScore(
             verifiedPerf,
             business.review_count ?? 0,
-            business.rating ?? 0
+            business.rating ?? 0,
+            business.business_type ?? undefined
           );
           return (
             <AnimatedScoreRing

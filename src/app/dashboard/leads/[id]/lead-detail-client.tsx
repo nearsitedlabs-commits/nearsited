@@ -149,7 +149,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const projScore                 = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta          = Math.max(0, projScore - overall);
   const effectiveOpportunityScore = biz.opportunity_score ??
-    computeOpportunityScore(overall || biz.performance_score || biz.design_score || 50, biz.review_count ?? 0, biz.rating ?? 0);
+    computeOpportunityScore(overall || biz.performance_score || biz.design_score || 50, biz.review_count ?? 0, biz.rating ?? 0, biz.business_type ?? undefined);
   const clientCallSummary         = buildClientCallSummary(
     biz.name, biz.business_type ?? "business", biz.city,
     overall, projScore, opportunityDelta,
