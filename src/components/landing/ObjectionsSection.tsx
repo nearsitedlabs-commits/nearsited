@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -8,7 +9,13 @@ import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 import { useAccordion } from "@/lib/shared-hooks";
 
-const OBJECTIONS = [
+type Objection = {
+  objection: string;
+  response: React.ReactNode;
+  answer: string;
+};
+
+const OBJECTIONS: Objection[] = [
   {
     objection: "I already have enough clients.",
     response: "Great — then you know the value of a warm pipeline. Nearsited lets you cherry-pick the best opportunities without cold outreach. Keep your pipeline full so you never have a slow month.",
@@ -21,8 +28,20 @@ const OBJECTIONS = [
   },
   {
     objection: "I can find leads myself on Google Maps.",
-    response: "Google Maps shows you businesses that have websites. It can't show you businesses with no website, social-only presence, or platform-only listings — those are often your highest-value leads. And even for businesses with websites, you can't audit 50 in 3 seconds, rank them by opportunity, and generate personalised pitches.",
-    answer: "How this helps you close more deals: You find opportunities Google Maps literally cannot show you. That's a different market.",
+    response: (
+      <div className="space-y-3">
+        <p>Google Maps is a directory. It shows you businesses — it can&rsquo;t tell you which ones have no website, which have a 4-second load time, or which are running entirely off Instagram.</p>
+        <p className="font-medium text-[var(--text-primary)]">What Maps can&rsquo;t do:</p>
+        <ul className="list-disc space-y-1 pl-4">
+          <li>Filter for businesses with no website, social-only, or platform-only presence</li>
+          <li>Run performance, SEO, mobile, design, and trust audits</li>
+          <li>Rank 50+ businesses by opportunity score in seconds</li>
+          <li>Generate a personalised pitch for each opportunity type</li>
+        </ul>
+        <p>Maps is the starting point. Nearsited turns that data into ranked, pitchable leads.</p>
+      </div>
+    ),
+    answer: "How this helps you close more deals: Maps gives you a list. Nearsited gives you a prioritised pipeline with evidence-based pitches. That's the difference between prospecting taking 3 hours vs. 10 minutes.",
   },
   {
     objection: "My clients aren't on page 1 of Google anyway.",
@@ -64,6 +83,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
             >
               <button
                 onClick={() => toggle(i)}
+                aria-expanded={openIndex === i}
                 className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
               >
                 <span className="text-sm font-medium text-[var(--text-primary)]">{item.objection}</span>
@@ -95,7 +115,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
                       className="overflow-hidden"
                     >
                       <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
-                        <p className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</p>
+                        <div className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</div>
                         <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
                           <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
                           <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>

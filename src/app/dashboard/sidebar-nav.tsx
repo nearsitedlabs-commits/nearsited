@@ -2,20 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard, Users, GitBranch, FileText, Settings,
-  Compass, Monitor,
-} from "lucide-react";
-
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/leads", label: "Opportunities", icon: Users },
-  { href: "/dashboard/discover", label: "Opportunity Discovery", icon: Compass },
-  { href: "/dashboard/audit", label: "Opportunity Review", icon: Monitor },
-  { href: "/dashboard/pipeline", label: "Pipeline", icon: GitBranch },
-  { href: "/dashboard/pitches", label: "Pitches", icon: FileText },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
-];
+import { DASHBOARD_NAV } from "@/lib/nav-constants";
 
 export default function SidebarNav() {
   const pathname = usePathname();
@@ -26,7 +13,7 @@ export default function SidebarNav() {
         Main
       </p>
 
-      {NAV_ITEMS.map((item) => {
+      {DASHBOARD_NAV.map((item) => {
         const Icon = item.icon;
         const isActive = item.href === "/dashboard"
           ? pathname === "/dashboard"
@@ -42,12 +29,11 @@ export default function SidebarNav() {
                 : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-white/[0.03] font-light"
             }`}
           >
-            <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[var(--accent)]" : "text-[var(--text-tertiary)]"}`} />
+            <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[var(--accent)]" : "text-[var(--text-tertiary)]"}`} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>
         );
       })}
-
     </nav>
   );
 }

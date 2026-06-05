@@ -1,6 +1,10 @@
+"use client";
+
 import { type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Card, type CardVariant } from "./Card";
+import { FadeUp } from "@/lib/motion";
+import { useReducedMotion } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -32,10 +36,11 @@ export function StatCard({
   variant = "default",
   className,
 }: StatCardProps) {
+  const prefersReduced = useReducedMotion();
   const isPositive = change != null && change > 0;
   const isNegative = change != null && change < 0;
 
-  return (
+  const card = (
     <Card variant={variant} padding="md" className={cn(className)}>
       {/* Label row */}
       <div className="flex items-center justify-between">
@@ -76,5 +81,9 @@ export function StatCard({
       )}
     </Card>
   );
+
+  if (prefersReduced) return card;
+
+  return <FadeUp>{card}</FadeUp>;
 }
 StatCard.displayName = "StatCard";

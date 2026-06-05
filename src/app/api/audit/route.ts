@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { computeOpportunityScore } from "@/lib/scoring";
 import { checkCredit, deductCredit } from "@/lib/credits";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { createTimeoutController } from "@/lib/api/timeout";
+import { businessWebsiteSchema } from "@/lib/validation";
 
 type AuditRequestBody = {
   businessId?: string;
@@ -49,12 +52,6 @@ function writeStep(
   label: string,
 ) {
   writeJson(controller, encoder, { type: "progress", step, label });
-}
-
-function createTimeoutController(timeoutMs: number) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  return { controller, clear: () => clearTimeout(timeout) };
 }
 
 async function fetchPageSpeed(
@@ -168,21 +165,22 @@ function buildAuditData(lighthouseResult: unknown): unknown {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as AuditRequestBody;
-    const { businessId, website, force = false } = body;
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const parsed = businessWebsiteSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+        { status: 400 },
+      );
+    }
+    const { businessId, website, force } = parsed.data;
 
     // If businessId is provided, we'll persist results; otherwise run in
     // ephemeral mode (results displayed on screen but not saved to DB).
     const shouldPersist = Boolean(businessId);
 
-    // 1. Validate inputs
-    if (!website || typeof website !== "string" || !website.trim()) {
-      return NextResponse.json(
-        { error: "Website URL is required to run an audit. No-website businesses cannot be audited." },
-        { status: 400 },
-      );
-    }
-
-    const trimmedWebsite = website.trim();
+    const trimmedWebsite = website;
     if (shouldPersist) {
       console.log("[AUDIT] Starting audit for business:", businessId, "website:", trimmedWebsite);
     } else {
@@ -201,7 +199,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("[AUDIT] Authenticated user:", user.id);
+    console.log("[AUDIT] Authenticated user:...", user.id.slice(-4));
 
     // Rate limit: standard limit for audit operations
     const identifier = getRateLimitIdentifier(request, user.id);
@@ -229,9 +227,9 @@ export async function POST(request: NextRequest) {
 
     // 4. Cache check — only when persisting (need a real businessId to look up cached rows)
     if (shouldPersist) {
-      const adminClient = createAdminClient();
+      const sa = scopedAdmin(user.id);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: cachedAuditsData, error: cacheReadError } = await (adminClient.from("audits") as ReturnType<typeof adminClient.from>)
+      const { data: cachedAuditsData, error: cacheReadError } = await sa.from("audits")
         .select("*")
         .eq("business_id", businessId)
         .in("strategy", ["mobile", "desktop"])
@@ -340,7 +338,7 @@ export async function POST(request: NextRequest) {
 
           // 5. Persist results — only when a real businessId was provided
           if (shouldPersist) {
-            const adminSupabase = createAdminClient();
+            const adminSupabase = scopedAdmin(user.id);
 
             // Insert TWO rows into audits using ADMIN client (bypasses RLS)
             const auditRows: Record<string, unknown>[] = [
@@ -377,7 +375,8 @@ export async function POST(request: NextRequest) {
             ];
 
             for (const row of auditRows) {
-              const { error: insertError } = await (adminSupabase.from("audits") as ReturnType<typeof adminSupabase.from>)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const { error: insertError } = await (adminSupabase.from("audits") as any)
                 .insert(row);
 
               if (insertError) {
@@ -396,7 +395,8 @@ export async function POST(request: NextRequest) {
             const outreachReason = isFlagged ? (bestPerfScore < 40 ? "poor_performance" : "needs_improvement") : null;
 
             // 7. Compute opportunity score (rating + review_count already on the business row)
-            const { data: businessRow } = await (adminSupabase.from("businesses") as ReturnType<typeof adminSupabase.from>)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: businessRow } = await (adminSupabase.from("businesses") as any)
               .select("rating, review_count, business_type")
               .eq("id", businessId)
               .single();
@@ -407,7 +407,8 @@ export async function POST(request: NextRequest) {
             const opportunityScore = computeOpportunityScore(bestPerfScore, reviewCount, rating, businessType);
 
             // 8. Update businesses row
-            const { error: updateError } = await (adminSupabase.from("businesses") as ReturnType<typeof adminSupabase.from>)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { error: updateError } = await (adminSupabase.from("businesses") as any)
               .update({
                 audited_at: now,
                 performance_score: bestPerfScore,
@@ -455,9 +456,9 @@ export async function POST(request: NextRequest) {
       headers: { "Content-Type": "application/x-ndjson" },
     });
   } catch (error) {
-    console.error("[AUDIT] Unexpected error:", error);
+    console.error("[AUDIT] Internal error:", error instanceof Error ? error.message : String(error));
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal server error" },
+      { error: "An unexpected error occurred. Please try again later." },
       { status: 500 },
     );
   }

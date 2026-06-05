@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardClient from "./dashboard-client";
+import type { BusinessRow } from "@/lib/db-types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -22,11 +23,6 @@ export default async function DashboardPage() {
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
     .eq("flagged_for_outreach", true);
-
-  const { count: totalPitches } = await supabase
-    .from("pitches")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
 
   const { data: pipelineData } = await supabase
     .from("pipeline")
@@ -59,11 +55,10 @@ export default async function DashboardPage() {
       firstName={firstName}
       totalLeads={totalLeads ?? 0}
       flaggedLeads={flaggedLeads ?? 0}
-      _totalPitches={totalPitches ?? 0}
       unanalysedLeads={unanalysedLeads ?? 0}
       activeConversations={activeConversations}
       pipelineCounts={pipelineCounts}
-      recentLeads={(recentLeads ?? []) as Record<string, unknown>[]}
+      recentLeads={(recentLeads ?? []) as BusinessRow[]}
     />
   );
 }

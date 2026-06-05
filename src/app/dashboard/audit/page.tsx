@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
+import { FadeUp, StaggerContainer } from "@/lib/motion";
+import { useReducedMotion } from "framer-motion";
 
 // ── Constants ───────────────────────────────────────────────────────────────────
 const SAVE_INTERVAL_MS = 3000;
@@ -345,6 +347,7 @@ export default function AuditPage() {
   const pendingAutoRunRef = useRef<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const cancelledRef = useRef(false);
+  const shouldReduce = useReducedMotion();
 
   // Read hasCompletedAudit from localStorage on mount — useEffect is required for SSR safety
   useEffect(() => {
@@ -393,7 +396,7 @@ export default function AuditPage() {
       if (runningRef.current && urlRef.current) {
         try {
           const stored = sessionStorage.getItem(STORAGE_KEY);
-          const base = stored ? (JSON.parse(stored) as Record<string, unknown>) : {};
+          const base = stored ? (JSON.parse(stored) as unknown) as Record<string, unknown> : {};
           sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...base, url: urlRef.current, interrupted: true, interruptedAt: Date.now() }));
         } catch { /* ignore */ }
       }
@@ -426,19 +429,13 @@ export default function AuditPage() {
         return;
       }
 
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.url) setUrl(parsed.url);
       if (parsed.auditResult) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAuditResult(parsed.auditResult);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setStep("done");
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCompletedKeys(ALL_STEPS.map((s) => s.key));
       }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.designResult) setDesignResult(parsed.designResult);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.timestamp) setSavedTimestamp(parsed.timestamp);
     } catch {
       // ignore parse errors
@@ -522,9 +519,9 @@ export default function AuditPage() {
             if (parsed.type === "progress" && parsed.step) {
               onProgress(parsed.step as string);
             } else if (parsed.type === "result") {
-              onResult(parsed as Record<string, unknown>);
+              onResult(parsed as unknown as Record<string, unknown>);
             } else if (parsed.type === "error") {
-              onError?.(parsed as Record<string, unknown>);
+              onError?.(parsed as unknown as Record<string, unknown>);
             }
           } catch {
             // skip malformed lines
@@ -828,10 +825,9 @@ export default function AuditPage() {
 
   // ── Idle state ─────────────────────────────────────────────────────────────────
   if (step === "idle" && !error && !auditResult && !showProgress) {
-    return (
-      <div className="min-h-screen bg-[var(--bg-base)]">
-        <div className="mx-auto max-w-4xl px-6 py-8">
-          <Link
+    const mainContent = (
+      <>
+        <Link
             href="/dashboard"
             className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
           >
@@ -969,43 +965,54 @@ export default function AuditPage() {
               </button>
             </div>
           )}
-        </div>
+        </>
+    );
 
-        {showExampleModal && <ExampleReportModal type={exampleTab} onClose={() => setShowExampleModal(false)} />}
+    return (
+      <div className="min-h-screen bg-[var(--bg-base)]">
+        <div className="mx-auto max-w-4xl px-6 py-8">
+          {shouldReduce ? mainContent : <FadeUp>{mainContent}</FadeUp>}
+          {showExampleModal && <ExampleReportModal type={exampleTab} onClose={() => setShowExampleModal(false)} />}
+        </div>
       </div>
     );
   }
 
   // ── Error state (with retry) ────────────────────────────────────────────────
   if (error && !running && !auditResult) {
+    const errorContent = (
+      <>
+        <Link href="/dashboard" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
+          <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+        </Link>
+
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
+          <AlertTriangle className="mx-auto h-8 w-8 text-[var(--score-high)]" />
+          <h2 className="mt-3 text-lg font-medium text-[var(--text-primary)]">Review Failed</h2>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{error}</p>
+          <button
+            onClick={() => { setError(null); setStep("idle"); setRunning(false); }}
+            className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+          >
+            Try Again
+          </button>
+        </div>
+      </>
+    );
+
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-4xl px-6 py-8">
-          <Link href="/dashboard" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-          </Link>
-
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
-            <AlertTriangle className="mx-auto h-8 w-8 text-[var(--score-high)]" />
-            <h2 className="mt-3 text-lg font-medium text-[var(--text-primary)]">Review Failed</h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">{error}</p>
-            <button
-              onClick={() => { setError(null); setStep("idle"); setRunning(false); }}
-              className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
-            >
-              Try Again
-            </button>
-          </div>
+          {shouldReduce ? errorContent : <FadeUp>{errorContent}</FadeUp>}
         </div>
       </div>
     );
   }
 
   // ── Active / Done state ────────────────────────────────────────────────────────
-  return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
-      <div className="mx-auto max-w-4xl px-6 py-8">
-        <Link href="/dashboard" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
+  const activeDoneContent = (
+    <>
+      <Link href="/dashboard" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard
         </Link>
 
@@ -1073,12 +1080,14 @@ export default function AuditPage() {
                     </button>
                   </div>
                 )}
-                <div className="space-y-0.5">
-                  {ALL_STEPS.map((stepDef) => {
-                    const isDone   = completedKeys.includes(stepDef.key);
-                    const isActive = !isDone && activeKeys.includes(stepDef.key);
-                    return (
-                      <div key={stepDef.key} className="flex items-center gap-3 py-1.5">
+                <StaggerContainer>
+                  <div className="space-y-0.5">
+                    {ALL_STEPS.map((stepDef) => {
+                      const isDone   = completedKeys.includes(stepDef.key);
+                      const isActive = !isDone && activeKeys.includes(stepDef.key);
+                      return (
+                        <FadeUp key={stepDef.key}>
+                          <div className="flex items-center gap-3 py-1.5">
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
                         ) : isActive ? (
@@ -1093,10 +1102,12 @@ export default function AuditPage() {
                         }`}>
                           {stepDef.label}
                         </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                          </div>
+                        </FadeUp>
+                      );
+                    })}
+                  </div>
+                </StaggerContainer>
               </div>
             </div>
           )}
@@ -1408,7 +1419,14 @@ export default function AuditPage() {
           </div>
         )}
 
+      </>
+    );
+
+    return (
+      <div className="min-h-screen bg-[var(--bg-base)]">
+        <div className="mx-auto max-w-4xl px-6 py-8">
+          {shouldReduce ? activeDoneContent : <FadeUp>{activeDoneContent}</FadeUp>}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

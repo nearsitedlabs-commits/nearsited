@@ -7,13 +7,14 @@ import { readNdjsonStream } from "@/lib/ndjson";
 import { useToast } from "@/lib/shared-hooks";
 import { businessTypes } from "@/lib/data/businessTypes";
 import type { CityOption } from "@/lib/data/cities";
-import { ArrowLeft, ListFilter, Compass } from "lucide-react";
-import type { WebsiteStatus } from "@/lib/types";
+import { ArrowLeft, ListFilter } from "lucide-react";
+import type { WebsiteStatus } from "@/lib/db-types";
+import type { AuditRow } from "@/lib/db-types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Toast } from "@/components/ui/Toast";
 import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { DiscoverForm } from "./components/DiscoverForm";
 import { ResultCard } from "./components/ResultCard";
@@ -51,7 +52,7 @@ async function fetchPersistedAudits(ids: string[], sb: SupabaseClient): Promise<
   const { data, error } = await sb.from("audits").select("business_id, strategy, performance_score, seo_score, fcp, lcp, tbt, cls").in("business_id", ids).order("created_at", { ascending: false });
   if (error || !data) return map;
   const mobile = new Map<string, StrategyResult>(), desktop = new Map<string, StrategyResult>();
-  for (const r of data as Record<string, unknown>[]) {
+  for (const r of data as AuditRow[]) {
     const s: StrategyResult = { performance_score: (r.performance_score as number) ?? null, seo_score: (r.seo_score as number) ?? null, fcp: (r.fcp as string) ?? null, lcp: (r.lcp as string) ?? null, tbt: (r.tbt as string) ?? null, cls: (r.cls as string) ?? null, status: "ok" };
     if (r.strategy === "mobile") mobile.set(r.business_id as string, s); else if (r.strategy === "desktop") desktop.set(r.business_id as string, s);
   }
@@ -157,7 +158,7 @@ export default function DiscoverPage() {
     setFetching(true); setSubmitting(true);
     let gotInit = false;
     try {
-      const res = await fetch("/api/discover", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ city: cq, businessType: tq, userId, radiusMeters: radius }) });
+      const res = await fetch("/api/discover", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ city: cq, businessType: tq, radiusMeters: radius }) });
       if (!res.ok) { const p = await res.json().catch(() => null); throw new Error(p?.error || p?.details || `Failed (${res.status})`); }
       const reader = res.body!.getReader(); const dec = new TextDecoder(); let buf = "";
       while (true) {
@@ -236,7 +237,9 @@ export default function DiscoverPage() {
         {!fetching && results.length === 0 && error && <EmptyState type="no-results" />}
       </div>
 
-      {showSave && <SaveSearchDialog onSave={saveSearch} onCancel={() => setShowSave(false)} />}
+      <AnimatePresence>
+        {showSave && <SaveSearchDialog onSave={saveSearch} onCancel={() => setShowSave(false)} />}
+      </AnimatePresence>
       {toastMsg && <Toast message={toastMsg} onClose={() => setToast(null)} />}
     </div>
   );

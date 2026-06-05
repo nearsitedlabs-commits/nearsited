@@ -2,6 +2,8 @@
 
 import { forwardRef, type HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
+import { FadeUp, DURATION, EASE } from "@/lib/motion";
+import { useReducedMotion, motion } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -12,8 +14,9 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
   variant?: CardVariant;
   elevation?: Elevation;
   padding?: "sm" | "md" | "lg";
-  /** Kept for API compatibility — ignored (animations removed) */
+  /** When true, wraps content in a scroll-triggered fade-up animation */
   animate?: boolean;
+  /** Optional delay (seconds) before the animation triggers */
   animationDelay?: number;
 };
 
@@ -47,8 +50,10 @@ const BASE = "rounded-xl";
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = "default", elevation = 1, padding = "md", animate: _animate, animationDelay: _animationDelay, children, ...props }, ref) => {
-    return (
+  ({ className, variant = "default", elevation = 1, padding = "md", animate, animationDelay, children, ...props }, ref) => {
+    const prefersReduced = useReducedMotion();
+
+    const cardContent = (
       <div
         ref={ref}
         className={cn(BASE, ELEVATION_BG[elevation], VARIANT_STYLES[variant], PADDING[padding], className)}
@@ -57,6 +62,23 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
+
+    if (prefersReduced || !animate) return cardContent;
+
+    if (animationDelay !== undefined) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: DURATION.card, ease: EASE.out, delay: animationDelay }}
+        >
+          {cardContent}
+        </motion.div>
+      );
+    }
+
+    return <FadeUp>{cardContent}</FadeUp>;
   },
 );
 Card.displayName = "Card";

@@ -108,6 +108,7 @@ create table public.businesses (
   -- Outreach flags
   flagged_for_outreach boolean default false,
   outreach_reason     text,            -- reason for flagging: website_status value or score-based
+  contact_info        jsonb,           -- Cached contact data: { email, phone, scraped_at }
 
   -- Lifecycle timestamps
   discovered_at       timestamptz default now(),
@@ -124,8 +125,8 @@ create policy "users manage own businesses" on public.businesses
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 ```
 
-**Current column set (23 columns):**
-`id, user_id, name, place_id, business_type, address, city, phone, website, website_status, rating, review_count, performance_score, design_score, ux_score, opportunity_score, flagged_for_outreach, outreach_reason, discovered_at, audited_at, design_analyzed_at, ux_analyzed_at` + the unique constraint.
+**Current column set (24 columns):**
+`id, user_id, name, place_id, business_type, address, city, phone, website, website_status, rating, review_count, performance_score, design_score, ux_score, opportunity_score, flagged_for_outreach, outreach_reason, contact_info, discovered_at, audited_at, design_analyzed_at, ux_analyzed_at` + the unique constraint.
 
 > `ux_score` and `ux_analyzed_at` are nullable v2 columns — added now (§5.7) so the schema is stable, even though the UX feature is built later. Cheaper than a migration mid-build.
 
@@ -143,7 +144,10 @@ create table public.places_cache (
   place_id           text primary key,
   website            text,
   website_status     text,            -- §3.1
-  details_fetched_at timestamptz default now()
+  rating             numeric,         -- Google rating (denormalized from Nearby Search)
+  review_count       integer,         -- Google review count (denormalized)
+  details_fetched_at timestamptz default now(),
+  ratings_fetched_at timestamptz      -- When rating/review_count were last refreshed
 );
 
 alter table public.places_cache enable row level security;
@@ -588,7 +592,19 @@ create index if not exists share_links_token_idx on public.share_links (token);
 ### 5.10 — Create ux_analyses table (V2 — run when building UX feature)
 Full `CREATE TABLE` is in §2.6. Run it, plus its RLS policy, when starting the UX feature.
 
-### 5.11 — Create Supabase Storage bucket (V2)
+### 5.11 — Places cache rating columns + businesses contact_info (applied ad-hoc by routes)
+These columns were added directly by the API routes during development:
+```sql
+alter table public.places_cache
+  add column if not exists rating numeric,
+  add column if not exists review_count integer,
+  add column if not exists ratings_fetched_at timestamptz;
+
+alter table public.businesses
+  add column if not exists contact_info jsonb;
+```
+
+### 5.12 — Create Supabase Storage bucket (V2)
 In Supabase dashboard → Storage → New bucket: name `recordings`, **private** (not public). Then add policies so only the owning user can read their recordings and only the service role writes:
 ```sql
 -- Storage RLS (run in SQL editor after creating the bucket)
@@ -721,9 +737,9 @@ profiles         id, email, full_name, created_at
 businesses       id, user_id, name, place_id, business_type, address, city, phone,
                  website, website_status, rating, review_count,
                  performance_score, design_score, ux_score,
-                 flagged_for_outreach, outreach_reason,
+                 flagged_for_outreach, outreach_reason, contact_info,
                  discovered_at, audited_at, design_analyzed_at, ux_analyzed_at
-places_cache     place_id(PK), website, website_status, details_fetched_at      [shared, admin-write]
+places_cache     place_id(PK), website, website_status, rating, review_count, details_fetched_at, ratings_fetched_at      [shared, admin-write]
 audits           id, business_id, user_id, strategy, performance_score, seo_score,
                  fcp, lcp, tbt, cls, has_ssl, audit_data, created_at             [2 rows/run]
 design_analyses  id, business_id, user_id, strategy, design_score,

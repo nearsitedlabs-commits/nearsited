@@ -2,20 +2,10 @@
  * Quick script to check if the subscriptions table exists in Supabase.
  * Run: node scripts/check-subscriptions-table.mjs
  */
-import { readFileSync } from "fs";
+import "./load-env.mjs";
 
-// Read .env.local
-const envText = readFileSync(".env.local", "utf8");
-const envLines = envText.split("\n");
-
-function getEnv(key) {
-  const line = envLines.find((l) => l.trim().startsWith(key + "="));
-  if (!line) return null;
-  return line.split("=").slice(1).join("=").trim();
-}
-
-const SUPABASE_URL = getEnv("NEXT_PUBLIC_SUPABASE_URL");
-const SERVICE_KEY = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SERVICE_KEY) {
   console.error("❌ Missing env vars");

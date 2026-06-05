@@ -14,10 +14,6 @@ function scoreColor(s: number) {
   return s >= 70 ? "text-[var(--score-good)]" : s >= 45 ? "text-[var(--score-mid)]" : "text-[var(--score-high)]";
 }
 
-function scoreBg(s: number) {
-  return s >= 70 ? "bg-[var(--score-good-tint)] border-[var(--score-good)]/30" : s >= 45 ? "bg-[var(--score-mid-tint)] border-[var(--score-mid)]/30" : "bg-red-500/10 border-red-500/30";
-}
-
 function statusBadge(ws: string | null) {
   switch (ws) {
     case "no_website":    return <span className="rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">No Website</span>;
@@ -174,7 +170,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
   function toggle(id: string) {
     setExpanded(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
       return next;
     });
   }

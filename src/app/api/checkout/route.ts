@@ -1,21 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDodoClient } from "@/lib/dodo";
+import { VALID_PRODUCTS } from "@/lib/products";
+import { checkoutSchema } from "@/lib/validation";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
-const VALID_PRODUCTS = [
-  "pdt_0NgKrmYBX9pAp9NhbeMqp", // Starter Monthly
-  "pdt_0NgKs5x6MXKvmMOQemKP2", // Starter Annual
-  "pdt_0NgKsF0ROmm9U603GRqMm", // Agency Monthly
-  "pdt_0NgKsQO5UXCVGZskhrv89", // Agency Annual
-];
+/**
+ * Redact email addresses from a string for safe logging.
+ * Replaces anything resembling an email with `[EMAIL REDACTED]`.
+ */
+function redactPII(input: string): string {
+  return input.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "[EMAIL REDACTED]");
+}
 
 export async function POST(req: NextRequest) {
+  // ── Rate limit (pre-auth, by IP) ───────────────────────────────────────
+  const ipLimit = await checkRateLimit(req, rateLimiter, getRateLimitIdentifier(req));
+  if (ipLimit) return ipLimit;
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { productId } = await req.json().catch(() => ({}));
-  if (!productId || !VALID_PRODUCTS.includes(productId)) {
+  // ── Rate limit (post-auth, by user ID) ────────────────────────────────
+  const userLimit = await checkRateLimit(req, rateLimiter, getRateLimitIdentifier(req, user.id));
+  if (userLimit) return userLimit;
+
+  const body = await req.json().catch(() => ({}));
+  
+  // ── Zod validation ──────────────────────────────────────────────────────
+  const parsed = checkoutSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+      { status: 400 },
+    );
+  }
+  const { productId } = parsed.data;
+
+  if (!(VALID_PRODUCTS as readonly string[]).includes(productId)) {
     return NextResponse.json({ error: "Invalid product" }, { status: 400 });
   }
 
@@ -40,14 +63,15 @@ export async function POST(req: NextRequest) {
     });
 
     if (!session.checkout_url) {
-      console.error("[CHECKOUT] No checkout_url in response for user=%s product=%s", user.id, productId);
+      console.error("[CHECKOUT] No checkout_url in response for user=%s product=%s", user.id.slice(-4), productId);
       return NextResponse.json({ error: "No checkout URL returned" }, { status: 502 });
     }
 
-    console.log("[CHECKOUT] Created session for user=%s product=%s", user.id, productId);
+    console.log("[CHECKOUT] Created session for user=%s product=%s", user.id.slice(-4), productId);
     return NextResponse.json({ url: session.checkout_url });
   } catch (err) {
-    console.error("[CHECKOUT] Error creating session:", err);
+    const safeMessage = err instanceof Error ? redactPII(err.message) : String(err);
+    console.error("[CHECKOUT] Error creating session: %s", safeMessage);
     return NextResponse.json({ error: "Failed to create checkout session" }, { status: 502 });
   }
 }

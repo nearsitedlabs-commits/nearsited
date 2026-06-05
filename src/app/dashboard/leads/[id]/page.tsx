@@ -4,6 +4,7 @@ import { detectLeadWorkflow } from "@/lib/lead-types";
 import LeadDetailClient from "./lead-detail-client";
 import SocialOpportunityPage from "./components/social-opportunity-page";
 import NoDigitalPresencePage from "./components/no-digital-presence-page";
+import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
 
 type PageProps = {
@@ -66,7 +67,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
     case "social_only":
       return (
         <SocialOpportunityPage
-          business={business as Record<string, unknown>}
+          business={business as BusinessRow}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />
@@ -74,7 +75,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
     case "no_digital_presence":
       return (
         <NoDigitalPresencePage
-          business={business as Record<string, unknown>}
+          business={business as BusinessRow}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />
@@ -83,9 +84,9 @@ export default async function LeadDetailPage({ params }: PageProps) {
     default:
       return (
         <LeadDetailClient
-          business={business as Record<string, unknown>}
-          audits={(audits ?? []) as Record<string, unknown>[]}
-          designAnalyses={(designRows ?? []) as Record<string, unknown>[]}
+          business={business as BusinessRow}
+          audits={(audits ?? []) as AuditRow[]}
+          designAnalyses={(designRows ?? []) as DesignAnalysisRow[]}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
         />

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { jsPDF } from "jspdf";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { businessIdQuerySchema } from "@/lib/validation";
 
 const ACCENT: [number, number, number] = [138, 151, 119];
 const BLACK: [number, number, number] = [20, 20, 20];
@@ -42,11 +43,17 @@ function wrapped(doc: jsPDF, text: string, x: number, y: number, maxWidth: numbe
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const businessId = searchParams.get("businessId");
-
-    if (!businessId) {
-      return NextResponse.json({ error: "Missing businessId" }, { status: 400 });
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const queryParams = Object.fromEntries(searchParams.entries());
+    const parsed = businessIdQuerySchema.safeParse(queryParams);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+        { status: 400 },
+      );
     }
+    const { businessId } = parsed.data;
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

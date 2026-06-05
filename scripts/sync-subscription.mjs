@@ -6,14 +6,8 @@
  * This is a one-time recovery script for webhooks that arrived before the
  * metadata.user_id lookup was implemented.
  */
-import { readFileSync } from "fs";
+import "./load-env.mjs";
 import DodoPayments from "dodopayments";
-
-const env = readFileSync(".env.local", "utf8").split("\n");
-const getEnv = (k) => {
-  const l = env.find((l) => l.trim().startsWith(k + "="));
-  return l ? l.split("=").slice(1).join("=").trim() : null;
-};
 
 const SUBSCRIPTION_ID = process.argv[2];
 const USER_EMAIL = process.argv[3];
@@ -26,7 +20,7 @@ if (!SUBSCRIPTION_ID || !USER_EMAIL) {
 
 async function main() {
   // 1. Get Dodo subscription details
-  const apiKey = getEnv("DODO_API_KEY");
+  const apiKey = process.env.DODO_API_KEY;
   const isTestMode = apiKey?.startsWith("S-") ?? false;
 
   const dodo = new DodoPayments({
@@ -41,8 +35,8 @@ async function main() {
   console.log(`  Customer: ${sub.customer.email} (${sub.customer.customer_id})`);
 
   // 2. Find user in Supabase
-  const SUPABASE_URL = getEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const SERVICE_KEY = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const headers = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` };
 
   const res = await fetch(

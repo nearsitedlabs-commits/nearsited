@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { savedSearchSchema } from "@/lib/validation";
 
 export async function GET() {
   const supabase = await createClient();
@@ -32,11 +33,16 @@ export async function POST(request: NextRequest) {
   if (blocked) return blocked;
 
   const body = await request.json();
-  const { name, city, businessType } = body;
-
-  if (!name || !city || !businessType) {
-    return NextResponse.json({ error: "Missing required fields: name, city, businessType" }, { status: 400 });
+  
+  // ── Zod validation ──────────────────────────────────────────────────────
+  const parsed = savedSearchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+      { status: 400 },
+    );
   }
+  const { name, city, businessType } = parsed.data;
 
   const { data, error } = await supabase
     .from("territories")

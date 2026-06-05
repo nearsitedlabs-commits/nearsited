@@ -69,15 +69,15 @@ function SignupPageContent() {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    if (signUpError) {
-      setError(signUpError.message);
+    // If there's an error (e.g. "User already registered") OR the user already
+    // exists (empty identities), show the same generic success state to prevent
+    // account enumeration. The user cannot distinguish between:
+    //   - a new account created
+    //   - the email is already registered
+    //   - a transient server error
+    if (signUpError || (signUpData.user && signUpData.user.identities?.length === 0)) {
       setLoading(false);
-      return;
-    }
-    // Supabase returns no error but empty identities when email is already registered
-    if (signUpData.user && signUpData.user.identities?.length === 0) {
-      setError("An account with this email already exists. Please sign in instead.");
-      setLoading(false);
+      setSuccess(true);
       return;
     }
     setLoading(false);

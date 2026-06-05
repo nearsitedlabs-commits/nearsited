@@ -1,404 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { checkCredit, deductCredit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { businessWebsiteSchema } from "@/lib/validation";
-
-// ── Constants ────────────────────────────────────────────────────────────────
-const GEMINI_MODEL = "gemini-3.5-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-
-const SCREENSHOT_ONE_URL = "https://api.screenshotone.com/take";
-
-const MOBILE_VIEWPORT = { width: 390, height: 844 };
-const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
-
-const SCREENSHOT_TIMEOUT_MS = 30_000;
-
-const REQUEST_TIMEOUT_MS = 30_000;
-const RETRY_DELAYS = [3_000, 8_000];
-
-const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-
-/**
- * Fetch a URL with automatic retry on HTTP 429 (rate limit) and 503 (overloaded).
- * Each attempt has a 30-second timeout. Retries use back-off delays from RETRY_DELAYS.
- * Non-retryable errors (400, 401, 500, AbortError, network errors) are surfaced immediately
- * without retry.
- */
-async function retryWithBackoff(
-  fetchFn: (signal: AbortSignal) => Promise<Response>,
-): Promise<Response> {
-  const maxAttempts = RETRY_DELAYS.length + 1;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-    try {
-      const response = await fetchFn(controller.signal);
-      clearTimeout(timeoutId);
-
-      if (response.status === 429 || response.status === 503) {
-        if (attempt < maxAttempts) {
-          const delay = RETRY_DELAYS[attempt - 1];
-          console.log(
-            `[DESIGN] Gemini ${response.status} retry attempt ${attempt} of ${maxAttempts - 1}`,
-          );
-          await sleep(delay);
-          continue;
-        }
-        // Last attempt exhausted — return the response for the caller to handle
-        console.log(
-          `[DESIGN] Gemini ${response.status} — all ${maxAttempts - 1} retries exhausted`,
-        );
-        return response;
-      }
-
-      return response;
-    } catch (err) {
-      clearTimeout(timeoutId);
-      // AbortError, network failure, etc. — surface immediately, no retry
-      throw err;
-    }
-  }
-
-  throw new Error("unreachable");
-}
-
-// ── Types ────────────────────────────────────────────────────────────────────
-type DesignCriterion = "modernity" | "readability" | "cta" | "hierarchy" | "trust";
-
-type DesignIssue = {
-  title: string;
-  detail: string;
-  point_deduction: number;
-  impact: "High" | "Medium" | "Low";
-};
-
-type GeminiDesignResponse = {
-  design_score: number;
-  criteria_scores: Record<DesignCriterion, number>;
-  issues: DesignIssue[];
-};
-
-type StrategyResult = {
-  status: "ok" | "error";
-  design_score?: number;
-  criteria_scores?: Record<DesignCriterion, number>;
-  issues?: DesignIssue[];
-  raw_analysis?: GeminiDesignResponse;
-  error?: string;
-};
-
-type AnalyzeRequestBody = {
-  businessId?: string;
-  website: string;
-  force?: boolean;
-};
-
-// ── Prompt ───────────────────────────────────────────────────────────────────
-const CRITIQUE_PROMPT = `You are a senior web designer evaluating a small business website screenshot for a redesign sales pitch. Analyze this screenshot critically but fairly. Score these five criteria 1-10 (10=excellent): modernity (how current vs dated it looks), readability (text legibility, contrast, fonts on this viewport), cta (presence/clarity of calls-to-action like contact/book/buy/call), hierarchy (visual organization, clutter, whitespace), trust (professionalism and credibility). Then compute an overall design_score 0-100. Then list 3 to 5 specific, concrete design issues a business owner would understand. For EACH issue provide: a short 'title' (3-6 words), a one-sentence 'detail' explaining what you see, a 'point_deduction' (integer 1-30, your estimate of how many points this issue deducts from a perfect 100), and an 'impact' rating ("High", "Medium", or "Low"). The top issues should roughly explain the gap to the actual design_score. Respond ONLY with valid JSON, no markdown, exactly: {"design_score": <int 0-100>, "criteria_scores": {"modernity": <1-10>, "readability": <1-10>, "cta": <1-10>, "hierarchy": <1-10>, "trust": <1-10>}, "issues": [{"title": "...", "detail": "...", "point_deduction": <int>, "impact": "High"|"Medium"|"Low"}]}`;
-
-// ── Streaming helpers ────────────────────────────────────────────────────────
-
-/** Write an NDJSON line to the stream. */
-function writeJson(
-  controller: ReadableStreamDefaultController,
-  encoder: TextEncoder,
-  data: unknown,
-) {
-  controller.enqueue(encoder.encode(JSON.stringify(data) + "\n"));
-}
-
-/** Write a progress step event. */
-function writeStep(
-  controller: ReadableStreamDefaultController,
-  encoder: TextEncoder,
-  step: string,
-  label: string,
-) {
-  writeJson(controller, encoder, { type: "progress", step, label });
-}
-
-/**
- * Clean a raw Gemini text response by removing markdown fences and extracting
- * only the first complete, balanced JSON object.  This guards against Gemini
- * returning trailing garbage after the closing `}` or wrapping the JSON in
- * ```json … ``` fences.
- */
-const cleanGeminiJson = (raw: string): string => {
-  // Remove ```json and ``` fences
-  const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '')
-  // Extract just the first complete JSON object — find opening { and its matching }
-  const start = cleaned.indexOf('{')
-  if (start === -1) throw new Error('No JSON object found in Gemini response')
-  let depth = 0
-  let end = -1
-  for (let i = start; i < cleaned.length; i++) {
-    if (cleaned[i] === '{') depth++
-    if (cleaned[i] === '}') {
-      depth--
-      if (depth === 0) { end = i; break }
-    }
-  }
-  if (end === -1) throw new Error('Unclosed JSON object in Gemini response')
-  return cleaned.slice(start, end + 1)
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Take a full-page screenshot via ScreenshotOne and return base64-encoded PNG bytes. */
-async function takeScreenshot(
-  url: string,
-  viewport: { width: number; height: number },
-  accessKey: string,
-): Promise<{ ok: true; base64: string } | { ok: false; error: string; status: number | null }> {
-  const params = new URLSearchParams({
-    url,
-    access_key: accessKey,
-    full_page: "true",
-    viewport_width: String(viewport.width),
-    viewport_height: String(viewport.height),
-    format: "png",
-  });
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), SCREENSHOT_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(`${SCREENSHOT_ONE_URL}?${params}`, {
-      signal: controller.signal,
-    });
-
-    console.log(
-      `[DESIGN] ScreenshotOne (${viewport.width}w) HTTP status:`,
-      response.status,
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => "Unknown error");
-      return { ok: false, error: errorText, status: response.status };
-    }
-
-    // ScreenshotOne can return HTTP 200 with {"is_successful": false, "error": "..."}
-    // in the body when the screenshot fails (e.g. blocked page, unreachable site).
-    // Check the Content-Type to detect JSON error payloads before treating the body as binary.
-    const contentType = response.headers.get("content-type") ?? "";
-    if (contentType.includes("application/json") || contentType.includes("text/")) {
-      const bodyText = await response.text().catch(() => "");
-      let isError = false;
-      let errorMsg = "Screenshot unavailable";
-      try {
-        const json = JSON.parse(bodyText);
-        if (json && json.is_successful === false) {
-          isError = true;
-          errorMsg = json.error
-            ? `Screenshot unavailable: ${json.error}`
-            : "Screenshot unavailable — the page could not be captured";
-        }
-      } catch {
-        // Not JSON — treat response text as the error
-        if (bodyText.length > 0 && bodyText.length < 500) {
-          errorMsg = `Screenshot unavailable: ${bodyText}`;
-          isError = true;
-        }
-      }
-      if (isError) {
-        console.log(`[DESIGN] ScreenshotOne (${viewport.width}w) returned error:`, errorMsg);
-        return { ok: false, error: errorMsg, status: response.status };
-      }
-      // If we got here, it's not an error — it's a text-based response we can't use as an image
-      return { ok: false, error: "Screenshot unavailable — unexpected response format", status: response.status };
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-
-    // Verify the buffer is non-trivial (PNG has at least a few hundred bytes)
-    if (arrayBuffer.byteLength < 100) {
-      return { ok: false, error: "Screenshot unavailable — empty response", status: response.status };
-    }
-
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
-    return { ok: true, base64 };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    const isAbort = err instanceof DOMException && err.name === "AbortError";
-    return { ok: false, error: isAbort ? "Screenshot timed out" : message, status: null };
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-/** Send a screenshot to Gemini for design critique. */
-async function analyzeScreenshot(
-  base64Image: string,
-  apiKey: string,
-): Promise<{ ok: true; data: GeminiDesignResponse } | { ok: false; error: string; status: number | null; rawText?: string }> {
-  try {
-    const response = await retryWithBackoff(
-      (signal) =>
-        fetch(GEMINI_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": apiKey,
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { inline_data: { mime_type: "image/png", data: base64Image } },
-                  { text: CRITIQUE_PROMPT },
-                ],
-              },
-            ],
-          }),
-          signal,
-        }),
-    );
-
-    console.log("[DESIGN] Gemini HTTP status:", response.status);
-
-    const rawText = await response.text();
-    // Log Gemini response length (not content) for monitoring
-    console.log("[DESIGN] Gemini response received, length:", rawText?.length);
-
-    if (!response.ok) {
-      if (response.status === 429 || response.status === 503) {
-        return { ok: false, error: "AI_SERVICE_BUSY", status: response.status, rawText: undefined };
-      }
-      // Truncate raw error text in responses to avoid leaking AI output
-      const truncated = rawText ? rawText.slice(0, 200) : "Unknown AI error";
-      return { ok: false, error: truncated, status: response.status, rawText: undefined };
-    }
-
-    const parsed = JSON.parse(rawText);
-    const text =
-      parsed?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-
-    if (!text) {
-      return { ok: false, error: "Gemini returned empty text", status: response.status, rawText };
-    }
-
-    // Debug: log raw Gemini text content before cleaning + parsing
-    // Only log full Gemini text content in development to avoid leaking AI output
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('[DESIGN] RAW GEMINI TEXT CONTENT:', JSON.stringify(text))
-    }
-    console.error('[DESIGN] RAW GEMINI TEXT CONTENT LENGTH:', text?.length)
-
-    // Clean and extract valid JSON from Gemini's response (handles markdown fences
-    // and trailing garbage after the closing `}`)
-    let data: GeminiDesignResponse;
-    try {
-      const cleaned = cleanGeminiJson(text);
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('[DESIGN] RAW GEMINI RESPONSE >>>', typeof cleaned, cleaned)
-      }
-      data = JSON.parse(cleaned) as GeminiDesignResponse;
-    } catch {
-      // Log raw Gemini content on parse failure only in development
-      if (process.env.NODE_ENV !== 'production') {
-        console.error("[DESIGN] JSON parse failed. Raw Gemini response:", text);
-      } else {
-        console.error("[DESIGN] JSON parse failed. Response length:", text?.length);
-      }
-      return { ok: false, error: "Gemini returned invalid JSON", status: response.status, rawText: text };
-    }
-
-    // Basic validation
-    if (
-      typeof data.design_score !== "number" ||
-      !data.criteria_scores ||
-      !Array.isArray(data.issues)
-    ) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log("[DESIGN] Gemini response missing required fields:", JSON.stringify(data));
-      } else {
-        console.log("[DESIGN] Gemini response missing required fields");
-      }
-      return { ok: false, error: "Gemini response missing required fields", status: response.status, rawText: text };
-    }
-
-    return { ok: true, data };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return { ok: false, error: message, status: null };
-  }
-}
-
-/**
- * Sanitize an error string to avoid leaking raw API error JSON to the UI.
- * If the error looks like a JSON blob or contains sensitive technical details,
- * replace it with a user-friendly message.
- */
-function sanitizeError(error: string): string {
-  // If the error starts with { or [ it's likely raw JSON — replace it
-  const trimmed = error.trim();
-  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
-    return "Screenshot unavailable — the page could not be captured";
-  }
-  // If the error is very long it's likely a raw dump — truncate aggressively
-  if (trimmed.length > 200) {
-    return "Screenshot unavailable — an unexpected error occurred";
-  }
-  return trimmed;
-}
-
-/** Run the full screenshot + analysis pipeline for one strategy. Reserved for Playwright swap (v2). */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function runStrategy(
-  strategy: "mobile" | "desktop",
-  website: string,
-  screenshotKey: string,
-  geminiKey: string,
-): Promise<StrategyResult> {
-  const viewport = strategy === "mobile" ? MOBILE_VIEWPORT : DESKTOP_VIEWPORT;
-
-  console.log(`[DESIGN] Starting ${strategy} analysis for:`, website);
-
-  // 1. Screenshot
-  const screenshot = await takeScreenshot(website, viewport, screenshotKey);
-  if (!screenshot.ok) {
-    console.log(`[DESIGN] ${strategy} screenshot failed:`, screenshot.error);
-    return { status: "error", error: sanitizeError(screenshot.error) };
-  }
-  console.log(`[DESIGN] ${strategy} screenshot OK (${Math.round(screenshot.base64.length / 1024)} KB base64)`);
-
-  // 2. Gemini analysis
-  const analysis = await analyzeScreenshot(screenshot.base64, geminiKey);
-  if (!analysis.ok) {
-    console.log(`[DESIGN] ${strategy} Gemini analysis failed:`, analysis.error);
-    if (analysis.error === "AI_SERVICE_BUSY") {
-      return { status: "error", error: "AI_SERVICE_BUSY" };
-    }
-    return { status: "error", error: `Analysis failed: ${analysis.error}` };
-  }
-  console.log(`[DESIGN] ${strategy} Gemini analysis OK — score:`, analysis.data.design_score);
-
-  return {
-    status: "ok",
-    design_score: analysis.data.design_score,
-    criteria_scores: analysis.data.criteria_scores,
-    issues: analysis.data.issues,
-    raw_analysis: analysis.data,
-  };
-}
+import { writeJson, writeStep } from "@/lib/api/stream-utils";
+import { sanitizeError } from "@/lib/api/sanitize";
+import { takeScreenshot, MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from "@/lib/screenshot";
+import { analyzeScreenshot, type StrategyResult } from "@/lib/design-analysis";
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
   try {
     // 1. Parse & validate body
-    const body = (await request.json()) as AnalyzeRequestBody;
-    
+    const body = (await request.json()) as Record<string, unknown>;
+
     // ── Zod validation ──────────────────────────────────────────────────────
     const parsed = businessWebsiteSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
         { status: 400 },
       );
     }
@@ -444,7 +67,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Check API keys
+    // 5. Check API keys
     const screenshotKey = process.env.SCREENSHOT_API_KEY;
     if (!screenshotKey) {
       console.log("[DESIGN] Missing SCREENSHOT_API_KEY");
@@ -463,12 +86,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Cache check — only when persisting (need a real businessId to look up cached rows)
+    // 6. Cache check — only when persisting (need a real businessId to look up cached rows)
     if (shouldPersist) {
-      const adminClient = createAdminClient();
+      const sa = scopedAdmin(currentUser.id);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: cachedDesignData, error: cacheReadError } = await (adminClient.from("design_analyses") as any)
+      const { data: cachedDesignData, error: cacheReadError } = await sa.from("design_analyses")
         .select("*")
         .eq("business_id", businessId)
         .in("strategy", ["mobile", "desktop"])
@@ -601,10 +223,10 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 5. Persist results — only when a real businessId was provided
+          // 7. Persist results — only when a real businessId was provided
           const persistenceErrors: string[] = [];
           if (shouldPersist) {
-            const adminSupabase = createAdminClient();
+            const adminSupabase = scopedAdmin(currentUser.id);
 
             writeStep(controller, encoder, "persisting", "Saving results...");
 
@@ -645,7 +267,7 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            // 6. Update businesses row (admin client bypasses RLS)
+            // 8. Update businesses row (admin client bypasses RLS)
             const bestScore =
               mobile.status === "ok"
                 ? mobile.design_score
@@ -685,7 +307,7 @@ export async function POST(request: NextRequest) {
             console.log("[DESIGN] Analysis complete — ephemeral (not persisted)");
           }
 
-          // 7. If persistence failed, emit error instead of "done"
+          // 9. If persistence failed, emit error instead of "done"
           if (shouldPersist && persistenceErrors.length > 0) {
             console.error("[DESIGN] Persistence failed — emitting error instead of done");
             writeJson(controller, encoder, {
@@ -696,10 +318,10 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 8. Deduct credit for fresh (non-cached) analysis
+          // 10. Deduct credit for fresh (non-cached) analysis
           await deductCredit(user.id);
 
-          // 9. Stream result + done
+          // 11. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
 
           writeJson(controller, encoder, {

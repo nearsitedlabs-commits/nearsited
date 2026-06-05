@@ -1,0 +1,242 @@
+"use client";
+
+import { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { PitchResult } from "./usePitchGeneration";
+
+export const AUDIT_STEP_KEYS = ["fetching", "mobile", "desktop", "audit_complete"] as const;
+
+export const ANALYSE_STEPS: { key: string; label: string }[] = [
+  { key: "fetching",           label: "Fetching site data" },
+  { key: "mobile",             label: "Running Mobile PageSpeed" },
+  { key: "desktop",            label: "Running Desktop PageSpeed" },
+  { key: "audit_complete",     label: "Performance audit complete" },
+  { key: "screenshot_mobile",  label: "Taking Mobile screenshot" },
+  { key: "screenshot_desktop", label: "Taking Desktop screenshot" },
+  { key: "analysing_mobile",   label: "Analysing Mobile design" },
+  { key: "analysing_desktop",  label: "Analysing Desktop design" },
+  { key: "design_complete",    label: "Analysis complete" },
+];
+
+export function useLeadAnalysis({
+  businessId,
+  website,
+  websiteStatus,
+  pitchTone,
+  pitchLength,
+  showToast,
+  setQuotaError,
+  startQuotaTimer,
+  onPitchResult,
+}: {
+  businessId: string;
+  website: string | null;
+  websiteStatus: string;
+  pitchTone: string;
+  pitchLength: string;
+  showToast: (msg: string) => void;
+  setQuotaError: (error: string | null) => void;
+  startQuotaTimer: (seconds: number) => void;
+  onPitchResult: (result: PitchResult) => void;
+}) {
+  const router = useRouter();
+  const [runningDesign, setRunningDesign] = useState(false);
+  const [runningFullAnalysis, setRunningFullAnalysis] = useState(false);
+  const [completedKeys, setCompletedKeys] = useState<string[]>([]);
+  const [activeKeys, setActiveKeys] = useState<string[]>([]);
+  const [designError, setDesignError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const handleRunDesign = useCallback(async () => {
+    if (!website) return;
+    setRunningDesign(true);
+    try {
+      const res = await fetch("/api/analyze-design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId, website }),
+      });
+      if (res.ok && res.body) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let isQuotaError = false;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const chunk = JSON.parse(line);
+              if (chunk.type === "error" && chunk.error === "AI_QUOTA_EXCEEDED") isQuotaError = true;
+            } catch { /* skip */ }
+          }
+        }
+        if (isQuotaError) {
+          setQuotaError("AI quota exceeded — please wait a moment and try again");
+          startQuotaTimer(60);
+          return;
+        }
+      }
+      router.refresh();
+    } catch (err) {
+      console.error("[LEAD] Design analysis failed:", err);
+      showToast("Design analysis failed — please try again.");
+    } finally {
+      setRunningDesign(false);
+    }
+  }, [businessId, website, router, showToast, setQuotaError, startQuotaTimer]);
+
+  const handleFullAnalysis = useCallback(async () => {
+    if (!website) return;
+    console.log("[LEAD] handleFullAnalysis START", { id: businessId, website });
+    setRunningFullAnalysis(true);
+    setCompletedKeys([]);
+    setActiveKeys([]);
+
+    try {
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      const { signal } = abortController;
+
+      // Phase 1: Audit stream
+      console.log("[LEAD] Phase 1: fetching /api/audit...");
+      const auditRes = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId, website }),
+        signal,
+      });
+
+      if (auditRes.ok && auditRes.body) {
+        const reader = auditRes.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          if (signal.aborted) return;
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const parsed = JSON.parse(line);
+              if (parsed.type === "progress" && parsed.step) {
+                const key = parsed.step === "complete" ? "audit_complete" : parsed.step;
+                setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+              } else if (parsed.type === "result") {
+                setCompletedKeys([...AUDIT_STEP_KEYS]);
+                setActiveKeys([]);
+              }
+            } catch { /* skip */ }
+          }
+        }
+      }
+
+      // Phase 2: Design stream
+      console.log("[LEAD] Phase 2: fetching /api/analyze-design...");
+      const designRes = await fetch("/api/analyze-design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId, website }),
+        signal,
+      });
+
+      if (designRes.ok && designRes.body) {
+        const reader = designRes.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          if (signal.aborted) return;
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const parsed = JSON.parse(line);
+              if (parsed.type === "progress" && parsed.step) {
+                const key = parsed.step === "complete" ? "design_complete" : parsed.step;
+                setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+              } else if (parsed.type === "result") {
+                setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
+                setActiveKeys([]);
+                setDesignError(null);
+              } else if (parsed.type === "error") {
+                const msg = (parsed.message as string) ?? "Design analysis failed";
+                setDesignError(msg);
+                setRunningFullAnalysis(false);
+                setCompletedKeys([]);
+                setActiveKeys([]);
+                showToast(msg);
+                return;
+              }
+            } catch { /* skip */ }
+          }
+        }
+      }
+
+      showToast("Analysis complete — scores updated");
+
+      // Auto-generate pitch fire-and-forget
+      fetch("/api/pitch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId, tone: pitchTone, length: pitchLength, lead_type: websiteStatus }),
+      }).then(async (pitchRes) => {
+        if (pitchRes.ok) {
+          const pitchData = await pitchRes.json();
+          if (pitchData.success && pitchData.pitch && typeof pitchData.pitch.subject === "string" && typeof pitchData.pitch.body === "string") {
+            onPitchResult({ subject: pitchData.pitch.subject, body: pitchData.pitch.body });
+            showToast("Fresh pitch generated with new data");
+          }
+        }
+      }).catch((pitchErr) => {
+        console.warn("[LEAD] Pitch auto-generation failed:", pitchErr);
+      });
+
+      router.refresh();
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        console.log("[LEAD] handleFullAnalysis aborted by user");
+        return;
+      }
+      console.error("[LEAD] Full analysis failed:", err);
+      showToast("Analysis failed — please try again.");
+    } finally {
+      setRunningFullAnalysis(false);
+      abortControllerRef.current = null;
+    }
+  }, [businessId, website, websiteStatus, pitchTone, pitchLength, router, showToast, onPitchResult]);
+
+  const handleCancelAnalysis = useCallback(() => {
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
+      abortControllerRef.current = null;
+    }
+    setRunningFullAnalysis(false);
+    setCompletedKeys([]);
+    setActiveKeys([]);
+    setDesignError(null);
+    showToast("Analysis cancelled");
+  }, [showToast]);
+
+  return {
+    runningDesign,
+    runningFullAnalysis,
+    completedKeys,
+    activeKeys,
+    designError,
+    handleRunDesign,
+    handleFullAnalysis,
+    handleCancelAnalysis,
+  };
+}

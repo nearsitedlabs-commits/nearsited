@@ -10,7 +10,7 @@ type LeadExportSectionProps = {
 export function LeadExportSection({ businessId, handleShare }: LeadExportSectionProps) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h3>
+      <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
       <div className="flex flex-wrap gap-2">
         <a
           href={`/api/export/pdf?businessId=${businessId}`}

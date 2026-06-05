@@ -8,21 +8,31 @@ export default function NoOpServiceWorker() {
     if (!("serviceWorker" in navigator)) return;
 
     const ua = navigator.userAgent || "";
+    const win = window as unknown as {
+      acquireVsCodeApi?: () => void;
+      isSecureContext?: boolean;
+    };
     const isWebview =
       /WebView|vscode|Code\/|Electron/i.test(ua) ||
-      typeof (window as any).acquireVsCodeApi === "function";
+      typeof win.acquireVsCodeApi === "function";
     const isSecure =
       // standard secure context check
-      (window as any).isSecureContext ||
+      win.isSecureContext ||
       location.protocol === "https:" ||
       location.hostname === "localhost" ||
       location.hostname === "127.0.0.1";
 
     if (!isSecure || isWebview) {
-      const original = navigator.serviceWorker.register;
+      const sw = navigator.serviceWorker as unknown as {
+        register: (
+          url: string,
+          options?: RegistrationOptions
+        ) => Promise<ServiceWorkerRegistration>;
+      };
+      const original = sw.register;
       // replace register with a rejecting stub to avoid InvalidStateError in webviews
       // consumers can still handle the rejection if they expect it
-      (navigator.serviceWorker as any).register = (..._args: any[]) => {
+      sw.register = (..._args: unknown[]) => {
         console.debug(
           "NoOpServiceWorker: blocked service worker registration in webview/insecure context."
         );
@@ -33,8 +43,8 @@ export default function NoOpServiceWorker() {
 
       return () => {
         try {
-          (navigator.serviceWorker as any).register = original;
-        } catch (e) {
+          sw.register = original;
+        } catch (_e) {
           /* ignore */
         }
       };

@@ -217,7 +217,14 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                     >
                       Tone: {TONE_LABELS[tone]}
                     </Button>
-                    <Button variant="secondary" className="flex-1 sm:flex-none">Regenerate</Button>
+                    <Button
+                      variant="secondary"
+                      className="flex-1 sm:flex-none"
+                      onClick={() => {
+                        const tabs: PitchTab[] = ["weak", "none", "social", "platform"];
+                        setActiveTab((t) => tabs[(tabs.indexOf(t) + 1) % tabs.length]);
+                      }}
+                    >Regenerate</Button>
                   </div>
                   <Button variant="primary" onClick={() => navigate("/signup")} className="w-full sm:w-auto">
                     Copy pitch →

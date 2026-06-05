@@ -1,6 +1,8 @@
 "use client";
 
 import { Search, BarChart3, Mail, ListFilter, Check } from "lucide-react";
+import { useReducedMotion } from "framer-motion";
+import { StaggerContainer, FadeUp } from "@/lib/motion";
 import OpportunityPreviewCard from "./OpportunityPreviewCard";
 
 const FEATURES = [
@@ -11,16 +13,20 @@ const FEATURES = [
 ] as const;
 
 export default function BrandStoryPanel() {
-  return (
-    <div className="relative z-10 flex h-full flex-col justify-between px-12 py-16 lg:px-16 xl:px-20">
-      <div className="space-y-10">
+  const prefersReduced = useReducedMotion();
+
+  const content = (
+    <>
+      <FadeUp>
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
             Find website opportunities
           </span>
         </div>
+      </FadeUp>
 
+      <FadeUp>
         <div className="space-y-4">
           <h1 className="text-[clamp(2.5rem,4vw,3.8rem)] font-medium leading-[0.92] tracking-[-0.04em] text-[var(--text-primary)]">
             Find what others{" "}
@@ -33,7 +39,9 @@ export default function BrandStoryPanel() {
             missing, and generate personalised outreach — all in one place.
           </p>
         </div>
+      </FadeUp>
 
+      <FadeUp>
         <ul className="space-y-3">
           {FEATURES.map((f) => (
             <li key={f.text} className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
@@ -44,6 +52,18 @@ export default function BrandStoryPanel() {
             </li>
           ))}
         </ul>
+      </FadeUp>
+    </>
+  );
+
+  return (
+    <div className="relative z-10 flex h-full flex-col justify-between px-12 py-16 lg:px-16 xl:px-20">
+      <div className="space-y-10">
+        {prefersReduced ? (
+          content
+        ) : (
+          <StaggerContainer>{content}</StaggerContainer>
+        )}
       </div>
 
       <div className="my-10">

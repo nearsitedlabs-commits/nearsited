@@ -12,7 +12,7 @@
  */
 
 import { existsSync, statSync, readdirSync } from "fs";
-import { rm, readFile } from "fs/promises";
+import { rm } from "fs/promises";
 import { resolve, join } from "path";
 
 const ROOT = resolve(import.meta.dirname, "..");

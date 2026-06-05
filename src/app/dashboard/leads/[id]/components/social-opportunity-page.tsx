@@ -8,15 +8,17 @@ import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { detectSocialPlatforms, getSocialImpactEstimates, getSocialOpportunityReasons } from "@/lib/lead-types";
-import type { WebsiteStatus } from "@/lib/types";
+import type { WebsiteStatus } from "@/lib/db-types";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+import type { BusinessRow } from "@/lib/db-types";
+
 type SavedPitch = { id: string; subject: string; body: string; tone: string };
 
 type Props = {
-  business: Record<string, unknown>;
+  business: BusinessRow;
   pipelineStatus: string | null;
   savedPitch: SavedPitch | null;
 };
@@ -226,7 +228,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
 
             {/* ── DIGITAL PRESENCE CARD ──────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Digital Presence Analysis</h3>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Digital Presence Analysis</h2>
               <div className="space-y-2">
                 {socialPlatforms.map((platform) => (
                   <div key={platform} className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
@@ -246,7 +248,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
 
             {/* ── WHY THIS IS AN OPPORTUNITY ──────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h3>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
               <ul className="space-y-2">
                 {opportunityReasons.map((reason, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
@@ -259,7 +261,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
 
             {/* ── WEBSITE OPPORTUNITY IMPACT ──────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity Impact</h3>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity Impact</h2>
               <div className="space-y-3">
                 {impactEstimates.map((est) => (
                   <div key={est.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
@@ -282,7 +284,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
 
             {/* ── READY-TO-SEND OUTREACH ────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h3>
+              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
 
               {/* Channel tabs — only show available channels */}
               {availableChannels.length > 0 && (
@@ -358,7 +360,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h3>
+                  <h2 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h2>
                   <p className="mt-1 text-xs text-[var(--text-secondary)]">Read this 60 seconds before a sales call.</p>
                 </div>
               </div>
@@ -381,7 +383,7 @@ Build a professional website that integrates with existing social profiles, opti
 
             {/* ── EXPORT ──────────────────────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h3>
+              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
                 <a href={`/api/export/pdf?businessId=${biz.id}`}
                   className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">

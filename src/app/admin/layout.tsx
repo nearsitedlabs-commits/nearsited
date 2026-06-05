@@ -1,14 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "nearsitedlabs@gmail.com";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-  if (user.email !== ADMIN_EMAIL) redirect("/dashboard");
+  // requireAdmin handles auth + admin check, redirects if not authorized
+  await requireAdmin();
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">

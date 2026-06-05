@@ -48,6 +48,25 @@ export async function readNdjsonStream<T = Record<string, unknown>>(
         }
       }
     }
+
+    // ── Process remaining buffer after stream ends ───────────────────────
+    // If the final chunk had no trailing \n, the last JSON line is still
+    // in `buffer`. Without this, the last result/error/done is silently lost.
+    if (buffer.trim()) {
+      try {
+        const parsed = JSON.parse(buffer);
+        if (parsed.type === "result") {
+          callbacks.onResult?.(parsed as T);
+        } else if (parsed.type === "done") {
+          return;
+        } else if (parsed.type === "error") {
+          callbacks.onError?.(parsed.message ?? "Unknown error");
+          return;
+        }
+      } catch {
+        // skip malformed final line
+      }
+    }
   } finally {
     reader.releaseLock();
   }

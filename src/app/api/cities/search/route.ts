@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { citySearchQuerySchema } from "@/lib/validation";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -42,9 +44,23 @@ async function getCityOptions(): Promise<CityOption[]> {
 
 export async function GET(request: NextRequest) {
   try {
+    // ── Rate limit (public endpoint — IP-based) ───────────────────────────
+    const identifier = getRateLimitIdentifier(request);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
+
     const { searchParams } = new URL(request.url);
-    const q = searchParams.get("q") ?? "";
-    const limitRaw = searchParams.get("limit");
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const queryParams = Object.fromEntries(searchParams.entries());
+    const parsed = citySearchQuerySchema.safeParse(queryParams);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+        { status: 400 },
+      );
+    }
+    const { q = "", limit: limitRaw } = parsed.data;
     const returnAll = limitRaw === "all";
 
     const cities = await getCityOptions();

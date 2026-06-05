@@ -35,6 +35,7 @@
   --accent:        #8A9777;
   --accent-hover:  #7F8C63;
   --accent-tint:   rgba(138,151,119,0.14);
+  --accent-warm:   #a09470;
 
   /* Shadows (dark) */
   --brand-shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
@@ -153,9 +154,53 @@ input, select, textarea, button, option {
   z-index: 2;
 }
 
+/* ── Print styles ──────────────── */
+@media print {
+  nav, footer, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
 /* ── Autofill override ──
  * Prevents yellow browser autofill background on auth inputs.
  * Uses a large box-shadow inset trick across all interaction states. */
+/* ── Nav height token ───────────────────────────────────────
+ * Used by landing sections to offset anchor scroll targets
+ * below the fixed nav. Sections targeted via hash links
+ * should have `scroll-margin-top: var(--nav-height)`. */
+:root {
+  --nav-height: 80px;
+  --sidebar-width: 240px;
+
+  /* ── Z-index scale ──────────────────────────────────────────────────
+   * Single source of truth for all stacking contexts.
+   * Follows a clear convention to prevent stacking conflicts.
+   * Values are intentionally spaced so new layers can be inserted. */
+  --z-base:        0;
+  --z-dropdown:    100;
+  --z-sticky:      200;
+  --z-nav:         300;
+  --z-modal:       400;
+  --z-toast:       500;
+  --z-tooltip:     600;
+}
+
+/* ── Section scroll offset ────────────────────────────────
+ * Ensures hash-linked sections aren't hidden behind the
+ * fixed navigation bar. */
+section[id],
+div[id] {
+  scroll-margin-top: var(--nav-height);
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

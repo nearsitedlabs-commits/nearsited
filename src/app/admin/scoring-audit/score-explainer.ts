@@ -226,7 +226,7 @@ export function generateAuditReport(businesses: AuditBusiness[], explanations: S
 
   const statusGroups = ["no_website", "social_only", "platform_only", "has_website", "unknown"];
   const byStatus = statusGroups.map((status) => {
-    const bizList = businesses.filter((b, i) => (b.website_status ?? "unknown") === status);
+    const bizList = businesses.filter((b, _i) => (b.website_status ?? "unknown") === status);
     const exps = bizList.map((b) => explanations[businesses.indexOf(b)]);
     const avg = exps.length > 0 ? Math.round(exps.reduce((s, e) => s + e.displayScore, 0) / exps.length) : 0;
     const fc = exps.filter(e => e.flags.some(f => f.type === "high_warning" || f.type === "low_warning")).length;

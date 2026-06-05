@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Pricing from "@/components/landing/Pricing";
+import { Pricing } from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/Button";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Search } from "lucide-react";
@@ -86,7 +86,7 @@ export default function PricingPage() {
           <button
             onClick={() => navigate("/")}
             className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]"
-            style={{ fontFamily: "Switzer, Geist, sans-serif" }}
+            style={{ fontFamily: "var(--font-sans)" }}
           >
             <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
             <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">

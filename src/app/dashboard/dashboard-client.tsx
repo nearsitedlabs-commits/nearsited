@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useCountUp } from "@/lib/shared-hooks";
 import { motion } from "framer-motion";
 import {
   Search, Target, Mail, BarChart3, Activity,
@@ -10,7 +11,8 @@ import {
 } from "lucide-react";
 import { opportunityLabel, opportunityBadgeVariant, computeOpportunityScore } from "@/lib/scoring";
 import { ScoreRing } from "@/components/ui/ScoreRing";
-import type { WebsiteStatus } from "@/lib/types";
+import type { WebsiteStatus } from "@/lib/db-types";
+import type { BusinessRow } from "@/lib/db-types";
 import { PIPELINE_TEXT_COLORS, PIPELINE_BAR_COLORS } from "@/lib/ui-constants";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -34,11 +36,10 @@ type Props = {
   firstName: string;
   totalLeads: number;
   flaggedLeads: number;
-  _totalPitches: number;
   unanalysedLeads: number;
   activeConversations: number;
   pipelineCounts: Record<string, number>;
-  recentLeads: Record<string, unknown>[];
+  recentLeads: BusinessRow[];
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -52,29 +53,10 @@ function timeAgo(dateStr: string, now: number | null): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-// ── CountUp — animates from 0 to target once on mount ─────────────────────────
+// ── Animated count — uses shared useCountUp hook ──────────────────────────────
 
-function CountUp({ value, duration = 600 }: { value: number; duration?: number }) {
-  const [display, setDisplay] = useState(0);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (hasAnimated.current) { setDisplay(value); return; }
-    hasAnimated.current = true;
-    const start = performance.now();
-    const from = 0;
-    const diff = value - from;
-    function tick(now: number) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(from + diff * eased));
-      if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }, [value, duration]);
-
+function AnimatedCount({ value, duration = 600 }: { value: number; duration?: number }) {
+  const { display } = useCountUp(value, duration);
   return <>{display}</>;
 }
 
@@ -101,7 +83,7 @@ const DASHBOARD_PIPELINE_STAGES = [
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export default function DashboardClient({
-  firstName, totalLeads, flaggedLeads, _totalPitches,
+  firstName, totalLeads, flaggedLeads,
   unanalysedLeads, activeConversations, pipelineCounts, recentLeads,
 }: Props) {
   const [now, setNow] = useState<number | null>(null);
@@ -313,7 +295,7 @@ export default function DashboardClient({
                 <Mail className="h-4 w-4 text-[var(--accent)]" />
               </div>
               <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
-                <CountUp value={flaggedLeads} />
+                <AnimatedCount value={flaggedLeads} />
               </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Ready to Pitch</p>
             </motion.div>
@@ -330,7 +312,7 @@ export default function DashboardClient({
                 <BarChart3 className="h-4 w-4 text-[var(--text-secondary)]" />
               </div>
               <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
-                <CountUp value={totalPipeline} />
+                <AnimatedCount value={totalPipeline} />
               </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">In Pipeline</p>
             </motion.div>
@@ -347,7 +329,7 @@ export default function DashboardClient({
                 <MessageSquare className="h-4 w-4 text-[var(--text-secondary)]" />
               </div>
               <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
-                <CountUp value={activeConversations} />
+                <AnimatedCount value={activeConversations} />
               </p>
               <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Active Conversations</p>
             </motion.div>
@@ -364,7 +346,7 @@ export default function DashboardClient({
                 <Target className="h-4 w-4 text-[var(--text-tertiary)]" />
               </div>
               <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
-                <CountUp value={totalLeads} />
+                <AnimatedCount value={totalLeads} />
                 {unanalysedLeads > 0 && (
                   <span className="ml-2 text-sm font-normal text-[var(--text-tertiary)]">
                     ({unanalysedLeads} unanalysed)

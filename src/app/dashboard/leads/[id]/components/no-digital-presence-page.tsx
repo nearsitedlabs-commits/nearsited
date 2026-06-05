@@ -12,10 +12,12 @@ import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+import type { BusinessRow } from "@/lib/db-types";
+
 type SavedPitch = { id: string; subject: string; body: string; tone: string };
 
 type Props = {
-  business: Record<string, unknown>;
+  business: BusinessRow;
   pipelineStatus: string | null;
   savedPitch: SavedPitch | null;
 };
@@ -204,7 +206,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
             {/* ── WHY THIS IS AN OPPORTUNITY ──────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h3>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
               <ul className="space-y-2">
                 {opportunityReasons.map((reason, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
@@ -221,7 +223,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
             {/* ── WEBSITE OPPORTUNITY ──────────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity</h3>
+              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity</h2>
               <p className="mb-3 text-xs text-[var(--text-secondary)]">A professional website provides benefits that no other channel can replace.</p>
               <div className="space-y-3">
                 {[
@@ -245,7 +247,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
             {/* ── READY-TO-SEND OUTREACH ────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h3>
+              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
 
               {/* Show available channel info */}
               {!contactInfo.loading && contactInfo.phone && (
@@ -311,7 +313,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h3>
+                  <h2 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h2>
                   <p className="mt-1 text-xs text-[var(--text-secondary)]">Read this 60 seconds before a sales call.</p>
                 </div>
               </div>
@@ -334,7 +336,7 @@ Build a professional website, set up Google Business Profile, create social medi
 
             {/* ── EXPORT ──────────────────────────────────────────────────── */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h3>
+              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
                 <a href={`/api/export/pdf?businessId=${biz.id}`}
                   className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">

@@ -1,5 +1,4 @@
-/** Canonical website status values used across the entire codebase. */
-export type WebsiteStatus = "has_website" | "no_website" | "social_only" | "platform_only" | "unknown";
+import type { WebsiteStatus } from "@/lib/db-types";
 
 /**
  * Shared Business type representing a lead/business row from the database.

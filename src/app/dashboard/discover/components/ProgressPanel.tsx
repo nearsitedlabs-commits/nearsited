@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 // ── Analyse Step List (unified progress for audit + design) ──
 export const ANALYSE_STEPS: {
   key: string;
@@ -32,9 +34,20 @@ type ProgressPanelProps = {
 export function ProgressPanel({ ap, onCancel }: ProgressPanelProps) {
   const currentIdx = ANALYSE_STEPS.findIndex((s) => s.key === ap.step);
   const stepNum = currentIdx >= 0 ? currentIdx + 1 : ANALYSE_STEPS.length;
+  const progressPercent = (currentIdx >= 0 ? currentIdx + 1 : ANALYSE_STEPS.length) / ANALYSE_STEPS.length * 100;
 
   return (
-    <>
+    <div className="flex items-center gap-3">
+      <div className="flex-1">
+        <div className="h-1.5 w-full rounded-full bg-[var(--bg-elevated)]">
+          <motion.div
+            className="h-full rounded-full bg-[var(--accent)]"
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
+        </div>
+      </div>
       <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap shrink-0">
         Analysing... step {stepNum} of {ANALYSE_STEPS.length}
       </span>
@@ -45,6 +58,6 @@ export function ProgressPanel({ ap, onCancel }: ProgressPanelProps) {
       >
         Cancel
       </button>
-    </>
+    </div>
   );
 }

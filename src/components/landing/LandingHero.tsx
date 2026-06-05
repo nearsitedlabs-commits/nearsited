@@ -61,12 +61,12 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
         <motion.div {...fadeUp(0.1)} className="space-y-5">
           <h1 className="text-[clamp(2.8rem,5.5vw,5.5rem)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
-            Find website opportunities
+            Your next client is out there
             <br />
-            <em className="italic not-italic">before competitors do.</em>
+            <em className="italic not-italic">without a website.</em>
           </h1>
           <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
-            Nearsited finds local businesses with <strong className="text-[var(--text-primary)] font-medium">no website</strong>, social-only presence, platform-only listings, or weak websites — ranks them by opportunity score, and generates a tailored pitch for each type in under 2 minutes.
+            Nearsited finds hyperlocal businesses with <strong className="text-[var(--text-primary)] font-medium">no website</strong>, social-only presence, platform-only listings, or weak websites — ranks them by opportunity score, and generates a tailored pitch for each type in under 2 minutes.
           </p>
         </motion.div>
 
@@ -91,7 +91,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
         <motion.div {...fadeUp(0.3)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 50 businesses free</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />249 business types</span>
         </motion.div>
@@ -133,15 +133,15 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
               {/* Social Only */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10">
-                  <span className="text-xs font-bold text-amber-500">—</span>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--score-mid)]/10">
+                  <span className="text-xs font-bold text-[var(--score-mid)]">—</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Blue Wave Restaurant</p>
                   <p className="text-xs text-[var(--text-tertiary)]">JBR · Food & Beverage</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/10 px-2 py-0.5 text-[10px] font-semibold text-[var(--score-mid)]">
                     Social Only
                   </span>
                   <span className="text-[10px] text-[var(--score-good)]">$1,500–$4,000</span>

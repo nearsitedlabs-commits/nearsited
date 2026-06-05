@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { X, RotateCcw } from "lucide-react";
 import { RangeSlider } from "./RangeSlider";
 import type { FilterState } from "@/lib/filters";
-import { DEFAULT_FILTERS, countActiveFilters, trackFilter } from "@/lib/filters";
+import { countActiveFilters, trackFilter } from "@/lib/filters";
 
 const WEBSITE_STATUS_OPTIONS = [
   { value: "no_website",    label: "No Website" },

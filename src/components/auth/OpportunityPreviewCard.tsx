@@ -12,7 +12,6 @@
 
 "use client";
 
-import { computeOpportunityScore, opportunityLabel } from "@/lib/scoring";
 
 // ── Three opportunity types ─────────────────────────────────────────────────
 
@@ -124,11 +123,6 @@ const OPPORTUNITIES: OppType[] = [
 const SELECTED: OppType = OPPORTUNITIES[Math.floor(Math.random() * OPPORTUNITIES.length)];
 
 const SAMPLE_QUALITY = SELECTED.quality;
-const SAMPLE_REVIEWS = SELECTED.reviews;
-const SAMPLE_RATING = SELECTED.rating;
-const sampleOppScore = computeOpportunityScore(SAMPLE_QUALITY, SAMPLE_REVIEWS, SAMPLE_RATING);
-const sampleLabel = opportunityLabel(sampleOppScore);
-
 const SCORE_BAR_COLORS = [
   "bg-[var(--score-high)]",
   "bg-[var(--score-mid)]",

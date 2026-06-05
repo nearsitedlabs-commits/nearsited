@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, Copy, ExternalLink, FileText, Loader2, Search, Trash2, Check, TrendingUp, X } from "lucide-react";
 import { Toast } from "@/components/ui/Toast";
 import { detectLeadWorkflow } from "@/lib/lead-types";
+import { FadeUp, StaggerContainer } from "@/lib/motion";
+import { useReducedMotion } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -92,6 +94,7 @@ export default function PitchesPage() {
   const [pipelineStatuses, setPipelineStatuses] = useState<Record<string, string>>({});
   const [addingToPipeline, setAddingToPipeline] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const shouldReduce = useReducedMotion();
 
   const fetchPitches = useCallback(async (showLoader = false) => {
     if (showLoader) setRefreshing(true);
@@ -206,6 +209,152 @@ export default function PitchesPage() {
     );
   }
 
+  const renderPitchCards = (pitchesList: Pitch[]) => (
+    <StaggerContainer>
+      <div className="space-y-3">
+        {pitchesList.map((pitch) => {
+          const biz = Array.isArray(pitch.businesses) ? pitch.businesses[0] : pitch.businesses;
+          const pitchRow = pitch as Pitch & { business_id?: string };
+          const bizId = pitchRow.business_id;
+          const pipelineStatus = bizId ? pipelineStatuses[bizId] : undefined;
+          const isExpanded = expandedId === pitch.id;
+          const opportunityBadge = pitch.lead_type ? OPPORTUNITY_BADGES[pitch.lead_type] : null;
+          const channelBadge = pitch.channel ? CHANNEL_BADGES[pitch.channel] : null;
+          const opportunityContext = getOpportunityContext(pitch);
+
+          return (
+            <FadeUp key={pitch.id}>
+              <div
+                className={`rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-150 ${
+                  isExpanded ? "shadow-[var(--brand-shadow-sm)]" : ""
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  {/* Left: Content */}
+                  <div className="flex-1 min-w-0">
+                    {/* Line 1: Business Name + Opportunity Badge */}
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-[var(--text-primary)]" dir="auto">{biz?.name ?? "Unknown"}</span>
+                      {opportunityBadge && (
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${opportunityBadge.style}`}>
+                          {opportunityBadge.label}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Line 2: Subject */}
+                    <p className="text-sm font-medium text-[var(--accent)]" dir="auto">{pitch.subject}</p>
+
+                    {/* Line 3: Opportunity Context */}
+                    {opportunityContext && (
+                      <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">{opportunityContext}</p>
+                    )}
+
+                    {/* Line 4: Channel Badge + Meta */}
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      {channelBadge && (
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold tracking-wider ${channelBadge.style}`}>
+                          {channelBadge.label}
+                        </span>
+                      )}
+                      {pitch.tone && <span className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider">{pitch.tone}</span>}
+                      <span className="text-[10px] text-[var(--text-tertiary)]">
+                        {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </span>
+                    </div>
+
+                    {/* Line 5: Preview / Full content */}
+                    {isExpanded ? (
+                      <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                        <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed" dir="auto">{pitch.body}</p>
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs text-[var(--text-tertiary)] leading-relaxed line-clamp-3">
+                        {pitch.body}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Right: Actions */}
+                  <div className="flex shrink-0 flex-col gap-1.5">
+                    {/* Copy */}
+                    <button
+                      onClick={() => handleCopy(pitch)}
+                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                      title="Copy to clipboard"
+                    >
+                      {copiedId === pitch.id ? <Check className="h-4 w-4 text-[var(--score-good)]" /> : <Copy className="h-4 w-4" />}
+                    </button>
+
+                    {/* Pipeline */}
+                    {bizId && (
+                      pipelineStatus ? (
+                        <Link
+                          href={`/dashboard/leads/${bizId}`}
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" /> View Pipeline
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={() => handleAddToPipeline(bizId)}
+                          disabled={addingToPipeline === bizId}
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {addingToPipeline === bizId ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <TrendingUp className="h-3.5 w-3.5" />
+                          )}
+                          Add To Pipeline
+                        </button>
+                      )
+                    )}
+
+                    {/* Delete */}
+                    {deleteConfirmId === pitch.id ? (
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleDelete(pitch.id)}
+                          disabled={deletingId === pitch.id}
+                          className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1.5 text-[10px] font-medium text-[var(--badge-red-text)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {deletingId === pitch.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirmId(null)}
+                          className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[10px] font-medium text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteConfirmId(pitch.id)}
+                        className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-red-500/30 hover:text-[var(--badge-red-text)]"
+                        title="Delete pitch"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+
+                    {/* Expand/Collapse */}
+                    <button
+                      onClick={() => setExpandedId(isExpanded ? null : pitch.id)}
+                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                    >
+                      {isExpanded ? "Collapse" : "Expand Card"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </FadeUp>
+          );
+        })}
+      </div>
+    </StaggerContainer>
+  );
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="mx-auto max-w-5xl px-6 py-8">
@@ -291,7 +440,7 @@ export default function PitchesPage() {
           )}
         </div>
 
-        {/* Empty state */}
+        {/* Pitch list */}
         {pitches.length === 0 ? (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-12 py-20 text-center">
             <FileText className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
@@ -313,7 +462,7 @@ export default function PitchesPage() {
               Clear filters
             </button>
           </div>
-        ) : (
+        ) : shouldReduce ? (
           <div className="space-y-3">
             {filteredPitches.map((pitch) => {
               const biz = Array.isArray(pitch.businesses) ? pitch.businesses[0] : pitch.businesses;
@@ -326,16 +475,13 @@ export default function PitchesPage() {
               const opportunityContext = getOpportunityContext(pitch);
 
               return (
-                <div
-                  key={pitch.id}
+                <div key={pitch.id}
                   className={`rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-150 ${
                     isExpanded ? "shadow-[var(--brand-shadow-sm)]" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    {/* Left: Content */}
                     <div className="flex-1 min-w-0">
-                      {/* Line 1: Business Name + Opportunity Badge */}
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className="text-sm font-semibold text-[var(--text-primary)]" dir="auto">{biz?.name ?? "Unknown"}</span>
                         {opportunityBadge && (
@@ -344,16 +490,10 @@ export default function PitchesPage() {
                           </span>
                         )}
                       </div>
-
-                      {/* Line 2: Subject */}
                       <p className="text-sm font-medium text-[var(--accent)]" dir="auto">{pitch.subject}</p>
-
-                      {/* Line 3: Opportunity Context */}
                       {opportunityContext && (
                         <p className="mt-1 text-[11px] text-[var(--text-tertiary)]">{opportunityContext}</p>
                       )}
-
-                      {/* Line 4: Channel Badge + Meta */}
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         {channelBadge && (
                           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold tracking-wider ${channelBadge.style}`}>
@@ -365,87 +505,54 @@ export default function PitchesPage() {
                           {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </span>
                       </div>
-
-                      {/* Line 5: Preview / Full content */}
                       {isExpanded ? (
                         <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
                           <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed" dir="auto">{pitch.body}</p>
                         </div>
                       ) : (
-                        <p className="mt-2 text-xs text-[var(--text-tertiary)] leading-relaxed line-clamp-3">
-                          {pitch.body}
-                        </p>
+                        <p className="mt-2 text-xs text-[var(--text-tertiary)] leading-relaxed line-clamp-3">{pitch.body}</p>
                       )}
                     </div>
-
-                    {/* Right: Actions */}
                     <div className="flex shrink-0 flex-col gap-1.5">
-                      {/* Copy */}
-                      <button
-                        onClick={() => handleCopy(pitch)}
+                      <button onClick={() => handleCopy(pitch)}
                         className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-                        title="Copy to clipboard"
-                      >
+                        title="Copy to clipboard">
                         {copiedId === pitch.id ? <Check className="h-4 w-4 text-[var(--score-good)]" /> : <Copy className="h-4 w-4" />}
                       </button>
-
-                      {/* Pipeline */}
                       {bizId && (
                         pipelineStatus ? (
-                          <Link
-                            href={`/dashboard/leads/${bizId}`}
-                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-                          >
+                          <Link href={`/dashboard/leads/${bizId}`}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]">
                             <ExternalLink className="h-3.5 w-3.5" /> View Pipeline
                           </Link>
                         ) : (
-                          <button
-                            onClick={() => handleAddToPipeline(bizId)}
-                            disabled={addingToPipeline === bizId}
-                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                          >
-                            {addingToPipeline === bizId ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <TrendingUp className="h-3.5 w-3.5" />
-                            )}
+                          <button onClick={() => handleAddToPipeline(bizId)} disabled={addingToPipeline === bizId}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">
+                            {addingToPipeline === bizId ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <TrendingUp className="h-3.5 w-3.5" />}
                             Add To Pipeline
                           </button>
                         )
                       )}
-
-                      {/* Delete */}
                       {deleteConfirmId === pitch.id ? (
                         <div className="flex gap-1">
-                          <button
-                            onClick={() => handleDelete(pitch.id)}
-                            disabled={deletingId === pitch.id}
-                            className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1.5 text-[10px] font-medium text-[var(--badge-red-text)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
-                          >
+                          <button onClick={() => handleDelete(pitch.id)} disabled={deletingId === pitch.id}
+                            className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1.5 text-[10px] font-medium text-[var(--badge-red-text)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40">
                             {deletingId === pitch.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
                           </button>
-                          <button
-                            onClick={() => setDeleteConfirmId(null)}
-                            className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[10px] font-medium text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
-                          >
+                          <button onClick={() => setDeleteConfirmId(null)}
+                            className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[10px] font-medium text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]">
                             Cancel
                           </button>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => setDeleteConfirmId(pitch.id)}
+                        <button onClick={() => setDeleteConfirmId(pitch.id)}
                           className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-red-500/30 hover:text-[var(--badge-red-text)]"
-                          title="Delete pitch"
-                        >
+                          title="Delete pitch">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       )}
-
-                      {/* Expand/Collapse */}
-                      <button
-                        onClick={() => setExpandedId(isExpanded ? null : pitch.id)}
-                        className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
-                      >
+                      <button onClick={() => setExpandedId(isExpanded ? null : pitch.id)}
+                        className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]">
                         {isExpanded ? "Collapse" : "Expand Card"}
                       </button>
                     </div>
@@ -454,6 +561,8 @@ export default function PitchesPage() {
               );
             })}
           </div>
+        ) : (
+          renderPitchCards(filteredPitches)
         )}
       </div>
 

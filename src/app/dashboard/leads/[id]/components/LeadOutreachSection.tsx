@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucide-react";
+import { useReducedMotion } from "framer-motion";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -69,9 +70,10 @@ export function LeadOutreachSection({
   pitchResult,
   handleCopyPitch,
 }: LeadOutreachSectionProps) {
+  const shouldReduce = useReducedMotion();
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <h3 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h3>
+      <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
 
       {/* Channel tabs with contact status dots */}
       <div className="mb-3 flex gap-1 rounded-lg bg-[var(--bg-elevated)] p-1">
@@ -89,7 +91,7 @@ export function LeadOutreachSection({
                   : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${contactInfo.loading ? "bg-[var(--text-tertiary)] animate-pulse" : hasContact ? "bg-[var(--score-good)]" : "bg-[var(--text-tertiary)]"}`} />
+              <span className={`h-1.5 w-1.5 rounded-full ${contactInfo.loading ? `bg-[var(--text-tertiary)]${shouldReduce ? "" : " animate-pulse"}` : hasContact ? "bg-[var(--score-good)]" : "bg-[var(--text-tertiary)]"}`} />
               <ChannelIcon className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{channel.label}</span>
             </button>
@@ -225,7 +227,7 @@ export function LeadOutreachSection({
               Generate (analyse first)
             </div>
           )}
-          {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className="h-1 w-full bg-[var(--accent)]/60 animate-pulse"/></div>}
+          {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className={`h-1 w-full bg-[var(--accent)]/60${shouldReduce ? "" : " animate-pulse"}`}/></div>}
         </div>
         </div>
       </div>

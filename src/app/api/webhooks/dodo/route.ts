@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     // 1. Try metadata.user_id (passed from checkout session)
     if (sub.metadata?.user_id) {
       userId = sub.metadata.user_id;
-      console.log(`[DODO/WEBHOOK] Found user via metadata.user_id=${userId} for subscription ${sub.subscription_id}`);
+      console.log(`[DODO/WEBHOOK] Found user via metadata for subscription ${sub.subscription_id}`);
     }
 
     // 2. Try existing dodo_subscription_id in DB
@@ -66,6 +66,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Try customer email lookup
+    // NOTE: We do NOT log whether the email was found or not. The response is
+    // identical in both cases to prevent email existence enumeration attacks.
     if (!userId && sub.customer?.email) {
       const result2 = await admin
         .from("profiles")
@@ -74,12 +76,13 @@ export async function POST(req: NextRequest) {
         .maybeSingle() as { data: { id: string } | null };
       if (result2.data) {
         userId = result2.data.id;
-        console.log(`[DODO/WEBHOOK] Found user via email ${sub.customer.email} for subscription ${sub.subscription_id}`);
       }
     }
 
     if (!userId) {
-      console.warn(`[DODO/WEBHOOK] Could not resolve user for subscription ${sub.subscription_id}`);
+      // Return the same generic response regardless of why the user wasn't found.
+      // This ensures an attacker cannot distinguish between "email not registered"
+      // and "subscription not linked" by observing different error messages or codes.
       return NextResponse.json({ received: true });
     }
 
@@ -105,7 +108,7 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId);
       if (error) console.error("[DODO/WEBHOOK] Cancel update error", error);
       else if (cappedUsed < currentUsed) {
-        console.log(`[DODO/WEBHOOK] Capped audits_used from ${currentUsed} to ${cappedUsed} on downgrade for user=${userId}`);
+        console.log(`[DODO/WEBHOOK] Capped audits_used from ${currentUsed} to ${cappedUsed} on downgrade for user=...${userId.slice(-4)}`);
       }
     } else if (isActive && productInfo) {
       const now = new Date();
@@ -120,7 +123,7 @@ export async function POST(req: NextRequest) {
         credits_reset_at: resetAt,
       }, { onConflict: "user_id" });
       if (error) console.error("[DODO/WEBHOOK] Upsert error", error);
-      else console.log(`[DODO/WEBHOOK] Subscription updated: user=${userId} tier=${productInfo.tier}`);
+      else console.log(`[DODO/WEBHOOK] Subscription updated: user=...${userId.slice(-4)} tier=${productInfo.tier}`);
     }
   }
 

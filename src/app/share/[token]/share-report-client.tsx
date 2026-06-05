@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCountUp } from "@/lib/shared-hooks";
 import { motion } from "framer-motion";
+import type { AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -20,35 +21,16 @@ type ShareData = {
     audited_at: string | null;
     design_analyzed_at: string | null;
   };
-  mobileAudit: Record<string, unknown> | null;
-  desktopAudit: Record<string, unknown> | null;
-  mobileDesign: Record<string, unknown> | null;
-  desktopDesign: Record<string, unknown> | null;
+  mobileAudit: AuditRow | null;
+  desktopAudit: AuditRow | null;
+  mobileDesign: DesignAnalysisRow | null;
+  desktopDesign: DesignAnalysisRow | null;
 };
 
 // ── Count Up ──────────────────────────────────────────────────────────────────
 
 function CountUp({ value, duration = 800 }: { value: number | null; duration?: number }) {
-  const [display, setDisplay] = useState(0);
-  const done = useRef(false);
-
-  useEffect(() => {
-    if (value === null) return;
-    if (done.current) { setDisplay(value); return; }
-    done.current = true;
-    const start = performance.now();
-    const from = 0;
-    const diff = value - from;
-    function tick(now: number) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(from + diff * eased));
-      if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }, [value, duration]);
-
+  const { display } = useCountUp(value ?? 0, duration);
   if (value === null) return <span className="tabular-nums">—</span>;
   return <span className="tabular-nums">{display}</span>;
 }
@@ -162,8 +144,8 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
   const { business, mobileAudit, desktopAudit, mobileDesign, desktopDesign } = data;
   const overallScore = business.performance_score ?? business.design_score;
   const issues = [
-    ...((mobileDesign?.issues as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
-    ...((desktopDesign?.issues as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
+    ...((mobileDesign?.issues as unknown as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
+    ...((desktopDesign?.issues as unknown as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
   ].slice(0, 5);
 
   return (
@@ -294,8 +276,8 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h2>
               <p className="mb-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                 {getDesignSummary(
-                  mobileDesign?.issues as { title: string; detail: string }[] | undefined,
-                  desktopDesign?.issues as { title: string; detail: string }[] | undefined,
+                  mobileDesign?.issues as unknown as { title: string; detail: string }[] | undefined,
+                  desktopDesign?.issues as unknown as { title: string; detail: string }[] | undefined,
                 )}
               </p>
               <ul className="space-y-2">

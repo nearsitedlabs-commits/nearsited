@@ -1,18 +1,10 @@
 /**
  * Check current DB state for billing readiness using Supabase REST API.
  */
-import { readFileSync } from "fs";
+import "./load-env.mjs";
 
-const envText = readFileSync(".env.local", "utf8");
-const envLines = envText.split("\n");
-function getEnv(key) {
-  const line = envLines.find((l) => l.trim().startsWith(key + "="));
-  if (!line) return null;
-  return line.split("=").slice(1).join("=").trim();
-}
-
-const SUPABASE_URL = getEnv("NEXT_PUBLIC_SUPABASE_URL");
-const SERVICE_KEY = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const headers = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` };
 
 async function restGet(path) {

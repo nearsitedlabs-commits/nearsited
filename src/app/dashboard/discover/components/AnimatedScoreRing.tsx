@@ -33,6 +33,7 @@ export function AnimatedScoreRing({
       score={score == null ? null : display}
       variant={variant}
       size={size}
+      noAnimate
     />
   );
 }

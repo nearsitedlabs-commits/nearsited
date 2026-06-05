@@ -8,7 +8,7 @@ import { businessTypes } from "@/lib/data/businessTypes";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
 import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { AnimatedScoreRing } from "./AnimatedScoreRing";
-import { ProgressPanel, ANALYSE_STEPS } from "./ProgressPanel";
+import { ProgressPanel } from "./ProgressPanel";
 import type { BusinessResult } from "./types";
 
 // ── Muted reason tags when no audit/design actions are available ──

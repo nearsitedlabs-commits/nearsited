@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { NextResponse } from "next/server";
+import { withAuth } from "@/lib/api/with-auth";
+import { validateUrl } from "@/lib/url-security";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { BusinessRow } from "@/lib/db-types";
+import { businessIdQuerySchema, contactInfoSchema } from "@/lib/validation";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -17,7 +20,6 @@ const FETCH_TIMEOUT_MS = 5_000;
 
 /**
  * Fetch a website's HTML and extract email addresses only.
- * Phone numbers come from Google Places API (discovery), not website scraping.
  */
 async function scrapeWebsiteForEmail(url: string): Promise<string | null> {
   try {
@@ -57,89 +59,82 @@ async function scrapeWebsiteForEmail(url: string): Promise<string | null> {
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const businessId = searchParams.get("businessId");
-
-    if (!businessId) {
-      return NextResponse.json({ error: "Missing businessId parameter" }, { status: 400 });
-    }
-
-    // Auth
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Rate limit: standard limit for contact info operations
-    const identifier = getRateLimitIdentifier(request, user.id);
-    const blocked = await checkRateLimit(request, rateLimiter, identifier);
-    if (blocked) return blocked;
-
-    // Fetch business — ensure user owns it
-    // Use * to handle columns that may not exist yet (contact_info)
-    const { data: business, error: bizError } = await supabase
-      .from("businesses")
-      .select("*")
-      .eq("id", businessId)
-      .eq("user_id", user.id)
-      .single();
-
-    if (bizError || !business) {
-      return NextResponse.json({ error: "Business not found" }, { status: 404 });
-    }
-
-    // Try to read cached contact_info (may not exist in DB yet)
-    let cachedContact: ContactInfo = { email: null, phone: null, scraped_at: null };
-    try {
-      const raw = (business as Record<string, unknown>).contact_info;
-      if (raw && typeof raw === "object") {
-        cachedContact = raw as ContactInfo;
-      }
-    } catch {
-      // column may not exist — that's fine
-    }
-
-    const hasCachedContact = cachedContact.email || cachedContact.phone;
-    const scrapedAt = cachedContact.scraped_at ? new Date(cachedContact.scraped_at) : null;
-    const isFresh = scrapedAt && (Date.now() - scrapedAt.getTime()) < 30 * 24 * 60 * 60 * 1000;
-
-    if (hasCachedContact && isFresh) {
-      return NextResponse.json({
-        email: cachedContact.email,
-        phone: cachedContact.phone,
-        scraped_at: cachedContact.scraped_at,
-      });
-    }
-
-    // Scrape website for email only (phone comes from Google Places via discover route)
-    let scrapedEmail: string | null = null;
-
-    const bizWebsite = (business as Record<string, unknown>).website as string | null;
-    if (bizWebsite) {
-      scrapedEmail = await scrapeWebsiteForEmail(bizWebsite);
-    }
-
-    // Phone comes from Google Places API — stored in businesses.phone by discover route
-    const bizPhone = (business as Record<string, unknown>).phone as string | null;
-    const merged: ContactInfo = {
-      email: scrapedEmail ?? cachedContact.email ?? null,
-      phone: bizPhone ?? cachedContact.phone ?? null,
-      scraped_at: new Date().toISOString(),
-    };
-
-    // Cache the result (fire-and-forget — don't block response)
-    import("@/lib/supabase/admin").then(({ createAdminClient }) => {
-      const adminClient = createAdminClient();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (adminClient.from("businesses") as any).update({ contact_info: merged }).eq("id", businessId).then().catch(() => {});
-    });
-
-    return NextResponse.json(merged);
-  } catch (error) {
-    console.error("[CONTACT-INFO] Unexpected error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+export const GET = withAuth(async ({ request, user, supabase }) => {
+  const { searchParams } = new URL(request.url);
+  
+  // ── Zod validation ──────────────────────────────────────────────────────
+  const queryParams = Object.fromEntries(searchParams.entries());
+  const parsed = businessIdQuerySchema.safeParse(queryParams);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
+      { status: 400 },
+    );
   }
-}
+  const { businessId } = parsed.data;
+
+  // Fetch business — ensure user owns it
+  const { data: business, error: bizError } = await supabase
+    .from("businesses")
+    .select("*")
+    .eq("id", businessId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (bizError || !business) {
+    return NextResponse.json({ error: "Business not found" }, { status: 404 });
+  }
+
+  // Try to read cached contact_info
+  let cachedContact: ContactInfo = { email: null, phone: null, scraped_at: null };
+  try {
+    const raw = (business as BusinessRow).contact_info;
+    if (raw && typeof raw === "object") {
+      cachedContact = raw as ContactInfo;
+    }
+  } catch {
+    // column may not exist
+  }
+
+  const hasCachedContact = cachedContact.email || cachedContact.phone;
+  const scrapedAt = cachedContact.scraped_at ? new Date(cachedContact.scraped_at) : null;
+  const isFresh = scrapedAt && (Date.now() - scrapedAt.getTime()) < 30 * 24 * 60 * 60 * 1000;
+
+  if (hasCachedContact && isFresh) {
+    return NextResponse.json({
+      email: cachedContact.email,
+      phone: cachedContact.phone,
+      scraped_at: cachedContact.scraped_at,
+    });
+  }
+
+  // Scrape website for email only
+  let scrapedEmail: string | null = null;
+
+  const bizWebsite = (business as BusinessRow).website as string | null;
+  if (bizWebsite) {
+    const validated = await validateUrl(bizWebsite);
+    if (validated) {
+      scrapedEmail = await scrapeWebsiteForEmail(validated.href);
+    }
+  }
+
+  const bizPhone = (business as BusinessRow).phone as string | null;
+  const merged: ContactInfo = {
+    email: scrapedEmail ?? cachedContact.email ?? null,
+    phone: bizPhone ?? cachedContact.phone ?? null,
+    scraped_at: new Date().toISOString(),
+  };
+
+  // Cache the result (fire-and-forget) with Zod validation
+  const parsedContact = contactInfoSchema.safeParse(merged);
+  if (parsedContact.success) {
+    const adminClient = createAdminClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    void (adminClient.from("businesses") as any).update({ contact_info: parsedContact.data }).eq("id", businessId);
+  } else {
+    console.warn("[CONTACT INFO] Skipping cache — validation failed:", parsedContact.error.issues.map((i) => i.message).join(", "));
+  }
+
+  return NextResponse.json(merged);
+});

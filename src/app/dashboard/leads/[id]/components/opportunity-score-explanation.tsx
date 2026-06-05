@@ -212,7 +212,7 @@ function DriverBar({ label, score, description }: Driver) {
 export function OpportunityScoreExplanation({
   websiteStatus,
   overallScore,
-  opportunityScore,
+  opportunityScore: _opportunityScore,
   reviewCount,
   rating,
   hasAudit,
@@ -263,7 +263,7 @@ export function OpportunityScoreExplanation({
 
         {/* Header row */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h3>
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Type tags */}

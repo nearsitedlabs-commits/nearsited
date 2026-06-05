@@ -5,29 +5,41 @@ import { useState, useEffect, useRef, useCallback } from "react";
 /**
  * Animated counter that eases from 0 to the target value.
  * Once the hook has fired once (SPA navigation) it snaps to value on subsequent renders.
+ * Returns `{ display, done }` where `done` is true when the animation completes.
  */
-export function useCountUp(value: number, duration = 600): number {
+export function useCountUp(value: number, duration = 600): { display: number; done: boolean } {
   const [display, setDisplay] = useState(0);
+  const [done, setDone] = useState(false);
   const hasRun = useRef(false);
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
     if (hasRun.current) {
       setDisplay(value);
+      setDone(true);
       return;
     }
     hasRun.current = true;
+    setDone(false);
     const start = performance.now();
-    const raf = requestAnimationFrame(function tick(now) {
+    const from = 0;
+    const diff = value - from;
+    function tick(now: number) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-      setDisplay(Math.round(eased * value));
-      if (progress < 1) requestAnimationFrame(tick);
-    });
-    return () => cancelAnimationFrame(raf);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(from + diff * eased));
+      if (progress >= 1) setDone(true);
+      else rafId.current = requestAnimationFrame(tick);
+    }
+    rafId.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId.current != null) cancelAnimationFrame(rafId.current);
+    };
   }, [value, duration]);
 
-  return display;
+  return { display, done };
 }
 
 /**

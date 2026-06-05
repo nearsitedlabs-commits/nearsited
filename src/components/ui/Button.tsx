@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/cn";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -42,11 +43,24 @@ const BASE =
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", icon, loading, disabled, children, ...props }, ref) => {
+    const prefersReduced = useReducedMotion();
+
+    const MotionTag = prefersReduced ? "button" : (motion.button as React.ComponentType<ButtonHTMLAttributes<HTMLButtonElement> & { whileHover?: object; whileTap?: object; transition?: object }>);
+
+    const motionProps = prefersReduced
+      ? {}
+      : {
+          whileHover: { scale: 1.02 },
+          whileTap: { scale: 0.98 },
+          transition: { duration: 0.15, ease: "easeOut" as const },
+        };
+
     return (
-      <button
+      <MotionTag
         ref={ref}
         disabled={disabled || loading}
         className={cn(BASE, VARIANT_STYLES[variant], className)}
+        {...motionProps}
         {...props}
       >
         {loading ? (
@@ -55,7 +69,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
         ) : null}
         {children && <span className={cn(variant === "icon" && "sr-only")}>{children}</span>}
-      </button>
+      </MotionTag>
     );
   },
 );

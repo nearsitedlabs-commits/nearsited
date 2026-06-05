@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
+import { motion, useReducedMotion } from "framer-motion";
 
 const TRADITIONAL_CONS = [
   "No way to find businesses that have no website at all",
@@ -26,7 +27,17 @@ const NEARSITED_PROS = [
   "From search to pitch-ready lead in under 2 minutes",
 ];
 
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.4, delay, ease: [0.25, 0.1, 0.25, 1] as const },
+});
+
 export function WhyNearsitedSection() {
+  const prefersReducedMotion = useReducedMotion();
+  const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
+
   return (
     <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
@@ -40,40 +51,44 @@ export function WhyNearsitedSection() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {/* Traditional */}
-          <Card variant="default" padding="lg" className="border-[var(--score-high)]/20">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
-                <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+          <motion.div {...anim(0)}>
+            <Card variant="default" padding="lg" className="border-[var(--score-high)]/20">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
+                  <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+                </div>
+                <h3 className="text-base font-medium text-[var(--text-primary)]">Traditional prospecting</h3>
               </div>
-              <h3 className="text-base font-medium text-[var(--text-primary)]">Traditional prospecting</h3>
-            </div>
-            <ul className="space-y-3">
-              {TRADITIONAL_CONS.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
-                  <span className="mt-0.5 shrink-0 text-[var(--score-high)] font-bold">✕</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+              <ul className="space-y-3">
+                {TRADITIONAL_CONS.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                    <span className="mt-0.5 shrink-0 text-[var(--score-high)] font-bold">✕</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
 
           {/* Nearsited */}
-          <Card variant="default" padding="lg" className="border-[var(--accent)]/30">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-tint)]">
-                <Zap className="h-4 w-4 text-[var(--accent)]" />
+          <motion.div {...anim(0.1)}>
+            <Card variant="default" padding="lg" className="border-[var(--accent)]/30">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-tint)]">
+                  <Zap className="h-4 w-4 text-[var(--accent)]" />
+                </div>
+                <h3 className="text-base font-medium text-[var(--text-primary)]">Nearsited</h3>
               </div>
-              <h3 className="text-base font-medium text-[var(--text-primary)]">Nearsited</h3>
-            </div>
-            <ul className="space-y-3">
-              {NEARSITED_PROS.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+              <ul className="space-y-3">
+                {NEARSITED_PROS.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Lead type badges */}
@@ -82,26 +97,34 @@ export function WhyNearsitedSection() {
             Four types of website opportunity — all found in one search
           </p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-high)]" />
-              <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
-              <span className="text-xs text-[var(--text-tertiary)]">— biggest opportunity</span>
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-2.5">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" />
-              <span className="text-sm font-medium text-amber-400">Social Only</span>
-              <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-4 py-2.5">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--badge-indigo-text)]" />
-              <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
-              <span className="text-xs text-[var(--text-tertiary)]">— dependent on third-party</span>
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-4 py-2.5">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
-              <span className="text-sm font-medium text-[var(--accent)]">Weak Website</span>
-              <span className="text-xs text-[var(--text-tertiary)]">— redesign opportunity</span>
-            </div>
+            <motion.div {...anim(0)}>
+              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-high)]" />
+                <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
+                <span className="text-xs text-[var(--text-tertiary)]">— biggest opportunity</span>
+              </div>
+            </motion.div>
+            <motion.div {...anim(0.05)}>
+              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-4 py-2.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-mid)]" />
+                <span className="text-sm font-medium text-[var(--score-mid)]">Social Only</span>
+                <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
+              </div>
+            </motion.div>
+            <motion.div {...anim(0.1)}>
+              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-4 py-2.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--badge-indigo-text)]" />
+                <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
+                <span className="text-xs text-[var(--text-tertiary)]">— dependent on third-party</span>
+              </div>
+            </motion.div>
+            <motion.div {...anim(0.15)}>
+              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-4 py-2.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
+                <span className="text-sm font-medium text-[var(--accent)]">Weak Website</span>
+                <span className="text-xs text-[var(--text-tertiary)]">— redesign opportunity</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

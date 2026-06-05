@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, Loader2, MapPin, RefreshCw, TrendingUp } from 
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
+import { safeHref } from "@/lib/url-security";
 
 type LeadHeroSectionProps = {
   biz: {
@@ -65,7 +66,7 @@ export function LeadHeroSection({
               </a>
             )}
             {biz.website && (
-              <a href={biz.website} target="_blank" rel="noreferrer"
+              <a href={safeHref(biz.website) ?? "#"} target="_blank" rel="noreferrer"
                 className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
                 <ExternalLink className="h-3.5 w-3.5" /> Website
               </a>

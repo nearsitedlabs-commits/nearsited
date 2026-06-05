@@ -5,8 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { ArrowLeft, ExternalLink, Phone, Target, Search } from "lucide-react";
-import type { WebsiteStatus } from "@/lib/types";
-import { PIPELINE_BADGE_STYLES, PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
+import type { WebsiteStatus } from "@/lib/db-types";
+import { PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { detectLeadWorkflow } from "@/lib/lead-types";
 import { computeOpportunityScore } from "@/lib/scoring";
 

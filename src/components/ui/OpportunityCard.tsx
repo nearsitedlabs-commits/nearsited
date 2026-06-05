@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { MapPin, ExternalLink, Zap, TrendingUp, ArrowUp } from "lucide-react";
-import type { WebsiteStatus } from "@/lib/types";
+import type { WebsiteStatus } from "@/lib/db-types";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { opportunityInsight, type OpportunityInsight } from "@/lib/opportunity-insights";
 import { computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
 import { useMemo } from "react";
+import { FadeUp } from "@/lib/motion";
+import { useReducedMotion, motion } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -114,6 +116,8 @@ export function OpportunityCard({
   showActions = true,
   className = "",
 }: OpportunityCardProps) {
+  const prefersReduced = useReducedMotion();
+
   // Compute the effective score (use the best available)
   const effectiveScore = useMemo(() => {
     return lead.performance_score ?? lead.design_score ?? null;
@@ -139,7 +143,7 @@ export function OpportunityCard({
 
   const detailUrl = `${detailHref}/${lead.id}`;
 
-  return (
+  const cardContent = (
     <div
       className={`group relative w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
     >
@@ -247,5 +251,13 @@ export function OpportunityCard({
         )}
       </div>
     </div>
+  );
+
+  if (prefersReduced) return cardContent;
+
+  return (
+    <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.15, ease: [0.25, 0.1, 0.25, 1] }}>
+      <FadeUp>{cardContent}</FadeUp>
+    </motion.div>
   );
 }

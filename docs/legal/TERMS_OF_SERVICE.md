@@ -18,15 +18,15 @@ You are responsible for maintaining the confidentiality of your account credenti
 
 ---
 
-## 3. Payments & Subscriptions
+## 3. Beta Access & Future Billing
 
-**Free trial:** New accounts receive a 14-day free trial of the Starter plan (50 audits, 3 city searches, unlimited pitches, single user). No payment information is required during the trial.
+**Free beta:** Nearsited is currently in free beta. All features are available at no charge during this period. No payment information is required to create an account or use the service.
 
-**Billing:** After your trial ends, your subscription automatically converts to the paid Starter plan at $19/month. You may upgrade to the Agency plan ($49/month) at any time during or after the trial.
+**Paid plans:** Paid subscription plans are in development. When paid plans launch, we will notify registered users by email with at least 30 days notice before any charges apply. You will never be charged without explicit opt-in.
 
-**Cancellation:** You may cancel your subscription at any time before the trial ends with no charge. After the trial, cancellation stops future billing; access continues until the end of the current billing period. No partial refunds are issued.
+**Planned pricing:** Indicative pricing of $19/month (Starter) and $49/month (Agency) is shown on the pricing page for planning purposes. Final pricing may change before billing launches. Early beta users will receive preferential pricing.
 
-**Price changes:** Your price is locked for 12 months from the date you subscribe. After that, we may change prices with 30 days notice.
+**Price lock:** Once billing launches, your first-year price will be locked. After 12 months, we may change prices with 30 days notice.
 
 ---
 
@@ -61,6 +61,12 @@ We may update these terms from time to time. Material changes will be communicat
 
 ---
 
-## 8. Contact
+## 8. Governing Law
+
+These terms are governed by the laws of the Republic of India. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts in New Delhi, India. If you are a consumer in the European Union, nothing in this section affects your statutory rights under EU law.
+
+---
+
+## 9. Contact
 
 For questions about these terms: **nearsitedlabs@gmail.com**

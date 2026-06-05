@@ -1,6 +1,10 @@
+"use client";
+
 import { type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Card, type CardVariant } from "./Card";
+import { FadeUp } from "@/lib/motion";
+import { useReducedMotion } from "framer-motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -49,7 +53,9 @@ export function MetricCard({
   className,
   onClick,
 }: MetricCardProps) {
-  return (
+  const prefersReduced = useReducedMotion();
+
+  const card = (
     <Card
       variant={onClick ? "interactive" : variant}
       padding="md"
@@ -101,5 +107,9 @@ export function MetricCard({
       <div className="mt-0.5 text-xs text-[var(--text-tertiary)]">{label}</div>
     </Card>
   );
+
+  if (prefersReduced) return card;
+
+  return <FadeUp>{card}</FadeUp>;
 }
 MetricCard.displayName = "MetricCard";

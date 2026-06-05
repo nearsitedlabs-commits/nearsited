@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { pipelinePostSchema, pipelinePatchSchema, pipelineDeleteSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessId, website, audit, design } = body;
-    const normalizedWebsite = typeof website === "string" ? website.trim() : undefined;
-
-    if (!businessId && !normalizedWebsite) {
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const parsed = pipelinePostSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing required field: businessId or website" },
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
         { status: 400 },
       );
     }
+    const { businessId, website, audit, design } = parsed.data;
+    const normalizedWebsite = website;
 
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -125,8 +127,7 @@ export async function POST(request: NextRequest) {
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
 
-    const adminClient = createAdminClient();
-    const { error: insertError } = await (adminClient.from("pipeline") as ReturnType<typeof adminClient.from>).insert({
+    const { error: insertError } = await supabase.from("pipeline").insert({
       id,
       user_id: user.id,
       business_id: targetBusinessId,
@@ -159,23 +160,16 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessId, status, pipelineId } = body;
-
-    // Validate required fields — accept businessId (looked up from client) or pipelineId (direct)
-    if (!status) {
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const parsed = pipelinePatchSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing required field: status" },
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
         { status: 400 },
       );
     }
-
-    const validStatuses = ["new_lead", "analysed", "pitch_generated", "contacted", "in_conversation", "won", "lost"];
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` },
-        { status: 400 },
-      );
-    }
+    const { businessId, status, pipelineId } = parsed.data;
 
     const supabase = await createClient();
 
@@ -231,8 +225,7 @@ export async function PATCH(request: NextRequest) {
 
     // Create a pipeline row when one does not exist yet for this business and user.
     const id = crypto.randomUUID();
-    const patchAdminClient = createAdminClient();
-    const { error: insertError } = await (patchAdminClient.from("pipeline") as ReturnType<typeof patchAdminClient.from>).insert({
+    const { error: insertError } = await supabase.from("pipeline").insert({
       id,
       user_id: user.id,
       business_id: businessId,
@@ -262,14 +255,16 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
-    const { businessId, pipelineId } = body;
-
-    if (!businessId && !pipelineId) {
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const parsed = pipelineDeleteSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing required field: businessId or pipelineId" },
+        { error: "Validation failed", details: parsed.error.issues.map((i) => i.message) },
         { status: 400 },
       );
     }
+    const { businessId, pipelineId } = parsed.data;
 
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();

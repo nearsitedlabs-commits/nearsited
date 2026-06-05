@@ -102,7 +102,7 @@ const cardItem: Variants = {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-export default function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
+export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const shouldReduce = useReducedMotion();
 

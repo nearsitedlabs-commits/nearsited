@@ -40,11 +40,11 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
       .update({ audits_used: 0, credits_reset_at: nextReset })
       .eq("user_id", userId);
     row = { ...row, audits_used: 0, credits_reset_at: nextReset };
-    console.log(`[CREDITS] Monthly reset user=${userId}`);
+    console.log(`[CREDITS] Monthly reset user=...${userId.slice(-4)}`);
   }
 
   const allowed = row.audits_used < row.audits_limit;
-  console.log(`[CREDITS] check user=${userId} used=${row.audits_used} limit=${row.audits_limit} allowed=${allowed}`);
+  console.log(`[CREDITS] check user=...${userId.slice(-4)} used=${row.audits_used} limit=${row.audits_limit} allowed=${allowed}`);
   return { allowed, audits_used: row.audits_used, audits_limit: row.audits_limit };
 }
 
@@ -61,20 +61,20 @@ export async function deductCredit(userId: string): Promise<void> {
     const newValue = current + 1;
 
     // Optimistic update: only succeeds if audits_used hasn't changed since we read it
-    const { error, count } = await subTable()
+    const { error } = await subTable()
       .update({ audits_used: newValue })
       .eq("user_id", userId)
       .eq("audits_used", current)
       .select("audits_used");
 
     if (!error) {
-      console.log(`[CREDITS] deducted user=${userId} now=${newValue}`);
+      console.log(`[CREDITS] deducted user=...${userId.slice(-4)} now=${newValue}`);
       return;
     }
 
     // If the update matched 0 rows (race), retry
-    console.warn(`[CREDITS] retry ${attempt + 1}/${MAX_RETRIES} for user=${userId}: concurrent modification detected`);
+    console.warn(`[CREDITS] retry ${attempt + 1}/${MAX_RETRIES} for user=...${userId.slice(-4)}: concurrent modification detected`);
   }
 
-  console.error(`[CREDITS] failed to deduct credit for user=${userId} after ${MAX_RETRIES} attempts`);
+  console.error(`[CREDITS] failed to deduct credit for user=...${userId.slice(-4)} after ${MAX_RETRIES} attempts`);
 }
