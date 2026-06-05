@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { LandingNav } from "@/components/landing/LandingNav";
+import { LandingScrollNav } from "@/components/landing/LandingScrollNav";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
@@ -27,6 +28,7 @@ export default function LandingPageClient() {
   return (
     <div className="relative min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <LandingNav navigate={navigate} />
+      <LandingScrollNav />
       <main className="pt-[var(--nav-height,80px)]">
         <LandingHero navigate={navigate} />
         <TrustBar />

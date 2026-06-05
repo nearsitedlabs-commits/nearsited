@@ -44,7 +44,7 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="border-t border-[var(--border)] py-24">
+    <section id="usecases" className="scroll-mt-20 border-t border-[var(--border)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Who it&rsquo;s for</SectionLabel>
@@ -80,8 +80,8 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
             {USE_CASES.map((uc) => {
               const Icon = uc.icon;
               return (
-                <FadeUp key={uc.title}>
-                  <Card variant="interactive" padding="lg" className="flex flex-col">
+                <FadeUp key={uc.title} className="h-full">
+                  <Card variant="interactive" padding="lg" className="h-full flex flex-col">
                     <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-tint)] text-[var(--accent)]">
                       <Icon className="h-5 w-5" />
                     </div>

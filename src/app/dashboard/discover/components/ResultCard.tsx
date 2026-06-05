@@ -91,11 +91,11 @@ export function ResultCard({
           },
         },
       }}
-      className="relative w-full flex items-center gap-4 px-5 py-0 min-h-[52px] transition-colors duration-150 hover:bg-[var(--bg-elevated)] cursor-default"
+      className="relative w-full flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 px-4 md:px-5 py-3 md:py-0 min-h-[auto] md:min-h-[52px] transition-colors duration-150 hover:bg-[var(--bg-elevated)] cursor-default"
     >
       {/* Thin accent bar — analysis or outreach-flagged */}
       <div
-        className={`w-[2px] self-stretch flex-shrink-0 ${
+        className={`hidden md:block w-[2px] self-stretch flex-shrink-0 ${
           isAnalyseLoading || business.flagged_for_outreach
             ? "bg-[var(--accent)]"
             : "bg-transparent"
@@ -104,7 +104,7 @@ export function ResultCard({
 
       {/* Score ring — spinner during analysis, estimate/verified otherwise */}
       {isAnalyseLoading ? (
-        <div className="flex items-center justify-center w-[52px] h-[52px] flex-shrink-0">
+        <div className="flex items-center justify-center w-10 h-10 md:w-[52px] md:h-[52px] flex-shrink-0">
           <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
         </div>
       ) : (() => {
@@ -133,13 +133,16 @@ export function ResultCard({
         return <AnimatedScoreRing score={est} size={52} variant="estimate" />;
       })()}
 
-      {/* Website-status badge */}
-      <div className="w-[90px] flex-shrink-0 flex items-center">
+      {/* Website-status badge — mobile: next to score ring; desktop: own column */}
+      <div className="md:hidden flex-shrink-0">
+        <WebsiteBadge status={business.website_status} />
+      </div>
+      <div className="hidden md:flex w-[90px] flex-shrink-0 items-center">
         <WebsiteBadge status={business.website_status} />
       </div>
 
       {/* Name + meta */}
-      <div className="flex-1 min-w-0 py-3.5">
+      <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--text-primary)] truncate leading-snug">
             {business.name}
@@ -166,8 +169,8 @@ export function ResultCard({
         </div>
       </div>
 
-      {/* Icon links */}
-      <div className="flex-shrink-0 w-[168px] flex items-center justify-end gap-3">
+      {/* Icon links — desktop only */}
+      <div className="hidden md:flex flex-shrink-0 w-[168px] items-center justify-end gap-3">
         {business.flagged_for_outreach && (
           <span
             title={
@@ -216,11 +219,8 @@ export function ResultCard({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div
-        className="flex-shrink-0 flex items-center justify-end gap-2"
-        style={{ minWidth: "216px" }}
-      >
+      {/* Action buttons — full-width on mobile (forces wrap), fixed on desktop */}
+      <div className="flex items-center gap-2 w-full md:w-auto md:flex-shrink-0 md:min-w-[216px] md:justify-end">
         {/* Analyse Opportunity */}
         {(() => {
           if (isAnalyseLoading)

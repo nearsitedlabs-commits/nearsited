@@ -94,7 +94,7 @@ export const dataClearScopeSchema = z.enum([
 export const discoverSchema = z.object({
   city: cityNameSchema,
   businessType: businessTypeSchema,
-  radiusMeters: z.coerce.number().int().min(100).max(50000).optional(),
+  radiusMeters: z.coerce.number().int().min(100).max(100000).optional(),
 });
 
 /**

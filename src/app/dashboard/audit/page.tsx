@@ -487,9 +487,11 @@ export default function AuditPage() {
   };
 
   const handleRun = async (urlOverride?: string) => {
-    const trimmedUrl = (urlOverride ?? url).trim();
+    let trimmedUrl = (urlOverride ?? url).trim();
     if (!trimmedUrl) return;
-    if (urlOverride) setUrl(urlOverride);
+    if (!/^https?:\/\//i.test(trimmedUrl)) trimmedUrl = "https://" + trimmedUrl;
+    if (urlOverride) setUrl(trimmedUrl);
+    else setUrl(trimmedUrl);
 
     async function readStream(
       response: Response,
@@ -695,7 +697,7 @@ export default function AuditPage() {
         body: JSON.stringify({
           website: url.trim(),
           audit: auditResult,
-          design: designResult,
+          ...(designResult ? { design: designResult } : {}),
         }),
       });
 
@@ -703,7 +705,8 @@ export default function AuditPage() {
 
       if (!res.ok) {
         if (res.status === 400) {
-          throw new Error("Cannot generate pitch — no audit or design data available. Run the audit first.");
+          const details = Array.isArray(data?.details) ? ` (${data.details.join(", ")})` : "";
+          throw new Error(`Cannot generate pitch — invalid request${details}. Run the audit first.`);
         }
         throw new Error(data.error ?? "AI service is busy. Please try again.");
       }
@@ -732,7 +735,7 @@ export default function AuditPage() {
         body: JSON.stringify({
           website: url.trim(),
           audit: auditResult,
-          design: designResult,
+          ...(designResult ? { design: designResult } : {}),
         }),
       });
 
@@ -843,10 +846,10 @@ export default function AuditPage() {
           </div>
 
           {/* URL Input Card */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-            <div className="flex gap-3">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-5">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative flex-1">
-                <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
+                <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
                 <input
                   type="url"
                   value={url}
@@ -854,26 +857,26 @@ export default function AuditPage() {
                   onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && handleRun()}
                   placeholder="Paste a business website URL"
                   autoFocus
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] py-3 pl-10 pr-4 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                 />
               </div>
               <button
                 onClick={() => handleRun()}
                 disabled={running || !url.trim()}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-3 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
                 <Search className="h-4 w-4" />
                 Analyse Website
               </button>
             </div>
             {/* Example URL chips */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-[var(--text-tertiary)]">Try:</span>
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
+              <span className="text-xs font-medium text-[var(--text-secondary)]">Try:</span>
               {["lawfirmdubai.com", "dentalcaretoronto.ca", "accountingbrisbane.com.au"].map((ex) => (
                 <button
                   key={ex}
                   onClick={() => setUrl(ex)}
-                  className="cursor-pointer rounded-md border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-0.5 font-mono text-xs text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                  className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-1 text-xs text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
                 >
                   {ex}
                 </button>

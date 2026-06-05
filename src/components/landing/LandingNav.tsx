@@ -29,9 +29,12 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
             <li><a href="#faq" className="relative transition hover:text-[var(--text-primary)]">FAQ</a></li>
           </ul>
 
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate("/login")}>Sign in</Button>
-            <Button variant="primary" onClick={() => navigate("/signup")}>Get started free</Button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>Sign in</Button>
+            <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/signup")}>
+              <span className="sm:hidden">Get started</span>
+              <span className="hidden sm:inline">Get started free</span>
+            </Button>
           </div>
         </div>
       </nav>
@@ -79,9 +82,12 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
           </li>
         </ul>
 
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate("/login")}>Sign in</Button>
-          <Button variant="primary" onClick={() => navigate("/signup")}>Get started free</Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>Sign in</Button>
+          <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/signup")}>
+            <span className="sm:hidden">Get started</span>
+            <span className="hidden sm:inline">Get started free</span>
+          </Button>
         </div>
       </div>
     </motion.nav>

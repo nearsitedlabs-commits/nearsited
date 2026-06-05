@@ -2,6 +2,7 @@
 
 import { Info, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 const SORT_OPTIONS = [
   { value: "opportunity-desc", label: "Estimated Opportunity" },
@@ -51,13 +52,9 @@ export function ResultsFilterBar({
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-semibold text-[var(--accent)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
           {flaggedCount} flagged for outreach
-          <span className="relative group inline-flex items-center">
+          <Tooltip content="Businesses are flagged as outreach candidates when they have no website, rely only on social media or a third-party platform page, or score as a high opportunity after analysis.">
             <Info className="size-3 cursor-help opacity-60" />
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-surface-3)] text-[var(--text-primary)] text-xs rounded-xl px-3 py-2.5 w-64 shadow-xl z-50 leading-relaxed pointer-events-none">
-              Businesses are flagged as outreach candidates when they have no website, rely only on social media or a third-party platform page, or score as a high opportunity after analysis.
-              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-surface-3)]" />
-            </div>
-          </span>
+          </Tooltip>
         </span>
       )}
 

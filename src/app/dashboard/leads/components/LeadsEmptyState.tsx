@@ -34,6 +34,11 @@ const EMPTY_MESSAGES: Record<TabFilter, { icon: typeof Compass; title: string; d
     title: "No flagged leads",
     description: "Leads flagged for outreach will appear here.",
   },
+  pipeline_in: {
+    icon: Target,
+    title: "No pipeline leads",
+    description: "Add discovered opportunities to your pipeline to track them here.",
+  },
   pipeline_prospect: {
     icon: Target,
     title: "No prospects yet",

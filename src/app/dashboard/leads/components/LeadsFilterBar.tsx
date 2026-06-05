@@ -2,7 +2,7 @@ import { Search, Filter } from "lucide-react";
 import { FadeUp } from "@/lib/motion";
 import type { FilterState } from "@/lib/filters";
 import type { OpportunityTab, PipelineTab } from "./types";
-import { OPPORTUNITY_FILTER_OPTIONS, PIPELINE_FILTER_OPTIONS } from "./types";
+import { OPPORTUNITY_FILTER_OPTIONS } from "./types";
 
 type Props = {
   filters: FilterState;
@@ -55,19 +55,16 @@ export function LeadsFilterBar({
 
         <div className="hidden h-5 w-px bg-[var(--border)] sm:block" />
 
-        {PIPELINE_FILTER_OPTIONS.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => onPipelineTabClick(tab.value)}
-            className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-              activePipelineTab === tab.value
-                ? "bg-[var(--accent)] text-white"
-                : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <button
+          onClick={() => onPipelineTabClick(activePipelineTab === "all_pipeline" ? "pipeline_in" : "all_pipeline")}
+          className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+            activePipelineTab !== "all_pipeline"
+              ? "bg-[var(--accent)] text-white"
+              : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]"
+          }`}
+        >
+          Pipeline
+        </button>
 
         <button
           onClick={onOpenFilterDrawer}

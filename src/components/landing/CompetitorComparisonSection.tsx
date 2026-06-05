@@ -69,63 +69,72 @@ export function CompetitorComparisonSection({
         </SectionSub>
       </div>
 
-      {/* Comparison table */}
-      <div className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
-        {/* Table header */}
+      {/* Comparison table — desktop */}
+      <div className="mx-auto mt-12 max-w-4xl hidden md:block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
         <div className="grid grid-cols-3 gap-0 border-b border-[var(--border)] bg-[var(--bg-elevated)]">
-          <div className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-            Task
-          </div>
-          <div className="border-x border-[var(--border)] px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
-            Manual Process
-          </div>
-          <div className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
-            Nearsited
-          </div>
+          <div className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">Task</div>
+          <div className="border-x border-[var(--border)] px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-tertiary)]">Manual Process</div>
+          <div className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">Nearsited</div>
         </div>
-
-        {/* Table rows */}
         <StaggerContainer>
-        {ROWS.map((row, i) => (
-          <motion.div
-            key={row.task}
-            variants={fadeUpVariants}
-            className={`grid grid-cols-3 gap-0 ${
-              i < ROWS.length - 1 ? "border-b border-[var(--border)]" : ""
-            }`}
-          >
-            <div className="flex items-center gap-3 px-5 py-4">
-              <div
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-                  row.advantage === "check"
-                    ? "bg-[var(--accent)]/10 text-[var(--accent)]"
-                    : "bg-[var(--score-high)]/10 text-[var(--score-high)]"
-                }`}
-              >
-                {row.advantage === "check" ? (
+          {ROWS.map((row, i) => (
+            <motion.div
+              key={row.task}
+              variants={fadeUpVariants}
+              className={`grid grid-cols-3 gap-0 ${i < ROWS.length - 1 ? "border-b border-[var(--border)]" : ""}`}
+            >
+              <div className="flex items-center gap-3 px-5 py-4">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)]">
                   <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <X className="h-3.5 w-3.5" />
-                )}
+                </div>
+                <span className="text-sm font-medium text-[var(--text-primary)]">{row.task}</span>
               </div>
-              <span className="text-sm font-medium text-[var(--text-primary)]">
-                {row.task}
-              </span>
-            </div>
-            <div className="flex items-center border-x border-[var(--border)] px-5 py-4">
-              <span className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-                <X className="h-3.5 w-3.5 text-[var(--score-high)]" />
-                {row.manual}
-              </span>
-            </div>
-            <div className="flex items-center px-5 py-4">
-              <span className="flex items-center gap-2 text-sm font-medium text-[var(--accent)]">
-                <Check className="h-3.5 w-3.5" />
-                {row.nearsited}
-              </span>
-            </div>
-          </motion.div>
-        ))}
+              <div className="flex items-center border-x border-[var(--border)] px-5 py-4">
+                <span className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+                  <X className="h-3.5 w-3.5 shrink-0 text-[var(--score-high)]" />{row.manual}
+                </span>
+              </div>
+              <div className="flex items-center px-5 py-4">
+                <span className="flex items-center gap-2 text-sm font-medium text-[var(--accent)]">
+                  <Check className="h-3.5 w-3.5 shrink-0" />{row.nearsited}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </StaggerContainer>
+      </div>
+
+      {/* Comparison cards — mobile */}
+      <div className="mx-auto mt-8 max-w-lg space-y-3 md:hidden">
+        <StaggerContainer>
+          {ROWS.map((row) => (
+            <motion.div
+              key={row.task}
+              variants={fadeUpVariants}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden"
+            >
+              <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/10">
+                  <Check className="h-3 w-3 text-[var(--accent)]" />
+                </div>
+                <span className="text-sm font-semibold text-[var(--text-primary)]">{row.task}</span>
+              </div>
+              <div className="grid grid-cols-2 divide-x divide-[var(--border)]">
+                <div className="px-4 py-3">
+                  <p className="mb-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Manual</p>
+                  <span className="flex items-start gap-1.5 text-sm text-[var(--text-secondary)]">
+                    <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--score-high)]" />{row.manual}
+                  </span>
+                </div>
+                <div className="px-4 py-3">
+                  <p className="mb-1.5 text-[10px] uppercase tracking-[0.1em] text-[var(--accent)]">Nearsited</p>
+                  <span className="flex items-start gap-1.5 text-sm font-medium text-[var(--accent)]">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" />{row.nearsited}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </StaggerContainer>
       </div>
 

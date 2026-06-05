@@ -37,7 +37,7 @@ const SORT_OPTIONS = [
   { value: "reviews_asc",  label: "Fewest Reviews" },
 ];
 
-const selectClass = "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] cursor-pointer";
+const selectClass = "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] cursor-pointer [font-family:var(--font-sans)]";
 const inputClass  = "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]";
 const labelClass  = "mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]";
 
@@ -228,7 +228,7 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
           className={`fixed bottom-0 left-0 right-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-[var(--border)] bg-[var(--bg-surface)] shadow-2xl transition-transform duration-300 ease-out ${mobileOpen ? "translate-y-0" : "translate-y-full"}`}
         >
           {/* Handle + header */}
-          <div className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--bg-surface)] px-4 py-3">
+          <div className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--bg-surface)] px-4 py-3">
             <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-[var(--border)]" />
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[var(--text-primary)]">
@@ -243,7 +243,7 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
           <FilterBody filters={filters} onChange={onChange} onReset={onReset} businessTypes={businessTypes} />
 
           {/* Apply button */}
-          <div className="sticky bottom-0 border-t border-[var(--border)] bg-[var(--bg-surface)] p-4">
+          <div className="sticky bottom-0 z-20 border-t border-[var(--border)] bg-[var(--bg-surface)] p-4">
             <button
               onClick={() => { onClose?.(); trackFilter("filter_applied"); }}
               className="w-full cursor-pointer rounded-lg bg-[var(--accent)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"

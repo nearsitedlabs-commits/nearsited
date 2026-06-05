@@ -65,7 +65,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Gym · Dubai Marina",
     url: "instagram.com/dubaifitness",
     category: "Fitness",
-    quality: 0,
+    quality: 78,
     reviews: 85,
     rating: 4.5,
     scoreBarData: [
@@ -94,7 +94,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Plumbing · Deira, Dubai",
     url: "No website — Google Business only",
     category: "Home Services",
-    quality: 0,
+    quality: 94,
     reviews: 42,
     rating: 4.7,
     scoreBarData: [
@@ -181,12 +181,12 @@ export default function OpportunityPreviewCard() {
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={2 * Math.PI * 40}
-                strokeDashoffset={ringOffset(SAMPLE_QUALITY || 85)}
+                strokeDashoffset={ringOffset(SAMPLE_QUALITY)}
                 style={{ strokeDashoffset: 2 * Math.PI * 40 /* start fully hidden */ }}
               />
             </svg>
             <span className="absolute text-xl font-bold text-[var(--text-primary)]">
-              {SAMPLE_QUALITY || "—"}
+              {SAMPLE_QUALITY > 0 ? SAMPLE_QUALITY : "—"}
             </span>
           </div>
           <div className="min-w-0">
@@ -246,7 +246,7 @@ export default function OpportunityPreviewCard() {
       <style>{`
         @keyframes ringDraw {
           to {
-            stroke-dashoffset: ${ringOffset(SAMPLE_QUALITY || 85)};
+            stroke-dashoffset: ${ringOffset(SAMPLE_QUALITY)};
           }
         }
         @keyframes barGrow {

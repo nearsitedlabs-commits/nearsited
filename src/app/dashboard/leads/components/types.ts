@@ -24,7 +24,7 @@ export type LeadRow = {
 };
 
 export type OpportunityTab = "all" | "no_website" | "has_website" | "social_platform" | "flagged";
-export type PipelineTab = "all_pipeline" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
+export type PipelineTab = "all_pipeline" | "pipeline_in" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
 export type TabFilter = OpportunityTab | PipelineTab;
 
 export const PAGE_SIZE = 25;

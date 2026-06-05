@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FadeIn, fadeUpVariants } from "@/lib/motion";
+import { CanvasBackground } from "@/components/ui/CanvasBackground";
 import { useState, useCallback } from "react";
 
 export function LandingFooter() {
@@ -23,7 +24,8 @@ export function LandingFooter() {
 
   return (
     <FadeIn>
-      <footer className="border-t border-[var(--border)] bg-[var(--bg-surface)] px-6 py-12 md:px-8">
+      <footer className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--bg-surface)] px-6 py-12 md:px-8">
+        <CanvasBackground />
         <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>

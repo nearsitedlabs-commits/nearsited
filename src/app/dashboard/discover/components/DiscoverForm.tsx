@@ -11,6 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import SearchableSelect from "@/components/ui/SearchableSelect";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { businessTypes } from "@/lib/data/businessTypes";
 import type { CityOption } from "@/lib/data/cities";
 
@@ -106,13 +107,9 @@ export function DiscoverForm({
                   ? `${(radiusMeters / 1000).toFixed(0)} km`
                   : `${radiusMeters} m`}
               </span>
-              <span className="relative group inline-flex items-center">
+              <Tooltip content="Radius is measured from the city center coordinates.">
                 <Info className="size-3 cursor-help opacity-60" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-surface-3)] text-[var(--text-primary)] text-xs font-normal normal-case tracking-normal rounded-xl px-3 py-2.5 w-64 shadow-xl z-50 leading-relaxed pointer-events-none">
-                  Radius is measured from the city center coordinates.
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-surface-3)]" />
-                </div>
-              </span>
+              </Tooltip>
             </label>
             <input
               type="range"

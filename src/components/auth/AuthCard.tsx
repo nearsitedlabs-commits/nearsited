@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
@@ -50,16 +51,8 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <Link href="/" className="inline-block">
-            <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--accent)]/25 bg-[var(--accent-tint)] transition-colors hover:bg-[var(--accent)]/20">
-              <svg width="22" height="13" viewBox="0 0 48 28" fill="none">
-                <rect x="1" y="4" width="18" height="18" rx="9" fill="none" stroke="var(--accent)" strokeWidth="2.2" />
-                <rect x="29" y="4" width="18" height="18" rx="9" fill="none" stroke="var(--accent)" strokeWidth="2.2" />
-                <line x1="19" y1="13" x2="29" y2="13" stroke="var(--accent)" strokeWidth="2.2" />
-                <circle cx="38" cy="13" r="2.5" fill="var(--accent-hover)" />
-                <circle cx="39.5" cy="11.5" r="0.8" fill="white" opacity="0.8" />
-              </svg>
-            </span>
+          <Link href="/" className="inline-block opacity-90 transition-opacity hover:opacity-100">
+            <Image src="/logo-icon.svg" alt="NearSited" width={48} height={28} className="mx-auto block" />
           </Link>
           <h1 className="mt-4 text-2xl font-medium tracking-[-0.04em] text-[var(--text-primary)]">
             {isLogin ? "Sign in" : "Find your first opportunity"}

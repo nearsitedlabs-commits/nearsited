@@ -140,14 +140,14 @@ export default function LeadsPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Dashboard
           </Link>
         </div>
-        <div className="mb-8 flex items-start justify-between">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunities</p>
             <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">Your opportunities</h1>
           </div>
           <Link
             href="/dashboard/discover"
-            className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+            className="self-start inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
           >
             <Search className="h-4 w-4" /> New Search
           </Link>

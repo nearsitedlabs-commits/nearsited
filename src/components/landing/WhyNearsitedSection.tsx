@@ -39,7 +39,7 @@ export function WhyNearsitedSection() {
   const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
 
   return (
-    <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+    <section id="why" className="scroll-mt-20 border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Why Nearsited</SectionLabel>
@@ -49,10 +49,10 @@ export function WhyNearsitedSection() {
           </SectionSub>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <div className="mt-12 grid gap-6 md:grid-cols-2 md:items-stretch">
           {/* Traditional */}
-          <motion.div {...anim(0)}>
-            <Card variant="default" padding="lg" className="border-[var(--score-high)]/20">
+          <motion.div {...anim(0)} className="h-full">
+            <Card variant="default" padding="lg" className="h-full border-[var(--score-high)]/20">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
                   <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
@@ -71,8 +71,8 @@ export function WhyNearsitedSection() {
           </motion.div>
 
           {/* Nearsited */}
-          <motion.div {...anim(0.1)}>
-            <Card variant="default" padding="lg" className="border-[var(--accent)]/30">
+          <motion.div {...anim(0.1)} className="h-full">
+            <Card variant="default" padding="lg" className="h-full border-[var(--accent)]/30">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-tint)]">
                   <Zap className="h-4 w-4 text-[var(--accent)]" />
@@ -97,32 +97,40 @@ export function WhyNearsitedSection() {
             Four types of website opportunity — all found in one search
           </p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <motion.div {...anim(0)}>
-              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-4 py-2.5">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-high)]" />
-                <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
-                <span className="text-xs text-[var(--text-tertiary)]">— biggest opportunity</span>
+            <motion.div {...anim(0)} className="h-full">
+              <div className="flex h-full flex-col justify-center gap-1 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high)]/8 px-3 py-3 sm:flex-row sm:items-center sm:gap-2.5 sm:px-4 sm:py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-high)]" />
+                  <span className="text-sm font-medium text-[var(--score-high)]">No Website</span>
+                </div>
+                <span className="text-xs text-[var(--text-tertiary)]">Biggest opportunity</span>
               </div>
             </motion.div>
-            <motion.div {...anim(0.05)}>
-              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-4 py-2.5">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-mid)]" />
-                <span className="text-sm font-medium text-[var(--score-mid)]">Social Only</span>
-                <span className="text-xs text-[var(--text-tertiary)]">— renting on social platforms</span>
+            <motion.div {...anim(0.05)} className="h-full">
+              <div className="flex h-full flex-col justify-center gap-1 rounded-xl border border-[var(--score-mid)]/30 bg-[var(--score-mid)]/8 px-3 py-3 sm:flex-row sm:items-center sm:gap-2.5 sm:px-4 sm:py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--score-mid)]" />
+                  <span className="text-sm font-medium text-[var(--score-mid)]">Social Only</span>
+                </div>
+                <span className="text-xs text-[var(--text-tertiary)]">Renting on social</span>
               </div>
             </motion.div>
-            <motion.div {...anim(0.1)}>
-              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-4 py-2.5">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--badge-indigo-text)]" />
-                <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
-                <span className="text-xs text-[var(--text-tertiary)]">— dependent on third-party</span>
+            <motion.div {...anim(0.1)} className="h-full">
+              <div className="flex h-full flex-col justify-center gap-1 rounded-xl border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-3 py-3 sm:flex-row sm:items-center sm:gap-2.5 sm:px-4 sm:py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--badge-indigo-text)]" />
+                  <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Platform Only</span>
+                </div>
+                <span className="text-xs text-[var(--text-tertiary)]">Dependent on third-party</span>
               </div>
             </motion.div>
-            <motion.div {...anim(0.15)}>
-              <div className="flex items-center gap-2.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-4 py-2.5">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
-                <span className="text-sm font-medium text-[var(--accent)]">Weak Website</span>
-                <span className="text-xs text-[var(--text-tertiary)]">— redesign opportunity</span>
+            <motion.div {...anim(0.15)} className="h-full">
+              <div className="flex h-full flex-col justify-center gap-1 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-3 py-3 sm:flex-row sm:items-center sm:gap-2.5 sm:px-4 sm:py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]" />
+                  <span className="text-sm font-medium text-[var(--accent)]">Weak Website</span>
+                </div>
+                <span className="text-xs text-[var(--text-tertiary)]">Redesign opportunity</span>
               </div>
             </motion.div>
           </div>

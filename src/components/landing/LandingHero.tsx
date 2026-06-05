@@ -6,37 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
-
-function AnimatedBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <motion.div
-        className="absolute -left-60 -top-60 h-[600px] w-[600px] rounded-full bg-[var(--accent)]/4 blur-[180px]"
-        animate={{
-          x: [0, 40, -20, 0],
-          y: [0, -30, 20, 0],
-        }}
-        transition={{
-          duration: 25,
-          ease: "easeInOut",
-          repeat: Infinity,
-        }}
-      />
-      <motion.div
-        className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-[var(--score-mid)]/3 blur-[160px]"
-        animate={{
-          x: [0, -30, 20, 0],
-          y: [0, 30, -20, 0],
-        }}
-        transition={{
-          duration: 30,
-          ease: "easeInOut",
-          repeat: Infinity,
-        }}
-      />
-    </div>
-  );
-}
+import { CanvasBackground } from "@/components/ui/CanvasBackground";
 
 export function LandingHero({ navigate }: { navigate: (href: string) => void }) {
   const easeOut = [0.25, 0.1, 0.25, 1] as const;
@@ -48,8 +18,8 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-20 pb-16 md:grid-cols-2 md:px-8 md:pt-24 md:pb-20 lg:px-10">
-      <AnimatedBackground />
+    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-64px)] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10">
+      <CanvasBackground />
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">

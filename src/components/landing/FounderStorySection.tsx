@@ -55,15 +55,15 @@ export function FounderStorySection() {
         <div className="mt-10 text-center">
           <div className="mx-auto flex items-center justify-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent)]/10 text-sm font-semibold text-[var(--accent)]">
-              AK
+              AS
             </div>
             <div className="text-left">
-              <p className="text-sm font-medium text-[var(--text-primary)]">Arjun K.</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Adin Sheik</p>
               <p className="text-xs text-[var(--text-tertiary)]">Founder, Again Labs</p>
             </div>
           </div>
           <p className="mt-4 text-sm text-[var(--text-tertiary)]">
-            Built by <a href="https://againlive.com" className="text-[var(--accent)] hover:underline" title="A web development studio specializing in AI-powered tools" target="_blank" rel="noopener noreferrer">Again Labs</a> — the product studio where Arjun built this.
+            Built by <a href="https://againlive.com" className="text-[var(--accent)] hover:underline" title="A web development studio specializing in AI-powered tools" target="_blank" rel="noopener noreferrer">Again Labs</a> — the product studio where Adin built this.
           </p>
         </div>
       </div>

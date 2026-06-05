@@ -195,7 +195,7 @@ export default function DiscoverPage() {
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Discovery</p>
               <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">Find businesses worth <em className="italic text-[var(--accent)]">reaching out to.</em></h1>
             </div>
-            <Link href="/dashboard/pipeline" className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--text-primary)]"><ListFilter className="h-4 w-4" />View Pipeline →</Link>
+            <Link href="/dashboard/pipeline" className="self-start inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--text-primary)] sm:self-auto"><ListFilter className="h-4 w-4" />View Pipeline →</Link>
           </div>
         </div>
 
