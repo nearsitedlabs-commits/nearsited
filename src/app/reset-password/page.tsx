@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2, Eye, EyeOff } from "lucide-react";
 
@@ -14,8 +14,20 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [checking, setChecking] = useState(true);
   const supabase = createClient();
   const router = useRouter();
+
+  // Verify the user has a valid session (from password reset email link)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.replace("/login?error=reset_session_expired");
+      } else {
+        setChecking(false);
+      }
+    });
+  }, [supabase, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,7 +68,11 @@ export default function ResetPasswordPage() {
           <Image src="/logo-icon.svg" alt="" width={60} height={34} className="mx-auto block outline-none" />
         </div>
 
-        {done ? (
+        {checking ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
+          </div>
+        ) : done ? (
           <div className="text-center space-y-2">
             <h1 className="text-xl font-medium text-[var(--text-primary)]">Password updated</h1>
             <p className="text-sm text-[var(--text-secondary)]">Redirecting you to the dashboard…</p>

@@ -72,6 +72,9 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
       setGoogleLoading(false);
+    } else {
+      // Reset loading after timeout in case redirect doesn't complete
+      setTimeout(() => setGoogleLoading(false), 10000);
     }
   }
 
