@@ -75,7 +75,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
   );
 
   return (
-    <section className="border-t border-[var(--border)] py-24">
+    <section className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <SectionLabel>By the numbers</SectionLabel>

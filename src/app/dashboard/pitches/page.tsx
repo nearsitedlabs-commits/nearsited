@@ -162,15 +162,41 @@ export default function PitchesPage() {
     setAddingToPipeline(businessId);
     try {
       const res = await fetch("/api/pipeline", {
-        method: "PATCH",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId, status: "new_lead" }),
+        body: JSON.stringify({ businessId }),
       });
       if (res.ok) {
         setPipelineStatuses((prev) => ({ ...prev, [businessId]: "new_lead" }));
         setToast("Added to pipeline");
       } else {
-        setToast("Failed to add to pipeline");
+        const data = await res.json().catch(() => null);
+        setToast(data?.error ?? "Failed to add to pipeline");
+      }
+    } catch {
+      setToast("Network error");
+    } finally {
+      setAddingToPipeline(null);
+    }
+  };
+
+  const handleRemoveFromPipeline = async (businessId: string) => {
+    setAddingToPipeline(businessId);
+    try {
+      const res = await fetch("/api/pipeline", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId }),
+      });
+      if (res.ok) {
+        setPipelineStatuses((prev) => {
+          const next = { ...prev };
+          delete next[businessId];
+          return next;
+        });
+        setToast("Removed from pipeline");
+      } else {
+        setToast("Failed to remove from pipeline");
       }
     } catch {
       setToast("Network error");
@@ -286,15 +312,31 @@ export default function PitchesPage() {
                       {copiedId === pitch.id ? <Check className="h-4 w-4 text-[var(--score-good)]" /> : <Copy className="h-4 w-4" />}
                     </button>
 
-                    {/* Pipeline */}
+                    {/* View Details — always visible for leads with a business ID */}
+                    {bizId && (
+                      <Link
+                        href={`/dashboard/leads/${bizId}`}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" /> View Details
+                      </Link>
+                    )}
+
+                    {/* Add to / Remove from pipeline */}
                     {bizId && (
                       pipelineStatus ? (
-                        <Link
-                          href={`/dashboard/leads/${bizId}`}
-                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                        <button
+                          onClick={() => handleRemoveFromPipeline(bizId)}
+                          disabled={addingToPipeline === bizId}
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] font-medium text-[var(--badge-red-text)] transition-colors duration-150 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          <ExternalLink className="h-3.5 w-3.5" /> View Pipeline
-                        </Link>
+                          {addingToPipeline === bizId ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <X className="h-3.5 w-3.5" />
+                          )}
+                          Remove
+                        </button>
                       ) : (
                         <button
                           onClick={() => handleAddToPipeline(bizId)}
@@ -519,12 +561,22 @@ export default function PitchesPage() {
                         title="Copy to clipboard">
                         {copiedId === pitch.id ? <Check className="h-4 w-4 text-[var(--score-good)]" /> : <Copy className="h-4 w-4" />}
                       </button>
+                      {/* View Details — always visible for leads with a business ID */}
+                      {bizId && (
+                        <Link href={`/dashboard/leads/${bizId}`}
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]">
+                          <ExternalLink className="h-3.5 w-3.5" /> View Details
+                        </Link>
+                      )}
+
+                      {/* Add to / Remove from pipeline */}
                       {bizId && (
                         pipelineStatus ? (
-                          <Link href={`/dashboard/leads/${bizId}`}
-                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]">
-                            <ExternalLink className="h-3.5 w-3.5" /> View Pipeline
-                          </Link>
+                          <button onClick={() => handleRemoveFromPipeline(bizId)} disabled={addingToPipeline === bizId}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] font-medium text-[var(--badge-red-text)] transition-colors duration-150 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-40">
+                            {addingToPipeline === bizId ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
+                            Remove
+                          </button>
                         ) : (
                           <button onClick={() => handleAddToPipeline(bizId)} disabled={addingToPipeline === bizId}
                             className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">

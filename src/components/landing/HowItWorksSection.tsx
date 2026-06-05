@@ -54,7 +54,7 @@ export function HowItWorksSection() {
   const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
 
   return (
-    <section id="how" className="border-t border-[var(--border)] py-24">
+    <section id="how" className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>The workflow</SectionLabel>

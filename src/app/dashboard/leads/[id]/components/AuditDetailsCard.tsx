@@ -1,13 +1,11 @@
 "use client";
 
-import { ChevronDown, Monitor, Smartphone } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { AuditRow } from "@/lib/db-types";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { SubScore } from "./SubScore";
 
 type Props = {
-  strategy: "mobile" | "desktop";
-  onStrategyChange: (s: "mobile" | "desktop") => void;
   mobileAudit: AuditRow | undefined;
   desktopAudit: AuditRow | undefined;
   desktopPerfScore: number | null;
@@ -21,7 +19,6 @@ type Props = {
 };
 
 export function AuditDetailsCard({
-  strategy, onStrategyChange,
   mobileAudit, desktopAudit,
   desktopPerfScore, mobilePerfScore,
   uxDesignScoreVal, designScore, trustScoreVal, overall,
@@ -31,25 +28,7 @@ export function AuditDetailsCard({
 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-[var(--text-primary)]">
-          {strategy === "mobile" ? "Mobile" : "Desktop"} Audit
-        </h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onStrategyChange("mobile")}
-            className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${strategy === "mobile" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
-          >
-            <Smartphone className="h-3 w-3 inline mr-1" />Mobile
-          </button>
-          <button
-            onClick={() => onStrategyChange("desktop")}
-            className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${strategy === "desktop" ? "bg-[var(--accent)] text-white" : "bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]"}`}
-          >
-            <Monitor className="h-3 w-3 inline mr-1" />Desktop
-          </button>
-        </div>
-      </div>
+      <h2 className="text-base font-semibold text-[var(--text-primary)] mb-4">Audit Scores</h2>
 
       <div className="grid grid-cols-2 gap-2 mb-4">
         <SubScore label="Desktop Perf" score={desktopPerfScore} />

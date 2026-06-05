@@ -8,7 +8,7 @@ export function FounderStorySection() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+    <section className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-14 md:py-24">
       <div className="mx-auto max-w-3xl px-6 md:px-8">
         <div className="text-center">
           <SectionLabel>The story</SectionLabel>

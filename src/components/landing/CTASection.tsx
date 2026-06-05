@@ -10,7 +10,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
   const prefersReducedMotion = useReducedMotion() ?? true;
 
   return (
-    <section className="border-t border-[var(--border)] py-24">
+    <section className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? (
           <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-8 py-16 text-center md:px-16">

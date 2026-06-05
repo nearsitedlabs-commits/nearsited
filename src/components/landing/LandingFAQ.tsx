@@ -47,7 +47,7 @@ export function LandingFAQ() {
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   return (
-    <section id="faq" className="border-t border-[var(--border)] py-24">
+    <section id="faq" className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center">

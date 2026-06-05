@@ -24,7 +24,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
   ];
 
   return (
-    <section id="report" className="border-t border-[var(--border)] py-24">
+    <section id="report" className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="max-w-3xl">
           <SectionLabel>SAMPLE OPPORTUNITY REPORT</SectionLabel>
@@ -120,6 +120,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Marina Legal Consultants</h3>
+                        <Badge color="green">Opportunity: 85/100</Badge>
                         <Badge color="red">No Website</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
@@ -170,6 +171,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Blue Wave Restaurant</h3>
+                        <Badge color="green">Opportunity: 72/100</Badge>
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
@@ -220,6 +222,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</h3>
+                        <Badge color="green">Opportunity: 65/100</Badge>
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
@@ -340,6 +343,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Marina Legal Consultants</h3>
+                        <Badge color="green">Opportunity: 85/100</Badge>
                         <Badge color="red">No Website</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
@@ -395,6 +399,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Blue Wave Restaurant</h3>
+                        <Badge color="green">Opportunity: 72/100</Badge>
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
@@ -450,6 +455,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</h3>
+                        <Badge color="green">Opportunity: 65/100</Badge>
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>

@@ -79,7 +79,6 @@ function MaybeFadeUp({ reduce, children }: { reduce: boolean; children: React.Re
 export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
   const { toast, showToast, setToast } = useToast();
   const shouldReduce = !!useReducedMotion();
-  const [screenshotStrategy, setScreenshotStrategy] = useState<"mobile" | "desktop">("mobile");
   const [showAllIssues, setShowAllIssues] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
@@ -124,7 +123,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const desktopAudit  = audits?.find((a) => a.strategy === "desktop");
   const mobileDesign  = designAnalyses?.find((a) => a.strategy === "mobile");
   const desktopDesign = designAnalyses?.find((a) => a.strategy === "desktop");
-  const activeDesign  = screenshotStrategy === "mobile" ? (mobileDesign ?? desktopDesign) : (desktopDesign ?? mobileDesign);
+  const activeDesign  = mobileDesign ?? desktopDesign;
 
   const designScore      = biz.design_score ?? 0;
   const criteria         = activeDesign?.criteria_scores as Record<string, number> | undefined;
@@ -258,7 +257,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 Run an opportunity analysis to see scores, issues, and a generated pitch.
               </p>
               {hasWebsite && (
-                <div className="mt-6">
+                <div className="mt-6 flex items-center gap-3">
                   <button
                     onClick={analysis.handleFullAnalysis}
                     disabled={analysis.runningFullAnalysis}
@@ -267,9 +266,27 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     {analysis.runningFullAnalysis ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                     {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity →"}
                   </button>
+                  {analysis.runningFullAnalysis && (
+                    <button
+                      type="button"
+                      onClick={analysis.handleCancelAnalysis}
+                      className="cursor-pointer text-xs font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </div>
               )}
             </div>
+
+            {analysis.runningFullAnalysis && (
+              <AnalysisProgressBanner
+                running={analysis.runningFullAnalysis}
+                completedKeys={analysis.completedKeys}
+                activeKeys={analysis.activeKeys}
+              />
+            )}
+
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
               <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Score Breakdown</h2>
               <div className="grid grid-cols-2 gap-2">
@@ -385,8 +402,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 </motion.div>
                 <motion.div variants={sectionCard}>
                   <AuditDetailsCard
-                    strategy={screenshotStrategy}
-                    onStrategyChange={setScreenshotStrategy}
                     mobileAudit={mobileAudit}
                     desktopAudit={desktopAudit}
                     desktopPerfScore={desktopPerfScore}

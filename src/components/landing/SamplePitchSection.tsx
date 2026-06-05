@@ -124,7 +124,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
   const metaDisplay = `Tone: ${TONE_LABELS[tone]} · For: ${example.metaFor}`;
 
   return (
-    <section id="pitch" className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+    <section id="pitch" className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Left */}
@@ -178,7 +178,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-[var(--accent)]" />
-                  <span className="text-sm font-medium text-[var(--text-primary)]">Generated pitch</span>
+                  <span className="text-sm font-medium text-[var(--text-primary)]">Sample pitch</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge color={example.badgeColor}>{example.label}</Badge>

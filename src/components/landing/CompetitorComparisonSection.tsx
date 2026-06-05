@@ -152,7 +152,7 @@ export function CompetitorComparisonSection({
   );
 
   return (
-    <section className="border-t border-[var(--border)] py-24">
+    <section className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? content : <FadeUp>{content}</FadeUp>}
       </div>

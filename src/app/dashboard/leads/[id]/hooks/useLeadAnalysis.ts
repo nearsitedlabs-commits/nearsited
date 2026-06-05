@@ -111,7 +111,12 @@ export function useLeadAnalysis({
         signal,
       });
 
-      if (auditRes.ok && auditRes.body) {
+      if (!auditRes.ok) {
+        const errBody = await auditRes.json().catch(() => null);
+        throw new Error(errBody?.error ?? `Audit failed (${auditRes.status})`);
+      }
+
+      if (auditRes.body) {
         const reader = auditRes.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
@@ -132,6 +137,8 @@ export function useLeadAnalysis({
               } else if (parsed.type === "result") {
                 setCompletedKeys([...AUDIT_STEP_KEYS]);
                 setActiveKeys([]);
+              } else if (parsed.type === "error") {
+                throw new Error((parsed.message as string) ?? "Audit failed");
               }
             } catch { /* skip */ }
           }
@@ -147,7 +154,12 @@ export function useLeadAnalysis({
         signal,
       });
 
-      if (designRes.ok && designRes.body) {
+      if (!designRes.ok) {
+        const errBody = await designRes.json().catch(() => null);
+        throw new Error(errBody?.error ?? `Design analysis failed (${designRes.status})`);
+      }
+
+      if (designRes.body) {
         const reader = designRes.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
@@ -170,13 +182,7 @@ export function useLeadAnalysis({
                 setActiveKeys([]);
                 setDesignError(null);
               } else if (parsed.type === "error") {
-                const msg = (parsed.message as string) ?? "Design analysis failed";
-                setDesignError(msg);
-                setRunningFullAnalysis(false);
-                setCompletedKeys([]);
-                setActiveKeys([]);
-                showToast(msg);
-                return;
+                throw new Error((parsed.message as string) ?? "Design analysis failed");
               }
             } catch { /* skip */ }
           }

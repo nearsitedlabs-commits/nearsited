@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
-import { FadeUp, StaggerContainer } from "@/lib/motion";
+import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "framer-motion";
 
 // ── Constants ───────────────────────────────────────────────────────────────────
@@ -1105,14 +1105,12 @@ export default function AuditPage() {
                     </button>
                   </div>
                 )}
-                <StaggerContainer>
-                  <div className="space-y-0.5">
-                    {ALL_STEPS.map((stepDef) => {
-                      const isDone   = completedKeys.includes(stepDef.key);
-                      const isActive = !isDone && activeKeys.includes(stepDef.key);
-                      return (
-                        <FadeUp key={stepDef.key}>
-                          <div className="flex items-center gap-3 py-1.5">
+                <div>
+                  {ALL_STEPS.map((stepDef) => {
+                    const isDone   = completedKeys.includes(stepDef.key);
+                    const isActive = !isDone && activeKeys.includes(stepDef.key);
+                    return (
+                      <div key={stepDef.key} className="flex items-center gap-2.5 py-1">
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
                         ) : isActive ? (
@@ -1127,12 +1125,10 @@ export default function AuditPage() {
                         }`}>
                           {stepDef.label}
                         </span>
-                          </div>
-                        </FadeUp>
-                      );
-                    })}
-                  </div>
-                </StaggerContainer>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}

@@ -272,15 +272,23 @@ export function ResultCard({
             );
           if (showAnalyseButton)
             return (
-              <button
-                type="button"
-                onClick={() =>
-                  onAnalyseOpportunity(business.id, business.website!)
-                }
-                className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[120px] text-center"
-              >
-                Analyse Opportunity
-              </button>
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href={`/dashboard/leads/${business.id}?from=discover`}
+                  className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[64px] text-center"
+                >
+                  View
+                </Link>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onAnalyseOpportunity(business.id, business.website!)
+                  }
+                  className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[120px] text-center"
+                >
+                  Analyse Opportunity
+                </button>
+              </div>
             );
           // No site to analyse — show "View" link for non-website lead types
           if (

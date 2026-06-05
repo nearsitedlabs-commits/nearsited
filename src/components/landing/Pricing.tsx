@@ -109,7 +109,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
   return (
     <section
       id="pricing"
-      className={mode === "page" ? "py-16 sm:py-24" : "border-t border-[var(--border)] py-24"}
+      className={mode === "page" ? "py-14 sm:py-24" : "border-t border-[var(--border)] py-14 md:py-24"}
     >
       <div className="mx-auto max-w-7xl px-6 md:px-8">
 

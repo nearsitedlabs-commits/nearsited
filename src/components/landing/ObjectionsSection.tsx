@@ -65,7 +65,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
   const prefersReducedMotion = useReducedMotion() ?? true;
 
   return (
-    <section className="border-t border-[var(--border)] py-24">
+    <section className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Objections</SectionLabel>

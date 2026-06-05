@@ -71,7 +71,8 @@ export default function SearchableSelect({
     () => options.find((opt) => opt[valueKey] === value),
     [options, value, valueKey],
   );
-  const displayText = selectedOption ? selectedOption[displayKey] : "";
+  // Show the saved value as fallback text when the option list hasn't loaded yet
+  const displayText = selectedOption ? selectedOption[displayKey] : value || "";
 
   // Group options by groupKey (only relevant for small datasets like businessTypes)
   const grouped = useMemo(

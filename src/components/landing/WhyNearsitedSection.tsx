@@ -39,7 +39,7 @@ export function WhyNearsitedSection() {
   const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
 
   return (
-    <section id="why" className="scroll-mt-20 border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
+    <section id="why" className="scroll-mt-20 border-t border-[var(--border)] bg-[var(--bg-surface)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Why Nearsited</SectionLabel>

@@ -31,7 +31,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>Sign in</Button>
-            <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/signup")}>
+            <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/pricing")}>
               <span className="sm:hidden">Get started</span>
               <span className="hidden sm:inline">Get started free</span>
             </Button>
@@ -84,7 +84,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>Sign in</Button>
-          <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/signup")}>
+          <Button variant="primary" className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/pricing")}>
             <span className="sm:hidden">Get started</span>
             <span className="hidden sm:inline">Get started free</span>
           </Button>
