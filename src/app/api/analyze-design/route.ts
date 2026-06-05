@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkCredit, deductCredit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { businessWebsiteSchema } from "@/lib/validation";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const GEMINI_MODEL = "gemini-3.5-flash";
@@ -261,19 +262,17 @@ async function analyzeScreenshot(
     console.log("[DESIGN] Gemini HTTP status:", response.status);
 
     const rawText = await response.text();
-    console.log("[DESIGN] Gemini raw response:", rawText);
+    // Log Gemini response length (not content) for monitoring
+    console.log("[DESIGN] Gemini response received, length:", rawText?.length);
 
     if (!response.ok) {
       if (response.status === 429 || response.status === 503) {
-        return { ok: false, error: "AI_SERVICE_BUSY", status: response.status, rawText };
+        return { ok: false, error: "AI_SERVICE_BUSY", status: response.status, rawText: undefined };
       }
-      return { ok: false, error: rawText, status: response.status, rawText };
+      // Truncate raw error text in responses to avoid leaking AI output
+      const truncated = rawText ? rawText.slice(0, 200) : "Unknown AI error";
+      return { ok: false, error: truncated, status: response.status, rawText: undefined };
     }
-
-    // Debug: log raw Gemini API envelope before parsing
-    console.error('[DESIGN] RAW GEMINI RESPONSE:', JSON.stringify(rawText))
-    console.error('[DESIGN] RAW GEMINI RESPONSE LENGTH:', rawText?.length)
-    console.error('[DESIGN] RAW GEMINI RESPONSE >>>', typeof rawText, rawText)
 
     const parsed = JSON.parse(rawText);
     const text =
@@ -284,7 +283,10 @@ async function analyzeScreenshot(
     }
 
     // Debug: log raw Gemini text content before cleaning + parsing
-    console.error('[DESIGN] RAW GEMINI TEXT CONTENT:', JSON.stringify(text))
+    // Only log full Gemini text content in development to avoid leaking AI output
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[DESIGN] RAW GEMINI TEXT CONTENT:', JSON.stringify(text))
+    }
     console.error('[DESIGN] RAW GEMINI TEXT CONTENT LENGTH:', text?.length)
 
     // Clean and extract valid JSON from Gemini's response (handles markdown fences
@@ -292,10 +294,17 @@ async function analyzeScreenshot(
     let data: GeminiDesignResponse;
     try {
       const cleaned = cleanGeminiJson(text);
-      console.error('[DESIGN] RAW GEMINI RESPONSE >>>', typeof cleaned, cleaned)
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[DESIGN] RAW GEMINI RESPONSE >>>', typeof cleaned, cleaned)
+      }
       data = JSON.parse(cleaned) as GeminiDesignResponse;
     } catch {
-      console.error("[DESIGN] JSON parse failed. Raw Gemini response:", text);
+      // Log raw Gemini content on parse failure only in development
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("[DESIGN] JSON parse failed. Raw Gemini response:", text);
+      } else {
+        console.error("[DESIGN] JSON parse failed. Response length:", text?.length);
+      }
       return { ok: false, error: "Gemini returned invalid JSON", status: response.status, rawText: text };
     }
 
@@ -305,7 +314,11 @@ async function analyzeScreenshot(
       !data.criteria_scores ||
       !Array.isArray(data.issues)
     ) {
-      console.log("[DESIGN] Gemini response missing required fields:", JSON.stringify(data));
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("[DESIGN] Gemini response missing required fields:", JSON.stringify(data));
+      } else {
+        console.log("[DESIGN] Gemini response missing required fields");
+      }
       return { ok: false, error: "Gemini response missing required fields", status: response.status, rawText: text };
     }
 
@@ -380,20 +393,22 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Parse & validate body
     const body = (await request.json()) as AnalyzeRequestBody;
-    const { businessId, website, force = false } = body;
+    
+    // ── Zod validation ──────────────────────────────────────────────────────
+    const parsed = businessWebsiteSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
+      );
+    }
+    const { businessId, website, force } = parsed.data;
 
     // If businessId is provided, we'll persist results; otherwise run in
     // ephemeral mode (results displayed on screen but not saved to DB).
     const shouldPersist = Boolean(businessId);
 
-    if (!website || typeof website !== "string" || !website.trim()) {
-      return NextResponse.json(
-        { error: "Website URL is required to analyze design. No-website businesses cannot be analyzed." },
-        { status: 400 },
-      );
-    }
-
-    const trimmedWebsite = website.trim();
+    const trimmedWebsite = website;
     if (shouldPersist) {
       console.log("[DESIGN] Starting design analysis for business:", businessId, "website:", trimmedWebsite);
     } else {
@@ -413,7 +428,7 @@ export async function POST(request: NextRequest) {
     }
 
     const currentUser = user;
-    console.log("[DESIGN] Authenticated user:", currentUser.id);
+    console.log("[DESIGN] Authenticated user:...", currentUser.id.slice(-4));
 
     // 3. Rate limit — strict limit for expensive analysis operations
     const identifier = getRateLimitIdentifier(request, user.id);

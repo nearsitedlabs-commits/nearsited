@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Zap, FileText, TrendingUp, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -10,17 +11,30 @@ import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 
 type PitchTab = "weak" | "none" | "social" | "platform";
+type ToneOption = "professional" | "friendly" | "luxury";
+
+const TONE_LABELS: Record<ToneOption, string> = {
+  professional: "Professional",
+  friendly: "Friendly",
+  luxury: "Luxury",
+};
+
+const NEXT_TONE: Record<ToneOption, ToneOption> = {
+  professional: "friendly",
+  friendly: "luxury",
+  luxury: "professional",
+};
 
 const PITCH_EXAMPLES: Record<PitchTab, {
   label: string;
   badgeColor: "amber" | "red" | "indigo";
-  meta: string;
+  metaFor: string;
   body: React.ReactNode;
 }> = {
   weak: {
     label: "Weak Website",
     badgeColor: "amber",
-    meta: "Tone: Professional · For: Bright Smile Dental · 1.4s",
+    metaFor: "Bright Smile Dental · 1.4s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi Dr. Sameer,</p>
@@ -39,7 +53,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   none: {
     label: "No Website",
     badgeColor: "red",
-    meta: "Tone: Professional · For: Marina Legal Consultants · 1.2s",
+    metaFor: "Marina Legal Consultants · 1.2s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi,</p>
@@ -59,7 +73,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   social: {
     label: "Social Only",
     badgeColor: "indigo",
-    meta: "Tone: Friendly · For: Blue Wave Restaurant · 1.1s",
+    metaFor: "Blue Wave Restaurant · 1.1s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi Blue Wave team,</p>
@@ -78,7 +92,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   platform: {
     label: "Platform Only",
     badgeColor: "indigo",
-    meta: "Tone: Professional · For: Bloom Spa & Wellness · 1.3s",
+    metaFor: "Bloom Spa & Wellness · 1.3s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi,</p>
@@ -99,7 +113,15 @@ const PITCH_EXAMPLES: Record<PitchTab, {
 
 export function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) {
   const [activeTab, setActiveTab] = useState<PitchTab>("weak");
+  const [tone, setTone] = useState<ToneOption>("professional");
+  const prefersReducedMotion = useReducedMotion() ?? false;
   const example = PITCH_EXAMPLES[activeTab];
+
+  function cycleTone() {
+    setTone((t) => NEXT_TONE[t]);
+  }
+
+  const metaDisplay = `Tone: ${TONE_LABELS[tone]} · For: ${example.metaFor}`;
 
   return (
     <section id="pitch" className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-24">
@@ -165,12 +187,36 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
               </div>
 
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-                <p className="mb-4 text-xs text-[var(--text-tertiary)]">{example.meta}</p>
-                {example.body}
+                {prefersReducedMotion ? (
+                  <>
+                    <p className="mb-4 text-xs text-[var(--text-tertiary)]">{metaDisplay}</p>
+                    {example.body}
+                  </>
+                ) : (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${activeTab}-${tone}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      <p className="mb-4 text-xs text-[var(--text-tertiary)]">{metaDisplay}</p>
+                      {example.body}
+                    </motion.div>
+                  </AnimatePresence>
+                )}
 
                 <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary" className="flex-1 sm:flex-none">Edit tone</Button>
+                    <Button
+                      variant="secondary"
+                      className="flex-1 sm:flex-none"
+                      onClick={cycleTone}
+                      title={`Current: ${TONE_LABELS[tone]} — click to switch`}
+                    >
+                      Tone: {TONE_LABELS[tone]}
+                    </Button>
                     <Button variant="secondary" className="flex-1 sm:flex-none">Regenerate</Button>
                   </div>
                   <Button variant="primary" onClick={() => navigate("/signup")} className="w-full sm:w-auto">

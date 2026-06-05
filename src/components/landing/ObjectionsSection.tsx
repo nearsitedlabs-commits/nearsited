@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/landing/SectionLabel";
@@ -15,8 +16,8 @@ const OBJECTIONS = [
   },
   {
     objection: "Isn't this just another tool I'll never use?",
-    response: "Nearsited takes 3 minutes to get your first lead. No onboarding calls, no setup. Enter a city + category → get ranked leads → pitch in under 2 minutes. If you don't find a pitchable lead in your first search, you won't pay.",
-    answer: "How this helps you close more deals: Speed to first lead is under 3 minutes. If it doesn't work, you owe nothing.",
+    response: "Nearsited takes under 2 minutes to get your first lead. No onboarding calls, no setup. Enter a city + category → get ranked leads → pitch. If you don't find a pitchable lead in your first search, you won't pay.",
+    answer: "How this helps you close more deals: Speed to first lead is under 2 minutes. If it doesn't work, you owe nothing.",
   },
   {
     objection: "I can find leads myself on Google Maps.",
@@ -33,10 +34,16 @@ const OBJECTIONS = [
     response: "This isn't cold outreach. Every opportunity on Nearsited has a clear, measurable gap — whether that's a broken website or no website at all. You're not guessing — you're responding to evidence they can see themselves. It's warm.",
     answer: "How this helps you close more deals: Evidence-based outreach converts 3–5× better than cold email. You're helping, not selling.",
   },
+  {
+    objection: "I already use Apollo or Hunter for prospecting.",
+    response: "Apollo and Hunter find contact details. They don't tell you whether a business's website is worth redesigning — or whether one even exists. Nearsited finds a different kind of lead: businesses where the website itself is the gap. No website, social-only, platform-only, or a broken site. You're not blasting emails — you're reaching out with a diagnosis.",
+    answer: "How this helps you close more deals: Apollo gives you email addresses. Nearsited gives you reasons to reach out. Used together, they're a complete prospecting stack — find the gap with Nearsited, send the message with Apollo.",
+  },
 ];
 
 export function ObjectionsSection({ navigate }: { navigate: (href: string) => void }) {
   const { openIndex, toggle } = useAccordion();
+  const prefersReducedMotion = useReducedMotion() ?? true;
 
   return (
     <section className="border-t border-[var(--border)] py-24">
@@ -53,7 +60,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
           {OBJECTIONS.map((item, i) => (
             <div
               key={item.objection}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden transition-all duration-200"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}
@@ -66,14 +73,37 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
                   }`}
                 />
               </button>
-              {openIndex === i && (
-                <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
-                  <p className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</p>
-                  <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
-                    <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
-                    <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>
+              {prefersReducedMotion ? (
+                openIndex === i && (
+                  <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
+                    <p className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</p>
+                    <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
+                      <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
+                      <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>
+                    </div>
                   </div>
-                </div>
+                )
+              ) : (
+                <AnimatePresence initial={false}>
+                  {openIndex === i && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
+                        <p className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</p>
+                        <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
+                          <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
+                          <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
             </div>
           ))}

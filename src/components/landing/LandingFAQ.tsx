@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
@@ -31,10 +32,19 @@ const faqs = [
     q: "How is this different from cold email tools?",
     a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
   },
+  {
+    q: "How current is the business data? Are these businesses still active?",
+    a: "Business data comes directly from Google Places, which is updated continuously by businesses and Google's crawlers. You're seeing live Google reviews, ratings, and website data — not a static database. That said, some businesses close or update without immediately reflecting it on Google. Leads with reviews in the last 30 days and an active rating are almost always still open. We recommend a quick Google check before reaching out.",
+  },
+  {
+    q: "Which cities and countries does Nearsited cover?",
+    a: "Nearsited works in any city where Google Places has data — which covers most major and mid-size cities globally. You can search 29,000+ cities worldwide. Results quality is highest in English-speaking markets and India, where our beta users are concentrated. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
+  },
 ];
 
 export function LandingFAQ() {
   const { openIndex, toggle } = useAccordion();
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   return (
     <section id="faq" className="border-t border-[var(--border)] py-24">
@@ -65,10 +75,29 @@ export function LandingFAQ() {
                     }`}
                   />
                 </button>
-                {openIndex === i && (
-                  <div className="border-t border-[var(--border)] px-6 pb-6 pt-4">
-                    <p className="text-sm leading-7 text-[var(--text-secondary)]">{faq.a}</p>
-                  </div>
+                {prefersReducedMotion ? (
+                  openIndex === i && (
+                    <div className="border-t border-[var(--border)] px-6 pb-6 pt-4">
+                      <p className="text-sm leading-7 text-[var(--text-secondary)]">{faq.a}</p>
+                    </div>
+                  )
+                ) : (
+                  <AnimatePresence initial={false}>
+                    {openIndex === i && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-[var(--border)] px-6 pb-6 pt-4">
+                          <p className="text-sm leading-7 text-[var(--text-secondary)]">{faq.a}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 )}
               </div>
             ))}
