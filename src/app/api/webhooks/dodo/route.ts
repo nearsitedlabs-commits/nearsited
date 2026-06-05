@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
       product_id: string;
       customer_id: string;
       status: string;
-      customer?: { email?: string };
+      customer?: { email?: string; customer_id?: string };
+      metadata?: Record<string, string>;
     };
 
     const productInfo = DODO_PRODUCTS[sub.product_id];
@@ -42,26 +43,39 @@ export async function POST(req: NextRequest) {
       ["subscription.active", "subscription.renewed", "subscription.plan_changed"].includes(eventType);
     const isCancelled = ["subscription.cancelled", "subscription.expired", "subscription.failed"].includes(eventType);
 
-    // Find user by dodo_customer_id or email
+    // Find user: metadata (from checkout) → dodo_subscription_id → email
     let userId: string | null = null;
 
-    const result = await admin
-      .from("subscriptions")
-      .select("user_id")
-      .eq("dodo_subscription_id", sub.subscription_id)
-      .maybeSingle() as { data: { user_id: string } | null };
-    const existingSub = result.data;
+    // 1. Try metadata.user_id (passed from checkout session)
+    if (sub.metadata?.user_id) {
+      userId = sub.metadata.user_id;
+      console.log(`[DODO/WEBHOOK] Found user via metadata.user_id=${userId} for subscription ${sub.subscription_id}`);
+    }
 
-    if (existingSub) {
-      userId = existingSub.user_id;
-    } else if (sub.customer?.email) {
+    // 2. Try existing dodo_subscription_id in DB
+    if (!userId) {
+      const result = await admin
+        .from("subscriptions")
+        .select("user_id")
+        .eq("dodo_subscription_id", sub.subscription_id)
+        .maybeSingle() as { data: { user_id: string } | null };
+      if (result.data) {
+        userId = result.data.user_id;
+        console.log(`[DODO/WEBHOOK] Found user via dodo_subscription_id for subscription ${sub.subscription_id}`);
+      }
+    }
+
+    // 3. Try customer email lookup
+    if (!userId && sub.customer?.email) {
       const result2 = await admin
         .from("profiles")
         .select("id")
         .eq("email", sub.customer.email)
         .maybeSingle() as { data: { id: string } | null };
-      const profile = result2.data;
-      userId = profile?.id ?? null;
+      if (result2.data) {
+        userId = result2.data.id;
+        console.log(`[DODO/WEBHOOK] Found user via email ${sub.customer.email} for subscription ${sub.subscription_id}`);
+      }
     }
 
     if (!userId) {
