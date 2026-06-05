@@ -1,12 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Search, ExternalLink, Check, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreRing } from "@/components/ui/ScoreRing";
-import { CanvasBackground } from "@/components/ui/CanvasBackground";
+
+const CanvasBackground = dynamic(
+  () => import("@/components/ui/CanvasBackground").then((mod) => ({ default: mod.CanvasBackground })),
+  { ssr: false },
+);
 
 export function LandingHero({ navigate }: { navigate: (href: string) => void }) {
   const easeOut = [0.25, 0.1, 0.25, 1] as const;
@@ -18,7 +23,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-64px)] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10">
+    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-var(--nav-height,80px))] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10">
       <CanvasBackground />
 
       {/* Left: Copy */}
@@ -120,7 +125,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
               {/* Weak Website */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-3">
-                <ScoreRing score={87} size={32} variant="opportunity" />
+                <ScoreRing score={72} size={32} variant="opportunity" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Bright Smile Dental</p>
                   <p className="text-xs text-[var(--text-tertiary)]">Jumeirah · Healthcare</p>

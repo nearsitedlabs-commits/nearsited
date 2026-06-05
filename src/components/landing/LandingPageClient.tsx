@@ -29,7 +29,7 @@ export default function LandingPageClient() {
     <div className="relative min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <LandingNav navigate={navigate} />
       <LandingScrollNav />
-      <main className="pt-[var(--nav-height,80px)]">
+      <main className="pt-16 lg:pt-20">
         <LandingHero navigate={navigate} />
         <TrustBar />
         <HowItWorksSection />
