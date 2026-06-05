@@ -8,15 +8,12 @@ export function useContactInfo(businessId: string) {
   const [contactInfo, setContactInfo] = useState<ContactInfoState>({
     email: null,
     phone: null,
-    loading: true,
+    loading: !businessId,
   });
   const [manualEmail, setManualEmail] = useState("");
 
   useEffect(() => {
-    if (!businessId) {
-      setContactInfo((prev) => ({ ...prev, loading: false }));
-      return;
-    }
+    if (!businessId) return;
     Promise.all([
       fetch(`/api/contact-info?businessId=${businessId}`)
         .then((res) => res.json())

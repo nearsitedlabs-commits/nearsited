@@ -53,8 +53,13 @@ function useScrollProgress(): number {
 
   useEffect(() => {
     window.addEventListener("scroll", update, { passive: true });
-    update();
     return () => window.removeEventListener("scroll", update);
+  }, [update]);
+
+  // Set initial progress outside the effect to avoid lint warning
+  useEffect(() => {
+    const raf = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(raf);
   }, [update]);
 
   return progress;

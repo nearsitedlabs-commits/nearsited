@@ -94,7 +94,6 @@ export async function GET(request: NextRequest) {
       POPULAR_CITIES.map((name, i) => [name.toLowerCase(), i]),
     );
     const MAX_RESULTS = 200;
-    const MAX_ROWS_PER_POPULAR = 1; // only show one entry per popular city name
     const seenPopular = new Set<string>();
 
     const popular: CityOption[] = [];

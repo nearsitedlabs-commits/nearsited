@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
 import type { WebsiteStatus } from "@/lib/db-types";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
@@ -10,7 +9,6 @@ import {
   openingInstruction,
   urgencyInstruction,
   buildAngle,
-  channelInstruction,
   buildWorkflowPrompt,
   buildFullPrompt,
   buildAuditOnlyPrompt,
