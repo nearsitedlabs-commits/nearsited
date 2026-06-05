@@ -74,6 +74,7 @@ export default function DiscoverPage() {
   const [showSave, setShowSave] = useState(false);
   const { toast: toastMsg, showToast, setToast } = useToast();
   const [cities, setCities] = useState<CityOption[]>([]), [cityQ, setCityQ] = useState("");
+  const citiesFullRef = useRef<CityOption[]>([]);
   const [sortOpen, setSortOpen] = useState(false);
   const [saved, setSaved] = useState<{ id: string; name: string; city: string; business_type: string; radius?: number }[]>([]);
   const [savedOpen, setSavedOpen] = useState(false), [resKey, setResKey] = useState(0);
@@ -96,12 +97,30 @@ export default function DiscoverPage() {
       const sb = createClient(); const { data, error: ae } = await sb.auth.getUser();
       if (ae) setError("Unable to verify user. Please sign in again."); else if (data?.user) setUserId(data.user.id);
       try { const r = await fetch("/api/saved-searches"); if (r.ok) setSaved((await r.json()).searches ?? []); } catch {}
-      try { const r = await fetch("/api/cities/search"); if (r.ok) setCities((await r.json()).cities ?? []); } catch {}
+      try { const r = await fetch("/api/cities/search"); if (r.ok) { const data = (await r.json()).cities ?? []; setCities(data); citiesFullRef.current = data; } } catch {}
       setLoadingAuth(false);
     })();
   }, []);
 
-  useEffect(() => { if (!cityQ) return; const t = setTimeout(async () => { try { const r = await fetch(`/api/cities/search?q=${encodeURIComponent(cityQ)}`); if (r.ok && mounted.current) setCities((await r.json()).cities ?? []); } catch {} }, 150); return () => clearTimeout(t); }, [cityQ]);
+  useEffect(() => {
+    if (!cityQ) return;
+    const lower = cityQ.toLowerCase();
+    const localMatch = citiesFullRef.current.filter((c) =>
+      c.label.toLowerCase().includes(lower)
+    );
+    if (localMatch.length > 0 && localMatch.length < 200) {
+      setCities(localMatch);
+      return;
+    }
+    const t = setTimeout(async () => {
+      try {
+        const r = await fetch(`/api/cities/search?q=${encodeURIComponent(cityQ)}`);
+        if (r.ok && mounted.current) setCities((await r.json()).cities ?? []);
+      } catch {}
+    }, 250);
+    return () => clearTimeout(t);
+  }, [cityQ]);
+  useEffect(() => { if (!cityQ && citiesFullRef.current.length > 0) { setCities(citiesFullRef.current); } }, [cityQ]);
   useEffect(() => { function h(e: MouseEvent) { if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false); } document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h); }, []);
 
   const flagged = useMemo(() => results.filter((b) => b.flagged_for_outreach).length, [results]);
@@ -122,7 +141,7 @@ export default function DiscoverPage() {
     });
   }, [results, filter, sort]);
 
-  const randomize = useCallback(() => { if (!cities.length) return; setCity(cities[Math.floor(Math.random() * cities.length)].value); setBizType(businessTypes[Math.floor(Math.random() * businessTypes.length)].value); }, [cities]);
+  const randomize = useCallback(() => { const pool = citiesFullRef.current; if (!pool.length) return; setCity(pool[Math.floor(Math.random() * pool.length)].value); setBizType(businessTypes[Math.floor(Math.random() * businessTypes.length)].value); }, []);
 
   const analyseOpp = useCallback(async (id: string, website: string) => {
     setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "starting", label: "Starting opportunity analysis...", phase: "audit" }); return n; });
@@ -138,7 +157,7 @@ export default function DiscoverPage() {
       const dp = (async () => { try { const r = await dpr; if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? "Design failed"); await readStream(r, (s, l) => { setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: s, label: l, phase: "design" }); return n; }); }, (d) => { designData = d; }); if (designData) { const dd = designData; const m = (dd as Record<string, unknown>).mobile as Record<string, unknown> | undefined; const dt = (dd as Record<string, unknown>).desktop as Record<string, unknown> | undefined; const sc = (m?.design_score as number) ?? (dt?.design_score as number); if (sc) setResults((r) => r.map((b) => b.id === id ? { ...b, design_score: sc } : b)); setAnalysed((a) => { const n = new Set(a); n.add(id); save(SS.ANALYSED, [...n]); return n; }); } } catch (e) { designErr = e instanceof Error ? e.message : "Design failed"; } })();
       await Promise.all([ap, dp]); if (!mounted.current) return;
       if (auditErr) throw new Error(auditErr);
-      if (designErr) { console.warn("[DISCOVER] Design analysis failed (non-fatal):", designErr); showToast("Performance audit complete, but design analysis unavailable. Try again later."); }
+      if (designErr) { console.warn("[DISCOVER] Design analysis failed (non-fatal):", designErr); showToast("Performance audit complete, but design analysis unavailable. Try again later."); setAnalysed((prev) => new Set(prev).add(id)); }
       setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "done", label: "Analysis complete", phase: "done" }); return n; });
     } catch (e) { if (e instanceof DOMException && e.name === "AbortError") { abortRef.current.delete(id); return; } const m = e instanceof Error ? e.message : "Analysis failed"; setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "error", label: m, phase: "error", error: m }); return n; }); }
     finally { abortRef.current.delete(id); }

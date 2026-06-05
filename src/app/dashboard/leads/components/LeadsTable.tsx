@@ -2,7 +2,6 @@ import { Phone } from "lucide-react";
 import { motion, fadeUpVariants, staggerVariants } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
-import { WebPresenceBadge } from "./WebPresenceBadge";
 import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
 import { effectiveOpportunityScore, getOpportunityContext, formatDate } from "./helpers";
@@ -95,17 +94,17 @@ type RowProps = {
 
 function LeadTableRow({ lead, pipelineMap, analysingIds, analyseProgress, onAnalyse, animated }: RowProps) {
   const pipelineStatus = pipelineMap.get(lead.id);
-  const oppCtx        = getOpportunityContext(lead);
-  const showScoreRing = lead.website_status === "has_website" || lead.website_status === "unknown";
-  const ringScore     = showScoreRing ? effectiveOpportunityScore(lead) : null;
+  const oppCtx    = getOpportunityContext(lead);
+  const ringScore = effectiveOpportunityScore(lead);
 
   const cells = (
     <>
       <td className="w-16 px-5 py-4 align-top">
-        {showScoreRing
-          ? <ScoreRing score={ringScore} size={52} variant={lead.audited_at ? "opportunity" : "estimate"} />
-          : <WebPresenceBadge status={lead.website_status} />
-        }
+        <ScoreRing score={ringScore} size={52} variant={
+          lead.website_status === "has_website" && lead.audited_at ? "opportunity"
+          : lead.website_status === "has_website" ? "estimate"
+          : "opportunity"
+        } />
       </td>
       <td className="px-5 py-4 align-top">
         <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>

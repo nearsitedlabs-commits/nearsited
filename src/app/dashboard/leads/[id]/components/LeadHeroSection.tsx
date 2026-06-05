@@ -28,6 +28,7 @@ type LeadHeroSectionProps = {
   handlePipelineChange: (newStatus: string) => Promise<void>;
   handleFullAnalysis: () => Promise<void>;
   handleCancelAnalysis: () => void;
+  backTo?: string;
 };
 
 export function LeadHeroSection({
@@ -38,14 +39,15 @@ export function LeadHeroSection({
   handlePipelineChange,
   handleFullAnalysis,
   handleCancelAnalysis,
+  backTo = "leads",
 }: LeadHeroSectionProps) {
   return (
     <div className="mb-6">
       <Link
-        href="/dashboard/leads"
+        href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Leads
+        <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
       </Link>
 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-4">

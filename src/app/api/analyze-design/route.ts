@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     const credit = await checkCredit(user.id);
     if (!credit.allowed) {
       return NextResponse.json(
-        { error: "Audit limit reached. Upgrade your plan to run more design analyses.", code: "CREDIT_LIMIT", retryAfter: 0 },
+        { error: "Credit limit reached. Upgrade your plan to run more design analyses.", code: "CREDIT_LIMIT", retryAfter: 0 },
         { status: 429 },
       );
     }

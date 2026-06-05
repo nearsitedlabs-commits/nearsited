@@ -35,15 +35,15 @@ const faqItem: Variants = {
 const FAQ_ITEMS = [
   {
     q: "When are credits used?",
-    a: "Every time you run an opportunity analysis on a business — performance audit, design analysis, or a full scan — one credit is deducted. Searching for businesses and generating pitches do not use credits.",
+    a: "Every analysis uses 2 credits: 1 for the performance audit and 1 for the design analysis. If the design analysis isn't available, only 1 credit is used. Searching for businesses and generating pitches do not use credits.",
   },
   {
     q: "How many credits do I get?",
-    a: "Free: 10 audits to try it out. Starter: 50 audits/month. Agency: 200 audits/month. Paid plan credits reset at the start of each billing month. Unused credits do not roll over.",
+    a: "Free: 10 analyses (20 credits) to try it out. Starter: 50 analyses per month (100 credits). Agency: 200 analyses per month (400 credits). Paid plan credits reset at the start of each billing month. Unused credits do not roll over.",
   },
   {
     q: "What happens when I run out?",
-    a: "You can still log in, view your pipeline, manage leads, and access generated pitches. To audit new businesses, either wait for your credits to reset or upgrade to a higher plan.",
+    a: "You can still log in, view your pipeline, manage leads, and access generated pitches. To run more analyses, either wait for your credits to reset or upgrade to a higher plan.",
   },
 ];
 
@@ -125,7 +125,7 @@ export default function PricingPage() {
                   What is a credit?
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
-                  One credit = one business audit. Credits are deducted when you review a business for redesign opportunities.
+                  One analysis uses 2 credits — 1 for the performance audit and 1 for the design analysis. Credits are deducted when you review a business for redesign opportunities.
                 </p>
               </div>
 

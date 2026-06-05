@@ -20,11 +20,12 @@ type Props = {
   business: BusinessRow;
   pipelineStatus: string | null;
   savedPitch: SavedPitch | null;
+  backTo?: string;
 };
 
 // ── No Digital Presence Page ─────────────────────────────────────────────────
 
-export default function NoDigitalPresencePage({ business, pipelineStatus, savedPitch }: Props) {
+export default function NoDigitalPresencePage({ business, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [generatingPitch, setGeneratingPitch] = useState(false);
   const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(
@@ -130,9 +131,9 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
         {/* ── HERO ──────────────────────────────────────────────────────── */}
         <div className="mb-6">
-          <Link href="/dashboard/leads"
+          <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
             className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> Back to Leads
+            <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
           </Link>
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">

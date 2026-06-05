@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { CheckCircle2, ChevronDown, Info } from "lucide-react";
-import { websiteWeakness } from "@/lib/scoring";
+import { websiteWeakness, opportunityLabel } from "@/lib/scoring";
 import { opportunityInsight } from "@/lib/opportunity-insights";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -212,7 +212,7 @@ function DriverBar({ label, score, description }: Driver) {
 export function OpportunityScoreExplanation({
   websiteStatus,
   overallScore,
-  opportunityScore: _opportunityScore,
+  opportunityScore,
   reviewCount,
   rating,
   hasAudit,
@@ -257,9 +257,32 @@ export function OpportunityScoreExplanation({
     confidence === "Medium" ? "text-[var(--score-mid)]"  :
     "text-[var(--text-tertiary)]";
 
+  const scoreTierColor =
+    opportunityScore >= 70 ? "var(--score-good)" :
+    opportunityScore >= 40 ? "var(--score-mid)"  :
+    "var(--score-high)";
+
+  const scoreTierTextColor =
+    opportunityScore >= 70 ? "text-[var(--score-good)]" :
+    opportunityScore >= 40 ? "text-[var(--score-mid)]"  :
+    "text-[var(--score-high)]";
+
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden">
       <div className="p-5 sm:p-6">
+
+        {/* Score hero */}
+        <div className="mb-5 flex flex-col items-center justify-center rounded-xl bg-[var(--bg-elevated)] py-6">
+          <span
+            className="text-5xl font-bold leading-none tabular-nums"
+            style={{ color: scoreTierColor }}
+          >
+            {opportunityScore}
+          </span>
+          <span className={`mt-2 text-sm font-semibold ${scoreTierTextColor}`}>
+            {opportunityLabel(opportunityScore)}
+          </span>
+        </div>
 
         {/* Header row */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">

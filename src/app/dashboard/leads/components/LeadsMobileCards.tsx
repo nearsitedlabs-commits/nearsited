@@ -2,7 +2,6 @@ import { Phone } from "lucide-react";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
-import { WebPresenceBadge } from "./WebPresenceBadge";
 import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
 import { effectiveOpportunityScore, getOpportunityContext } from "./helpers";
@@ -29,18 +28,18 @@ export function LeadsMobileCards({
 }: Props) {
   const cards = paginated.map((lead) => {
     const pipelineStatus = pipelineMap.get(lead.id);
-    const oppCtx         = getOpportunityContext(lead);
-    const showScoreRing  = lead.website_status === "has_website" || lead.website_status === "unknown";
-    const ringScore      = showScoreRing ? effectiveOpportunityScore(lead) : null;
+    const oppCtx    = getOpportunityContext(lead);
+    const ringScore = effectiveOpportunityScore(lead);
 
     const card = (
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 pt-0.5">
-            {showScoreRing
-              ? <ScoreRing score={ringScore} size={52} variant={lead.audited_at ? "opportunity" : "estimate"} />
-              : <WebPresenceBadge status={lead.website_status} />
-            }
+            <ScoreRing score={ringScore} size={52} variant={
+              lead.website_status === "has_website" && lead.audited_at ? "opportunity"
+              : lead.website_status === "has_website" ? "estimate"
+              : "opportunity"
+            } />
           </div>
           <div className="min-w-0 flex-1">
             <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>

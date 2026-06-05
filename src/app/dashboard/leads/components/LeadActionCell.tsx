@@ -20,7 +20,7 @@ export function LeadActionCell({ lead, isAnalysing, progress, onAnalyse }: Props
 
   const viewBtn = (
     <Link
-      href={`/dashboard/leads/${lead.id}`}
+      href={`/dashboard/leads/${lead.id}?from=leads`}
       className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
     >
       <Eye className="h-3 w-3" /> View
@@ -31,7 +31,7 @@ export function LeadActionCell({ lead, isAnalysing, progress, onAnalyse }: Props
     return (
       <div className="flex flex-wrap items-center gap-2">
         <Link
-          href={`/dashboard/leads/${lead.id}`}
+          href={`/dashboard/leads/${lead.id}?from=leads`}
           className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
         >
           Generate Outreach
@@ -45,7 +45,7 @@ export function LeadActionCell({ lead, isAnalysing, progress, onAnalyse }: Props
     return (
       <div className="flex flex-wrap items-center gap-2">
         <Link
-          href={`/dashboard/leads/${lead.id}`}
+          href={`/dashboard/leads/${lead.id}?from=leads`}
           className="inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
         >
           Review Opportunity

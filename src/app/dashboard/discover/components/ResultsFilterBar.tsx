@@ -58,7 +58,7 @@ export function ResultsFilterBar({
         </span>
       )}
 
-      <div className="ml-auto flex items-center gap-2 flex-wrap">
+      <div className="ml-auto flex flex-col sm:flex-row items-end sm:items-center gap-2 w-full sm:w-auto">
         {/* Sort dropdown */}
         <div className="relative" ref={sortRef}>
           <button
@@ -99,7 +99,7 @@ export function ResultsFilterBar({
         </div>
 
         {/* Filter pills */}
-        <div className="flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
+        <div className="flex flex-wrap gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.value}

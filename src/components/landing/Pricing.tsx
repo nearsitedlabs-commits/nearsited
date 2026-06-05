@@ -42,7 +42,7 @@ const PLANS: Plan[] = [
     annualNote: "billed $180/yr",
     description: "For solo freelancers and independent web designers.",
     features: [
-      "50 opportunity audits per month",
+      "50 opportunity analyses per month",
       "3 city searches per month",
       "Single user",
     ],
@@ -60,7 +60,7 @@ const PLANS: Plan[] = [
     annualNote: "billed $468/yr",
     description: "For small agencies and growing web design teams.",
     features: [
-      "200 opportunity audits per month",
+      "200 opportunity analyses per month",
       "10 city searches per month",
       "Up to 3 team seats",
     ],
@@ -131,7 +131,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
             Start finding clients this week.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
-            Start with 10 free audits — no credit card needed to get started.
+            Start with 10 free analyses — no credit card needed to get started.
           </p>
         </motion.div>
 

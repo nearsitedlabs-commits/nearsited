@@ -59,6 +59,7 @@ type Props = {
   designAnalyses: DesignAnalysisRow[];
   pipelineStatus: string | null;
   savedPitch: SavedPitch | null;
+  backTo?: string;
 };
 
 // ── Conditional animation wrappers ────────────────────────────────────────────
@@ -75,7 +76,7 @@ function MaybeFadeUp({ reduce, children }: { reduce: boolean; children: React.Re
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch }: Props) {
+export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
   const { toast, showToast, setToast } = useToast();
   const shouldReduce = !!useReducedMotion();
   const [screenshotStrategy, setScreenshotStrategy] = useState<"mobile" | "desktop">("mobile");
@@ -212,8 +213,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-7xl px-6 py-8">
-          <Link href="/dashboard/leads" className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> Back to Leads
+          <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"} className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
+            <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
           </Link>
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
@@ -314,6 +315,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               handlePipelineChange={handlePipelineChange}
               handleFullAnalysis={analysis.handleFullAnalysis}
               handleCancelAnalysis={analysis.handleCancelAnalysis}
+              backTo={backTo}
             />
           </MaybeFadeUp>
 

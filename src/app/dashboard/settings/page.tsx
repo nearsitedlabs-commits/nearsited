@@ -300,7 +300,7 @@ export default function SettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
                 <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                  {sub?.audits_used ?? 0} / {sub?.audits_limit ?? 10} audits used this month
+                  {sub?.audits_used ?? 0} / {sub?.audits_limit ?? 10} credits used this month
                 </p>
               </div>
               <span className={`rounded-full border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>

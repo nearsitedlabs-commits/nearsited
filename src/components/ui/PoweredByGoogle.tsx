@@ -4,13 +4,14 @@ type Props = {
 
 export function PoweredByGoogle({ className = "" }: Props) {
   return (
-    <span className={`inline-flex items-center gap-1 ${className}`}>
+    <span className={`inline-flex items-center gap-0.5 sm:gap-1 ${className}`}>
       <svg
-        width="10"
-        height="10"
+        width="8"
+        height="8"
         viewBox="0 0 24 24"
         aria-hidden="true"
         focusable="false"
+        className="shrink-0 sm:h-[10px] sm:w-[10px]"
       >
         <path
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -30,8 +31,8 @@ export function PoweredByGoogle({ className = "" }: Props) {
         />
       </svg>
       <span
-        className="text-[var(--text-tertiary)]"
-        style={{ fontSize: "9px", letterSpacing: "0.01em" }}
+        className="text-[var(--text-tertiary)] text-[7px] sm:text-[9px]"
+        style={{ letterSpacing: "0.01em" }}
       >
         Powered by Google
       </span>

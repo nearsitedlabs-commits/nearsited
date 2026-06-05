@@ -94,6 +94,8 @@ export async function GET(request: NextRequest) {
       POPULAR_CITIES.map((name, i) => [name.toLowerCase(), i]),
     );
     const MAX_RESULTS = 200;
+    const MAX_ROWS_PER_POPULAR = 1; // only show one entry per popular city name
+    const seenPopular = new Set<string>();
 
     const popular: CityOption[] = [];
     const rest: CityOption[] = [];
@@ -101,6 +103,8 @@ export async function GET(request: NextRequest) {
     for (const city of filtered) {
       const rank = popularityIndex.get(city.city.toLowerCase());
       if (rank !== undefined) {
+        if (seenPopular.has(city.city.toLowerCase())) continue;
+        seenPopular.add(city.city.toLowerCase());
         popular.push(city);
       } else {
         rest.push(city);

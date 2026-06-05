@@ -197,7 +197,7 @@ export default function SearchableSelect({
           }}
           onFocus={() => {
             setOpen(true);
-            setSearch("");
+            setSearch(displayText);
           }}
           onKeyDown={(e) => {
             if (e.key === "Escape") {

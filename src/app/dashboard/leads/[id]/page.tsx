@@ -9,10 +9,13 @@ import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 };
 
-export default async function LeadDetailPage({ params }: PageProps) {
+export default async function LeadDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { from } = await searchParams;
+  const fromSource = from || "leads";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -70,6 +73,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           business={business as BusinessRow}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
+          backTo={fromSource}
         />
       );
     case "no_digital_presence":
@@ -78,6 +82,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           business={business as BusinessRow}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
+          backTo={fromSource}
         />
       );
     case "website":
@@ -89,6 +94,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           designAnalyses={(designRows ?? []) as DesignAnalysisRow[]}
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
+          backTo={fromSource}
         />
       );
   }

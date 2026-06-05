@@ -35,15 +35,15 @@ type DesignResult = {
 const AUDIT_STEP_KEYS = ["fetching", "mobile", "desktop", "audit_complete"] as const;
 
 const ALL_STEPS: { key: string; label: string }[] = [
-  { key: "fetching",           label: "Fetching site data" },
-  { key: "mobile",             label: "Running Mobile PageSpeed" },
-  { key: "desktop",            label: "Running Desktop PageSpeed" },
-  { key: "audit_complete",     label: "Performance audit complete" },
-  { key: "screenshot_mobile",  label: "Taking Mobile screenshot" },
-  { key: "screenshot_desktop", label: "Taking Desktop screenshot" },
-  { key: "analysing_mobile",   label: "Analysing Mobile design" },
-  { key: "analysing_desktop",  label: "Analysing Desktop design" },
-  { key: "design_complete",    label: "Analysis complete" },
+  { key: "fetching",             label: "Fetching site data" },
+  { key: "mobile",               label: "Running Mobile PageSpeed" },
+  { key: "desktop",              label: "Running Desktop PageSpeed" },
+  { key: "audit_complete",       label: "Performance audit complete" },
+  { key: "mobile-screenshot",    label: "Taking Mobile screenshot" },
+  { key: "desktop-screenshot",   label: "Taking Desktop screenshot" },
+  { key: "analysing_mobile",     label: "Analysing Mobile design" },
+  { key: "analysing_desktop",    label: "Analysing Desktop design" },
+  { key: "design_complete",      label: "Analysis complete" },
 ];
 
 // ── Example data ───────────────────────────────────────────────────────────────
@@ -551,7 +551,6 @@ export default function AuditPage() {
     let localAuditResult: { mobile: StrategyResult; desktop: StrategyResult } | null = null;
     let localDesignResult: { mobile: DesignResult; desktop: DesignResult } | null = null;
     let auditError: string | null = null;
-    let designError: string | null = null;
     let isQuotaError = false;
 
     const signal = abortControllerRef.current!.signal;
@@ -604,7 +603,21 @@ export default function AuditPage() {
     const designProcess = (async () => {
       try {
         const res = await designResponsePromise;
-        if (!res.ok) throw new Error("Design analysis failed");
+
+        // Non-2xx response — capture error from body and show in design UI
+        if (!res.ok) {
+          let errMsg = "Design analysis failed";
+          try {
+            const errBody = await res.json() as { error?: string; message?: string };
+            errMsg = errBody.error ?? errBody.message ?? errMsg;
+          } catch { /* ignore parse failure */ }
+          localDesignResult = {
+            mobile: { status: "error", error: errMsg },
+            desktop: { status: "error", error: errMsg },
+          };
+          setDesignResult(localDesignResult);
+          return;
+        }
 
         await readStream(
           res,
@@ -620,14 +633,27 @@ export default function AuditPage() {
             progressiveSave();
           },
           (data) => {
-            if (data.error === "AI_QUOTA_EXCEEDED" || data.error === "AI_SERVICE_BUSY") {
+            // API streams { type: "error", message: "..." } when analysis fails
+            const errMsg = (data.message as string) || (data.error as string) || "Design analysis failed";
+            if (errMsg === "AI_QUOTA_EXCEEDED" || errMsg === "AI_SERVICE_BUSY") {
               isQuotaError = true;
             }
+            // Set error result so the existing design error UI (with retry buttons) renders
+            localDesignResult = {
+              mobile: { status: "error", error: errMsg },
+              desktop: { status: "error", error: errMsg },
+            };
+            setDesignResult(localDesignResult);
           },
         );
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return;
-        designError = err instanceof Error ? err.message : "Design analysis failed";
+        const errMsg = err instanceof Error ? err.message : "Design analysis failed";
+        localDesignResult = {
+          mobile: { status: "error", error: errMsg },
+          desktop: { status: "error", error: errMsg },
+        };
+        setDesignResult(localDesignResult);
       }
     })();
 
@@ -656,10 +682,6 @@ export default function AuditPage() {
       startQuotaTimer(60);
       setRunning(false);
       return;
-    }
-
-    if (designError) {
-      console.warn("[AUDIT] Design analysis failed (non-fatal):", designError);
     }
 
     if (localAuditResult) {
@@ -1021,7 +1043,7 @@ export default function AuditPage() {
 
         {/* URL input card */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Review</p>
               <h1 className="mt-1 text-2xl font-medium text-[var(--text-primary)]">
@@ -1033,7 +1055,7 @@ export default function AuditPage() {
                 <>
                   <button
                     onClick={handleReset}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                    className="inline-flex w-full sm:w-auto cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
                   >
                     <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
                     New Search
@@ -1047,7 +1069,7 @@ export default function AuditPage() {
             </div>
           </div>
 
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
               <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
               <input
@@ -1062,7 +1084,7 @@ export default function AuditPage() {
             <button
               onClick={() => handleRun()}
               disabled={running || !url.trim()}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex w-full sm:w-auto cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               {running ? (step === "auditing" ? "Reviewing…" : "Analysing…") : "Review Again"}
@@ -1319,7 +1341,7 @@ export default function AuditPage() {
 
         {/* Done state actions */}
         {step === "done" && !error && auditResult && (
-          <div className="mt-6 space-y-4">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {(!designResult || (designResult.mobile.status !== "ok" && designResult.desktop.status !== "ok")) && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
                 Pitch will be based on performance data only.{" "}
@@ -1338,16 +1360,13 @@ export default function AuditPage() {
 
             {/* Generate Pitch */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between">
                 <div>
                   <h3 className="text-base font-medium text-[var(--text-primary)]">Generate Pitch</h3>
-                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
-                    Create a personalised outreach message based on this review.
-                  </p>
                 </div>
                 {auditResult.mobile.status === "timeout" && auditResult.desktop.status === "timeout" ? (
                   <div
-                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-[var(--bg-surface-2)] px-5 py-2.5 text-sm font-medium text-[var(--text-tertiary)]"
+                    className="inline-flex w-full sm:w-auto cursor-not-allowed items-center gap-2 rounded-lg bg-[var(--bg-surface-2)] px-5 py-2.5 text-sm font-medium text-[var(--text-tertiary)]"
                     title="Generate Pitch (unavailable — audit failed)"
                   >
                     <Mail className="h-4 w-4" />
@@ -1357,7 +1376,7 @@ export default function AuditPage() {
                   <button
                     onClick={handleGeneratePitch}
                     disabled={pitchLoading}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex w-full sm:w-auto cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {pitchLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -1391,18 +1410,15 @@ export default function AuditPage() {
 
             {/* Add to Pipeline */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between">
                 <div>
                   <h3 className="text-base font-medium text-[var(--text-primary)]">Add to Pipeline</h3>
-                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
-                    Save this opportunity to your pipeline and track progress.
-                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleAddToPipeline}
                   disabled={pipelineLoading || pipelineAdded}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex w-full sm:w-auto items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {pipelineAdded ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                   {pipelineLoading ? "Adding…" : pipelineAdded ? "Added" : "Add to Pipeline"}

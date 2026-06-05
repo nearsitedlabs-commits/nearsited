@@ -30,8 +30,8 @@ export default function CreditsWidget({
       const remaining = limit - used;
       // Defer setState to next microtask to avoid cascading render warning
       const msg = remaining <= 1
-        ? `You've used all ${limit} audits this month. Upgrade to continue auditing.`
-        : `${remaining} audit${remaining !== 1 ? "s" : ""} remaining this month. Upgrade when you need more.`;
+        ? `You've used all ${limit} credits this month. Upgrade to continue.`
+        : `${remaining} credit${remaining !== 1 ? "s" : ""} remaining this month. Upgrade when you need more.`;
       const id = setTimeout(() => setToast(msg), 0);
       return () => clearTimeout(id);
     }
@@ -50,7 +50,7 @@ export default function CreditsWidget({
           )}
         </div>
         <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-          {used} / {limit} audits this month
+          {used} / {limit} credits used this month
         </p>
         <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-elevated)]">
           <div className={`h-1 rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />

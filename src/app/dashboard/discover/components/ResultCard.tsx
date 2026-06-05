@@ -253,7 +253,7 @@ export function ResultCard({
             return (
               <div className="flex items-center gap-1.5">
                 <Link
-                  href={`/dashboard/leads/${business.id}`}
+                  href={`/dashboard/leads/${business.id}?from=discover`}
                   className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[90px] text-center"
                 >
                   View
@@ -288,7 +288,7 @@ export function ResultCard({
           ) {
             return (
               <Link
-                href={`/dashboard/leads/${business.id}`}
+                href={`/dashboard/leads/${business.id}?from=discover`}
                 className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[120px] text-center"
               >
                 View Opportunity
