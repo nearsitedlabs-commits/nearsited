@@ -311,19 +311,19 @@ export default function SettingsPage() {
           {(!sub || sub.tier === "free") && (
             <div className="mt-4 flex flex-wrap gap-2">
               <button
-                onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
+                onClick={() => handleUpgrade("pdt_0NgNzY19yqBBRy9eriQzV")}
                 disabled={upgrading !== null}
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:opacity-50"
               >
-                {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                {upgrading === "pdt_0NgNzY19yqBBRy9eriQzV" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 Upgrade to Starter — $19/mo
               </button>
               <button
-                onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
+                onClick={() => handleUpgrade("pdt_0NgNzY19yqBBRy9eriQzV")}
                 disabled={upgrading !== null}
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:opacity-50"
               >
-                {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                {upgrading === "pdt_0NgNzY19yqBBRy9eriQzV" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 Upgrade to Agency — $49/mo
               </button>
             </div>
