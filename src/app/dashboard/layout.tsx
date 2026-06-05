@@ -1,17 +1,41 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import SignOutButton from "./sign-out-button";
 import SidebarNav from "./sidebar-nav";
 import MobileBottomNav from "./mobile-nav";
 import CreditsWidget from "@/components/ui/CreditsWidget";
+import { FREE_AUDIT_LIMIT } from "@/lib/dodo";
+
+const TIER_LABELS: Record<string, string> = {
+  free: "Free Beta",
+  starter: "Starter",
+  agency: "Agency",
+};
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   if (!user.email_confirmed_at) redirect("/signup?verify=1");
+
+  // Fetch subscription tier for the user label
+  let planLabel = "Free Beta";
+  try {
+    const admin = createAdminClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: sub } = await (admin.from("subscriptions") as any)
+      .select("tier")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (sub?.tier) {
+      planLabel = TIER_LABELS[sub.tier as string] ?? sub.tier as string;
+    }
+  } catch {
+    // Non-critical — fall back to "Free Beta"
+  }
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-[var(--bg-base)]">
@@ -43,7 +67,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="truncate text-xs font-medium text-[var(--text-primary)]">
                 {user.email ?? "User"}
               </p>
-              <p className="text-[10px] text-[var(--text-tertiary)]">Free Beta</p>
+              <p className="text-[10px] text-[var(--text-tertiary)]">{planLabel}</p>
             </div>
           </div>
           <SignOutButton />

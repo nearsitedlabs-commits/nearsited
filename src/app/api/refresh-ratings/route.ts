@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -9,6 +10,11 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit: standard limit for refresh operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
 
     const body = await request.json() as { businessId?: string };
     const { businessId } = body;

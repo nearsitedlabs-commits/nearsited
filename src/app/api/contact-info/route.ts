@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +72,11 @@ export async function GET(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Rate limit: standard limit for contact info operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
 
     // Fetch business — ensure user owns it
     // Use * to handle columns that may not exist yet (contact_info)

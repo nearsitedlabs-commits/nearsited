@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 export async function GET() {
   const supabase = await createClient();
@@ -24,6 +25,11 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: standard limit for saved searches
+  const identifier = getRateLimitIdentifier(request, user.id);
+  const blocked = await checkRateLimit(request, rateLimiter, identifier);
+  if (blocked) return blocked;
 
   const body = await request.json();
   const { name, city, businessType } = body;

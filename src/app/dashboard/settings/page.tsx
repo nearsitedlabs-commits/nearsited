@@ -49,6 +49,8 @@ export default function SettingsPage() {
   const [nameInput, setNameInput] = useState("");
   const [savingName, setSavingName] = useState(false);
   const [nameMsg, setNameMsg] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   async function handleClear(scope: ClearScope) {
     setClearing(true);
@@ -66,6 +68,30 @@ export default function SettingsPage() {
         : `Error: ${json.error ?? "Unknown error"}`
     );
     setTimeout(() => setClearMsg(null), 3500);
+  }
+
+  // Reconcile subscription with Dodo (webhook fallback)
+  async function reconcileSubscription() {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/check-subscription");
+      const json = await res.json();
+      if (json.synced && json.reason === "reconciled") {
+        // Subscription was updated — refresh local state
+        setSub({ tier: json.tier, audits_used: json.audits_used, audits_limit: json.audits_limit });
+        setSyncMsg(`Upgrade confirmed! You're now on the ${json.tier === "starter" ? "Starter" : "Agency"} plan.`);
+        setTimeout(() => setSyncMsg(null), 6000);
+      } else if (json.synced && json.reason === "already_in_sync") {
+        setSyncMsg(null);
+      } else if (!json.synced && json.reason === "dodo_api_error") {
+        setSyncMsg("Could not verify subscription status. If the problem persists, contact support.");
+        setTimeout(() => setSyncMsg(null), 8000);
+      }
+    } catch {
+      // Silent fail — reconciliation is best-effort
+    } finally {
+      setSyncing(false);
+    }
   }
 
   useEffect(() => {
@@ -91,20 +117,38 @@ export default function SettingsPage() {
           }
         } catch { /* ignore */ }
       }
+
+      // Webhook fallback: if ?upgraded=1 is in the URL, reconcile with Dodo
+      if (typeof window !== "undefined" && window.location.search.includes("upgraded=1")) {
+        // Clean the URL param so refresh doesn't re-trigger
+        window.history.replaceState({}, "", window.location.pathname);
+        reconcileSubscription();
+      }
     }
     fetchData();
   }, [supabase]);
 
   async function handleUpgrade(productId: string) {
     setUpgrading(productId);
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId }),
-    });
-    const json = await res.json();
-    setUpgrading(null);
-    if (json.url) window.location.href = json.url;
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+      const json = await res.json();
+      setUpgrading(null);
+      if (json.url) {
+        window.location.href = json.url;
+      } else {
+        setSyncMsg(json.error ? `Upgrade failed: ${json.error}` : "Upgrade failed. Please try again or contact support.");
+        setTimeout(() => setSyncMsg(null), 6000);
+      }
+    } catch {
+      setUpgrading(null);
+      setSyncMsg("Network error. Please check your connection and try again.");
+      setTimeout(() => setSyncMsg(null), 6000);
+    }
   }
 
   if (loading) {
@@ -231,7 +275,21 @@ export default function SettingsPage() {
               <CreditCard className="h-5 w-5 text-[var(--score-good)]" />
             </div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Plan</h2>
+            {syncing && (
+              <div className="flex items-center gap-1.5 ml-auto">
+                <Loader2 className="h-3 w-3 animate-spin text-[var(--text-tertiary)]" />
+                <span className="text-xs text-[var(--text-tertiary)]">Syncing...</span>
+              </div>
+            )}
           </div>
+
+          {/* Upgrade success / reconciliation message */}
+          {syncMsg && (
+            <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
+              {syncMsg}
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>

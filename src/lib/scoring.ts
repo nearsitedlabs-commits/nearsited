@@ -241,23 +241,93 @@ export function businessViabilityMultiplier(
   return parseFloat(((reviewScore * 0.7) + (ratingScore * 0.3)).toFixed(3));
 }
 
+// ── Industry Multiplier ────────────────────────────────────────────────────────
+
+/**
+ * Industry-specific opportunity multipliers.
+ *
+ * Certain verticals are far more likely to invest in web redesign services.
+ * These multipliers adjust the opportunity score accordingly.
+ *
+ * High-opportunity verticals (dentists, lawyers, home services) get a boost.
+ * Low-opportunity verticals (banks, chains, government) get a penalty.
+ */
+export const INDUSTRY_MULTIPLIERS: Record<string, number> = {
+  // High opportunity — strong willingness to invest in web presence
+  dentist: 1.15, orthodontist: 1.15, chiropractor: 1.15,
+  lawyer: 1.15, "personal injury lawyer": 1.15,
+  "divorce lawyer": 1.15, "criminal defense lawyer": 1.15,
+  "estate planning lawyer": 1.15,
+
+  // High — competitive local service verticals
+  plumber: 1.10, electrician: 1.10, hvac: 1.10,
+  "hvac contractor": 1.10, roofer: 1.10, painter: 1.10,
+  landscaper: 1.10, "lawn care service": 1.10,
+  "general contractor": 1.10, "home inspector": 1.10,
+  "pest control service": 1.10, "carpet cleaner": 1.10,
+
+  // High — restaurants, hospitality, personal care
+  restaurant: 1.10, cafe: 1.10, bar: 1.10,
+  bakery: 1.10, "pizza restaurant": 1.10, "fast food restaurant": 1.10,
+  salon: 1.10, barber: 1.10, "hair salon": 1.10,
+  "nail salon": 1.10, "day spa": 1.10, "massage therapist": 1.10,
+  "tanning salon": 1.10, "tattoo shop": 1.10,
+  gym: 1.10, "personal trainer": 1.10, "yoga studio": 1.10,
+  "pilates studio": 1.10, "crossfit gym": 1.10,
+
+  // Medium-high — competitive professional services
+  "auto repair": 1.05, mechanic: 1.05, "car dealer": 1.05,
+  "used car dealer": 1.05, "body shop": 1.05,
+  "real estate agent": 1.05, "real estate agency": 1.05,
+  "property management": 1.05,
+  accountant: 1.05, "financial planner": 1.05,
+  "mortgage broker": 1.05, "insurance agent": 1.05,
+
+  // Low — unlikely to invest in web redesign
+  bank: 0.80, "credit union": 0.80,
+  "investment firm": 0.80,
+  "government office": 0.75,
+  "post office": 0.75,
+  "non profit": 0.80, church: 0.80,
+  school: 0.75, university: 0.75, college: 0.75,
+  "chain store": 0.80, supermarket: 0.80,
+  "department store": 0.80, "shopping mall": 0.80,
+  "big box store": 0.80,
+};
+
+/** Default multiplier when industry isn't explicitly listed. */
+export const DEFAULT_INDUSTRY_MULTIPLIER = 1.0;
+
+/**
+ * Returns the industry multiplier for a given business type value.
+ * Matches by exact value first, then falls back to 1.0.
+ * The value should be the raw `business_type` string from the DB (lowercase).
+ */
+export function getIndustryMultiplier(businessType?: string | null): number {
+  if (!businessType) return DEFAULT_INDUSTRY_MULTIPLIER;
+  const key = businessType.toLowerCase().trim();
+  return INDUSTRY_MULTIPLIERS[key] ?? DEFAULT_INDUSTRY_MULTIPLIER;
+}
+
 /**
  * Computes the opportunity score — how attractive this lead is for a redesign agency.
- * Combines website weakness with business viability.
+ * Combines website weakness with business viability and industry multiplier.
  *
- * High score = bad website + active business = strong redesign pitch candidate.
- * Low score = either too neglected (business doesn't care) or too good (doesn't need work).
+ * High score = bad website + active business + high-opportunity vertical = strong pitch.
+ * Low score = either too neglected or too good, or low-opportunity vertical.
  *
  * Returns 0–100.
  */
 export function computeOpportunityScore(
   qualityScore: number,
   reviewCount: number = 0,
-  rating: number = 0
+  rating: number = 0,
+  businessType?: string | null
 ): number {
   const weakness = websiteWeakness(qualityScore);
   const viability = businessViabilityMultiplier(reviewCount, rating);
-  return Math.round(weakness * viability);
+  const industry = getIndustryMultiplier(businessType);
+  return Math.round(weakness * viability * industry);
 }
 
 /**

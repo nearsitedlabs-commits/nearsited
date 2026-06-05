@@ -39,7 +39,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How many credits do I get?",
-    a: "Starter: 50 audits/month. Agency: 200 audits/month. Credits reset at the start of each billing month. Unused credits do not roll over.",
+    a: "Free: 10 audits to try it out. Starter: 50 audits/month. Agency: 200 audits/month. Paid plan credits reset at the start of each billing month. Unused credits do not roll over.",
   },
   {
     q: "What happens when I run out?",

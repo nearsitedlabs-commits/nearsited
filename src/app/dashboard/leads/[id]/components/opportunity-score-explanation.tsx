@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { CheckCircle2, ChevronDown, Info } from "lucide-react";
 import { websiteWeakness } from "@/lib/scoring";
+import { opportunityInsight } from "@/lib/opportunity-insights";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -28,40 +29,6 @@ function getConfidence(hasAudit: boolean, hasDesign: boolean, reviewCount: numbe
   if (hasAudit && hasDesign && r >= 10) return "High";
   if (hasAudit || hasDesign || r >= 5)  return "Medium";
   return "Low";
-}
-
-function getSummary(
-  websiteStatus: string,
-  overallScore: number,
-  opportunityScore: number,
-  reviewCount: number | null,
-  rating: number | null,
-  businessType: string | null,
-): string {
-  const r   = reviewCount ?? 0;
-  const rat = rating ?? 0;
-  const t   = businessType ?? "business";
-
-  if (websiteStatus === "no_website") {
-    return r >= 20 && rat >= 4.0
-      ? `This ${t} has an active local presence and strong reputation, but no website — a clear opportunity to build their digital foundation.`
-      : `This ${t} has no website, creating a direct opportunity for web design and digital presence services.`;
-  }
-  if (websiteStatus === "social_only") {
-    return `This ${t} relies entirely on social media. A website would add search visibility and direct lead capture that social profiles can't provide.`;
-  }
-  if (websiteStatus === "platform_only") {
-    return `This ${t} uses a third-party platform. A custom website would give them brand control and better conversion capabilities.`;
-  }
-  if (opportunityScore >= 70) {
-    return r >= 20
-      ? `This active ${t} has a website with significant improvement potential. Strong customer engagement signals a business ready to invest.`
-      : `This ${t}'s website has major performance and design gaps — a strong redesign candidate.`;
-  }
-  if (opportunityScore >= 45) {
-    return `This ${t} has a website with fixable issues. Addressing performance, design, and conversion improvements could meaningfully grow their results.`;
-  }
-  return `This ${t} has a functional website with specific optimisation opportunities that could enhance their search visibility and conversions.`;
 }
 
 function getSignals(
@@ -265,7 +232,21 @@ export function OpportunityScoreExplanation({
   }, []);
 
   const confidence     = getConfidence(hasAudit, hasDesign, reviewCount);
-  const summary        = getSummary(websiteStatus, overallScore, opportunityScore, reviewCount, rating, businessType);
+  const insight        = opportunityInsight(
+    websiteStatus,
+    null,  // performanceScore — not available at this level
+    null,  // designScore
+    null,  // mobileScore
+    null,  // seoScore
+    null,  // trustScore
+    {
+      businessType: businessType ?? undefined,
+      reviewCount,
+      rating,
+      overallScore,
+    },
+  );
+  const summary        = insight.summary;
   const signals        = getSignals(websiteStatus, overallScore, reviewCount, rating, contactAvailable, issues);
   const types          = getTypes(websiteStatus, overallScore, issues);
   const services       = getServices(websiteStatus, overallScore, issues);

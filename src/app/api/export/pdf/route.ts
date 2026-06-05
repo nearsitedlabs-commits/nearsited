@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { jsPDF } from "jspdf";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 const ACCENT: [number, number, number] = [138, 151, 119];
 const BLACK: [number, number, number] = [20, 20, 20];
@@ -50,6 +51,11 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Rate limit: standard limit for PDF export
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
 
     const [{ data: biz }, { data: audits }, { data: designs }, { data: pitches }] = await Promise.all([
       supabase.from("businesses").select("*").eq("id", businessId).eq("user_id", user.id).single(),

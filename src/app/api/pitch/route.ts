@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { WebsiteStatus } from "@/lib/types";
+import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const GEMINI_MODEL = "gemini-3.5-flash";
@@ -365,6 +366,11 @@ export async function POST(request: NextRequest) {
     }
 
     console.log("[PITCH] Authenticated user:", user.id);
+
+    // Rate limit: strict limit for expensive pitch generation
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
+    if (blocked) return blocked;
 
     let promptBusinessName = "there";
     let promptBusinessType = "business";

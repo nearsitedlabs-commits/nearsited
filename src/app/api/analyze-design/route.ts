@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkCredit, deductCredit } from "@/lib/credits";
+import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const GEMINI_MODEL = "gemini-3.5-flash";
@@ -413,7 +415,21 @@ export async function POST(request: NextRequest) {
     const currentUser = user;
     console.log("[DESIGN] Authenticated user:", currentUser.id);
 
-    // 3. Check API keys
+    // 3. Rate limit — strict limit for expensive analysis operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
+    if (blocked) return blocked;
+
+    // 4. Credit check — runs before any external API calls
+    const credit = await checkCredit(user.id);
+    if (!credit.allowed) {
+      return NextResponse.json(
+        { error: "Audit limit reached. Upgrade your plan to run more design analyses.", code: "CREDIT_LIMIT", retryAfter: 0 },
+        { status: 429 },
+      );
+    }
+
+    // 4. Check API keys
     const screenshotKey = process.env.SCREENSHOT_API_KEY;
     if (!screenshotKey) {
       console.log("[DESIGN] Missing SCREENSHOT_API_KEY");
@@ -665,7 +681,10 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 8. Stream result + done
+          // 8. Deduct credit for fresh (non-cached) analysis
+          await deductCredit(user.id);
+
+          // 9. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
 
           writeJson(controller, encoder, {

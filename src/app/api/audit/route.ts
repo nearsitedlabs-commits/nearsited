@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { computeOpportunityScore } from "@/lib/scoring";
 import { checkCredit, deductCredit } from "@/lib/credits";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 type AuditRequestBody = {
   businessId?: string;
@@ -202,6 +203,11 @@ export async function POST(request: NextRequest) {
 
     console.log("[AUDIT] Authenticated user:", user.id);
 
+    // Rate limit: standard limit for audit operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
+
     // 3. Credit check — runs before any external API calls
     const credit = await checkCredit(user.id);
     if (!credit.allowed) {
@@ -391,13 +397,14 @@ export async function POST(request: NextRequest) {
 
             // 7. Compute opportunity score (rating + review_count already on the business row)
             const { data: businessRow } = await (adminSupabase.from("businesses") as ReturnType<typeof adminSupabase.from>)
-              .select("rating, review_count")
+              .select("rating, review_count, business_type")
               .eq("id", businessId)
               .single();
 
             const reviewCount = (businessRow as { review_count?: number } | null)?.review_count ?? 0;
             const rating = (businessRow as { rating?: number } | null)?.rating ?? 0;
-            const opportunityScore = computeOpportunityScore(bestPerfScore, reviewCount, rating);
+            const businessType = (businessRow as { business_type?: string | null } | null)?.business_type ?? null;
+            const opportunityScore = computeOpportunityScore(bestPerfScore, reviewCount, rating, businessType);
 
             // 8. Update businesses row
             const { error: updateError } = await (adminSupabase.from("businesses") as ReturnType<typeof adminSupabase.from>)

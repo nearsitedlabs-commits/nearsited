@@ -73,10 +73,26 @@ export async function POST(req: NextRequest) {
     const subTable = (admin as any).from("subscriptions");
 
     if (isCancelled) {
+      // Read current audits_used so we can cap it at the free limit on downgrade
+      const { data: currentSub } = await subTable
+        .select("audits_used")
+        .eq("user_id", userId)
+        .maybeSingle() as { data: { audits_used: number } | null };
+      const currentUsed = (currentSub as { audits_used: number } | null)?.audits_used ?? 0;
+      const cappedUsed = Math.min(currentUsed, FREE_AUDIT_LIMIT);
+
       const { error } = await subTable
-        .update({ tier: "free", audits_limit: FREE_AUDIT_LIMIT, dodo_subscription_id: sub.subscription_id })
+        .update({
+          tier: "free",
+          audits_limit: FREE_AUDIT_LIMIT,
+          audits_used: cappedUsed,
+          dodo_subscription_id: sub.subscription_id,
+        })
         .eq("user_id", userId);
       if (error) console.error("[DODO/WEBHOOK] Cancel update error", error);
+      else if (cappedUsed < currentUsed) {
+        console.log(`[DODO/WEBHOOK] Capped audits_used from ${currentUsed} to ${cappedUsed} on downgrade for user=${userId}`);
+      }
     } else if (isActive && productInfo) {
       const now = new Date();
       const resetAt = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();

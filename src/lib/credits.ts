@@ -49,11 +49,32 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
 }
 
 /**
- * Increments audits_used by 1. Called after a successful non-cached audit.
+ * Increments audits_used by 1 atomically using optimistic concurrency control.
+ * Retries up to 3 times if a concurrent request modifies the row between read and write.
+ * Called after a successful non-cached audit.
  */
 export async function deductCredit(userId: string): Promise<void> {
-  const { data } = await subTable().select("audits_used").eq("user_id", userId).maybeSingle();
-  const current = (data as { audits_used: number } | null)?.audits_used ?? 0;
-  await subTable().update({ audits_used: current + 1 }).eq("user_id", userId);
-  console.log(`[CREDITS] deducted user=${userId} now=${current + 1}`);
+  const MAX_RETRIES = 3;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const { data } = await subTable().select("audits_used").eq("user_id", userId).maybeSingle();
+    const current = (data as { audits_used: number } | null)?.audits_used ?? 0;
+    const newValue = current + 1;
+
+    // Optimistic update: only succeeds if audits_used hasn't changed since we read it
+    const { error, count } = await subTable()
+      .update({ audits_used: newValue })
+      .eq("user_id", userId)
+      .eq("audits_used", current)
+      .select("audits_used");
+
+    if (!error) {
+      console.log(`[CREDITS] deducted user=${userId} now=${newValue}`);
+      return;
+    }
+
+    // If the update matched 0 rows (race), retry
+    console.warn(`[CREDITS] retry ${attempt + 1}/${MAX_RETRIES} for user=${userId}: concurrent modification detected`);
+  }
+
+  console.error(`[CREDITS] failed to deduct credit for user=${userId} after ${MAX_RETRIES} attempts`);
 }

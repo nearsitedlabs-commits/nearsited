@@ -5,10 +5,15 @@ import DodoPayments from "dodopayments";
 let _client: DodoPayments | null = null;
 export function getDodoClient(): DodoPayments {
   if (!_client) {
+    const apiKey = process.env.DODO_API_KEY;
+    // Dodo test API keys start with "S-" — auto-detect environment
+    const isTestMode = apiKey?.startsWith("S-") ?? false;
     _client = new DodoPayments({
-      bearerToken: process.env.DODO_API_KEY,
+      bearerToken: apiKey,
       webhookKey: process.env.DODO_WEBHOOK_SECRET ?? null,
+      environment: isTestMode ? "test_mode" : "live_mode",
     });
+    console.log(`[DODO] Initialized in ${isTestMode ? "TEST" : "LIVE"} mode`);
   }
   return _client;
 }

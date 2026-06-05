@@ -352,17 +352,19 @@ create table public.mockups (
 );
 ```
 
-### 2.10 `subscriptions` (v2 — dormant)
-Stripe scaffold. Credits UI reads a placeholder until wired. `tier`: `free | starter | pro | agency`.
+### 2.10 `subscriptions`
+Billing / audit-credit tracking. Provisioned on signup via [`getSubscription()`](src/lib/credits.ts:17) (free tier) and updated by the Dodo Payments webhook ([`src/app/api/webhooks/dodo/route.ts`](src/app/api/webhooks/dodo/route.ts)) when users subscribe, upgrade, or cancel. `audits_used` is decremented atomically via optimistic concurrency control (see §10). On downgrade/cancel, `audits_used` is capped to `FREE_AUDIT_LIMIT` (10) to prevent over-limit states.
+
+`tier`: `free | starter | agency`.
 ```sql
 create table public.subscriptions (
   id                     uuid primary key default extensions.uuid_generate_v4(),
   user_id                uuid references public.profiles(id) on delete cascade,
-  stripe_customer_id     text,
-  stripe_subscription_id text,
-  tier                   text,
-  credits_discovery      integer,
-  credits_mockup         integer,
+  dodo_customer_id       text,            -- Dodo Payments customer ID
+  dodo_subscription_id   text,            -- Dodo Payments subscription ID
+  tier                   text,            -- free | starter | agency
+  audits_used            integer default 0,   -- atomic optimistic-lock counter (§10)
+  audits_limit           integer default 10,  -- FREE_AUDIT_LIMIT = 10, starter=50, agency=200
   credits_reset_at       timestamptz,
   created_at             timestamptz default now()
 );
@@ -733,8 +735,8 @@ pipeline         id, business_id, user_id, status, notes, created_at, updated_at
 pitches          id, business_id, user_id, subject, body, tone, lead_type,
                  pitch_status, created_at
 mockups          id, business_id, user_id, html_content, preview_url, created_at        [v2]
-subscriptions    id, user_id, stripe_customer_id, stripe_subscription_id, tier,
-                 credits_discovery, credits_mockup, credits_reset_at, created_at         [v2]
+subscriptions    id, user_id, dodo_customer_id, dodo_subscription_id, tier,
+                 audits_used, audits_limit, credits_reset_at, created_at                 [atomic OCC on audits_used §10]
 share_links      id, business_id, user_id, token, created_at, expires_at                 [admin insert, anon select]
 territories      id, user_id, name, city, business_type,
                  last_scanned_at, alert_enabled, created_at                              [v2 — no radius column]

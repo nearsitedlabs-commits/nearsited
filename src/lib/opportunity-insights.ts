@@ -19,6 +19,21 @@ export type OpportunityInsight = {
   delta: number | null;
 };
 
+export type OpportunityInsightOptions = {
+  /** Business type for personalised text, e.g. "bakery", "dentist" */
+  businessType?: string;
+  /** Number of Google reviews, used to enrich the summary */
+  reviewCount?: number | null;
+  /** Average star rating, used to enrich the summary */
+  rating?: number | null;
+  /**
+   * Overall score override — when provided and individual scores are all null,
+   * this value is used as the effective current score instead of falling through
+   * to the "not audited yet" branch.
+   */
+  overallScore?: number | null;
+};
+
 /**
  * Generate an opportunity insight for a business lead.
  *
@@ -28,6 +43,7 @@ export type OpportunityInsight = {
  * @param mobileScore       - PageSpeed mobile score (0–100), nullable
  * @param seoScore          - PageSpeed SEO score (0–100), nullable
  * @param trustScore        - Gemini trust score (0–100), nullable
+ * @param options           - Optional enrichment params (businessType, reviewCount, rating, overallScore)
  */
 export function opportunityInsight(
   websiteStatus: string,
@@ -36,15 +52,31 @@ export function opportunityInsight(
   mobileScore: number | null,
   seoScore: number | null,
   trustScore: number | null,
+  options?: OpportunityInsightOptions,
 ): OpportunityInsight {
-  // Compute the "current" overall score from whatever we have
-  const currentScore = computeEffectiveScore(performanceScore, designScore, mobileScore, seoScore, trustScore);
+  const t  = options?.businessType ?? "business";
+  const r  = options?.reviewCount ?? 0;
+  const rt = options?.rating ?? 0;
+
+  // Compute the "current" overall score from whatever we have.
+  // If an explicit overallScore was provided and no individual scores are
+  // available, use it as the effective score.
+  const computedScore = computeEffectiveScore(performanceScore, designScore, mobileScore, seoScore, trustScore);
+  const currentScore = options?.overallScore ?? computedScore;
   const { potentialScore, delta } = computePotentialAndDelta(currentScore, websiteStatus);
 
   // — Presence-based insights (no audit data needed) —
   if (websiteStatus === "no_website") {
+    if (r >= 20 && rt >= 4.0) {
+      return {
+        summary: `This ${t} has an active local presence and strong reputation, but no website — a clear opportunity to build their digital foundation.`,
+        type: "presence",
+        potentialScore,
+        delta,
+      };
+    }
     return {
-      summary: "No website exists — this business is missing every online opportunity. A strong site would unlock discovery, credibility, and leads.",
+      summary: `This ${t} has no website, creating a direct opportunity for web design and digital presence services.`,
       type: "presence",
       potentialScore,
       delta,
@@ -53,7 +85,7 @@ export function opportunityInsight(
 
   if (websiteStatus === "social_only") {
     return {
-      summary: "Social media alone isn't a website — this business is renting its online presence. A dedicated site builds trust and ownership.",
+      summary: `This ${t} relies entirely on social media. A website would add search visibility and direct lead capture that social profiles can't provide.`,
       type: "social",
       potentialScore,
       delta,
@@ -62,7 +94,7 @@ export function opportunityInsight(
 
   if (websiteStatus === "platform_only") {
     return {
-      summary: "Relying on a third-party platform limits control and branding. A custom website would establish independence and professionalism.",
+      summary: `This ${t} uses a third-party platform. A custom website would give them brand control and better conversion capabilities.`,
       type: "platform",
       potentialScore,
       delta,
@@ -72,7 +104,7 @@ export function opportunityInsight(
   // — Score-based insights (has_website) —
   if (currentScore === null) {
     return {
-      summary: "This business has a website but hasn't been audited yet. Run an audit to uncover the opportunity.",
+      summary: `This ${t} has a website but hasn't been audited yet. Run an audit to uncover the opportunity.`,
       type: "mixed",
       potentialScore: null,
       delta: null,
@@ -116,8 +148,16 @@ export function opportunityInsight(
     };
   }
 
-  // Scores exist but look decent — still frame as opportunity
+  // No specific weaknesses — use tiered opportunity text enriched by business activity signals
   if (currentScore >= 70) {
+    if (r >= 20) {
+      return {
+        summary: `This active ${t} has a website with significant improvement potential. Strong customer engagement signals a business ready to invest.`,
+        type: "mixed",
+        potentialScore,
+        delta,
+      };
+    }
     return {
       summary: `Solid foundation at ${currentScore}/100 — small refinements could push this into top-tier territory (potential ${potentialScore}).`,
       type: "mixed",
@@ -126,9 +166,18 @@ export function opportunityInsight(
     };
   }
 
-  // Fallback — scores in the mid range
+  if (currentScore >= 45) {
+    return {
+      summary: `This ${t} has a website with fixable issues. Addressing performance, design, and conversion improvements could meaningfully grow their results.`,
+      type: "mixed",
+      potentialScore,
+      delta,
+    };
+  }
+
+  // Fallback — scores in the mid/low range
   return {
-    summary: `Current score of ${currentScore}/100 leaves room for improvement. Addressing the highlighted issues could unlock significant gains.`,
+    summary: `This ${t} has a functional website with specific optimisation opportunities that could enhance their search visibility and conversions.`,
     type: "mixed",
     potentialScore,
     delta,

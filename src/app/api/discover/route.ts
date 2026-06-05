@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { classifyWebsite } from "@/lib/types";
+import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 /**
  * Maps Nearsited business_type values to Google Places Nearby Search `type` values.
@@ -327,6 +328,11 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
+
+    // Rate limit: strict limit for expensive discovery operations
+    const identifier = getRateLimitIdentifier(request, userId);
+    const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
+    if (blocked) return blocked;
 
     const radius = radiusMeters ?? 10000; // default 10km
     const expandedRadius = Math.round(radius * 1.5);
