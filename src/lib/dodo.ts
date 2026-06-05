@@ -19,9 +19,11 @@ export function getDodoClient(): DodoPayments {
 }
 
 // Product ID → plan tier + monthly audit limit
-// Test mode: single product used for all plans during testing
 export const DODO_PRODUCTS: Record<string, { tier: "starter" | "agency"; limit: number }> = {
-  pdt_0NgNzY19yqBBRy9eriQzV: { tier: "starter", limit: 50  }, // Test — Starter Monthly
+  pdt_0NgKrmYBX9pAp9NhbeMqp: { tier: "starter", limit: 50  }, // Starter Monthly
+  pdt_0NgKs5x6MXKvmMOQemKP2: { tier: "starter", limit: 50  }, // Starter Annual
+  pdt_0NgKsF0ROmm9U603GRqMm: { tier: "agency",  limit: 200 }, // Agency Monthly
+  pdt_0NgKsQO5UXCVGZskhrv89: { tier: "agency",  limit: 200 }, // Agency Annual
 };
 
 export const FREE_AUDIT_LIMIT = 10;

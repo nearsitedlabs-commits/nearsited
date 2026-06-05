@@ -3,7 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getDodoClient } from "@/lib/dodo";
 
 const VALID_PRODUCTS = [
-  "pdt_0NgNzY19yqBBRy9eriQzV", // Test — Starter Monthly
+  "pdt_0NgKrmYBX9pAp9NhbeMqp", // Starter Monthly
+  "pdt_0NgKs5x6MXKvmMOQemKP2", // Starter Annual
+  "pdt_0NgKsF0ROmm9U603GRqMm", // Agency Monthly
+  "pdt_0NgKsQO5UXCVGZskhrv89", // Agency Annual
 ];
 
 export async function POST(req: NextRequest) {
