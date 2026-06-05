@@ -2,9 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "@/lib/motion";
 import { FadeIn, fadeUpVariants } from "@/lib/motion";
-import { CanvasBackground } from "@/components/ui/CanvasBackground";
+import dynamic from "next/dynamic";
+
+// Lazy-load canvas animation — footer is off-screen initially, no need to block
+const CanvasBackground = dynamic(
+  () => import("@/components/ui/CanvasBackground").then((mod) => ({ default: mod.CanvasBackground })),
+  { ssr: false },
+);
 import { useState, useCallback } from "react";
 
 export function LandingFooter() {
