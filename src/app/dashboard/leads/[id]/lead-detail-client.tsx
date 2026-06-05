@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Loader2, MapPin, TrendingUp } from "lucide-react";

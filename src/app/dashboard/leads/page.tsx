@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { FilterPanel } from "@/components/filters/FilterPanel";
 import {
   type FilterState, DEFAULT_FILTERS, countActiveFilters,

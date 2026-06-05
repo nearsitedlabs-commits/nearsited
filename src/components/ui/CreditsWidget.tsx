@@ -6,36 +6,46 @@ import { Toast } from "@/components/ui/Toast";
 
 const TIER_LABELS: Record<string, string> = { free: "Free", starter: "Starter", agency: "Agency" };
 
-export default function CreditsWidget({
-  tier,
-  auditsUsed,
-  auditsLimit,
-}: {
-  tier: string;
-  auditsUsed: number;
-  auditsLimit: number;
-}) {
+type SubData = { tier: string; audits_used: number; audits_limit: number };
+
+export default function CreditsWidget() {
+  const [sub, setSub] = useState<SubData | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const hasShownToast = useRef(false);
 
-  const used = auditsUsed;
-  const limit = auditsLimit;
+  // Fetch subscription data client-side — avoids blocking the dashboard layout
+  useEffect(() => {
+    fetch("/api/check-subscription")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.tier) {
+          setSub({ tier: data.tier, audits_used: data.audits_used ?? 0, audits_limit: data.audits_limit ?? 10 });
+        }
+      })
+      .catch(() => {
+        // Silent fail — widget gracefully degrades
+      });
+  }, []);
+
+  const tier = sub?.tier ?? "free";
+  const used = sub?.audits_used ?? 0;
+  const limit = sub?.audits_limit ?? 10;
   const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
   const barColor = pct >= 95 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-[var(--accent)]";
 
   // Show low-balance toast once per session when credits are critically low
   useEffect(() => {
+    if (!sub) return;
     if (pct >= 80 && !hasShownToast.current) {
       hasShownToast.current = true;
       const remaining = limit - used;
-      // Defer setState to next microtask to avoid cascading render warning
       const msg = remaining <= 1
         ? `You've used all ${limit} credits this month. Upgrade to continue.`
         : `${remaining} credit${remaining !== 1 ? "s" : ""} remaining this month. Upgrade when you need more.`;
       const id = setTimeout(() => setToast(msg), 0);
       return () => clearTimeout(id);
     }
-  }, [pct, limit, used]);
+  }, [pct, limit, used, sub]);
 
   return (
     <>
@@ -49,12 +59,18 @@ export default function CreditsWidget({
             <Link href="/pricing" className="text-[10px] text-[var(--accent)] hover:underline">Upgrade</Link>
           )}
         </div>
-        <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
-          {used} / {limit} credits used this month
-        </p>
-        <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-elevated)]">
-          <div className={`h-1 rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
-        </div>
+        {sub ? (
+          <>
+            <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
+              {used} / {limit} credits used this month
+            </p>
+            <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-elevated)]">
+              <div className={`h-1 rounded-full transition-all ${barColor}`} style={{ width: `${pct}%` }} />
+            </div>
+          </>
+        ) : (
+          <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">Loading...</p>
+        )}
       </div>
     </>
   );

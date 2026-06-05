@@ -1,41 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { redirect } from "next/navigation";
 import SignOutButton from "./sign-out-button";
 import SidebarNav from "./sidebar-nav";
 import MobileBottomNav from "./mobile-nav";
 import CreditsWidget from "@/components/ui/CreditsWidget";
-import type { SubscriptionRow } from "@/lib/db-types";
-
-const TIER_LABELS: Record<string, string> = {
-  free: "Free Beta",
-  starter: "Starter",
-  agency: "Agency",
-};
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   if (!user.email_confirmed_at) redirect("/signup?verify=1");
-
-  // Fetch subscription tier for the user label and credits widget
-  let planLabel = "Free Beta";
-  let sub: Pick<SubscriptionRow, "tier" | "audits_used" | "audits_limit"> | null = null;
-  try {
-    const { data } = await scopedAdmin(user.id)
-      .from("subscriptions")
-      .select("tier, audits_used, audits_limit")
-      .maybeSingle();
-    sub = data as Pick<SubscriptionRow, "tier" | "audits_used" | "audits_limit"> | null;
-    if (sub?.tier) {
-      planLabel = TIER_LABELS[sub.tier as string] ?? sub.tier as string;
-    }
-  } catch (e) {
-    console.error("Failed to fetch subscription tier:", e);
-  }
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-[var(--bg-base)]">
@@ -52,13 +28,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* Nav — client component for active state */}
         <SidebarNav />
 
-        {/* Credits widget */}
+        {/* Credits widget — fetches its own data client-side to avoid blocking layout */}
         <div className="border-t border-[var(--border)] px-4 py-3">
-          <CreditsWidget
-            tier={sub?.tier ?? "free"}
-            auditsUsed={sub?.audits_used ?? 0}
-            auditsLimit={sub?.audits_limit ?? 10}
-          />
+          <CreditsWidget />
         </div>
 
         {/* User row */}
@@ -71,7 +43,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="truncate text-xs font-medium text-[var(--text-primary)]">
                 {user.email ?? "User"}
               </p>
-              <p className="text-[10px] text-[var(--text-tertiary)]">{planLabel}</p>
+              <p className="text-[10px] text-[var(--text-tertiary)]">Free Beta</p>
             </div>
           </div>
           <SignOutButton />

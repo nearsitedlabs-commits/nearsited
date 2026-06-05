@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCountUp } from "@/lib/shared-hooks";
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import {
   Search, Target, Mail, BarChart3, Activity,
   ArrowRight, MessageSquare, Compass, TrendingUp,

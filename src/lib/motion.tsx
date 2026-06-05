@@ -2,6 +2,8 @@
  * Nearsited Motion System
  *
  * Reusable animation primitives built on Framer Motion.
+ * Do NOT import from "framer-motion" directly — import from this module instead.
+ * This ensures proper tree-shaking via optimizePackageImports.
  *
  * Brand: Professional · Modern · Confident · Fast · Premium
  *
@@ -23,7 +25,7 @@
  *   ✗ No spinning loaders
  */
 
-import { motion, type Variants, type Easing } from "framer-motion";
+import { motion, useReducedMotion as _useReducedMotion, type Variants, type Easing } from "framer-motion";
 
 // ── Duration & Easing Tokens ──────────────────────────────────────────────────
 
@@ -235,6 +237,6 @@ export function SkeletonLoader({
   );
 }
 
-// ── Re-export motion for convenience ───────────────────────────────────────────
+// ── Re-exports — always import from here, never directly from "framer-motion" ──
 
-export { motion, type Variants };
+export { motion, _useReducedMotion as useReducedMotion, type Variants };

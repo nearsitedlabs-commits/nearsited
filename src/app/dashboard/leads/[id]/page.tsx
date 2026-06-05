@@ -20,14 +20,17 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // Fetch business
-  const { data: business, error: bizErr } = await supabase
-    .from("businesses")
-    .select("*")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .single();
+  // Fetch all data in parallel — business, audits, design analyses, pipeline, pitch
+  const [bizResult, auditsResult, designResult, pipelineResult, pitchResult] = await Promise.all([
+    supabase.from("businesses").select("*").eq("id", id).eq("user_id", user.id).single(),
+    supabase.from("audits").select("*").eq("business_id", id).order("created_at", { ascending: false }).limit(2),
+    supabase.from("design_analyses").select("*").eq("business_id", id).order("analyzed_at", { ascending: false }).limit(2),
+    supabase.from("pipeline").select("status").eq("business_id", id).eq("user_id", user.id).maybeSingle(),
+    supabase.from("pitches").select("id, subject, body, tone").eq("business_id", id).eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
+  ]);
 
+  const business = bizResult.data;
+  const bizErr = bizResult.error;
   if (bizErr || !business) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
@@ -41,27 +44,10 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   // Detect lead workflow from website_status
   const workflow = detectLeadWorkflow(business as { website_status: string; website: string | null });
 
-  // Fetch latest audits
-  const { data: audits } = await supabase
-    .from("audits")
-    .select("*")
-    .eq("business_id", id)
-    .order("created_at", { ascending: false })
-    .limit(2);
-
-  // Fetch latest design analyses
-  const { data: designRows } = await supabase
-    .from("design_analyses")
-    .select("*")
-    .eq("business_id", id)
-    .order("analyzed_at", { ascending: false })
-    .limit(2);
-
-  // Fetch pipeline status + latest saved pitch in parallel
-  const [{ data: pipelineRow }, { data: pitchRows }] = await Promise.all([
-    supabase.from("pipeline").select("status").eq("business_id", id).eq("user_id", user.id).maybeSingle(),
-    supabase.from("pitches").select("id, subject, body, tone").eq("business_id", id).eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
-  ]);
+  const audits = auditsResult.data;
+  const designRows = designResult.data;
+  const pipelineRow = pipelineResult.data;
+  const pitchRows = pitchResult.data;
 
   const savedPitch = pitchRows?.[0] ?? null;
 
