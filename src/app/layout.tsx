@@ -27,10 +27,12 @@ export const metadata: Metadata = {
   title: "NearSited — Find businesses that need websites",
   description: "Find local businesses with weak websites, discover website opportunities, and win redesign projects with personalised outreach.",
   manifest: "/manifest.json",
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://nearsited.io" },
   openGraph: {
     title: "NearSited — Find businesses that need websites",
     description: "Discover local businesses with weak or missing websites, get opportunity scores, and generate personalised outreach pitches in under 2 minutes.",
-    url: "https://nearsited.com",
+    url: "https://nearsited.io",
     siteName: "NearSited",
     locale: "en_US",
     type: "website",
@@ -40,6 +42,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "NearSited — Find businesses that need websites",
     description: "Discover local businesses with weak or missing websites, get opportunity scores, and generate personalised outreach pitches in under 2 minutes.",
+  },
+  other: {
+    "msvalidate.01": "Bing verification token", // Replace with your Bing Webmaster Tools verification code
   },
 };
 

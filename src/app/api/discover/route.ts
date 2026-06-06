@@ -7,6 +7,7 @@ import { geocodeCity, fetchPlacesWithPagination, fetchPlaceDetails } from "@/lib
 import { discoverSchema } from "@/lib/validation";
 import { writeJson, writeProgress } from "@/lib/api/stream-utils";
 import { BUSINESS_TYPE_TO_PLACES_TYPE } from "@/lib/data/places-types";
+import { checkSearch, deductSearch } from "@/lib/credits";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,6 +33,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Unauthorized — please sign in" },
         { status: 401 },
+      );
+    }
+
+    // Search limit check — must pass before any external API calls
+    const searchCheck = await checkSearch(user.id);
+    if (!searchCheck.allowed) {
+      console.log(`[DISCOVER] Search limit reached for user=...${user.id.slice(-4)} used=${searchCheck.searches_used}/${searchCheck.searches_limit}`);
+      return NextResponse.json(
+        { error: "Search limit reached", searches_used: searchCheck.searches_used, searches_limit: searchCheck.searches_limit },
+        { status: 429 },
       );
     }
 
@@ -408,6 +419,9 @@ export async function POST(request: NextRequest) {
           ).length;
 
           console.log("[DISCOVER] Success - returning:", { total: upsertedBusinesses.length, flagged });
+
+          // Deduct one search from the user's monthly allowance
+          await deductSearch(user.id);
 
           writeJson(controller, encoder, {
             type: "done",

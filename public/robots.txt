@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://nearsited.io/sitemap.xml
+
+# Bing
+User-agent: Bingbot
+Allow: /

@@ -7,7 +7,6 @@ import { LandingHero } from "@/components/landing/LandingHero";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { WhyNearsitedSection } from "@/components/landing/WhyNearsitedSection";
-import { CompetitorComparisonSection } from "@/components/landing/CompetitorComparisonSection";
 import { SampleReportSection } from "@/components/landing/SampleReportSection";
 import { AgencyUseCasesSection } from "@/components/landing/AgencyUseCasesSection";
 import { ObjectionsSection } from "@/components/landing/ObjectionsSection";
@@ -30,8 +29,7 @@ export default function LandingPageClient() {
         <TrustBar />
         <HowItWorksSection />
         <WhyNearsitedSection />
-        <CompetitorComparisonSection navigate={navigate} />
-        <SampleReportSection navigate={navigate} />
+<SampleReportSection navigate={navigate} />
         <AgencyUseCasesSection navigate={navigate} />
         <ObjectionsSection navigate={navigate} />
         <ProofBlocksSection navigate={navigate} />

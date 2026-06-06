@@ -1,0 +1,34 @@
+# NearSited
+
+> Find local businesses that need websites — discover opportunities, score leads, and generate outreach in under 2 minutes.
+
+## Description
+
+NearSited is a web-based tool for web design agencies and freelancers to find local businesses with weak or missing websites. It discovers businesses across 249 types in 16 industries, ranks them by opportunity score, runs automated performance audits + AI design analysis, and generates personalised outreach pitches.
+
+## Key Features
+
+- **Business Discovery**: Search by city and business type across 249 types. Uses Google Places API to find businesses.
+- **Four Opportunity Types**: Finds businesses with no website, social-only presence, platform-only presence, or weak websites.
+- **Opportunity Scoring**: Every business gets an estimated opportunity score instantly. Full analysis provides verified scores based on PageSpeed audits + Gemini AI design analysis.
+- **Performance Audit**: Google PageSpeed Insights for mobile + desktop. Measures FCP, LCP, TBT, CLS, SEO.
+- **AI Design Analysis**: ScreenshotOne captures screenshots, Gemini AI evaluates design quality across 5 criteria (modernity, readability, CTA, hierarchy, trust).
+- **AI Pitch Generation**: Generates personalised outreach pitches tailored to each lead type with configurable tone/length/focus.
+- **Pipeline Management**: Track leads from discovery through outreach to closed deal.
+- **PDF Exports**: Downloadable audit reports.
+- **Share Links**: Shareable report links for client presentations.
+
+## Pricing
+
+- Free: 10 analyses per month
+- Starter ($19/mo): 50 analyses per month
+- Agency ($49/mo): 200 analyses per month
+- One analysis = 2 credits (1 performance audit + 1 design analysis)
+
+## Website
+
+https://nearsited.io
+
+## Contact
+
+nearsitedlabs@gmail.com

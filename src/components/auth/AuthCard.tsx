@@ -15,7 +15,7 @@ type AuthCardProps = {
 };
 
 const TRUST_INDICATORS = [
-  "10 free analyses included",
+  "2 free opportunity analyses included",
   "No credit card required",
 ];
 

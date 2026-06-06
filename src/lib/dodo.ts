@@ -18,14 +18,15 @@ export function getDodoClient(): DodoPayments {
   return _client;
 }
 
-// Product ID → plan tier + monthly audit limit
-export const DODO_PRODUCTS: Record<string, { tier: "starter" | "agency"; limit: number }> = {
-  pdt_0NgKrmYBX9pAp9NhbeMqp: { tier: "starter", limit: 50  }, // Starter Monthly
-  pdt_0NgKs5x6MXKvmMOQemKP2: { tier: "starter", limit: 50  }, // Starter Annual
-  pdt_0NgKsF0ROmm9U603GRqMm: { tier: "agency",  limit: 200 }, // Agency Monthly
-  pdt_0NgKsQO5UXCVGZskhrv89: { tier: "agency",  limit: 200 }, // Agency Annual
+// Product ID → plan tier + monthly audit limit + monthly search limit
+export const DODO_PRODUCTS: Record<string, { tier: "starter" | "agency"; limit: number; searches: number }> = {
+  pdt_0NgKrmYBX9pAp9NhbeMqp: { tier: "starter", limit: 50,  searches: 3  }, // Starter Monthly
+  pdt_0NgKs5x6MXKvmMOQemKP2: { tier: "starter", limit: 50,  searches: 3  }, // Starter Annual
+  pdt_0NgKsF0ROmm9U603GRqMm: { tier: "agency",  limit: 200, searches: 10 }, // Agency Monthly
+  pdt_0NgKsQO5UXCVGZskhrv89: { tier: "agency",  limit: 200, searches: 10 }, // Agency Annual
 };
 
-export const FREE_AUDIT_LIMIT = 10;
+export const FREE_AUDIT_LIMIT = 4; // 2 full workflows (audit + design each)
+export const FREE_SEARCH_LIMIT = 1;
 
 export type PlanTier = "free" | "starter" | "agency";
