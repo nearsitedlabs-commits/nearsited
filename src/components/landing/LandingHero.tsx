@@ -101,9 +101,9 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             {/* Opportunity rows */}
             <div className="space-y-2.5">
               {[
-                { type: "no_website" as OppType, score: 85, name: "Marina Legal Consultants", desc: "Dubai Marina · Legal", badge: "No Website", badgeColor: "var(--score-high)", price: "$2,000–$6,000" },
-                { type: "social_only" as OppType, score: 72, name: "Blue Wave Restaurant", desc: "JBR · Food & Beverage", badge: "Social Only", badgeColor: "var(--score-mid)", price: "$1,500–$4,000" },
-                { type: "has_website" as OppType, score: 72, name: "Bright Smile Dental", desc: "Jumeirah · Healthcare", badge: "Weak Website", badgeColor: "var(--score-mid)", price: "$1,000–$3,000" },
+                { type: "no_website" as OppType, score: 85, name: "Marina Legal Consultants", desc: "Dubai Marina · Legal", badge: "No Website", badgeColor: "var(--score-high)" },
+                { type: "social_only" as OppType, score: 72, name: "Blue Wave Restaurant", desc: "JBR · Food & Beverage", badge: "Social Only", badgeColor: "var(--score-mid)" },
+                { type: "has_website" as OppType, score: 72, name: "Bright Smile Dental", desc: "Jumeirah · Healthcare", badge: "Weak Website", badgeColor: "var(--score-mid)" },
               ].map((opp) => (
                 <button
                   key={opp.type}
@@ -120,14 +120,13 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                     <p className="truncate text-sm font-medium text-[var(--text-primary)]">{opp.name}</p>
                     <p className="text-xs text-[var(--text-tertiary)]">{opp.desc}</p>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex shrink-0 flex-col items-end">
                     <span
                       className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
                       style={{ borderColor: `${opp.badgeColor}30`, backgroundColor: `${opp.badgeColor}10`, color: opp.badgeColor }}
                     >
                       {opp.badge}
                     </span>
-                    <span className="text-[10px] text-[var(--score-good)]">{opp.price}</span>
                   </div>
                 </button>
               ))}
