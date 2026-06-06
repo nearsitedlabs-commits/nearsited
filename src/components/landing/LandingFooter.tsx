@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "@/lib/motion";
@@ -11,7 +12,6 @@ const CanvasBackground = dynamic(
   () => import("@/components/ui/CanvasBackground").then((mod) => ({ default: mod.CanvasBackground })),
   { ssr: false },
 );
-import { useState, useCallback } from "react";
 
 export function LandingFooter() {
   const [email, setEmail] = useState("");
