@@ -15,10 +15,9 @@ import {
   buildDesignOnlyPrompt,
   cleanGeminiJson,
 } from "@/lib/pitch/prompts";
+import { GEMINI_URL } from "@/lib/gemini";
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const GEMINI_MODEL = "gemini-3.5-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 const GEMINI_TIMEOUT_MS = 30_000;
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -364,8 +363,8 @@ Urgency: ${urgencyInstruction(urgency)}${focus && focus !== "all" ? `\nFocus par
       console.log("[PITCH] Gemini HTTP status:", geminiResponse.status);
 
       if (!geminiResponse.ok) {
-        const _errorText = await geminiResponse.text().catch(() => "Unknown error");
-        console.error("[PITCH] Gemini API error:", geminiResponse.status);
+        const errorText = await geminiResponse.text().catch(() => "Unknown error");
+        console.error("[PITCH] Gemini API error:", geminiResponse.status, errorText);
         if (geminiResponse.status === 429) {
           return NextResponse.json({
             success: false,

@@ -1,9 +1,8 @@
-/**
- * Shared Gemini utility functions.
- *
- * Consolidates `cleanGeminiJson` which was previously duplicated in
- * `src/app/api/analyze-design/route.ts` and `src/lib/pitch/prompts.ts`.
- */
+// Single source of truth for the Gemini model ID.
+// Never inline this string in route files — import from here.
+export const GEMINI_MODEL = "gemini-3.5-flash";
+export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+export const GEMINI_URL = `${GEMINI_BASE_URL}/${GEMINI_MODEL}:generateContent`;
 
 /**
  * Clean a raw Gemini text response by removing markdown fences and extracting

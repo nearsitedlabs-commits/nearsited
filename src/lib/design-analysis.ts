@@ -6,13 +6,8 @@
 
 import { retryWithBackoff } from "@/lib/api/retry";
 import { sanitizeError } from "@/lib/api/sanitize";
-import { cleanGeminiJson } from "@/lib/gemini";
+import { cleanGeminiJson, GEMINI_URL } from "@/lib/gemini";
 import { takeScreenshot, MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from "@/lib/screenshot";
-
-// ── Constants ──────────────────────────────────────────────────────────────────
-
-const GEMINI_MODEL = "gemini-2.0-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
