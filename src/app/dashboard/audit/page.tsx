@@ -336,6 +336,7 @@ export default function AuditPage() {
   const [pipelineLoading, setPipelineLoading] = useState(false);
   const [pipelineAdded, setPipelineAdded] = useState(false);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
+  const [savedBusinessId, setSavedBusinessId] = useState<string | null>(null);
   const [designRetrying, setDesignRetrying] = useState<{ mobile: boolean; desktop: boolean }>({ mobile: false, desktop: false });
   const [hasCompletedAudit, setHasCompletedAudit] = useState(false);
   const [showExampleModal, setShowExampleModal] = useState(false);
@@ -766,6 +767,7 @@ export default function AuditPage() {
         throw new Error(data.error ?? data.message ?? "Failed to add to pipeline");
       }
 
+      setSavedBusinessId((data as { business_id?: string }).business_id ?? null);
       setPipelineAdded(true);
     } catch (err) {
       setPipelineError(err instanceof Error ? err.message : "Failed to add to pipeline");
@@ -995,7 +997,7 @@ export default function AuditPage() {
 
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
-        <div className="mx-auto max-w-4xl px-6 py-8">
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {shouldReduce ? mainContent : <FadeUp>{mainContent}</FadeUp>}
           {showExampleModal && <ExampleReportModal type={exampleTab} onClose={() => setShowExampleModal(false)} />}
         </div>
@@ -1027,7 +1029,7 @@ export default function AuditPage() {
 
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
-        <div className="mx-auto max-w-4xl px-6 py-8">
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {shouldReduce ? errorContent : <FadeUp>{errorContent}</FadeUp>}
         </div>
       </div>
@@ -1042,7 +1044,7 @@ export default function AuditPage() {
         </Link>
 
         {/* URL input card */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Review</p>
@@ -1050,18 +1052,18 @@ export default function AuditPage() {
                 {step === "done" ? "Review Complete" : "Reviewing Opportunity"}
               </h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {step === "done" && (
                 <>
                   <button
                     onClick={handleReset}
-                    className="inline-flex w-full sm:w-auto cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
                   >
                     <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
                     New Search
                   </button>
-                  <div className="rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-3 py-1.5 text-xs font-medium text-[var(--badge-green-text)]">
-                    <CheckCircle2 className="mr-1 inline h-3 w-3" />
+                  <div className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-3 py-1.5 text-xs font-medium text-[var(--badge-green-text)]">
+                    <CheckCircle2 className="h-3 w-3" />
                     Complete
                   </div>
                 </>
@@ -1094,9 +1096,9 @@ export default function AuditPage() {
           {/* Progress checklist */}
           {showProgress && (
             <div className="mt-4">
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3 sm:p-4">
                 {running && (
-                  <div className="mb-3 flex justify-end">
+                  <div className="mb-2 flex justify-end">
                     <button
                       onClick={handleCancel}
                       className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
@@ -1110,7 +1112,7 @@ export default function AuditPage() {
                     const isDone   = completedKeys.includes(stepDef.key);
                     const isActive = !isDone && activeKeys.includes(stepDef.key);
                     return (
-                      <div key={stepDef.key} className="flex items-center gap-2.5 py-1">
+                      <div key={stepDef.key} className="flex items-center gap-2.5 py-0.5 sm:py-1">
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
                         ) : isActive ? (
@@ -1426,8 +1428,16 @@ export default function AuditPage() {
                 </div>
               )}
               {pipelineAdded && (
-                <div className="mt-4 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-3 text-sm text-[var(--badge-green-text)]">
-                  Opportunity saved to your pipeline.
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-3 text-sm text-[var(--badge-green-text)]">
+                  <span>Opportunity saved to your pipeline.</span>
+                  {savedBusinessId && (
+                    <Link
+                      href={`/dashboard/leads/${savedBusinessId}`}
+                      className="shrink-0 font-medium underline hover:opacity-80"
+                    >
+                      View Opportunity →
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -1439,7 +1449,7 @@ export default function AuditPage() {
 
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
-        <div className="mx-auto max-w-4xl px-6 py-8">
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {shouldReduce ? activeDoneContent : <FadeUp>{activeDoneContent}</FadeUp>}
         </div>
       </div>

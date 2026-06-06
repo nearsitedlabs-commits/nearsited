@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { success: true, pipeline_id: id },
+      { success: true, pipeline_id: id, business_id: targetBusinessId },
       { status: 200 },
     );
   } catch (error) {
