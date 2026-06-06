@@ -13,7 +13,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
     <section className="border-t border-[var(--border)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? (
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-8 py-16 text-center md:px-16">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/5 blur-[100px]" />
 
             <div className="relative z-10">
@@ -41,7 +41,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
           </div>
         ) : (
           <FadeUp>
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-8 py-16 text-center md:px-16">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
               <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/5 blur-[100px]" />
 
               <div className="relative z-10">

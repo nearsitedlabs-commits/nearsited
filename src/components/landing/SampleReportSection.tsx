@@ -40,7 +40,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
                   : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"

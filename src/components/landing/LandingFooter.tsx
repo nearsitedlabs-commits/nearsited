@@ -67,7 +67,7 @@ export function LandingFooter() {
                       animate="visible"
                       exit="hidden"
                       onSubmit={handleSubmit}
-                      className="flex gap-2"
+                      className="flex flex-col sm:flex-row gap-2"
                     >
                       <input
                         type="email"
@@ -80,7 +80,7 @@ export function LandingFooter() {
                       />
                       <button
                         type="submit"
-                        className="shrink-0 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
+                        className="w-full sm:w-auto shrink-0 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
                       >
                         Subscribe
                       </button>

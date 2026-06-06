@@ -37,12 +37,12 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Dental Clinic · Dubai",
     url: "brightsmile.ae",
     category: "Healthcare",
-    quality: 46,
+    quality: 76,
     reviews: 30,
     rating: 4.2,
     scoreBarData: [
       { label: "Performance", value: 42 },
-      { label: "Mobile UX",   value: 39 },
+      { label: "Mobile",      value: 39 },
       { label: "SEO",         value: 48 },
       { label: "Trust",       value: 38 },
     ],
@@ -57,7 +57,7 @@ const OPPORTUNITIES: OppType[] = [
         that are quietly costing you patients every week&hellip;
       </>
     ),
-    scoreColor: "var(--score-mid)",
+    scoreColor: "var(--score-good)",
   },
   // 2. Social Only
   {
@@ -65,7 +65,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Gym · Dubai Marina",
     url: "instagram.com/dubaifitness",
     category: "Fitness",
-    quality: 72,
+    quality: 79,
     reviews: 85,
     rating: 4.5,
     scoreBarData: [
@@ -86,7 +86,7 @@ const OPPORTUNITIES: OppType[] = [
         .
       </>
     ),
-    scoreColor: "#f59e0b",
+    scoreColor: "var(--score-good)",
   },
   // 3. No Website
   {
@@ -94,7 +94,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Plumbing · Deira, Dubai",
     url: "No website — Google Business only",
     category: "Home Services",
-    quality: 52,
+    quality: 88,
     reviews: 42,
     rating: 4.7,
     scoreBarData: [
@@ -114,7 +114,7 @@ const OPPORTUNITIES: OppType[] = [
         beyond Maps. Every day without a website is lost calls and lost jobs.
       </>
     ),
-    scoreColor: "var(--score-high)",
+    scoreColor: "var(--score-good)",
   },
 ];
 
@@ -123,12 +123,11 @@ const OPPORTUNITIES: OppType[] = [
 const SELECTED: OppType = OPPORTUNITIES[Math.floor(Math.random() * OPPORTUNITIES.length)];
 
 const SAMPLE_QUALITY = SELECTED.quality;
-const SCORE_BAR_COLORS = [
-  "bg-[var(--score-high)]",
-  "bg-[var(--score-mid)]",
-  "bg-[var(--score-good)]",
-  "bg-[var(--score-high)]",
-];
+function barColor(value: number): string {
+  if (value >= 70) return "bg-[var(--score-good)]";
+  if (value >= 40) return "bg-[var(--score-mid)]";
+  return "bg-[var(--score-high)]";
+}
 
 const BAR_DATA = SELECTED.scoreBarData;
 
@@ -211,7 +210,7 @@ export default function OpportunityPreviewCard() {
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-surface-2)]">
                   <div
-                    className={`h-full rounded-full ${SCORE_BAR_COLORS[i]}`}
+                    className={`h-full rounded-full ${barColor(item.value)}`}
                     style={{
                       width: `${Math.max(item.value, 5)}%`,
                       transform: "scaleX(0)",

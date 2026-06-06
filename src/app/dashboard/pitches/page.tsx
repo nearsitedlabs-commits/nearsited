@@ -306,7 +306,7 @@ export default function PitchesPage() {
                     {/* Copy */}
                     <button
                       onClick={() => handleCopy(pitch)}
-                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
                       title="Copy to clipboard"
                     >
                       {copiedId === pitch.id ? <Check className="h-4 w-4 text-[var(--score-good)]" /> : <Copy className="h-4 w-4" />}
@@ -316,9 +316,9 @@ export default function PitchesPage() {
                     {bizId && (
                       <Link
                         href={`/dashboard/leads/${bizId}`}
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" /> View Details
+                        <ExternalLink className="h-3.5 w-3.5" /> View
                       </Link>
                     )}
 
@@ -328,7 +328,7 @@ export default function PitchesPage() {
                         <button
                           onClick={() => handleRemoveFromPipeline(bizId)}
                           disabled={addingToPipeline === bizId}
-                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] font-medium text-[var(--badge-red-text)] transition-colors duration-150 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-xs font-medium text-[var(--badge-red-text)] transition-colors duration-150 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {addingToPipeline === bizId ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -341,14 +341,14 @@ export default function PitchesPage() {
                         <button
                           onClick={() => handleAddToPipeline(bizId)}
                           disabled={addingToPipeline === bizId}
-                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {addingToPipeline === bizId ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
                           ) : (
                             <TrendingUp className="h-3.5 w-3.5" />
                           )}
-                          Add To Pipeline
+                          Pipeline
                         </button>
                       )
                     )}
@@ -359,21 +359,21 @@ export default function PitchesPage() {
                         <button
                           onClick={() => handleDelete(pitch.id)}
                           disabled={deletingId === pitch.id}
-                          className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/15 px-2 py-1.5 text-[10px] font-medium text-[var(--badge-red-text)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="cursor-pointer rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-2 text-xs font-medium text-[var(--badge-red-text)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {deletingId === pitch.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
+                          {deletingId === pitch.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Yes"}
                         </button>
                         <button
                           onClick={() => setDeleteConfirmId(null)}
-                          className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[10px] font-medium text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
+                          className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 text-xs font-medium text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
                         >
-                          Cancel
+                          No
                         </button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setDeleteConfirmId(pitch.id)}
-                        className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-red-500/30 hover:text-[var(--badge-red-text)]"
+                        className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-red-500/30 hover:text-[var(--badge-red-text)]"
                         title="Delete pitch"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -383,9 +383,9 @@ export default function PitchesPage() {
                     {/* Expand/Collapse */}
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : pitch.id)}
-                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[11px] font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
+                      className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-xs font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--accent)]"
                     >
-                      {isExpanded ? "Collapse" : "Expand Card"}
+                      {isExpanded ? "Collapse" : "Expand"}
                     </button>
                   </div>
                 </div>
@@ -484,7 +484,7 @@ export default function PitchesPage() {
 
         {/* Pitch list */}
         {pitches.length === 0 ? (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-12 py-20 text-center">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center">
             <FileText className="mx-auto h-10 w-10 text-[var(--text-tertiary)]" />
             <h2 className="mt-4 text-lg font-semibold text-[var(--text-primary)]">No pitches generated yet.</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--text-tertiary)]">
@@ -496,7 +496,7 @@ export default function PitchesPage() {
             </Link>
           </div>
         ) : filteredPitches.length === 0 ? (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-12 py-16 text-center">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 sm:px-12 py-10 sm:py-16 text-center">
             <Search className="mx-auto h-8 w-8 text-[var(--text-tertiary)]" />
             <p className="mt-3 text-sm text-[var(--text-tertiary)]">No pitches match your search or filter.</p>
             <button onClick={() => { setSearchQuery(""); setActiveFilter("all"); }}

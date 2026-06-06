@@ -163,7 +163,7 @@ export function ResultCard({
             </span>
           )}
         </div>
-        <div className="mt-0.5 text-[11px] font-normal text-[var(--text-tertiary)] truncate tracking-wide">
+        <div className="mt-0.5 text-xs font-normal text-[var(--text-tertiary)] truncate tracking-wide">
           {typeDisplay}
           {typeDisplay && cityDisplay ? " · " : ""}
           {cityDisplay}
@@ -229,7 +229,7 @@ export function ResultCard({
               <button
                 type="button"
                 disabled
-                className="cursor-not-allowed text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 w-[120px] text-center"
+                className="cursor-not-allowed text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[120px] md:flex-none text-center"
               >
                 <span className="inline-flex items-center justify-center gap-1.5">
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -244,7 +244,7 @@ export function ResultCard({
                 onClick={() =>
                   onAnalyseOpportunity(business.id, business.website!)
                 }
-                className="cursor-pointer text-[11px] px-2.5 py-1.5 rounded-lg border border-red-500/30 text-[var(--badge-red-text)] hover:bg-red-500/10 transition-colors duration-150 w-[120px] text-center"
+                className="cursor-pointer text-xs px-2.5 py-2 rounded-lg border border-red-500/30 text-[var(--badge-red-text)] hover:bg-red-500/10 transition-colors duration-150 flex-1 md:w-[120px] md:flex-none text-center"
                 title={ap.label}
               >
                 Retry
@@ -255,7 +255,7 @@ export function ResultCard({
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[90px] text-center"
+                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[90px] md:flex-none text-center"
                 >
                   View
                 </Link>
@@ -264,7 +264,7 @@ export function ResultCard({
                   onClick={() =>
                     onAnalyseOpportunity(business.id, business.website!)
                   }
-                  className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[90px] text-center"
+                  className="cursor-pointer text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[90px] md:flex-none text-center"
                 >
                   Re-analyse
                 </button>
@@ -275,7 +275,7 @@ export function ResultCard({
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[64px] text-center"
+                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[64px] md:flex-none text-center"
                 >
                   View
                 </Link>
@@ -284,7 +284,7 @@ export function ResultCard({
                   onClick={() =>
                     onAnalyseOpportunity(business.id, business.website!)
                   }
-                  className="cursor-pointer text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 w-[120px] text-center"
+                  className="cursor-pointer text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[120px] md:flex-none text-center"
                 >
                   Analyse Opportunity
                 </button>
@@ -298,14 +298,14 @@ export function ResultCard({
             return (
               <Link
                 href={`/dashboard/leads/${business.id}?from=discover`}
-                className="inline-flex items-center justify-center text-[11px] font-medium px-2.5 py-1.5 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 w-[120px] text-center"
+                className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[120px] md:flex-none text-center"
               >
                 View Opportunity
               </Link>
             );
           }
           return (
-            <span className="text-[11px] italic text-[var(--text-tertiary)] w-[120px] text-center leading-tight">
+            <span className="text-xs italic text-[var(--text-tertiary)] flex-1 md:w-[120px] md:flex-none text-center leading-tight">
               {NO_ACTION_LABEL[business.website_status] ?? ""}
             </span>
           );
@@ -317,7 +317,7 @@ export function ResultCard({
             type="button"
             onClick={() => onRemoveFromPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="cursor-pointer text-[11px] font-medium px-3 py-1.5 rounded-lg border border-red-500 text-red-500 hover:bg-red-500/10 transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 w-[90px] text-center"
+            className="cursor-pointer text-xs font-medium px-3 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500/10 transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 flex-1 md:w-[90px] md:flex-none text-center"
           >
             {pipelineLoadingId === business.id ? (
               <span className="flex items-center justify-center gap-1.5">
@@ -333,7 +333,7 @@ export function ResultCard({
             type="button"
             onClick={() => onAddToPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="cursor-pointer text-[11px] font-medium px-3 py-1.5 rounded-lg border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 w-[90px] text-center"
+            className="cursor-pointer text-xs font-medium px-3 py-2 rounded-lg border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 flex-1 md:w-[90px] md:flex-none text-center"
           >
             {pipelineLoadingId === business.id ? (
               <span className="flex items-center justify-center gap-1.5">

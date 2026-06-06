@@ -98,14 +98,14 @@ export function LeadHeroSection({
         </div>
 
         {/* Header actions: Pipeline + Analyse + Cancel */}
-        <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
+        <div className="flex flex-col items-start sm:items-end gap-3 w-full sm:w-auto">
           <div className="flex flex-wrap items-center gap-2">
             {hasWebsite && (
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleFullAnalysis}
                   disabled={runningFullAnalysis}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {runningFullAnalysis ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -134,7 +134,7 @@ export function LeadHeroSection({
             ) : (
               <button
                 onClick={() => handlePipelineChange("new_lead")}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-2 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white"
               >
                 <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
               </button>

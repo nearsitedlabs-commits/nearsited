@@ -116,7 +116,7 @@ export function HowItWorksSection() {
                 </p>
 
                 {/* Tier indicators */}
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-center">
                     <span className="inline-flex items-center justify-center h-2 w-2 rounded-full bg-[var(--score-high)]" />
                     <p className="mt-1.5 text-xs font-semibold text-[var(--text-primary)]">Below 40</p>

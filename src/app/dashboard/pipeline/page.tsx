@@ -128,6 +128,43 @@ function AnimatedCount({ value }: { value: number }) {
   );
 }
 
+// ── Mobile Card ───────────────────────────────────────────────────────────────
+
+function MobileCard({ item, onStatusChange }: { item: PipelineBusiness; onStatusChange: (pipelineId: string, status: string) => void }) {
+  const badge = OPPORTUNITY_BADGES[item.website_status] ?? OPPORTUNITY_BADGES.unknown;
+  return (
+    <div className={`rounded-xl border border-[var(--border)] border-l-[3px] bg-[var(--bg-surface)] p-4 ${STAGE_COLORS[item.pipeline_status]?.replace("border-t-", "border-l-") ?? ""}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-[var(--text-primary)]">{item.name}</p>
+          <p className="mt-0.5 truncate text-xs text-[var(--text-tertiary)]">{item.business_type} · {item.city}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase ${badge.style}`}>{badge.label}</span>
+            <span className="text-[10px] text-[var(--text-tertiary)]">{new Date(item.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <select
+            value={item.pipeline_status}
+            onChange={(e) => onStatusChange(item.pipeline_id, e.target.value)}
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[11px] text-[var(--text-secondary)] focus:outline-none"
+          >
+            {STAGES.map((s) => (
+              <option key={s} value={s}>{STAGE_LABELS[s]}</option>
+            ))}
+          </select>
+          <Link
+            href={`/dashboard/leads/${item.id}`}
+            className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+          >
+            <ExternalLink className="h-3 w-3" /> View
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Stage Column ──────────────────────────────────────────────────────────────
 
 function StageColumn({
@@ -384,8 +421,11 @@ export default function PipelinePage() {
               <div>
                 <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Pipeline</p>
                 <h1 className="mt-1 text-2xl font-normal tracking-tight text-[var(--text-primary)]">Your pipeline</h1>
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                <p className="mt-1 text-sm text-[var(--text-secondary)] hidden lg:block">
                   Drag cards between stages to update progress
+                </p>
+                <p className="mt-1 text-sm text-[var(--text-secondary)] lg:hidden">
+                  Use the dropdown on each card to update status
                 </p>
               </div>
               <span className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-4 py-2 text-sm text-[var(--text-secondary)]">
@@ -401,7 +441,7 @@ export default function PipelinePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-12 py-20 text-center"
+            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -441,22 +481,42 @@ export default function PipelinePage() {
             </motion.div>
           </motion.div>
         ) : (
-          /* Kanban board */
-          <LayoutGroup>
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {STAGES.map((stage) => (
-                <StageColumn
-                  key={stage}
-                  stage={stage}
-                  items={grouped[stage] ?? []}
-                  draggingId={draggingId}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                  onCardClick={handleCardClick}
-                />
+          <>
+            {/* Mobile list — one card per row, grouped by stage */}
+            <div className="lg:hidden space-y-6">
+              {STAGES.filter((s) => (grouped[s] ?? []).length > 0).map((stage) => (
+                <div key={stage}>
+                  <p className={`mb-2 px-1 text-xs font-semibold uppercase tracking-wider ${STAGE_TEXT_COLORS[stage]}`}>
+                    {STAGE_LABELS[stage]} · {(grouped[stage] ?? []).length}
+                  </p>
+                  <div className="space-y-2">
+                    {(grouped[stage] ?? []).map((item) => (
+                      <MobileCard key={item.pipeline_id} item={item} onStatusChange={handleStatusChange} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
-          </LayoutGroup>
+
+            {/* Desktop Kanban board */}
+            <div className="hidden lg:block">
+              <LayoutGroup>
+                <div className="flex gap-4 overflow-x-auto pb-4">
+                  {STAGES.map((stage) => (
+                    <StageColumn
+                      key={stage}
+                      stage={stage}
+                      items={grouped[stage] ?? []}
+                      draggingId={draggingId}
+                      onDragStart={handleDragStart}
+                      onDragEnd={handleDragEnd}
+                      onCardClick={handleCardClick}
+                    />
+                  ))}
+                </div>
+              </LayoutGroup>
+            </div>
+          </>
         )}
       </div>
     </div>

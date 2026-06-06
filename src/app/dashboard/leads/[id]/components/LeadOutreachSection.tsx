@@ -212,7 +212,7 @@ export function LeadOutreachSection({
             <button
               onClick={handleGeneratePitch}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generatingPitch && <Loader2 className="h-3 w-3 animate-spin" />}
               <Send className="h-3 w-3" />
@@ -220,7 +220,7 @@ export function LeadOutreachSection({
             </button>
           ) : (
             <div
-              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
               title="Analyse this lead first to generate a pitch"
             >
               <Mail className="h-3 w-3" />
@@ -241,18 +241,18 @@ export function LeadOutreachSection({
       {pitchResult ? (
         <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
           <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
-          <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
+          <p className="whitespace-pre-wrap break-words text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
             >
               <Copy className="h-3 w-3" /> Copy
             </button>
             <button
               onClick={handleGeneratePitch}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate
