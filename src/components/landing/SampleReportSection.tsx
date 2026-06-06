@@ -63,6 +63,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
                         <Badge color="green">Opportunity: 87/100</Badge>
+                        <Badge color="green">Verified</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
                     </div>
@@ -121,6 +122,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Marina Legal Consultants</h3>
                         <Badge color="green">Opportunity: 85/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="red">No Website</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
@@ -172,6 +174,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Blue Wave Restaurant</h3>
                         <Badge color="green">Opportunity: 72/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
@@ -223,6 +226,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</h3>
                         <Badge color="green">Opportunity: 65/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
@@ -281,6 +285,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bright Smile Dental</h3>
                         <Badge color="green">Opportunity: 87/100</Badge>
+                        <Badge color="green">Verified</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
                     </div>
@@ -344,6 +349,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Marina Legal Consultants</h3>
                         <Badge color="green">Opportunity: 85/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="red">No Website</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
@@ -400,6 +406,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Blue Wave Restaurant</h3>
                         <Badge color="green">Opportunity: 72/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
@@ -456,6 +463,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <div className="flex items-center gap-3">
                         <h3 className="text-xl font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</h3>
                         <Badge color="green">Opportunity: 65/100</Badge>
+                        <Badge color="green">Verified</Badge>
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>

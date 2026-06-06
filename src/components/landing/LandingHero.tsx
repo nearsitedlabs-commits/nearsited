@@ -91,7 +91,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             <div className="space-y-2.5">
               {/* No Website */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
-                <ScoreRing score={85} size={32} variant="opportunity" />
+                <ScoreRing score={85} size={32} variant="estimate" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Marina Legal Consultants</p>
                   <p className="text-xs text-[var(--text-tertiary)]">Dubai Marina · Legal</p>
@@ -106,7 +106,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
               {/* Social Only */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
-                <ScoreRing score={72} size={32} variant="opportunity" />
+                <ScoreRing score={72} size={32} variant="estimate" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Blue Wave Restaurant</p>
                   <p className="text-xs text-[var(--text-tertiary)]">JBR · Food & Beverage</p>
@@ -121,7 +121,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
               {/* Weak Website */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-3">
-                <ScoreRing score={72} size={32} variant="opportunity" />
+                <ScoreRing score={72} size={32} variant="estimate" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Bright Smile Dental</p>
                   <p className="text-xs text-[var(--text-tertiary)]">Jumeirah · Healthcare</p>
