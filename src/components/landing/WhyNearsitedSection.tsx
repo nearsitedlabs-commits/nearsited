@@ -20,7 +20,7 @@ const TRADITIONAL_CONS = [
 const NEARSITED_PROS = [
   "Finds businesses with no website, social-only, and platform-only presence",
   "Surfaces weak websites ranked by opportunity score — not quality score",
-  "Opportunity score weighs both site weakness AND business viability",
+  "Every lead gets an estimated score instantly — analyse only the best to save credits",
   "Pitch angle changes completely per lead type — not one generic template",
   "Generates evidence-based pitches citing real audit data",
   "Built-in pipeline — track every lead from discovery to closed deal",
