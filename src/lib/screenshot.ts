@@ -51,6 +51,13 @@ export async function takeScreenshot(
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
+      console.error("[SCREENSHOT] ScreenshotOne HTTP error", {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+        url,
+        viewport: viewport.width,
+      });
       return { ok: false, error: errorText, status: response.status };
     }
 
@@ -69,12 +76,23 @@ export async function takeScreenshot(
           errorMsg = json.error
             ? `Screenshot unavailable: ${json.error}`
             : "Screenshot unavailable — the page could not be captured";
+          console.error("[SCREENSHOT] ScreenshotOne business error", {
+            error: json.error,
+            url,
+            viewport: viewport.width,
+            fullResponse: json,
+          });
         }
       } catch {
         // Not JSON — treat response text as the error
         if (bodyText.length > 0 && bodyText.length < 500) {
           errorMsg = `Screenshot unavailable: ${bodyText}`;
           isError = true;
+          console.error("[SCREENSHOT] ScreenshotOne text error", {
+            body: bodyText,
+            url,
+            viewport: viewport.width,
+          });
         }
       }
       if (isError) {
@@ -82,6 +100,11 @@ export async function takeScreenshot(
         return { ok: false, error: errorMsg, status: response.status };
       }
       // If we got here, it's not an error — it's a text-based response we can't use as an image
+      console.error("[SCREENSHOT] ScreenshotOne unexpected response format", {
+        contentType,
+        url,
+        viewport: viewport.width,
+      });
       return { ok: false, error: "Screenshot unavailable — unexpected response format", status: response.status };
     }
 

@@ -11,10 +11,11 @@ type Props = {
   projScore: number;
   opportunityDelta: number;
   runningDesign: boolean;
+  runningFullAnalysis: boolean;
   onRunDesign: () => void;
 };
 
-export function OpportunityScoreStrip({ hasDesign, hasAudit, hasWebsite, overall, projScore, opportunityDelta, runningDesign, onRunDesign }: Props) {
+export function OpportunityScoreStrip({ hasDesign, hasAudit, hasWebsite, overall, projScore, opportunityDelta, runningDesign, runningFullAnalysis, onRunDesign }: Props) {
   if (hasDesign) {
     return (
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-16 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 sm:px-8 py-6">
@@ -51,11 +52,11 @@ export function OpportunityScoreStrip({ hasDesign, hasAudit, hasWebsite, overall
           {hasWebsite && (
             <button
               onClick={onRunDesign}
-              disabled={runningDesign}
+              disabled={runningDesign || runningFullAnalysis}
               className="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {runningDesign ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-              {runningDesign ? "Analysing…" : "Analyse Design"}
+              {(runningDesign || runningFullAnalysis) ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+              {(runningDesign || runningFullAnalysis) ? "Analysing…" : "Analyse Design"}
             </button>
           )}
         </div>

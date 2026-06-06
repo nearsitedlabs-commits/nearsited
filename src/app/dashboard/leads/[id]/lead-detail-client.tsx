@@ -351,6 +351,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 projScore={projScore}
                 opportunityDelta={opportunityDelta}
                 runningDesign={analysis.runningDesign}
+                runningFullAnalysis={analysis.runningFullAnalysis}
                 onRunDesign={analysis.handleRunDesign}
               />
             </motion.div>
