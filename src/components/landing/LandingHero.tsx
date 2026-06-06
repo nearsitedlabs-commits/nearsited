@@ -34,7 +34,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-var(--nav-height,80px))] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10">
+    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-var(--nav-height,80px))] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10" style={{ contentVisibility: "auto" }}>
       <CanvasBackground />
 
       {/* Left: Copy */}

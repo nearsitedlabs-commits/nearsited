@@ -13,6 +13,14 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
 
     let rafId: number;
     let time = 0;
+    let isVisible = true;
+
+    // Stop animating when off-screen to save CPU
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisible = entry.isIntersecting; },
+      { threshold: 0 },
+    );
+    observer.observe(canvas);
 
     const PARTICLE_COUNT = 36;
     const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
@@ -34,6 +42,7 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
     window.addEventListener("resize", resize);
 
     function draw() {
+      if (!isVisible) { rafId = requestAnimationFrame(draw); return; }
       time++;
       const w = canvas!.width;
       const h = canvas!.height;
@@ -108,6 +117,7 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      observer.disconnect();
     };
   }, []);
 
