@@ -34,7 +34,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
               </div>
               <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--text-tertiary)]">
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />2 free opportunity analyses</span>
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
               </div>
             </div>
@@ -62,7 +62,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
                 </div>
                 <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--text-tertiary)]">
                   <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
+                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />2 free opportunity analyses</span>
                   <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
                 </div>
               </div>
