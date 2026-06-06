@@ -1,6 +1,6 @@
 # Nearsited — Complete Project Report
 
-> **Generated:** June 5, 2026 · **Last updated:** June 2026  
+> **Generated:** June 5, 2026 · **Last updated:** June 6, 2026
 > **Project:** Nearsited by Again Labs  
 > **Repository:** `c:/Projects/nearsited`
 
@@ -106,7 +106,7 @@ One Google Place Details API call per unique `place_id` platform-wide, ever (90-
 
 | Service | Purpose |
 |---------|---------|
-| **Gemini 3.5 Flash** | Vision analysis (screenshot evaluation) + Pitch generation |
+| **Gemini 2.0 Flash** | Vision analysis (screenshot evaluation) + Pitch generation |
 | **ScreenshotOne** | Static website screenshots for design analysis |
 
 ### UI & Animation
@@ -262,7 +262,7 @@ All documented in [Section 13 — API Routes Reference](#13-api-routes-reference
 | [`src/lib/lead-types.ts`](src/lib/lead-types.ts) | ~200 | Lead workflow routing: `LeadWorkflow` type (3 values), `detectLeadWorkflow()`, `detectSocialPlatforms()`, `getSocialImpactEstimates()`, `getSocialOpportunityReasons()`, `getNoDigitalOpportunityReasons()`, `getDigitalFoundationRecommendations()` |
 | [`src/lib/credits.ts`](src/lib/credits.ts) | ~100 | Credit system: `getSubscription()` (provision + fetch), `checkCredit()` (monthly auto-reset), `deductCredit()` (optimistic concurrency with 3 retries) |
 | [`src/lib/dodo.ts`](src/lib/dodo.ts) | ~50 | Dodo Payments client singleton, `DODO_PRODUCTS` map (4 products), `FREE_AUDIT_LIMIT = 10` |
-| [`src/lib/env.ts`](src/lib/env.ts) | ~40 | `validateEnv()` — checks 9 required env vars at startup, cached result, auto-runs on server import |
+| [`src/lib/env.ts`](src/lib/env.ts) | ~40 | `validateEnv()` — checks 11 required env vars at startup, cached result, auto-runs on server import |
 | [`src/lib/filters.ts`](src/lib/filters.ts) | ~100 | `FilterState` type, `DEFAULT_FILTERS`, `applyFilters()`, URL encode/decode for filter persistence, analytics tracking |
 | [`src/lib/metric-meta.ts`](src/lib/metric-meta.ts) | ~80 | `METRIC_META` registry — FCP/LCP/TBT/CLS labels, thresholds, `toCanonical` parsers, `metricColor()` |
 | [`src/lib/opportunity-insights.ts`](src/lib/opportunity-insights.ts) | ~100 | `opportunityInsight()` — deterministic client-side plain-English opportunity explanations |
@@ -626,6 +626,11 @@ The discover feature lets agencies find local businesses that need websites:
 
 ### 6.9 Admin Tools
 
+**Signup Notifications** ([`/api/notify-signup`](src/app/api/notify-signup/route.ts)):
+- Sends email via Resend when a new user signs up
+- Fire-and-forget from signup page — silent on failure
+- Includes name, email, signup time in IST
+
 **Scoring Audit** ([`src/app/admin/scoring-audit/`](src/app/admin/scoring-audit/)):
 - Debug tool for examining score calculations on any business
 - Score breakdown by category
@@ -810,7 +815,7 @@ All API routes use Zod schemas for input validation:
 
 ### 9.3 Landing Page Animations
 
-- **Hero Section**: Animated [`OpportunityAtlas`](src/components/landing/atlas/OpportunityAtlas.tsx) background with particle/map effects
+- **Hero Section**: CanvasBackground (lazy-loaded via `next/dynamic`, pauses when off-screen via IntersectionObserver)
 - **Scroll-triggered** section entrances using Framer Motion viewport detection
 - **Staggered content** reveals in feature sections
 - **Accordion animations** in FAQ via [`useAccordion()`](src/lib/shared-hooks.ts)
@@ -1278,7 +1283,32 @@ Resolved medium items include:
 
 All 43 medium issues have been fully resolved. The previously remaining content items (M-32 through M-43) — hyperlocal keyword, pipeline stats attribution, value unit consistency, tone customization interactivity, expanded use cases, Apollo/Hunter objection, data accuracy FAQ, geographic coverage FAQ — have all been addressed in code across the landing page components.
 
-All critical and high items have been resolved (the 4 remaining high items were fixed separately).
+### June 6, 2026 Session Fixes
+
+Additional fixes applied in the June 6 session:
+
+- **Analysis error handling**: Non-2xx API responses now throw properly with toast messages (was silently swallowing errors)
+- **Hero section pitch**: Now dynamic — changes based on which demo card is selected (fixed pitch mismatch)
+- **Auth page scoring**: Quality values updated to reflect actual `estimatedOpportunity()` / `computeOpportunityScore()` logic
+- **Hero score rings**: Changed from `opportunity` to `estimate` variant (dashed ring + ~ prefix) to distinguish pre-analysis scores
+- **Sample report verified badges**: Added "Verified" badge to all 4 sample report tabs — contrasts with hero's "Estimated"
+- **Landing page performance**: CanvasBackground pauses animation when off-screen via IntersectionObserver; `content-visibility: auto` on hero section
+- **Framer Motion tree-shaking**: Added to `optimizePackageImports`; re-exported `useReducedMotion` and `AnimatePresence` through `motion.tsx`
+- **Dashboard layout**: Subscription fetch moved to client-side (CreditsWidget) — no longer blocks all dashboard page loads
+- **Lead detail page DB queries**: Parallelized 5 queries via `Promise.all` (was sequential waterfall)
+- **Pitches page navigation**: "View Pipeline" now correctly navigates to lead detail page; added "Add to Pipeline" / "Remove from Pipeline" buttons
+- **SearchableSelect fallback**: Shows raw value when options array hasn't loaded yet (prevents empty city field on Discover page return)
+- **Credit terminology**: Standardized across all UI ("audits" → "credits" / "analyses"); fixed AuthCard bug (100→10 free analyses)
+- **Signup notifications**: New `/api/notify-signup` route sends email via Resend on new user registration
+- **SEO**: Sitemap, robots.txt, canonical URL, Bing Webmaster Tools verification, Google Search Console verification
+- **AI discovery**: `llms.txt` file created for LLM-based recommendations
+- **OG image**: Created SVG-based og-image for social sharing previews
+- **Rate limiter**: Graceful fallback when Upstash Redis is not configured
+- **Gemini model name**: Corrected from `gemini-3.5-flash` to `gemini-2.0-flash`
+- **Audit page mobile layout**: Fixed new search button and complete element responsive layout
+- **Database query parallelization**: `businessType` parameter now passed to `computeOpportunityScore()` in 4 locations for accurate industry multipliers
+
+All critical and high items have been resolved.
 
 ### Low (23 → 22 resolved, 1 remaining)
 
@@ -1325,11 +1355,14 @@ Required variables (checked by [`validateEnv()`](src/lib/env.ts)):
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (secret, NEVER public) |
 | `GEMINI_API_KEY` | Google Gemini API key |
-| `SCREENSHOT_API_KEY` | ScreenshotOne API key (noted as missing from validation) |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps/Places API key |
+| `SCREENSHOT_API_KEY` | ScreenshotOne API key |
+| `GOOGLE_PLACES_API_KEY` | Google Places API key |
 | `UPSTASH_REDIS_REST_URL` | Upstash Redis URL |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis token |
 | `DODO_API_KEY` | Dodo Payments API key |
+| `DODO_WEBHOOK_SECRET` | Dodo webhook secret |
+| `RESEND_API_KEY` | Resend email API key (signup notifications) |
+| `ADMIN_EMAIL` | Admin email for signup notifications |
 
 ---
 
