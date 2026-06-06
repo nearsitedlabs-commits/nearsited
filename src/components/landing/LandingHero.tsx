@@ -91,9 +91,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             <div className="space-y-2.5">
               {/* No Website */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--score-high)]/10">
-                  <span className="text-xs font-bold text-[var(--score-high)]">—</span>
-                </div>
+                <ScoreRing score={85} size={32} variant="opportunity" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Marina Legal Consultants</p>
                   <p className="text-xs text-[var(--text-tertiary)]">Dubai Marina · Legal</p>
@@ -108,9 +106,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
               {/* Social Only */}
               <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--score-mid)]/10">
-                  <span className="text-xs font-bold text-[var(--score-mid)]">—</span>
-                </div>
+                <ScoreRing score={72} size={32} variant="opportunity" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">Blue Wave Restaurant</p>
                   <p className="text-xs text-[var(--text-tertiary)]">JBR · Food & Beverage</p>
