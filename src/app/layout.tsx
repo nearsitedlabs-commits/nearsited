@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     description: "Discover local businesses with weak or missing websites, get opportunity scores, and generate personalised outreach pitches in under 2 minutes.",
   },
   other: {
-    "msvalidate.01": "Bing verification token", // Replace with your Bing Webmaster Tools verification code
+    "msvalidate.01": "2E11934A84FAB57D254458C58A88DA8D",
   },
 };
 
