@@ -8,10 +8,14 @@ const FALLBACK_LIMIT = { success: true, limit: Infinity, remaining: Infinity, re
 
 // ── Redis client with error resilience ───────────────────────────────────────
 let redisClient: Redis | null = null;
-try {
-  redisClient = Redis.fromEnv();
-} catch (e) {
-  console.warn("⚠️  Failed to create Redis client — rate limiting will be a no-op fallback", e);
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  try {
+    redisClient = Redis.fromEnv();
+  } catch (e) {
+    console.warn("⚠️  Failed to create Redis client — rate limiting will be a no-op fallback", e);
+  }
+} else {
+  console.log("[RATE_LIMIT] Upstash Redis not configured — rate limiting disabled");
 }
 
 // ── Rate limiter factory with fallback ───────────────────────────────────────
