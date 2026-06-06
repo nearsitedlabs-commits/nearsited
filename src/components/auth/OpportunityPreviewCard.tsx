@@ -37,7 +37,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Dental Clinic · Dubai",
     url: "brightsmile.ae",
     category: "Healthcare",
-    quality: 41,
+    quality: 46,
     reviews: 30,
     rating: 4.2,
     scoreBarData: [
@@ -65,7 +65,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Gym · Dubai Marina",
     url: "instagram.com/dubaifitness",
     category: "Fitness",
-    quality: 78,
+    quality: 72,
     reviews: 85,
     rating: 4.5,
     scoreBarData: [
@@ -94,7 +94,7 @@ const OPPORTUNITIES: OppType[] = [
     subtitle: "Plumbing · Deira, Dubai",
     url: "No website — Google Business only",
     category: "Home Services",
-    quality: 94,
+    quality: 52,
     reviews: 42,
     rating: 4.7,
     scoreBarData: [
