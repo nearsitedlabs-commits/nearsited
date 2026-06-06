@@ -192,7 +192,7 @@ export default function OpportunityPreviewCard() {
           </div>
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
-              Score
+              Opportunity Score
             </p>
             <p className="mt-1 text-sm leading-relaxed text-[var(--text-secondary)]">
               {SELECTED.description}

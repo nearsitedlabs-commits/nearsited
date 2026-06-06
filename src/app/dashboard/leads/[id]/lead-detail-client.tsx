@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Loader2, MapPin, TrendingUp } from "lucide-react";
-import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore } from "@/lib/scoring";
+import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
@@ -21,6 +21,7 @@ import { useLeadAnalysis } from "./hooks/useLeadAnalysis";
 
 // Sub-components
 import { SubScore } from "./components/SubScore";
+import { ScoreRingWithLabel } from "./components/ScoreRingWithLabel";
 import { buildClientCallSummary } from "./components/OpportunityBullets";
 import { LeadHeroSection } from "./components/LeadHeroSection";
 import { LeadOutreachSection } from "./components/LeadOutreachSection";
@@ -145,20 +146,28 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     ...((desktopDesign?.issues as unknown as { title: string; detail: string; point_deduction?: number; impact: "High" | "Medium" | "Low" }[]) ?? []),
   ].slice(0, 5);
 
+  const hasAudit   = !!biz.audited_at;
+  const hasDesign  = !!biz.design_analyzed_at;
+  const hasWebsite = !!biz.website;
+
   const projScore                 = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta          = Math.max(0, projScore - overall);
   const effectiveOpportunityScore = biz.opportunity_score ??
     computeOpportunityScore(overall || biz.performance_score || biz.design_score || 50, biz.review_count ?? 0, biz.rating ?? 0, biz.business_type ?? undefined);
+  const displayOpportunityScore   = hasAudit
+    ? effectiveOpportunityScore
+    : estimatedOpportunity({
+        website_status: biz.website_status as WebsiteStatus,
+        website: biz.website ?? null,
+        rating: biz.rating ?? null,
+        user_ratings_total: biz.review_count ?? null,
+      });
   const clientCallSummary         = buildClientCallSummary(
     biz.name, biz.business_type ?? "business", biz.city,
     overall, projScore, opportunityDelta,
     allIssues as { title: string; detail: string; impact: string }[],
     mobilePerfScore, desktopPerfScore, biz.rating, biz.review_count,
   );
-
-  const hasAudit   = !!biz.audited_at;
-  const hasDesign  = !!biz.design_analyzed_at;
-  const hasWebsite = !!biz.website;
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
@@ -287,13 +296,13 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               />
             )}
 
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Score Breakdown</h2>
-              <div className="grid grid-cols-2 gap-2">
-                <SubScore label="Performance" score={null} /><SubScore label="SEO" score={null} />
-                <SubScore label="Mobile" score={null} /><SubScore label="UX / Design" score={null} />
-                <SubScore label="Trust" score={null} /><SubScore label="Overall" score={null} />
-              </div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
+              <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
+              <ScoreRingWithLabel score={displayOpportunityScore} size={88} />
+              <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
+                Estimated
+              </span>
+              <p className="text-xs text-[var(--text-tertiary)]">Run an audit above to get a verified score</p>
             </div>
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
               <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Top Issues Impacting Score</h2>
@@ -344,15 +353,11 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               transition={shouldReduce ? undefined : { duration: 0.35, ease: EASE_OUT }}
             >
               <OpportunityScoreStrip
-                hasDesign={hasDesign}
+                opportunityScore={displayOpportunityScore}
+                isVerified={hasAudit && hasDesign}
                 hasAudit={hasAudit}
                 hasWebsite={hasWebsite}
-                overall={overall}
-                projScore={projScore}
                 opportunityDelta={opportunityDelta}
-                runningDesign={analysis.runningDesign}
-                runningFullAnalysis={analysis.runningFullAnalysis}
-                onRunDesign={analysis.handleRunDesign}
               />
             </motion.div>
           </MaybeFadeUp>

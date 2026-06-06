@@ -82,6 +82,13 @@ function SignupPageContent() {
     }
     setLoading(false);
     setSuccess(true);
+
+    // Fire-and-forget admin notification
+    fetch("/api/notify-signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: actualEmail, name: actualName || fullName }),
+    }).catch(() => { /* silent — notification is best-effort */ });
   }
 
   async function handleGoogleLogin() {

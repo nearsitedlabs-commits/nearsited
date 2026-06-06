@@ -19,16 +19,24 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
 
   const content = (
     <>
-      {/* Explainer — what makes this data different */}
-      <p className="mt-6 text-sm leading-7 text-[var(--text-secondary)]">
-        These aren&rsquo;t vanity metrics. Every business type, city, and opportunity type here
-        represents a real, findable lead &mdash; surfaced by scanning live business data, not
-        guessing. The dataset is built for one thing: helping you find a business that actually
-        needs a new website, <em>today</em>.
-      </p>
+      {/* Founder quote */}
+      <blockquote className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 text-left">
+        <p className="text-base italic leading-7 text-[var(--text-secondary)]">
+          &ldquo;I was spending 3 hours every week just finding businesses to pitch. I built Nearsited so I could spend that time closing instead.&rdquo;
+        </p>
+        <footer className="mt-4 flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]/10 text-xs font-semibold text-[var(--accent)]">
+            AS
+          </div>
+          <div>
+            <p className="text-sm font-medium text-[var(--text-primary)]">Adin Sheik</p>
+            <p className="text-xs text-[var(--text-tertiary)]">Founder, Again Labs — built this to solve his own problem</p>
+          </div>
+        </footer>
+      </blockquote>
 
-      {/* Stat cards — keep existing */}
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
+      {/* Stat cards */}
+      <div className="mt-8 grid gap-6 sm:grid-cols-2">
         {PROOF_POINTS.map((point) => (
           <div
             key={point.stat}
@@ -64,7 +72,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
 
       {/* Early-access callout — keep existing */}
       <SectionSub className="mx-auto mt-10 max-w-xl text-center">
-        Nearsited is a new tool. We&rsquo;re working with our first 20 design agencies to refine the workflow before scaling. Join the early cohort — pricing is locked at the launch rate.
+        Early adopters get launch pricing locked in permanently. The workflow is live — agencies are closing deals with it today.
       </SectionSub>
       <div className="mt-8 text-center">
         <Button variant="primary" onClick={() => navigate("/signup")} className="px-8 py-3 text-base">

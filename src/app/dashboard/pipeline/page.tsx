@@ -74,7 +74,7 @@ function getOpportunityContext(item: PipelineBusiness): string {
     if (item.performance_score != null) {
       const opp = computeOpportunityScore(item.performance_score, item.review_count ?? 0, item.rating ?? 0);
       const label = opp >= 70 ? "High opportunity" : opp >= 45 ? "Good opportunity" : "Moderate opportunity";
-      return `${label} · site score ${item.performance_score}/100`;
+      return `${label} · opportunity score ${opp}/100`;
     }
     return "Website opportunity";
   }

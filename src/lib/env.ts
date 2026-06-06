@@ -37,6 +37,8 @@ export const REQUIRED_ENV_VARS = [
   "GOOGLE_PLACES_API_KEY",
   "GEMINI_API_KEY",
   "SCREENSHOT_API_KEY",
+  "RESEND_API_KEY",
+  "ADMIN_EMAIL",
 ] as const;
 
 /**

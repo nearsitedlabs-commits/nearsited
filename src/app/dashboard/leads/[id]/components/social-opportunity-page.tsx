@@ -8,7 +8,9 @@ import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { detectSocialPlatforms, getSocialImpactEstimates, getSocialOpportunityReasons } from "@/lib/lead-types";
+import { estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
+import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -51,6 +53,12 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const socialPlatforms = detectSocialPlatforms(biz.website);
   const impactEstimates = getSocialImpactEstimates();
   const opportunityReasons = getSocialOpportunityReasons();
+  const oppScore = estimatedOpportunity({
+    website_status: biz.website_status,
+    website: biz.website ?? null,
+    rating: biz.rating ?? null,
+    user_ratings_total: biz.review_count ?? null,
+  });
 
   // Fetch contact info
   useEffect(() => {
@@ -219,6 +227,16 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               )}
             </div>
           </div>
+        </div>
+
+        {/* ── OPPORTUNITY SCORE ─────────────────────────────────────────── */}
+        <div className="mb-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
+          <ScoreRingWithLabel score={oppScore} size={88} />
+          <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
+            Estimated
+          </span>
+          <p className="text-xs text-[var(--text-tertiary)]">Based on social presence and review signals</p>
         </div>
 
         {/* ── TWO-COLUMN LAYOUT ─────────────────────────────────────────── */}

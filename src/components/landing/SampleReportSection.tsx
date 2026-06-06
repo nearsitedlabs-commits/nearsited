@@ -72,22 +72,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$3,000–$8,000</p>
                     </div>
                   </div>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                    {[
-                      { label: "Performance", score: 42 },
-                      { label: "Mobile UX",   score: 39 },
-                      { label: "SEO",         score: 48 },
-                      { label: "Design",      score: 36 },
-                      { label: "Trust",       score: 38 },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-2xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                          {item.score}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
@@ -111,6 +95,28 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       ))}
                     </ul>
                   </div>
+                  <details className="mt-4 group">
+                    <summary className="cursor-pointer text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] list-none flex items-center gap-1.5">
+                      <svg className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                      Technical Analysis
+                    </summary>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                      {[
+                        { label: "Performance", score: 42 },
+                        { label: "Mobile UX",   score: 39 },
+                        { label: "SEO",         score: 48 },
+                        { label: "Design",      score: 36 },
+                        { label: "Trust",       score: 38 },
+                      ].map((item) => (
+                        <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3 text-center">
+                          <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                          <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                            {item.score}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
                 </>
               )}
 
@@ -294,22 +300,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$3,000–$8,000</p>
                     </div>
                   </div>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                    {[
-                      { label: "Performance", score: 42 },
-                      { label: "Mobile UX",   score: 39 },
-                      { label: "SEO",         score: 48 },
-                      { label: "Design",      score: 36 },
-                      { label: "Trust",       score: 38 },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-2xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                          {item.score}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
@@ -333,6 +323,28 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       ))}
                     </ul>
                   </div>
+                  <details className="mt-4 group">
+                    <summary className="cursor-pointer text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] list-none flex items-center gap-1.5">
+                      <svg className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                      Technical Analysis
+                    </summary>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                      {[
+                        { label: "Performance", score: 42 },
+                        { label: "Mobile UX",   score: 39 },
+                        { label: "SEO",         score: 48 },
+                        { label: "Design",      score: 36 },
+                        { label: "Trust",       score: 38 },
+                      ].map((item) => (
+                        <div key={item.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3 text-center">
+                          <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{item.label}</p>
+                          <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                            {item.score}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
                 </motion.div>
               )}
 

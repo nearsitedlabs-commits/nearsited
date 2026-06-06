@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Home, Search, Zap, FileText, MessageSquare, Users, CreditCard } from "lucide-react";
+import { Home, Search, Zap, FileText, Users, CreditCard } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
 
 const NAV_SECTIONS = [
@@ -10,7 +10,6 @@ const NAV_SECTIONS = [
   { id: "how",      label: "How it works",  Icon: Search },
   { id: "why",      label: "Why Nearsited", Icon: Zap },
   { id: "report",   label: "Sample report", Icon: FileText },
-  { id: "pitch",    label: "Sample pitch",  Icon: MessageSquare },
   { id: "usecases", label: "Use cases",     Icon: Users },
   { id: "pricing",  label: "Pricing",       Icon: CreditCard },
 ] as const;

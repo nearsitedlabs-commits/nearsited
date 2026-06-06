@@ -19,7 +19,7 @@ const HIERARCHY = [
   {
     number: "02",
     title: "Understand the gap",
-    desc: "Every lead gets a full assessment: website presence, performance, mobile UX, SEO, design, trust signals. You see exactly what's missing — and what to pitch.",
+    desc: "Every lead gets an opportunity score (0–100) backed by website presence, performance, mobile, SEO, design, and trust analysis. The higher the score, the hotter the lead — drill into the issues to see exactly what to pitch.",
     icon: Target,
     statKey: "Issues per lead",
     statValue: "4–7 critical issues found",

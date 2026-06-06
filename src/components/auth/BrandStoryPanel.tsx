@@ -7,7 +7,7 @@ import OpportunityPreviewCard from "./OpportunityPreviewCard";
 
 const FEATURES = [
   { icon: Search, text: "Discover businesses with weak, social-only, or no website" },
-  { icon: BarChart3, text: "Audit performance, mobile, SEO, design, and trust signals" },
+  { icon: BarChart3, text: "Score every lead by opportunity — performance, SEO, design, and trust analysed automatically" },
   { icon: Mail, text: "Generate personalised outreach pitches in one click" },
   { icon: ListFilter, text: "Track every opportunity from discovery to won project" },
 ] as const;

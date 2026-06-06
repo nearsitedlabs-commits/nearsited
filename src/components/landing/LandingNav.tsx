@@ -24,7 +24,6 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
           <ul className="hidden items-center gap-8 text-sm text-[var(--text-tertiary)] md:flex">
             <li><a href="#how" className="relative transition hover:text-[var(--text-primary)]">How it works</a></li>
             <li><a href="#report" className="relative transition hover:text-[var(--text-primary)]">Sample report</a></li>
-            <li><a href="#pitch" className="relative transition hover:text-[var(--text-primary)]">Sample pitch</a></li>
             <li><Link href="/pricing" className="relative transition hover:text-[var(--text-primary)]">Pricing</Link></li>
             <li><a href="#faq" className="relative transition hover:text-[var(--text-primary)]">FAQ</a></li>
           </ul>
@@ -63,11 +62,6 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
           <li>
             <a href="#report" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
               Sample report
-            </a>
-          </li>
-          <li>
-            <a href="#pitch" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
-              Sample pitch
             </a>
           </li>
           <li>

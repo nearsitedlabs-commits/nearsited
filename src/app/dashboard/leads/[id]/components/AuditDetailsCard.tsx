@@ -28,50 +28,52 @@ export function AuditDetailsCard({
 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <h2 className="text-base font-semibold text-[var(--text-primary)] mb-4">Audit Scores</h2>
-
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <SubScore label="Desktop Perf" score={desktopPerfScore} />
-        <SubScore label="SEO"          score={(desktopAudit?.seo_score as number | null) ?? null} />
-        <SubScore label="Mobile Perf"  score={mobilePerfScore} />
-        <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
-        <SubScore label="Trust"        score={trustScoreVal || null} />
-        <SubScore label="Overall"      score={overall || null} />
-      </div>
-
       <button
         onClick={onToggleTechDetails}
-        className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--text-secondary)]"
+        className="inline-flex w-full cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
       >
-        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-150 ${showTechDetails ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 transition-transform duration-150 ${showTechDetails ? "rotate-180" : ""}`} />
         {showTechDetails ? "Hide" : "View"} Technical Details
       </button>
 
-      {showTechDetails && auditsToShow.length > 0 && (
-        <div className="mt-3 space-y-3">
-          {auditsToShow.map((audit) => (
-            <div key={audit.id as string} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-              <p className="text-xs font-medium text-[var(--text-primary)] mb-2">
-                {audit.strategy === "mobile" ? "Mobile" : "Desktop"} Web Vitals
-              </p>
-              <div className="space-y-2">
-                {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((metric) => {
-                  const rawVal = audit[metric] as string | null | undefined;
-                  const colorClass = metricColor(metric, rawVal);
-                  const meta = METRIC_META[metric];
-                  return (
-                    <div key={metric} className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-[var(--text-primary)]">{meta.label}</p>
-                        <p className="text-[10px] text-[var(--text-tertiary)]">{meta.subtitle}</p>
-                      </div>
-                      <span className={`text-xs font-bold ${colorClass}`}>{rawVal ?? "—"}</span>
-                    </div>
-                  );
-                })}
-              </div>
+      {showTechDetails && (
+        <div className="mt-4 space-y-4">
+          <div className="grid grid-cols-2 gap-2">
+            <SubScore label="Desktop Perf" score={desktopPerfScore} />
+            <SubScore label="SEO"          score={(desktopAudit?.seo_score as number | null) ?? null} />
+            <SubScore label="Mobile Perf"  score={mobilePerfScore} />
+            <SubScore label="UX / Design"  score={uxDesignScoreVal || designScore || null} />
+            <SubScore label="Trust"        score={trustScoreVal || null} />
+            <SubScore label="Overall"      score={overall || null} />
+          </div>
+
+          {auditsToShow.length > 0 && (
+            <div className="space-y-3">
+              {auditsToShow.map((audit) => (
+                <div key={audit.id as string} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                  <p className="text-xs font-medium text-[var(--text-primary)] mb-2">
+                    {audit.strategy === "mobile" ? "Mobile" : "Desktop"} Web Vitals
+                  </p>
+                  <div className="space-y-2">
+                    {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((metric) => {
+                      const rawVal = audit[metric] as string | null | undefined;
+                      const colorClass = metricColor(metric, rawVal);
+                      const meta = METRIC_META[metric];
+                      return (
+                        <div key={metric} className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-[var(--text-primary)]">{meta.label}</p>
+                            <p className="text-[10px] text-[var(--text-tertiary)]">{meta.subtitle}</p>
+                          </div>
+                          <span className={`text-xs font-bold ${colorClass}`}>{rawVal ?? "—"}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

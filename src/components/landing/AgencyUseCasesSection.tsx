@@ -27,14 +27,14 @@ const USE_CASES = [
   {
     icon: Palette,
     title: "Design studios",
-    desc: "Turn your portfolio into prospecting fuel. Find businesses with dated visual design, audit their scores, and walk into discovery calls with real evidence — not guesses.",
+    desc: "Turn your portfolio into prospecting fuel. Find businesses with dated visual design, check their opportunity score, and walk into discovery calls with real evidence — not guesses.",
     stat: "Evidence-led pitches",
     cta: "Start finding clients",
   },
   {
     icon: TrendingUp,
     title: "SEO agencies",
-    desc: "Find businesses with poor PageSpeed, missing local SEO, and no SSL — the exact leads that need your services most. Audit, score, and pitch in under 2 minutes.",
+    desc: "Find businesses with poor PageSpeed, missing local SEO, and no SSL — ranked by opportunity score so you know exactly who to call first. Pitch with real data in under 2 minutes.",
     stat: "4–7 technical issues per lead",
     cta: "Start finding leads",
   },

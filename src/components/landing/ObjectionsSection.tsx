@@ -34,8 +34,8 @@ const OBJECTIONS: Objection[] = [
         <p className="font-medium text-[var(--text-primary)]">What Maps can&rsquo;t do:</p>
         <ul className="list-disc space-y-1 pl-4">
           <li>Filter for businesses with no website, social-only, or platform-only presence</li>
-          <li>Run performance, SEO, mobile, design, and trust audits</li>
           <li>Rank 50+ businesses by opportunity score in seconds</li>
+          <li>Analyse performance, SEO, mobile, design, and trust to back that score</li>
           <li>Generate a personalised pitch for each opportunity type</li>
         </ul>
         <p>Maps is the starting point. Nearsited turns that data into ranked, pitchable leads.</p>
