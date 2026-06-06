@@ -38,7 +38,7 @@ type LeadOutreachSectionProps = {
   hasAudit: boolean;
   hasDesign: boolean;
   generatingPitch: boolean;
-  handleGeneratePitch: () => Promise<void>;
+  handleGeneratePitch: (force?: boolean) => Promise<void>;
   pitchError: string | null;
   pitchResult: { subject: string; body: string } | null;
   handleCopyPitch: () => void;
@@ -210,7 +210,7 @@ export function LeadOutreachSection({
         <div className="relative inline-block">
           {hasAudit || hasDesign ? (
             <button
-              onClick={handleGeneratePitch}
+              onClick={() => handleGeneratePitch()}
               disabled={generatingPitch}
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -250,7 +250,7 @@ export function LeadOutreachSection({
               <Copy className="h-3 w-3" /> Copy
             </button>
             <button
-              onClick={handleGeneratePitch}
+              onClick={() => handleGeneratePitch(true)}
               disabled={generatingPitch}
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >

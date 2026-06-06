@@ -30,11 +30,11 @@ export function usePitchGeneration({
   const [pitchUrgency, setPitchUrgency] = useState("medium");
   const [outreachChannel, setOutreachChannel] = useState<"email" | "whatsapp">("email");
 
-  const handleGeneratePitch = useCallback(async () => {
+  const handleGeneratePitch = useCallback(async (force = false) => {
     setGeneratingPitch(true);
     setPitchError(null);
     try {
-      console.log("[LEAD] Generating pitch:", { businessId, tone: pitchTone, length: pitchLength, channel: outreachChannel, website_status: websiteStatus });
+      console.log("[LEAD] Generating pitch:", { businessId, tone: pitchTone, length: pitchLength, channel: outreachChannel, website_status: websiteStatus, force });
       const res = await fetch("/api/pitch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,10 +43,10 @@ export function usePitchGeneration({
           tone: pitchTone,
           length: pitchLength,
           channel: outreachChannel,
-          lead_type: websiteStatus,
           focus: pitchFocus,
           opening: pitchOpening,
           urgency: pitchUrgency,
+          force,
         }),
       });
       if (res.status === 429) {
@@ -70,7 +70,7 @@ export function usePitchGeneration({
     } finally {
       setGeneratingPitch(false);
     }
-  }, [businessId, websiteStatus, pitchTone, pitchLength, outreachChannel, pitchFocus, pitchOpening, pitchUrgency, setQuotaError, startQuotaTimer]);
+  }, [businessId, pitchTone, pitchLength, outreachChannel, pitchFocus, pitchOpening, pitchUrgency, setQuotaError, startQuotaTimer]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) {
