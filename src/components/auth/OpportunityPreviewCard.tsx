@@ -177,6 +177,7 @@ export default function OpportunityPreviewCard() {
                 cy="45"
                 r="40"
                 fill="none"
+                stroke={SELECTED.scoreColor}
                 className="animate-[ringDraw_1.2s_cubic-bezier(0.22,1,0.36,1)_0.1s_forwards]"
                 strokeWidth="8"
                 strokeLinecap="round"
