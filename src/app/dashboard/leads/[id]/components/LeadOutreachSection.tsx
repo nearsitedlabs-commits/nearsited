@@ -208,7 +208,7 @@ export function LeadOutreachSection({
         </div>
         <div className="flex flex-wrap gap-2">
         <div className="relative inline-block">
-          {hasAudit && hasDesign ? (
+          {hasAudit || hasDesign ? (
             <button
               onClick={handleGeneratePitch}
               disabled={generatingPitch}
