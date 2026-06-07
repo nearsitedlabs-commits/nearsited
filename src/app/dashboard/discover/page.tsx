@@ -12,7 +12,7 @@ import type { WebsiteStatus } from "@/lib/db-types";
 import type { AuditRow } from "@/lib/db-types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Toast } from "@/components/ui/Toast";
-import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { estimatedOpportunity, computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -140,8 +140,11 @@ export default function DiscoverPage() {
     const score = (b: BusinessResult) => {
       const mobile  = b.audit?.mobile?.performance_score ?? null;
       const desktop = b.audit?.desktop?.performance_score ?? null;
-      const v = mobile != null || desktop != null ? Math.max(mobile ?? 0, desktop ?? 0) : null;
-      return v != null ? computeOpportunityScore(v, b.review_count ?? 0, b.rating ?? 0, b.business_type ?? undefined) : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
+      const design  = b.design_score ?? null;
+      const hasData = mobile != null || desktop != null || design != null;
+      return hasData
+        ? computeOpportunityScore(blendQualityForOpportunity(mobile, desktop, design), b.review_count ?? 0, b.rating ?? 0, b.business_type ?? undefined)
+        : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
     };
     return [...f].sort((a, b) => {
       if (sort === "rating-desc") return (b.rating ?? 0) - (a.rating ?? 0);
@@ -205,7 +208,7 @@ export default function DiscoverPage() {
           const t = ch.type as string;
           if (t === "progress") continue;
           if (t === "results") { const b = (ch.data as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); setVisible(30); setFetching(false); setSubmitting(false); setResKey((k) => k + 1); gotInit = true; continue; }
-          if (t === "enrichment") { const upd = (ch.updated as { id: string; website: string | null; phone: string | null; website_status: string }[]) ?? []; if (upd.length) { const m = new Map(upd.map((u) => [u.id, u])); setResults((pr) => pr.map((b) => { const e = m.get(b.id); return e ? { ...b, website: e.website ?? b.website, phone: e.phone ?? b.phone, website_status: e.website_status as WebsiteStatus } : b; })); } continue; }
+          if (t === "enrichment") { const upd = (ch.updated as { id: string; website: string | null; phone: string | null; website_status: string; flagged_for_outreach?: boolean }[]) ?? []; if (upd.length) { const m = new Map(upd.map((u) => [u.id, u])); setResults((pr) => pr.map((b) => { const e = m.get(b.id); return e ? { ...b, website: e.website ?? b.website, phone: e.phone ?? b.phone, website_status: e.website_status as WebsiteStatus, flagged_for_outreach: e.flagged_for_outreach ?? b.flagged_for_outreach } : b; })); } continue; }
           if (t === "done") { const b = (ch.businesses as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); if (b.length) fetchPersistedAudits(b.map((x) => x.id), supabase).then((m) => { setResults((pr) => pr.map((r) => { const p = m.get(r.id); return p ? { ...r, audit: p } : r; })); }).catch(() => {}); continue; }
           if (t === "error") throw new Error((ch.message as string) ?? "Error");
         }

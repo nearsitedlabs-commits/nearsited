@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 
 export async function PATCH(
   request: NextRequest,
@@ -62,12 +62,8 @@ export async function PATCH(
 
   if (body.rating !== undefined || body.reviewCount !== undefined || body.businessType !== undefined) {
     if (perfScore != null) {
-      updates.opportunity_score = computeOpportunityScore(
-        perfScore,
-        newReviewCount,
-        newRating,
-        newBusinessType
-      );
+      const blendedQ = blendQualityForOpportunity(null, perfScore, existing.design_score ?? null);
+      updates.opportunity_score = computeOpportunityScore(blendedQ, newReviewCount, newRating, newBusinessType);
     } else {
       // No audit yet — use estimatedOpportunity
       updates.opportunity_score = estimatedOpportunity({

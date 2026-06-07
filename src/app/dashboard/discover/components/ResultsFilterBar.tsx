@@ -54,8 +54,10 @@ export function ResultsFilterBar({
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-semibold text-[var(--accent)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
           {flaggedCount} flagged for outreach
-          <Tooltip content="Businesses are flagged as outreach candidates when they have no website, rely only on social media or a third-party platform page, or score as a high opportunity after analysis.">
-            <Info className="size-3 cursor-help opacity-60" />
+          <Tooltip content="Flagged when a business has no website, uses only social media (Facebook, Instagram, etc.), or is listed only on a third-party platform (Fresha, Booksy, etc.) — meaning they don't own their digital presence.">
+            <span className="inline-flex cursor-help">
+              <Info className="size-3 opacity-60" />
+            </span>
           </Tooltip>
         </span>
       )}

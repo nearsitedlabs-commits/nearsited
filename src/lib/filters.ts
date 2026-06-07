@@ -1,4 +1,4 @@
-import { computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -109,8 +109,10 @@ export type FilterableLead = {
 
 function effectiveOpportunity(lead: FilterableLead): number {
   if (lead.opportunity_score != null) return lead.opportunity_score;
-  const q = lead.performance_score ?? lead.design_score ?? 50;
-  return computeOpportunityScore(q, lead.review_count ?? 0, lead.rating ?? 0, lead.business_type);
+  return computeOpportunityScore(
+    blendQualityForOpportunity(null, lead.performance_score, lead.design_score),
+    lead.review_count ?? 0, lead.rating ?? 0, lead.business_type
+  );
 }
 
 function effectiveHealth(lead: FilterableLead): number | null {

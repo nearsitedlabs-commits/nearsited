@@ -6,7 +6,7 @@ import type { WebsiteStatus } from "@/lib/db-types";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { opportunityInsight, type OpportunityInsight } from "@/lib/opportunity-insights";
-import { computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
 import { useMemo } from "react";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion, motion } from "framer-motion";
@@ -118,16 +118,19 @@ export function OpportunityCard({
 }: OpportunityCardProps) {
   const prefersReduced = useReducedMotion();
 
-  // Compute the effective score (use the best available)
+  // Compute the effective score (use the best available, for ScoreRing display)
   const effectiveScore = useMemo(() => {
     return lead.performance_score ?? lead.design_score ?? null;
   }, [lead.performance_score, lead.design_score]);
 
-  // Opportunity score (with fallback for legacy records)
+  // Opportunity score — blend perf + design instead of using one or the other
   const oppScore = useMemo(() => {
-    const qualityScore = effectiveScore ?? 50;
-    return computeOpportunityScore(qualityScore, lead.review_count ?? 0, lead.rating ?? 0);
-  }, [effectiveScore, lead.review_count, lead.rating]);
+    return computeOpportunityScore(
+      blendQualityForOpportunity(null, lead.performance_score ?? null, lead.design_score ?? null),
+      lead.review_count ?? 0,
+      lead.rating ?? 0,
+    );
+  }, [lead.performance_score, lead.design_score, lead.review_count, lead.rating]);
 
   // Generate insight
   const insight: OpportunityInsight = useMemo(() => {

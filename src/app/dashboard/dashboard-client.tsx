@@ -9,7 +9,7 @@ import {
   Search, Target, Mail, BarChart3, Activity,
   ArrowRight, MessageSquare, Compass, TrendingUp,
 } from "lucide-react";
-import { opportunityLabel, opportunityBadgeVariant, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
+import { blendQualityForOpportunity, opportunityLabel, opportunityBadgeVariant, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow } from "@/lib/db-types";
@@ -232,18 +232,6 @@ export default function DashboardClient({
             <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">{greeting}</h1>
           </div>
           <div className="flex flex-wrap gap-2">
-            {primaryAction && (
-              <Link
-                href={primaryAction.href}
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
-              >
-                {primaryAction.icon === Search ? <Search className="h-4 w-4" /> :
-                 primaryAction.icon === Mail ? <Mail className="h-4 w-4" /> :
-                 primaryAction.icon === Activity ? <Activity className="h-4 w-4" /> :
-                 <Compass className="h-4 w-4" />}
-                {primaryAction.cta}
-              </Link>
-            )}
             <Link
               href="/dashboard/discover"
               className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]"
@@ -268,7 +256,7 @@ export default function DashboardClient({
                   href={primaryAction.href}
                   className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
                 >
-                  {primaryAction.cta} <ArrowRight className="h-3.5 w-3.5" />
+                  {primaryAction.cta}
                 </Link>
               </div>
             </div>
@@ -463,7 +451,7 @@ export default function DashboardClient({
                         {(() => {
                           const oppScore = lead.opportunity_score
                             ?? (isAnalysed
-                              ? computeOpportunityScore(score!, lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
+                              ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
                               : estimatedOpportunity({
                                   website_status: lead.website_status,
                                   website: lead.website,

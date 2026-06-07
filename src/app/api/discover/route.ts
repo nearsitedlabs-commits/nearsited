@@ -304,7 +304,7 @@ export async function POST(request: NextRequest) {
                 }),
               );
 
-              const enriched: { id: string; website: string | null; phone: string | null; website_status: string }[] = [];
+              const enriched: { id: string; website: string | null; phone: string | null; website_status: string; flagged_for_outreach: boolean }[] = [];
               // Collect successful results for batched cache upsert
               const cacheBatch: { place_id: string; website: string | null; website_status: string; details_fetched_at: string; rating: number | null; review_count: number | null; ratings_fetched_at: string }[] = [];
 
@@ -314,7 +314,8 @@ export async function POST(request: NextRequest) {
                   enrichedWebsites[index] = website;
                   enrichedStatuses[index] = websiteStatus;
                   enrichedPhones[index] = phone;
-                  enriched.push({ id: businessIds[index], website, phone, website_status: websiteStatus });
+                  const flagged = websiteStatus === "no_website" || websiteStatus === "social_only" || websiteStatus === "platform_only";
+                  enriched.push({ id: businessIds[index], website, phone, website_status: websiteStatus, flagged_for_outreach: flagged });
                   detailsCalls++;
 
                   const srcPlace = uniquePlaces[index] as Record<string, unknown>;

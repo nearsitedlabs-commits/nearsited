@@ -310,6 +310,32 @@ export function getIndustryMultiplier(businessType?: string | null): number {
 }
 
 /**
+ * Blends performance and design scores into a single quality signal for opportunity scoring.
+ *
+ * Using max(mobile, desktop) inflates quality → collapses weakness → understates opportunity.
+ * This helper averages mobile+desktop perf (not max) and blends in design when present.
+ *
+ * Weights: perf 60%, design 40% (performance drives UX speed; design drives agency pitch value).
+ * Returns 0–100.
+ */
+export function blendQualityForOpportunity(
+  mobilePerf: number | null,
+  desktopPerf: number | null,
+  designScore: number | null
+): number {
+  const avgPerf =
+    mobilePerf != null && desktopPerf != null ? (mobilePerf + desktopPerf) / 2
+    : mobilePerf ?? desktopPerf ?? null;
+
+  if (avgPerf != null && designScore != null && designScore > 0) {
+    return Math.round(avgPerf * 0.6 + designScore * 0.4);
+  }
+  if (avgPerf != null) return Math.round(avgPerf);
+  if (designScore != null && designScore > 0) return designScore;
+  return 50;
+}
+
+/**
  * Computes the opportunity score — how attractive this lead is for a redesign agency.
  * Combines website weakness with business viability and industry multiplier.
  *

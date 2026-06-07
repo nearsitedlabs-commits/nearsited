@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, MapPin, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
-import { computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "framer-motion";
@@ -1249,23 +1249,21 @@ export default function AuditPage() {
           {/* Progress checklist */}
           {showProgress && (
             <div className="mt-4">
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3 sm:p-4">
+              <div className="relative rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3 sm:p-4">
                 {running && (
-                  <div className="mb-2 flex justify-end">
-                    <button
-                      onClick={handleCancel}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
-                    >
-                      <X className="h-3.5 w-3.5" /> Cancel
-                    </button>
-                  </div>
+                  <button
+                    onClick={handleCancel}
+                    className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
+                  >
+                    <X className="h-3.5 w-3.5" /> Cancel
+                  </button>
                 )}
                 <div>
                   {ALL_STEPS.map((stepDef) => {
                     const isDone   = completedKeys.includes(stepDef.key);
                     const isActive = !isDone && activeKeys.includes(stepDef.key);
                     return (
-                      <div key={stepDef.key} className="flex items-center gap-2.5 py-0.5 sm:py-1">
+                      <div key={stepDef.key} className="flex items-center gap-2.5 py-0.5">
                         {isDone ? (
                           <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
                         ) : isActive ? (
@@ -1353,13 +1351,14 @@ export default function AuditPage() {
           <div className="mt-6 space-y-6">
             {/* Opportunity Score */}
             {(() => {
-              const bestPerf = Math.max(
-                auditResult.mobile.performance_score ?? 0,
-                auditResult.desktop.performance_score ?? 0,
-              );
-              if (!bestPerf) return null;
-              const oppScore = computeOpportunityScore(bestPerf, mapsReviewCount ?? 0, mapsRating ?? 0, undefined);
+              const mP = auditResult.mobile.performance_score ?? null;
+              const dP = auditResult.desktop.performance_score ?? null;
+              const dS = designResult?.mobile?.design_score ?? designResult?.desktop?.design_score ?? null;
+              if (mP == null && dP == null && dS == null) return null;
+              const blendedQ = blendQualityForOpportunity(mP, dP, dS);
+              const oppScore = computeOpportunityScore(blendedQ, mapsReviewCount ?? 0, mapsRating ?? 0, undefined);
               const isVerified = mapsRating != null;
+              const hasDesign = dS != null;
               return (
                 <div className="flex items-center justify-between rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-4">
                   <div>
@@ -1373,7 +1372,7 @@ export default function AuditPage() {
                     )}
                     {isVerified && mapsRating != null && (
                       <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
-                        Based on performance + {mapsRating.toFixed(1)}★
+                        Based on {hasDesign ? "performance + design" : "performance"} + {mapsRating.toFixed(1)}★
                         {mapsReviewCount != null && mapsReviewCount > 0 ? ` · ${mapsReviewCount} reviews` : ""}
                       </p>
                     )}
@@ -1547,7 +1546,6 @@ export default function AuditPage() {
                 }}
                 className="inline-flex w-full sm:w-auto cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
               >
-                <ArrowRight className="h-4 w-4" />
                 View Full Report →
               </button>
             </div>
@@ -1722,40 +1720,42 @@ export default function AuditPage() {
             </div>
 
             {/* Add to Pipeline */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:justify-between">
-                <div>
-                  <h3 className="text-base font-medium text-[var(--text-primary)]">Add to Pipeline</h3>
+            {pipelineAdded ? (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-5 py-4 text-sm text-[var(--badge-green-text)]">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Added to pipeline.</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAddToPipeline}
-                  disabled={pipelineLoading || pipelineAdded}
-                  className="inline-flex w-full sm:w-auto items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {pipelineAdded ? <CheckCircle2 className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                  {pipelineLoading ? "Adding…" : pipelineAdded ? "Added" : "Add to Pipeline"}
-                </button>
+                {savedBusinessId && (
+                  <Link
+                    href={`/dashboard/leads/${savedBusinessId}`}
+                    className="shrink-0 font-medium underline hover:opacity-80"
+                  >
+                    View Opportunity →
+                  </Link>
+                )}
               </div>
-              {pipelineError && (
-                <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                  {pipelineError}
+            ) : (
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 className="text-base font-medium text-[var(--text-primary)]">Add to Pipeline</h3>
+                  <button
+                    type="button"
+                    onClick={handleAddToPipeline}
+                    disabled={pipelineLoading}
+                    className="inline-flex w-full sm:w-auto cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {pipelineLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                    {pipelineLoading ? "Adding…" : "Add to Pipeline"}
+                  </button>
                 </div>
-              )}
-              {pipelineAdded && (
-                <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-3 text-sm text-[var(--badge-green-text)]">
-                  <span>Opportunity saved to your pipeline.</span>
-                  {savedBusinessId && (
-                    <Link
-                      href={`/dashboard/leads/${savedBusinessId}`}
-                      className="shrink-0 font-medium underline hover:opacity-80"
-                    >
-                      View Opportunity →
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
+                {pipelineError && (
+                  <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                    {pipelineError}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           </div>
         )}

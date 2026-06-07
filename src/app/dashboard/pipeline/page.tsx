@@ -8,7 +8,7 @@ import { ArrowLeft, ExternalLink, Phone, Target, Search } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/db-types";
 import { PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { detectLeadWorkflow } from "@/lib/lead-types";
-import { computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -27,6 +27,7 @@ type PipelineBusiness = {
   city: string;
   business_type: string;
   performance_score: number | null;
+  design_score: number | null;
 };
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -71,8 +72,11 @@ const NEXT_ACTIONS: Record<string, string> = {
 function getOpportunityContext(item: PipelineBusiness): string {
   const wf = detectLeadWorkflow({ website_status: item.website_status, website: item.website });
   if (wf === "website") {
-    if (item.performance_score != null) {
-      const opp = computeOpportunityScore(item.performance_score, item.review_count ?? 0, item.rating ?? 0);
+    if (item.performance_score != null || item.design_score != null) {
+      const opp = computeOpportunityScore(
+        blendQualityForOpportunity(null, item.performance_score, item.design_score),
+        item.review_count ?? 0, item.rating ?? 0
+      );
       const label = opp >= 70 ? "High opportunity" : opp >= 45 ? "Good opportunity" : "Moderate opportunity";
       return `${label} · opportunity score ${opp}/100`;
     }
@@ -88,7 +92,7 @@ const PIPELINE_QUERY = `
   id, status, created_at,
   businesses:business_id (
     id, name, address, website, phone, website_status,
-    rating, review_count, city, business_type, performance_score
+    rating, review_count, city, business_type, performance_score, design_score
   )
 `;
 
@@ -109,6 +113,7 @@ function mapPipelineRow(row: Record<string, unknown>): PipelineBusiness {
     city:             (biz?.city as string) ?? "",
     business_type:    (biz?.business_type as string) ?? "",
     performance_score:(biz?.performance_score as number | null) ?? null,
+    design_score:     (biz?.design_score as number | null) ?? null,
   };
 }
 

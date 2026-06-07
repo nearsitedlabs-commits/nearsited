@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
-import { ArrowLeft, Copy, FileDown, Loader2, MapPin, Phone, RefreshCw, Send, Share2, TrendingUp } from "lucide-react";
+import { ArrowLeft, Copy, FileDown, Loader2, Mail, MapPin, Phone, RefreshCw, Send, Share2, TrendingUp } from "lucide-react";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
@@ -37,7 +37,8 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
   const [toast, setToast] = useState<string | null>(null);
-  const [contactInfo, setContactInfo] = useState<{ phone: string | null; loading: boolean }>({ phone: null, loading: true });
+  const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
+  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({ email: null, phone: null, loading: true });
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
@@ -61,10 +62,10 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     if (!biz.id) return;
     fetch(`/api/contact-info?businessId=${biz.id}`)
       .then((r) => r.json())
-      .then((d) => setContactInfo({ phone: d.phone ?? null, loading: false }))
+      .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
       .catch((err) => {
         console.error("[NO-DIGITAL] contact-info fetch failed:", err);
-        setContactInfo((p) => ({ ...p, loading: false }));
+        setContactInfo((p) => ({ ...p, email: null, loading: false }));
       });
   }, [biz.id]);
 
@@ -100,25 +101,28 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           businessId: biz.id, tone: pitchTone, length: pitchLength,
-          channel: contactInfo.phone ? "whatsapp" : "email",
+          channel: activeChannel,
           workflow: "no_digital_presence",
         }),
       });
       if (res.status === 429) { setPitchError("AI quota exceeded — please try again later."); return; }
       const data = await res.json();
-      if (data.success && data.pitch?.subject && data.pitch?.body) {
-        setPitchResult({ subject: data.pitch.subject, body: data.pitch.body });
+      if (data.success && data.pitch?.body) {
+        setPitchResult({ subject: data.pitch.subject ?? "", body: data.pitch.body });
       } else {
         setPitchError(data.error ?? "Pitch generation failed.");
       }
     } catch { setPitchError("Network error — please try again."); }
     finally { setGeneratingPitch(false); }
-  }, [biz.id, pitchTone, pitchLength, contactInfo.phone]);
+  }, [biz.id, pitchTone, pitchLength, activeChannel]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) { showToast("Generate a pitch first"); return; }
-    navigator.clipboard.writeText(pitchResult.body).then(() => showToast("Pitch copied to clipboard"));
-  }, [pitchResult, showToast]);
+    const text = activeChannel === "email" && pitchResult.subject
+      ? `${pitchResult.subject}\n\n${pitchResult.body}`
+      : pitchResult.body;
+    navigator.clipboard.writeText(text).then(() => showToast("Pitch copied to clipboard"));
+  }, [pitchResult, activeChannel, showToast]);
 
   const handleShare = useCallback(async () => {
     try {
@@ -268,11 +272,49 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
 
-              {/* Show available channel info */}
-              {!contactInfo.loading && contactInfo.phone && (
-                <div className="mb-3 flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-                  <Phone className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                  <span className="text-xs text-[var(--text-secondary)]">{contactInfo.phone}</span>
+              {/* Channel tabs */}
+              <div className="mb-4 flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
+                {([
+                  { id: "email" as const, label: "Email", icon: Mail },
+                  { id: "whatsapp" as const, label: "WhatsApp", icon: Phone },
+                ] as const).map((ch) => (
+                  <button
+                    key={ch.id}
+                    type="button"
+                    onClick={() => { setActiveChannel(ch.id); setPitchResult(null); }}
+                    className={`relative flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-150 ${
+                      activeChannel === ch.id
+                        ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--brand-shadow-xs)]"
+                        : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                    }`}
+                  >
+                    <ch.icon className="h-3.5 w-3.5" />
+                    {ch.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Contact hint */}
+              {!contactInfo.loading && (
+                <div className="mb-3">
+                  {activeChannel === "email" && contactInfo.email && (
+                    <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
+                      <Mail className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                      <span className="text-xs text-[var(--text-secondary)]">{contactInfo.email}</span>
+                    </div>
+                  )}
+                  {activeChannel === "email" && !contactInfo.email && (
+                    <p className="text-[11px] text-[var(--text-tertiary)]">No email found — pitch will be formatted for email outreach.</p>
+                  )}
+                  {activeChannel === "whatsapp" && contactInfo.phone && (
+                    <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
+                      <Phone className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                      <span className="text-xs text-[var(--text-secondary)]">{contactInfo.phone}</span>
+                    </div>
+                  )}
+                  {activeChannel === "whatsapp" && !contactInfo.phone && (
+                    <p className="text-[11px] text-[var(--text-tertiary)]">No phone number found — pitch will be formatted for WhatsApp.</p>
+                  )}
                 </div>
               )}
 
@@ -309,7 +351,9 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
               {pitchResult ? (
                 <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
+                  {activeChannel === "email" && pitchResult.subject && (
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
+                  )}
                   <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
                   <div className="flex gap-2 mt-2">
                     <button onClick={handleCopyPitch}

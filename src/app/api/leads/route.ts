@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
-import { computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,12 +55,13 @@ export async function POST(request: NextRequest) {
       ? Math.round(designValues.reduce((a, b) => a + b, 0) / designValues.length)
       : null;
 
-    const bestPerf = Math.max(
-      audit?.mobile?.performance_score ?? 0,
-      audit?.desktop?.performance_score ?? 0,
+    const qualityForOpp = blendQualityForOpportunity(
+      audit?.mobile?.performance_score ?? null,
+      audit?.desktop?.performance_score ?? null,
+      avgDesign,
     );
-    const opportunityScore = bestPerf > 0
-      ? computeOpportunityScore(bestPerf, reviewCount ?? 0, rating ?? 0, businessType ?? null)
+    const opportunityScore = (avgPerformance !== null || avgDesign !== null)
+      ? computeOpportunityScore(qualityForOpp, reviewCount ?? 0, rating ?? 0, businessType ?? null)
       : null;
 
     const now = new Date().toISOString();

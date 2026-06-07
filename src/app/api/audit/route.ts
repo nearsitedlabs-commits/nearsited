@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
-import { computeOpportunityScore } from "@/lib/scoring";
+import { computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
 import { checkCredit, deductCredit } from "@/lib/credits";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { createTimeoutController } from "@/lib/api/timeout";
@@ -396,14 +396,22 @@ export async function POST(request: NextRequest) {
             // 7. Compute opportunity score (rating + review_count already on the business row)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data: businessRow } = await (adminSupabase.from("businesses") as any)
-              .select("rating, review_count, business_type")
+              .select("rating, review_count, business_type, design_score")
               .eq("id", businessId)
               .single();
 
             const reviewCount = (businessRow as { review_count?: number } | null)?.review_count ?? 0;
             const rating = (businessRow as { rating?: number } | null)?.rating ?? 0;
             const businessType = (businessRow as { business_type?: string | null } | null)?.business_type ?? null;
-            const opportunityScore = computeOpportunityScore(bestPerfScore, reviewCount, rating, businessType);
+            const existingDesign = (businessRow as { design_score?: number | null } | null)?.design_score ?? null;
+            // Use avg(mobile, desktop) not max — max inflates quality and understates opportunity.
+            // Blend in design score if already analysed (design analysis runs separately).
+            const blendedQ = blendQualityForOpportunity(
+              mobileMetrics.performance_score ?? null,
+              desktopMetrics.performance_score ?? null,
+              existingDesign,
+            );
+            const opportunityScore = computeOpportunityScore(blendedQ, reviewCount, rating, businessType);
 
             // 8. Update businesses row
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

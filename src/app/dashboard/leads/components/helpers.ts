@@ -1,4 +1,4 @@
-import { computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import type { LeadRow } from "./types";
 
 export function effectiveOpportunityScore(lead: LeadRow): number {
@@ -26,9 +26,10 @@ export function effectiveOpportunityScore(lead: LeadRow): number {
     return Math.round(50 + viability * 25); // Range: 50-75
   }
   
-  // For has_website and unknown: use computed score from performance_score (or default)
-  const qualityScore = lead.performance_score ?? 50;
-  return computeOpportunityScore(qualityScore, lead.review_count ?? 0, lead.rating ?? 0);
+  return computeOpportunityScore(
+    blendQualityForOpportunity(null, lead.performance_score, lead.design_score),
+    lead.review_count ?? 0, lead.rating ?? 0, lead.business_type
+  );
 }
 
 export function formatDate(dateStr: string | null): string {

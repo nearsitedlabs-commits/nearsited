@@ -5,6 +5,7 @@ import { checkCredit, deductCredit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { businessWebsiteSchema } from "@/lib/validation";
 import { writeJson, writeStep } from "@/lib/api/stream-utils";
+import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { sanitizeError } from "@/lib/api/sanitize";
 import { takeScreenshot, MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from "@/lib/screenshot";
 import { analyzeScreenshot, type StrategyResult } from "@/lib/design-analysis";
@@ -299,6 +300,23 @@ export async function POST(request: NextRequest) {
               persistenceErrors.push("businesses update");
             } else {
               console.log("[DESIGN] Updated business design_score and design_analyzed_at");
+
+              // Recompute opportunity_score blending perf + new design score
+              if (bestScore != null) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const { data: bizForOpp } = await (adminSupabase.from("businesses") as any)
+                  .select("performance_score, rating, review_count, business_type")
+                  .eq("id", businessId)
+                  .single();
+                const bfp = bizForOpp as { performance_score?: number | null; rating?: number | null; review_count?: number | null; business_type?: string | null } | null;
+                if (bfp?.performance_score != null) {
+                  const blendedQ = blendQualityForOpportunity(null, bfp.performance_score, bestScore);
+                  const newOppScore = computeOpportunityScore(blendedQ, bfp.review_count ?? 0, bfp.rating ?? 0, bfp.business_type ?? null);
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  await (adminSupabase.from("businesses") as any).update({ opportunity_score: newOppScore }).eq("id", businessId);
+                  console.log("[DESIGN] Updated opportunity_score with blended quality:", newOppScore);
+                }
+              }
             }
 
             console.log("[DESIGN] Analysis complete — persisted for business:", businessId, "| errors:", persistenceErrors.length);

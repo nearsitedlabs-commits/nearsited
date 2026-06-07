@@ -6,7 +6,7 @@ import { Loader2, Flag, MapPin, Globe, Phone } from "lucide-react";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { businessTypes } from "@/lib/data/businessTypes";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
-import { estimatedOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { estimatedOpportunity, computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
 import { AnimatedScoreRing } from "./AnimatedScoreRing";
 import { ProgressPanel } from "./ProgressPanel";
 import type { BusinessResult } from "./types";
@@ -110,13 +110,11 @@ export function ResultCard({
       ) : (() => {
         const mobilePf  = business.audit?.mobile?.performance_score ?? null;
         const desktopPf = business.audit?.desktop?.performance_score ?? null;
-        const verifiedPerf =
-          mobilePf != null || desktopPf != null
-            ? Math.max(mobilePf ?? 0, desktopPf ?? 0)
-            : null;
-        if (verifiedPerf != null) {
+        const designPf  = business.design_score ?? null;
+        const hasData   = mobilePf != null || desktopPf != null || designPf != null;
+        if (hasData) {
           const oppScore = computeOpportunityScore(
-            verifiedPerf,
+            blendQualityForOpportunity(mobilePf, desktopPf, designPf),
             business.review_count ?? 0,
             business.rating ?? 0,
             business.business_type ?? undefined
@@ -161,12 +159,6 @@ export function ResultCard({
           <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--text-primary)] truncate leading-snug">
             {business.name}
           </span>
-          {business.flagged_for_outreach && !isAnalyseLoading && (
-            <span className="md:hidden inline-flex items-center gap-1 rounded-md border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
-              <Flag className="h-2.5 w-2.5" />
-              Outreach
-            </span>
-          )}
           {isAnalyseLoading && ap && (
             <ProgressPanel ap={ap} onCancel={() => onCancelAnalysis(business.id)} />
           )}
@@ -182,10 +174,18 @@ export function ResultCard({
             </span>
           )}
         </div>
-        <div className="mt-0.5 text-xs font-normal text-[var(--text-tertiary)] truncate tracking-wide">
-          {typeDisplay}
-          {typeDisplay && cityDisplay ? " · " : ""}
-          {cityDisplay}
+        <div className="mt-0.5 flex items-center gap-1.5 flex-wrap">
+          <span className="text-xs font-normal text-[var(--text-tertiary)] truncate tracking-wide">
+            {typeDisplay}
+            {typeDisplay && cityDisplay ? " · " : ""}
+            {cityDisplay}
+          </span>
+          {business.flagged_for_outreach && !isAnalyseLoading && (
+            <span className="md:hidden inline-flex items-center gap-1 rounded-md border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+              <Flag className="h-2.5 w-2.5" />
+              Outreach
+            </span>
+          )}
         </div>
       </div>
 
