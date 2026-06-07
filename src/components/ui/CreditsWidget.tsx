@@ -19,7 +19,7 @@ export default function CreditsWidget() {
       .then((res) => res.json())
       .then((data) => {
         if (data.tier) {
-          setSub({ tier: data.tier, audits_used: data.audits_used ?? 0, audits_limit: data.audits_limit ?? 4 });
+          setSub({ tier: data.tier, audits_used: data.audits_used ?? 0, audits_limit: data.audits_limit ?? 20 });
         }
       })
       .catch(() => {
@@ -29,7 +29,7 @@ export default function CreditsWidget() {
 
   const tier = sub?.tier ?? "free";
   const used = sub?.audits_used ?? 0;
-  const limit = sub?.audits_limit ?? 4;
+  const limit = sub?.audits_limit ?? 20;
   const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
   const barColor = pct >= 95 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-[var(--accent)]";
 

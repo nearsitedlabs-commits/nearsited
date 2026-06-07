@@ -30,7 +30,7 @@ export function usePitchGeneration({
   const [pitchUrgency, setPitchUrgency] = useState("medium");
   const [outreachChannel, setOutreachChannel] = useState<"email" | "whatsapp">("email");
 
-  const handleGeneratePitch = useCallback(async (force = false) => {
+  const handleGeneratePitch = useCallback(async (force = true) => {
     setGeneratingPitch(true);
     setPitchError(null);
     try {

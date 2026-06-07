@@ -19,6 +19,7 @@ type ShareData = {
     review_count: number | null;
     performance_score: number | null;
     design_score: number | null;
+    opportunity_score: number | null;
     audited_at: string | null;
     design_analyzed_at: string | null;
   };
@@ -65,7 +66,7 @@ async function getShareData(token: string): Promise<ShareData | null> {
   // Fetch business
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: biz } = await (admin.from("businesses") as any)
-    .select("name, business_type, address, city, website, website_status, rating, review_count, performance_score, design_score, audited_at, design_analyzed_at")
+    .select("name, business_type, address, city, website, website_status, rating, review_count, performance_score, design_score, opportunity_score, audited_at, design_analyzed_at")
     .eq("id", businessId)
     .single();
 

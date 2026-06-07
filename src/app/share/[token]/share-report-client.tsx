@@ -19,6 +19,7 @@ type ShareData = {
     review_count: number | null;
     performance_score: number | null;
     design_score: number | null;
+    opportunity_score: number | null;
     audited_at: string | null;
     design_analyzed_at: string | null;
   };
@@ -38,7 +39,7 @@ function CountUp({ value, duration = 800 }: { value: number | null; duration?: n
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function ScoreRing({ score, size = "md" }: { score: number | null; size?: "sm" | "md" | "lg" }) {
+function ScoreRing({ score, size = "md", label: labelOverride }: { score: number | null; size?: "sm" | "md" | "lg"; label?: string }) {
   const dim = size === "lg" ? 80 : size === "sm" ? 40 : 56;
   const stroke = size === "lg" ? 5 : size === "sm" ? 3 : 4;
   const r = (dim - stroke) / 2;
@@ -58,7 +59,7 @@ function ScoreRing({ score, size = "md" }: { score: number | null; size?: "sm" |
   const offset = circumference - (clamped / 100) * circumference;
   const color = clamped >= 70 ? "stroke-[var(--score-good)]" : clamped >= 40 ? "stroke-[var(--score-mid)]" : "stroke-[var(--score-high)]";
   const textColor = clamped >= 70 ? "text-[var(--score-good)]" : clamped >= 40 ? "text-[var(--score-mid)]" : "text-[var(--score-high)]";
-  const lbl = clamped >= 85 ? "Strong" : clamped >= 70 ? "Good" : clamped >= 40 ? "Needs Improvement" : "Poor";
+  const lbl = labelOverride ?? (clamped >= 85 ? "Strong" : clamped >= 70 ? "Good" : clamped >= 40 ? "Needs Improvement" : "Poor");
 
   return (
     <div className="flex flex-col items-center gap-1">
@@ -143,7 +144,16 @@ function Section({ children, delay = 0 }: { children: React.ReactNode; delay?: n
 
 export default function ShareReportClient({ data }: { data: ShareData }) {
   const { business, mobileAudit, desktopAudit, mobileDesign, desktopDesign } = data;
-  const overallScore = business.performance_score ?? business.design_score;
+  const hasWebsite = business.website_status === "has_website" || business.website_status === "platform_only";
+  const hasAuditData = mobileAudit !== null || desktopAudit !== null;
+  const overallScore = hasWebsite
+    ? (business.performance_score ?? business.design_score)
+    : business.opportunity_score;
+  const overallLabel = !hasWebsite
+    ? (overallScore !== null
+        ? overallScore >= 70 ? "High Opportunity" : overallScore >= 40 ? "Good Opportunity" : "Low Opportunity"
+        : undefined)
+    : undefined;
   const issues = [
     ...((mobileDesign?.issues as unknown as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
     ...((desktopDesign?.issues as unknown as { title: string; detail: string; point_deduction?: number; impact: string }[]) ?? []),
@@ -198,76 +208,107 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
 
         {/* Overall Score */}
         <Section delay={0.1}>
-          <div className="mb-6 flex justify-center">
-            <ScoreRing score={overallScore} size="lg" />
+          <div className="mb-6 flex flex-col items-center gap-1">
+            <ScoreRing score={overallScore} size="lg" label={overallLabel} />
+            {!hasWebsite && (
+              <p className="mt-1 text-xs text-[var(--text-tertiary)]">Opportunity Score</p>
+            )}
           </div>
         </Section>
 
-        {/* Performance Scores */}
+        {/* Performance Scores (website leads) or Opportunity Reasons (no-website) */}
         <Section delay={0.15}>
-          <div className="mb-6 grid gap-6 md:grid-cols-2">
-            {/* Mobile Audit */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">📱 Mobile</p>
-              {mobileAudit ? (
-                <div className="space-y-2">
-                  <SubScore label="Performance" score={(mobileAudit.performance_score as number | null) ?? null} />
-                  <SubScore label="SEO" score={(mobileAudit.seo_score as number | null) ?? null} />
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">FCP</span>
-                      <p className="font-medium text-[var(--text-primary)]">{mobileAudit.fcp as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">LCP</span>
-                      <p className="font-medium text-[var(--text-primary)]">{mobileAudit.lcp as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">TBT</span>
-                      <p className="font-medium text-[var(--text-primary)]">{mobileAudit.tbt as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">CLS</span>
-                      <p className="font-medium text-[var(--text-primary)]">{mobileAudit.cls as string ?? "—"}</p>
+          {hasAuditData ? (
+            <div className="mb-6 grid gap-6 md:grid-cols-2">
+              {/* Mobile Audit */}
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">📱 Mobile</p>
+                {mobileAudit ? (
+                  <div className="space-y-2">
+                    <SubScore label="Performance" score={(mobileAudit.performance_score as number | null) ?? null} />
+                    <SubScore label="SEO" score={(mobileAudit.seo_score as number | null) ?? null} />
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">FCP</span>
+                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.fcp as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">LCP</span>
+                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.lcp as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">TBT</span>
+                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.tbt as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">CLS</span>
+                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.cls as string ?? "—"}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
-              )}
-            </div>
+                ) : (
+                  <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
+                )}
+              </div>
 
-            {/* Desktop Audit */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">🖥️ Desktop</p>
-              {desktopAudit ? (
-                <div className="space-y-2">
-                  <SubScore label="Performance" score={(desktopAudit.performance_score as number | null) ?? null} />
-                  <SubScore label="SEO" score={(desktopAudit.seo_score as number | null) ?? null} />
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">FCP</span>
-                      <p className="font-medium text-[var(--text-primary)]">{desktopAudit.fcp as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">LCP</span>
-                      <p className="font-medium text-[var(--text-primary)]">{desktopAudit.lcp as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">TBT</span>
-                      <p className="font-medium text-[var(--text-primary)]">{desktopAudit.tbt as string ?? "—"}</p>
-                    </div>
-                    <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                      <span className="text-[var(--text-tertiary)]">CLS</span>
-                      <p className="font-medium text-[var(--text-primary)]">{desktopAudit.cls as string ?? "—"}</p>
+              {/* Desktop Audit */}
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">🖥️ Desktop</p>
+                {desktopAudit ? (
+                  <div className="space-y-2">
+                    <SubScore label="Performance" score={(desktopAudit.performance_score as number | null) ?? null} />
+                    <SubScore label="SEO" score={(desktopAudit.seo_score as number | null) ?? null} />
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">FCP</span>
+                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.fcp as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">LCP</span>
+                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.lcp as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">TBT</span>
+                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.tbt as string ?? "—"}</p>
+                      </div>
+                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
+                        <span className="text-[var(--text-tertiary)]">CLS</span>
+                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.cls as string ?? "—"}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
-              )}
+                ) : (
+                  <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
+              <ul className="space-y-3">
+                {[
+                  business.website_status === "social_only"
+                    ? "Social media only — a dedicated website builds far greater trust and search visibility"
+                    : "No website detected — potential customers can't find or evaluate this business online",
+                  "Competitors with professional websites are capturing leads this business is missing",
+                  "Most purchasing decisions start with an online search — no web presence means lost customers",
+                  `${business.rating != null ? `A ${business.rating.toFixed(1)}-star Google rating` : "Positive Google reviews"} shows real demand — a website would convert that trust into enquiries`,
+                ].map((reason, i) => (
+                  <motion.li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.07 }}
+                  >
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+                    {reason}
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Section>
 
         {/* AI Opportunity Summary */}
@@ -337,7 +378,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
         {/* Footer */}
         <Section delay={0.3}>
           <div className="text-center text-xs text-[var(--text-tertiary)]">
-            <p>Generated by <span className="font-semibold text-[var(--accent)]">Nearsited</span> &mdash; AI-powered redesign opportunity intelligence</p>
+            <p>Generated by <span className="font-semibold text-[var(--accent)]">Nearsited</span> &mdash; AI-powered opportunity intelligence</p>
             {business.design_analyzed_at && (
               <p className="mt-1">Analysed {new Date(business.design_analyzed_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
             )}

@@ -254,9 +254,10 @@ export default function DashboardClient({
                 </div>
                 <Link
                   href={primaryAction.href}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
                 >
-                  {primaryAction.cta}
+                  {primaryAction.cta.replace(/ →$/, "")}
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
               </div>
             </div>
@@ -272,77 +273,73 @@ export default function DashboardClient({
               visible: { transition: { staggerChildren: 0.06 } },
             }}
           >
-            {/* 1. Ready to Pitch — highest signal of progress */}
+            {/* 1. Ready to Pitch */}
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
-              className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-4"
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
+              className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
             >
-              <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--accent-tint)]">
-                <Mail className="h-4 w-4 text-[var(--accent)]" />
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Ready to Pitch</p>
+                <div className="rounded-lg p-1.5 bg-[var(--accent-tint)]">
+                  <Mail className="h-3.5 w-3.5 text-[var(--accent)]" />
+                </div>
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+              <p className="text-[2rem] font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
                 <AnimatedCount value={flaggedLeads} />
               </p>
-              <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Ready to Pitch</p>
             </motion.div>
 
-            {/* 2. In Pipeline — deals in motion */}
+            {/* 2. In Pipeline */}
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
             >
-              <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
-                <BarChart3 className="h-4 w-4 text-[var(--text-secondary)]" />
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">In Pipeline</p>
+                <div className="rounded-lg p-1.5 bg-[var(--bg-elevated)]">
+                  <BarChart3 className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
+                </div>
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+              <p className="text-[2rem] font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
                 <AnimatedCount value={totalPipeline} />
               </p>
-              <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">In Pipeline</p>
             </motion.div>
 
-            {/* 3. Active Conversations — warmest deals */}
+            {/* 3. Active Conversations */}
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
             >
-              <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
-                <MessageSquare className="h-4 w-4 text-[var(--text-secondary)]" />
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Conversations</p>
+                <div className="rounded-lg p-1.5 bg-[var(--bg-elevated)]">
+                  <MessageSquare className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
+                </div>
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+              <p className="text-[2rem] font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
                 <AnimatedCount value={activeConversations} />
               </p>
-              <p className="mt-1.5 text-[11px] leading-tight text-[var(--text-tertiary)]">Active Conversations</p>
             </motion.div>
 
-            {/* 4. Leads — de-emphasized collection metric with context */}
+            {/* 4. Leads */}
             <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4"
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
             >
-              <div className="mb-2 inline-flex rounded-lg p-2 bg-[var(--bg-elevated)]">
-                <Target className="h-4 w-4 text-[var(--text-tertiary)]" />
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Leads</p>
+                <div className="rounded-lg p-1.5 bg-[var(--bg-elevated)]">
+                  <Target className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                </div>
               </div>
-              <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
-                <AnimatedCount value={totalLeads} />
+              <div>
+                <p className="text-[2rem] font-semibold tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
+                  <AnimatedCount value={totalLeads} />
+                </p>
                 {unanalysedLeads > 0 && (
-                  <span className="ml-2 text-sm font-normal text-[var(--text-tertiary)]">
-                    ({unanalysedLeads} unanalysed)
-                  </span>
+                  <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">{unanalysedLeads} unanalysed</p>
                 )}
-              </p>
-              <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Leads</p>
+              </div>
             </motion.div>
           </motion.div>
 

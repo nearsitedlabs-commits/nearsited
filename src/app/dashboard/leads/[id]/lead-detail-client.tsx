@@ -257,17 +257,29 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
               <div className="mt-1 flex items-start gap-2">
                 <h1 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{urlToDisplayName(biz.name)}</h1>
-                <button
-                  type="button"
-                  onClick={() => setShowEditPanel((v) => !v)}
-                  title="Edit business details"
-                  className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
+                {!biz.place_id && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPanel((v) => !v)}
+                    title="Edit business details"
+                    className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {hasWebsite && (
+                <button
+                  onClick={analysis.handleFullAnalysis}
+                  disabled={analysis.runningFullAnalysis}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {analysis.runningFullAnalysis ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity"}
+                </button>
+              )}
               {currentPipelineStatus ? (
                 <PipelineSelect value={currentPipelineStatus} onChange={handlePipelineChange} options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))} />
               ) : (
@@ -294,7 +306,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               )}
             </div>
           </div>
-          {showEditPanel && (
+          {showEditPanel && !biz.place_id && (
             <div className="mt-4">
               <BusinessEditPanel
                 bizId={biz.id}
@@ -321,25 +333,15 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-tertiary)]">
                 Run an opportunity analysis to see scores, issues, and a generated pitch.
               </p>
-              {hasWebsite && (
-                <div className="mt-6 flex items-center gap-3">
+              {analysis.runningFullAnalysis && (
+                <div className="mt-4 flex items-center justify-center gap-3">
                   <button
-                    onClick={analysis.handleFullAnalysis}
-                    disabled={analysis.runningFullAnalysis}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                    type="button"
+                    onClick={analysis.handleCancelAnalysis}
+                    className="cursor-pointer text-xs font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
                   >
-                    {analysis.runningFullAnalysis ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity →"}
+                    Cancel analysis
                   </button>
-                  {analysis.runningFullAnalysis && (
-                    <button
-                      type="button"
-                      onClick={analysis.handleCancelAnalysis}
-                      className="cursor-pointer text-xs font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  )}
                 </div>
               )}
             </div>

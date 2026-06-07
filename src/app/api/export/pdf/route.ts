@@ -102,7 +102,8 @@ export async function GET(request: NextRequest) {
     doc.text("Nearsited", margin, y);
     doc.setFontSize(9);
     doc.setTextColor(...LIGHT);
-    doc.text("Redesign Opportunity Report", margin, y + 6);
+    const hasWebsite = biz.website_status === "has_website" || biz.website_status === "platform_only";
+    doc.text(hasWebsite ? "Redesign Opportunity Report" : "Digital Opportunity Report", margin, y + 6);
     doc.setFontSize(8);
     doc.text(`Generated ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}`, 190, y, { align: "right" });
     y += 18;
@@ -118,19 +119,39 @@ export async function GET(request: NextRequest) {
     if (meta) { doc.text(meta, margin, y); y += 5; }
     if (biz.website) { doc.text(biz.website as string, margin, y); y += 5; }
     if (biz.rating != null) {
-      doc.text(`Google Rating: ${(biz.rating as number).toFixed(1)}★${biz.review_count ? `  (${biz.review_count} reviews)` : ""}`, margin, y);
+      doc.text(`Google Rating: ${(biz.rating as number).toFixed(1)}/5${biz.review_count ? `  (${biz.review_count} reviews)` : ""}`, margin, y);
       y += 5;
     }
     y += 8;
 
-    // ── Performance Scores ────────────────────────────────────────────────────
-    checkPage(60);
-    y = section(doc, "Performance Scores", y);
-    y = scoreRow(doc, "Desktop Performance", perfScore, y);
-    y = scoreRow(doc, "Mobile Performance",  mobileScore, y);
-    y = scoreRow(doc, "SEO",                 seoScore, y);
-    y = scoreRow(doc, "UX / Design",         designScore, y);
-    y += 6;
+    // ── Performance Scores (website leads) / Opportunity Overview (no-website) ─
+    const hasAuditData = perfScore !== null || mobileScore !== null || seoScore !== null || designScore !== null;
+    if (hasAuditData) {
+      checkPage(60);
+      y = section(doc, "Performance Scores", y);
+      y = scoreRow(doc, "Desktop Performance", perfScore, y);
+      y = scoreRow(doc, "Mobile Performance",  mobileScore, y);
+      y = scoreRow(doc, "SEO",                 seoScore, y);
+      y = scoreRow(doc, "UX / Design",         designScore, y);
+      y += 6;
+    } else {
+      checkPage(50);
+      y = section(doc, "Opportunity Overview", y);
+      const oppScore = (biz.opportunity_score as number | null);
+      if (oppScore != null) {
+        y = scoreRow(doc, "Opportunity Score", oppScore, y);
+      }
+      doc.setFontSize(9);
+      doc.setTextColor(...GRAY);
+      const statusText =
+        biz.website_status === "no_website"
+          ? "No website detected — strong opportunity to establish digital presence."
+          : biz.website_status === "social_only"
+          ? "Social media profile only — a dedicated website would significantly expand reach and trust."
+          : "No website audit data available.";
+      y = wrapped(doc, statusText, 25, y, 155, 5);
+      y += 6;
+    }
 
     // ── Core Web Vitals ───────────────────────────────────────────────────────
     const hasVitals = desktopAudit || mobileAudit;
@@ -197,7 +218,7 @@ export async function GET(request: NextRequest) {
       doc.setPage(i);
       doc.setFontSize(7.5);
       doc.setTextColor(...LIGHT);
-      doc.text("Powered by Nearsited — AI Redesign Opportunity Intelligence", margin, 290);
+      doc.text("Powered by Nearsited — AI Opportunity Intelligence", margin, 290);
       doc.text(`Page ${i} of ${totalPages}`, 190, 290, { align: "right" });
     }
 
@@ -206,7 +227,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${((biz.name as string) ?? "business").replace(/[^a-zA-Z0-9]/g, "-")}-audit.pdf"`,
+        "Content-Disposition": `attachment; filename="${((biz.name as string) ?? "business").replace(/[^a-zA-Z0-9]/g, "-")}-report.pdf"`,
         "Content-Length": String(pdfBuffer.length),
       },
     });

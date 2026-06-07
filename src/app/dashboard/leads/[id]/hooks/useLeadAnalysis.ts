@@ -69,10 +69,14 @@ export function useLeadAnalysis({
           buffer = lines.pop() ?? "";
           for (const line of lines) {
             if (!line.trim()) continue;
-            try {
-              const chunk = JSON.parse(line);
-              if (chunk.type === "error" && chunk.error === "AI_QUOTA_EXCEEDED") isQuotaError = true;
-            } catch { /* skip */ }
+            let chunk: Record<string, unknown> | null = null;
+            try { chunk = JSON.parse(line); } catch { continue; }
+            if (!chunk) continue;
+            if (chunk.type === "error" && chunk.error === "AI_QUOTA_EXCEEDED") isQuotaError = true;
+            else if (chunk.type === "error" && chunk.message) {
+              console.error("[LEAD] Design API error:", chunk.message);
+              showToast(`Design analysis failed — ${chunk.message as string}`);
+            }
           }
         }
         if (isQuotaError) {
@@ -129,18 +133,18 @@ export function useLeadAnalysis({
           buffer = lines.pop() ?? "";
           for (const line of lines) {
             if (!line.trim()) continue;
-            try {
-              const parsed = JSON.parse(line);
-              if (parsed.type === "progress" && parsed.step) {
-                const key = parsed.step === "complete" ? "audit_complete" : parsed.step;
-                setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-              } else if (parsed.type === "result") {
-                setCompletedKeys([...AUDIT_STEP_KEYS]);
-                setActiveKeys([]);
-              } else if (parsed.type === "error") {
-                throw new Error((parsed.message as string) ?? "Audit failed");
-              }
-            } catch { /* skip */ }
+            let parsed: Record<string, unknown> | null = null;
+            try { parsed = JSON.parse(line); } catch { continue; }
+            if (!parsed) continue;
+            if (parsed.type === "progress" && parsed.step) {
+              const key = parsed.step === "complete" ? "audit_complete" : parsed.step as string;
+              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+            } else if (parsed.type === "result") {
+              setCompletedKeys([...AUDIT_STEP_KEYS]);
+              setActiveKeys([]);
+            } else if (parsed.type === "error") {
+              throw new Error((parsed.message as string) ?? "Audit failed");
+            }
           }
         }
       }
@@ -159,6 +163,7 @@ export function useLeadAnalysis({
         throw new Error(errBody?.error ?? `Design analysis failed (${designRes.status})`);
       }
 
+      let designSucceeded = false;
       if (designRes.body) {
         const reader = designRes.body.getReader();
         const decoder = new TextDecoder();
@@ -172,24 +177,44 @@ export function useLeadAnalysis({
           buffer = lines.pop() ?? "";
           for (const line of lines) {
             if (!line.trim()) continue;
-            try {
-              const parsed = JSON.parse(line);
-              if (parsed.type === "progress" && parsed.step) {
-                const key = parsed.step === "complete" ? "design_complete" : parsed.step;
-                setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-              } else if (parsed.type === "result") {
-                setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
-                setActiveKeys([]);
-                setDesignError(null);
-              } else if (parsed.type === "error") {
-                throw new Error((parsed.message as string) ?? "Design analysis failed");
+            let parsed: Record<string, unknown> | null = null;
+            try { parsed = JSON.parse(line); } catch { continue; }
+            if (!parsed) continue;
+            if (parsed.type === "progress" && parsed.step) {
+              const key = parsed.step === "complete" ? "design_complete" : parsed.step as string;
+              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+            } else if (parsed.type === "result") {
+              setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
+              setActiveKeys([]);
+              setDesignError(null);
+              designSucceeded = true;
+            } else if (parsed.type === "cached") {
+              setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
+              setActiveKeys([]);
+              setDesignError(null);
+              designSucceeded = true;
+            } else if (parsed.type === "error") {
+              if ((parsed.error as string | undefined) === "AI_QUOTA_EXCEEDED") {
+                setQuotaError("AI quota exceeded — please wait a moment and try again");
+                startQuotaTimer(60);
+                showToast("Performance audit saved — design analysis blocked by AI quota");
+                router.refresh();
+                return;
               }
-            } catch { /* skip */ }
+              throw new Error((parsed.message as string) ?? "Design analysis failed");
+            }
           }
         }
       }
 
-      showToast("Analysis complete — scores updated");
+      if (designSucceeded) {
+        showToast("Analysis complete — scores updated");
+      } else {
+        // Design phase returned no result (e.g. cache hit returned plain JSON, not NDJSON)
+        // Audit still succeeded so show partial success
+        showToast("Performance audit complete — run design analysis to get full scores");
+        setDesignError("Design analysis did not complete. Use the button above to retry.");
+      }
 
       // Auto-generate pitch fire-and-forget
       fetch("/api/pitch", {

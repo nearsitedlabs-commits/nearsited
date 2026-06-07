@@ -106,7 +106,7 @@ export default function SettingsPage() {
         supabase.from("subscriptions").select("tier, audits_used, audits_limit").eq("user_id", authUser.id).maybeSingle(),
       ]);
       setUser((profile as UserData) ?? { email: authUser.email ?? null, full_name: null, created_at: null });
-      const resolvedSub = (subRow as SubData) ?? { tier: "free", audits_used: 0, audits_limit: 4 };
+      const resolvedSub = (subRow as SubData) ?? { tier: "free", audits_used: 0, audits_limit: 20 };
       setSub(resolvedSub);
       setLoading(false);
 
@@ -300,7 +300,7 @@ export default function SettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
                 <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                  {sub?.audits_used ?? 0} / {sub?.audits_limit ?? 4} credits used this month
+                  {sub?.audits_used ?? 0} / {sub?.audits_limit ?? 20} credits used this month
                 </p>
               </div>
               <span className={`rounded-full border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
             <div className="mt-3 h-1.5 w-full rounded-full bg-[var(--bg-elevated)]">
               <div
                 className="h-1.5 rounded-full bg-[var(--accent)] transition-all"
-                style={{ width: `${Math.min(100, ((sub?.audits_used ?? 0) / (sub?.audits_limit ?? 4)) * 100)}%` }}
+                style={{ width: `${Math.min(100, ((sub?.audits_used ?? 0) / (sub?.audits_limit ?? 20)) * 100)}%` }}
               />
             </div>
             {(!sub || sub.tier === "free") && (

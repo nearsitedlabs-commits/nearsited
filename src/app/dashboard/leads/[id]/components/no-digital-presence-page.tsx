@@ -36,6 +36,9 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
+  const [pitchFocus, setPitchFocus] = useState("all");
+  const [pitchOpening, setPitchOpening] = useState("direct");
+  const [pitchUrgency, setPitchUrgency] = useState("medium");
   const [toast, setToast] = useState<string | null>(null);
   const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
   const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({ email: null, phone: null, loading: true });
@@ -103,6 +106,8 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           businessId: biz.id, tone: pitchTone, length: pitchLength,
           channel: activeChannel,
           workflow: "no_digital_presence",
+          focus: pitchFocus, opening: pitchOpening, urgency: pitchUrgency,
+          force: true,
         }),
       });
       if (res.status === 429) { setPitchError("AI quota exceeded — please try again later."); return; }
@@ -319,30 +324,63 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
               )}
 
               {/* Pitch controls */}
-              <div className="mb-3 flex flex-wrap gap-2">
-                <PipelineSelect
-                  value={pitchTone}
-                  onChange={(v) => setPitchTone(v as typeof pitchTone)}
-                  options={[
-                    { value: "professional", label: "Professional" },
-                    { value: "friendly", label: "Friendly" },
-                    { value: "luxury", label: "Luxury" },
-                  ]}
-                />
-                <PipelineSelect
-                  value={pitchLength}
-                  onChange={(v) => setPitchLength(v as typeof pitchLength)}
-                  options={[
-                    { value: "short", label: "Short" },
-                    { value: "medium", label: "Medium" },
-                    { value: "detailed", label: "Detailed" },
-                  ]}
-                />
-                <button onClick={handleGeneratePitch} disabled={generatingPitch}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50">
-                  {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-                  {generatingPitch ? "Generating…" : "Generate"}
-                </button>
+              <div className="mb-3 space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  <PipelineSelect
+                    value={pitchTone}
+                    onChange={(v) => setPitchTone(v as typeof pitchTone)}
+                    options={[
+                      { value: "professional", label: "Professional" },
+                      { value: "friendly", label: "Friendly" },
+                      { value: "luxury", label: "Luxury" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchLength}
+                    onChange={(v) => setPitchLength(v as typeof pitchLength)}
+                    options={[
+                      { value: "short", label: "Short" },
+                      { value: "medium", label: "Medium" },
+                      { value: "detailed", label: "Detailed" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchFocus}
+                    onChange={(v) => setPitchFocus(v)}
+                    options={[
+                      { value: "all", label: "All angles" },
+                      { value: "seo", label: "Visibility & SEO" },
+                      { value: "trust", label: "Trust" },
+                      { value: "revenue", label: "Revenue" },
+                    ]}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <PipelineSelect
+                    value={pitchOpening}
+                    onChange={(v) => setPitchOpening(v)}
+                    options={[
+                      { value: "direct", label: "Direct" },
+                      { value: "question", label: "Question-led" },
+                      { value: "empathy", label: "Empathy" },
+                      { value: "data", label: "Data-led" },
+                    ]}
+                  />
+                  <PipelineSelect
+                    value={pitchUrgency}
+                    onChange={(v) => setPitchUrgency(v)}
+                    options={[
+                      { value: "low", label: "Low-key" },
+                      { value: "medium", label: "Medium" },
+                      { value: "high", label: "High urgency" },
+                    ]}
+                  />
+                  <button onClick={handleGeneratePitch} disabled={generatingPitch}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50">
+                    {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                    {generatingPitch ? "Generating…" : "Generate"}
+                  </button>
+                </div>
               </div>
 
               {pitchError && (
