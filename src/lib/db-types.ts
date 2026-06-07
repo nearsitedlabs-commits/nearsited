@@ -74,6 +74,7 @@ export interface BusinessRow {
   outreach_reason: string | null;
 
   // Lifecycle timestamps
+  created_at: string;
   discovered_at: string;
   audited_at: string | null;
   design_analyzed_at: string | null;
