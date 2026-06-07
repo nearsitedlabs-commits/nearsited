@@ -10,7 +10,7 @@ const TABLE_MAP: Record<Scope, string> = {
   leads: "businesses",
   pipeline: "pipeline",
   pitches: "pitches",
-  saved_searches: "saved_searches",
+  saved_searches: "territories",
 };
 
 export const POST = withAuth(async ({ request, user }) => {

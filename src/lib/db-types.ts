@@ -19,7 +19,6 @@ export type WebsiteStatus =
 export type PipelineStatus =
   | "new_lead"
   | "analysed"
-  | "pitch_generated"
   | "contacted"
   | "in_conversation"
   | "won"
@@ -167,6 +166,7 @@ export interface PitchRow {
   tone: PitchTone | null;
   lead_type: WebsiteStatus | null;
   pitch_status: PitchStatus;
+  channel: "email" | "whatsapp" | null;
 
   created_at: string;
 }
@@ -207,6 +207,8 @@ export interface SubscriptionRow {
   tier: string | null;
   audits_used: number;
   audits_limit: number;
+  searches_used: number;
+  searches_limit: number;
   credits_reset_at: string | null;
 
   created_at: string;
