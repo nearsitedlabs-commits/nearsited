@@ -75,7 +75,7 @@ export default function PrivacyPage() {
               <li><strong className="text-[var(--text-primary)]">Dodo Payments:</strong> payment processing</li>
               <li><strong className="text-[var(--text-primary)]">Google Places & PageSpeed APIs:</strong> business discovery and website analysis</li>
               <li><strong className="text-[var(--text-primary)]">Gemini (Google AI):</strong> AI pitch generation and design analysis</li>
-              <li><strong className="text-[var(--text-primary)]">ScreenshotOne:</strong> website screenshots for analysis</li>
+              <li><strong className="text-[var(--text-primary)]">ScreenshotCore:</strong> website screenshots for analysis</li>
               <li><strong className="text-[var(--text-primary)]">Upstash Redis:</strong> rate limiting</li>
             </ul>
             <p className="mt-3">

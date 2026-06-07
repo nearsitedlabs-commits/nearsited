@@ -332,7 +332,7 @@ export default function DashboardClient({
               <p className="text-3xl font-normal tracking-tight text-[var(--text-primary)] leading-none tabular-nums">
                 <AnimatedCount value={activeConversations} />
               </p>
-              <p className="mt-1.5 text-[11px] text-[var(--text-tertiary)]">Active Conversations</p>
+              <p className="mt-1.5 text-[11px] leading-tight text-[var(--text-tertiary)]">Active Conversations</p>
             </motion.div>
 
             {/* 4. Leads — de-emphasized collection metric with context */}
@@ -542,7 +542,20 @@ export default function DashboardClient({
             ) : totalPipeline < 5 ? (
               /* Compact view for sparse pipelines — includes next-step suggestions */
               <div className="space-y-4">
-                <div className="grid grid-cols-5 gap-2">
+                {/* Mobile: stacked list */}
+                <div className="space-y-1.5 sm:hidden">
+                  {DASHBOARD_PIPELINE_STAGES.map((stage) => {
+                    const count = pipelineCounts[stage.key] ?? 0;
+                    return (
+                      <div key={stage.key} className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-4 py-2.5">
+                        <p className="text-sm text-[var(--text-secondary)]">{stage.label}</p>
+                        <p className={`text-lg font-semibold tabular-nums ${stage.textColor}`}>{count}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Desktop: 5-column grid */}
+                <div className="hidden sm:grid sm:grid-cols-5 gap-2">
                   {DASHBOARD_PIPELINE_STAGES.map((stage) => {
                     const count = pipelineCounts[stage.key] ?? 0;
                     return (

@@ -347,7 +347,7 @@ export default function SettingsPage() {
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Integrations</h2>
             </div>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-              Nearsited connects to Google APIs (Places & PageSpeed), Gemini AI, ScreenshotOne, and Supabase. These integrations are managed by the platform and require no configuration from you.
+              Nearsited connects to Google APIs (Places & PageSpeed), Gemini AI, ScreenshotCore, and Supabase. These integrations are managed by the platform and require no configuration from you.
             </p>
             <p className="mt-3 text-xs text-[var(--text-tertiary)]">
               If you experience issues with discovery, audits, or pitch generation, contact{" "}

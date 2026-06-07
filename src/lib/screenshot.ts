@@ -1,12 +1,10 @@
 /**
- * ScreenshotOne integration for full-page screenshots.
- *
- * Extracted from src/app/api/analyze-design/route.ts.
+ * ScreenshotCore integration for full-page screenshots.
  */
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
-export const SCREENSHOT_ONE_URL = "https://api.screenshotone.com/take";
+export const SCREENSHOTCORE_URL = "https://screenshotcore.com/api/v1/screenshot";
 
 export const SCREENSHOT_TIMEOUT_MS = 30_000;
 
@@ -21,7 +19,7 @@ export type ScreenshotResult =
 
 // ── Screenshot function ───────────────────────────────────────────────────────
 
-/** Take a full-page screenshot via ScreenshotOne and return base64-encoded PNG bytes. */
+/** Take a full-page screenshot via ScreenshotCore and return base64-encoded PNG bytes. */
 export async function takeScreenshot(
   url: string,
   viewport: { width: number; height: number },
@@ -34,83 +32,48 @@ export async function takeScreenshot(
     viewport_width: String(viewport.width),
     viewport_height: String(viewport.height),
     format: "png",
+    block_ads: "true",
+    block_cookie_banners: "true",
   });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), SCREENSHOT_TIMEOUT_MS);
 
   try {
-    const response = await fetch(`${SCREENSHOT_ONE_URL}?${params}`, {
+    const response = await fetch(`${SCREENSHOTCORE_URL}?${params}`, {
       signal: controller.signal,
     });
 
     console.log(
-      `[SCREENSHOT] ScreenshotOne (${viewport.width}w) HTTP status:`,
+      `[SCREENSHOT] ScreenshotCore (${viewport.width}w) HTTP status:`,
       response.status,
     );
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => "Unknown error");
-      console.error("[SCREENSHOT] ScreenshotOne HTTP error", {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText,
-        url,
-        viewport: viewport.width,
-      });
-      return { ok: false, error: errorText, status: response.status };
-    }
-
-    // ScreenshotOne can return HTTP 200 with {"is_successful": false, "error": "..."}
-    // in the body when the screenshot fails (e.g. blocked page, unreachable site).
-    // Check the Content-Type to detect JSON error payloads before treating the body as binary.
-    const contentType = response.headers.get("content-type") ?? "";
-    if (contentType.includes("application/json") || contentType.includes("text/")) {
-      const bodyText = await response.text().catch(() => "");
-      let isError = false;
-      let errorMsg = "Screenshot unavailable";
+      // ScreenshotCore returns proper HTTP status codes with a JSON error body.
+      let errorMsg = `Screenshot failed with HTTP ${response.status}`;
       try {
-        const json = JSON.parse(bodyText);
-        if (json && json.is_successful === false) {
-          isError = true;
-          errorMsg = json.error
-            ? `Screenshot unavailable: ${json.error}`
-            : "Screenshot unavailable — the page could not be captured";
-          console.error("[SCREENSHOT] ScreenshotOne business error", {
-            error: json.error,
-            url,
-            viewport: viewport.width,
-            fullResponse: json,
-          });
-        }
+        const json = await response.json() as { error?: string; code?: string };
+        if (json.error) errorMsg = json.error;
+        console.error("[SCREENSHOT] ScreenshotCore error", {
+          status: response.status,
+          code: json.code,
+          error: json.error,
+          url,
+          viewport: viewport.width,
+        });
       } catch {
-        // Not JSON — treat response text as the error
-        if (bodyText.length > 0 && bodyText.length < 500) {
-          errorMsg = `Screenshot unavailable: ${bodyText}`;
-          isError = true;
-          console.error("[SCREENSHOT] ScreenshotOne text error", {
-            body: bodyText,
-            url,
-            viewport: viewport.width,
-          });
-        }
+        console.error("[SCREENSHOT] ScreenshotCore HTTP error", {
+          status: response.status,
+          url,
+          viewport: viewport.width,
+        });
       }
-      if (isError) {
-        console.log(`[SCREENSHOT] ScreenshotOne (${viewport.width}w) returned error:`, errorMsg);
-        return { ok: false, error: errorMsg, status: response.status };
-      }
-      // If we got here, it's not an error — it's a text-based response we can't use as an image
-      console.error("[SCREENSHOT] ScreenshotOne unexpected response format", {
-        contentType,
-        url,
-        viewport: viewport.width,
-      });
-      return { ok: false, error: "Screenshot unavailable — unexpected response format", status: response.status };
+      return { ok: false, error: errorMsg, status: response.status };
     }
 
     const arrayBuffer = await response.arrayBuffer();
 
-    // Verify the buffer is non-trivial (PNG has at least a few hundred bytes)
     if (arrayBuffer.byteLength < 100) {
       return { ok: false, error: "Screenshot unavailable — empty response", status: response.status };
     }

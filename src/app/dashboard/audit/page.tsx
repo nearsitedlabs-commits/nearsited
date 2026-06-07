@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "framer-motion";
+import { businessTypes } from "@/lib/data/businessTypes";
 
 // ── Constants ───────────────────────────────────────────────────────────────────
 const SAVE_INTERVAL_MS = 3000;
@@ -319,6 +321,7 @@ function ExampleReportModal({ type, onClose }: { type: ExampleTab; onClose: () =
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function AuditPage() {
+  const router = useRouter();
   const [url, setUrl] = useState("");
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState<"idle" | "auditing" | "design" | "done">("idle");
@@ -337,6 +340,12 @@ export default function AuditPage() {
   const [pipelineAdded, setPipelineAdded] = useState(false);
   const [pipelineError, setPipelineError] = useState<string | null>(null);
   const [savedBusinessId, setSavedBusinessId] = useState<string | null>(null);
+  const [savingLead, setSavingLead] = useState(false);
+  const [saveLeadError, setSaveLeadError] = useState<string | null>(null);
+  const [showSaveForm, setShowSaveForm] = useState(false);
+  const [saveLeadName, setSaveLeadName] = useState("");
+  const [saveLeadCity, setSaveLeadCity] = useState("");
+  const [saveLeadType, setSaveLeadType] = useState("");
   const [designRetrying, setDesignRetrying] = useState<{ mobile: boolean; desktop: boolean }>({ mobile: false, desktop: false });
   const [hasCompletedAudit, setHasCompletedAudit] = useState(false);
   const [showExampleModal, setShowExampleModal] = useState(false);
@@ -745,6 +754,33 @@ export default function AuditPage() {
       setPitchLoading(false);
     }
   }, [url, auditResult, designResult]);
+
+  const handleSaveLead = useCallback(async (skipDetails = false) => {
+    if (!url.trim()) return;
+    setSaveLeadError(null);
+    setSavingLead(true);
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          website: url.trim(),
+          name: skipDetails ? undefined : saveLeadName || undefined,
+          city: skipDetails ? undefined : saveLeadCity || undefined,
+          businessType: skipDetails ? undefined : saveLeadType || undefined,
+          audit: auditResult,
+          ...(designResult ? { design: designResult } : {}),
+        }),
+      });
+      const data = await res.json() as { success?: boolean; business_id?: string; error?: string };
+      if (!res.ok || !data.success) throw new Error(data.error ?? "Failed to save lead");
+      router.push(`/dashboard/leads/${data.business_id}`);
+    } catch (err) {
+      setSaveLeadError(err instanceof Error ? err.message : "Failed to save lead");
+    } finally {
+      setSavingLead(false);
+    }
+  }, [url, saveLeadName, saveLeadCity, saveLeadType, auditResult, designResult, router]);
 
   const handleAddToPipeline = useCallback(async () => {
     if (!url.trim() || !auditResult) return;
@@ -1339,7 +1375,95 @@ export default function AuditPage() {
 
         {/* Done state actions */}
         {step === "done" && !error && auditResult && (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 space-y-4">
+
+          {/* Save as Lead — primary CTA */}
+          {!showSaveForm ? (
+            <div className="flex flex-col gap-2 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Save to Opportunities</p>
+                <p className="text-xs text-[var(--text-secondary)]">Add this lead to your Opportunities list and view the full report.</p>
+              </div>
+              <button
+                onClick={() => {
+                  let hostname = url.trim();
+                  try { hostname = new URL(url.trim()).hostname; } catch { /* keep raw */ }
+                  setSaveLeadName(hostname);
+                  setSaveLeadCity("");
+                  setSaveLeadType("");
+                  setSaveLeadError(null);
+                  setShowSaveForm(true);
+                }}
+                className="inline-flex w-full sm:w-auto cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+              >
+                <ArrowRight className="h-4 w-4" />
+                View Full Report →
+              </button>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] p-4 sm:p-5">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-sm font-medium text-[var(--text-primary)]">Add a few details (optional)</p>
+                <button
+                  onClick={() => setShowSaveForm(false)}
+                  className="cursor-pointer rounded-lg p-1 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-primary)]"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="mb-3 text-xs text-[var(--text-secondary)]">
+                Not a local business? Leave city and type blank — score will be based on performance only.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-3">
+                <input
+                  type="text"
+                  value={saveLeadName}
+                  onChange={(e) => setSaveLeadName(e.target.value)}
+                  placeholder="Business name"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                />
+                <input
+                  type="text"
+                  value={saveLeadCity}
+                  onChange={(e) => setSaveLeadCity(e.target.value)}
+                  placeholder="City (e.g. Dubai, London)"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                />
+                <select
+                  value={saveLeadType}
+                  onChange={(e) => setSaveLeadType(e.target.value)}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                >
+                  <option value="">Business type (optional)</option>
+                  {businessTypes.map((bt) => (
+                    <option key={bt.value} value={bt.value}>{bt.label}</option>
+                  ))}
+                </select>
+              </div>
+              {saveLeadError && (
+                <p className="mt-2 text-xs text-red-400">{saveLeadError}</p>
+              )}
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => handleSaveLead(false)}
+                  disabled={savingLead}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {savingLead ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                  {savingLead ? "Saving…" : "Save & View Report"}
+                </button>
+                <button
+                  onClick={() => handleSaveLead(true)}
+                  disabled={savingLead}
+                  className="cursor-pointer text-xs text-[var(--text-tertiary)] underline underline-offset-2 transition-colors hover:text-[var(--text-secondary)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Skip details
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="grid gap-4 sm:grid-cols-2">
             {(!designResult || (designResult.mobile.status !== "ok" && designResult.desktop.status !== "ok")) && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
                 Pitch will be based on performance data only.{" "}
@@ -1441,6 +1565,7 @@ export default function AuditPage() {
                 </div>
               )}
             </div>
+          </div>
           </div>
         )}
 

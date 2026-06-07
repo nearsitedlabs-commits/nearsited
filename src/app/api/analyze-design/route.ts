@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (!screenshotKey) {
       console.log("[DESIGN] Missing SCREENSHOT_API_KEY");
       return NextResponse.json(
-        { error: "Server configuration error: missing ScreenshotOne API key" },
+        { error: "Server configuration error: missing ScreenshotCore API key" },
         { status: 500 },
       );
     }
@@ -119,9 +119,9 @@ export async function POST(request: NextRequest) {
           desktop: desktopCache,
         });
       }
-      console.log("[DESIGN] cache miss — running ScreenshotOne + Gemini for", businessId);
+      console.log("[DESIGN] cache miss — running ScreenshotCore + Gemini for", businessId);
     } else {
-      console.log("[DESIGN] ephemeral mode — skipping cache check, running ScreenshotOne + Gemini directly");
+      console.log("[DESIGN] ephemeral mode — skipping cache check, running ScreenshotCore + Gemini directly");
     }
 
     // ------------------------------------------------------------------
