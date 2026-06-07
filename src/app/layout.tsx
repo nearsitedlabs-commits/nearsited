@@ -29,6 +29,14 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   robots: { index: true, follow: true },
   alternates: { canonical: "https://nearsited.io" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/logo-icon.svg", type: "image/svg+xml" },
+      { url: "/logo-icon.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/logo-icon.png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "NearSited — Find businesses that need websites",
     description: "Discover local businesses with weak or missing websites, get opportunity scores, and generate personalised outreach pitches in under 2 minutes.",

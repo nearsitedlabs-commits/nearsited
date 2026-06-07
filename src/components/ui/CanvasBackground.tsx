@@ -6,6 +6,7 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -125,7 +126,7 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className={`pointer-events-none z-0 ${fixed ? "fixed" : "absolute"} inset-0`}
+      className={`pointer-events-none z-0 ${fixed ? "fixed" : "absolute"} inset-0 hidden md:block`}
     />
   );
 }

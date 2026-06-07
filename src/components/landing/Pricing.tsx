@@ -62,7 +62,6 @@ const PLANS: Plan[] = [
     features: [
       "200 opportunity analyses per month",
       "10 city searches per month",
-      "Up to 3 team seats",
     ],
     featured: true,
     monthlyProductId: "pdt_0NgKsF0ROmm9U603GRqMm",

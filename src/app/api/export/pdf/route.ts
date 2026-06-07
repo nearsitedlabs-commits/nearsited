@@ -117,7 +117,13 @@ export async function GET(request: NextRequest) {
     doc.setTextColor(...GRAY);
     const meta = [biz.business_type, biz.city].filter(Boolean).join("  ·  ");
     if (meta) { doc.text(meta, margin, y); y += 5; }
-    if (biz.website) { doc.text(biz.website as string, margin, y); y += 5; }
+    if (biz.website) {
+      const websiteLabel =
+        biz.website_status === "social_only" ? "Social presence: " :
+        biz.website_status === "platform_only" ? "Platform profile: " : "";
+      doc.text(`${websiteLabel}${biz.website as string}`, margin, y);
+      y += 5;
+    }
     if (biz.rating != null) {
       doc.text(`Google Rating: ${(biz.rating as number).toFixed(1)}/5${biz.review_count ? `  (${biz.review_count} reviews)` : ""}`, margin, y);
       y += 5;
@@ -148,6 +154,10 @@ export async function GET(request: NextRequest) {
           ? "No website detected — strong opportunity to establish digital presence."
           : biz.website_status === "social_only"
           ? "Social media profile only — a dedicated website would significantly expand reach and trust."
+          : biz.website_status === "unknown"
+          ? "No confirmed digital presence — run an analysis to uncover this opportunity."
+          : biz.website_status === "platform_only"
+          ? "Platform-hosted presence only — a dedicated website would provide full control and better search visibility."
           : "No website audit data available.";
       y = wrapped(doc, statusText, 25, y, 155, 5);
       y += 6;
