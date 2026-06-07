@@ -8,7 +8,7 @@ import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { getNoDigitalOpportunityReasons } from "@/lib/lead-types";
-import { estimatedOpportunity } from "@/lib/scoring";
+import { estimatedOpportunity, opportunityLabel } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
 
@@ -150,7 +150,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] break-words [text-wrap:balance]">
+              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] break-words [text-wrap:balance]">
                 {biz.name}
               </h1>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -214,7 +214,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
         {/* ── OPPORTUNITY SCORE ─────────────────────────────────────────── */}
         <div className="mb-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
-          <ScoreRingWithLabel score={oppScore} size={88} />
+          <ScoreRingWithLabel score={oppScore} size={88} label={opportunityLabel(oppScore)} />
           <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
             Estimated
           </span>
@@ -281,7 +281,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
                   <button
                     key={ch.id}
                     type="button"
-                    onClick={() => { setActiveChannel(ch.id); setPitchResult(null); }}
+                    onClick={() => setActiveChannel(ch.id)}
                     className={`relative flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-150 ${
                       activeChannel === ch.id
                         ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--brand-shadow-xs)]"

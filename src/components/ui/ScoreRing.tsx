@@ -23,7 +23,7 @@ const CIRCUMFERENCE = 2 * Math.PI * R;
 // ── Tier helpers ──────────────────────────────────────────────────────────────
 
 function verifiedTier(score: number) {
-  return score <= 55 ? "var(--score-high)" : score <= 74 ? "var(--score-mid)" : "var(--score-good)";
+  return score < 40 ? "var(--score-high)" : score < 70 ? "var(--score-mid)" : "var(--score-good)";
 }
 
 function opportunityTier(score: number) {
@@ -36,10 +36,10 @@ function ScoreTooltip({ score, variant }: { score: number; variant: "verified" |
   const isOpp = variant === "opportunity" || variant === "estimate";
   const label = isOpp
     ? score < 40 ? "Low opportunity" : score < 70 ? "Medium opportunity" : "High opportunity"
-    : score <= 55 ? "Poor performance" : score <= 74 ? "Needs improvement" : "Good performance";
+    : score < 40 ? "Poor performance" : score < 70 ? "Needs improvement" : "Good performance";
   const detail = isOpp
     ? "Score ≥ 70 = high opportunity lead"
-    : score <= 55 ? "Score ≤ 55 indicates significant issues" : score <= 74 ? "Score 55-74 indicates room for improvement" : "Score ≥ 75 indicates solid performance";
+    : score < 40 ? "Score < 40 indicates significant issues" : score < 70 ? "Score 40–69 indicates room for improvement" : "Score ≥ 70 indicates solid performance";
   return (
     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-elevated)] text-[var(--text-primary)] text-xs rounded-xl px-3 py-2 w-56 shadow-xl z-50 leading-relaxed pointer-events-none border border-[var(--border)]">
       <p className="font-medium">{label}</p>

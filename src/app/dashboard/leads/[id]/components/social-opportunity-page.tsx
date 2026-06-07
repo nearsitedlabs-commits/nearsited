@@ -8,7 +8,8 @@ import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { detectSocialPlatforms, getSocialImpactEstimates, getSocialOpportunityReasons } from "@/lib/lead-types";
-import { estimatedOpportunity } from "@/lib/scoring";
+import { estimatedOpportunity, opportunityLabel } from "@/lib/scoring";
+import { safeHref } from "@/lib/url-security";
 import type { WebsiteStatus } from "@/lib/db-types";
 import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
@@ -38,6 +39,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
   const [toast, setToast] = useState<string | null>(null);
+  const [activeChannel, setActiveChannel] = useState<string>("whatsapp");
   const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({ email: null, phone: null, loading: true });
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -104,7 +106,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           businessId: biz.id, tone: pitchTone, length: pitchLength,
-          channel: contactInfo.email ? "email" : "whatsapp",
+          channel: activeChannel,
           workflow: "social_only",
           socialPlatforms,
         }),
@@ -118,7 +120,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
       }
     } catch { setPitchError("Network error — please try again."); }
     finally { setGeneratingPitch(false); }
-  }, [biz.id, pitchTone, pitchLength, contactInfo.email, socialPlatforms]);
+  }, [biz.id, pitchTone, pitchLength, activeChannel, socialPlatforms]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) { showToast("Generate a pitch first"); return; }
@@ -145,7 +147,13 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   if (socialPlatforms.includes("Facebook")) availableChannels.push({ id: "facebook", label: "Facebook Message", icon: Users, contact: null });
   if (contactInfo.email) availableChannels.push({ id: "email", label: "Email", icon: Mail, contact: contactInfo.email });
 
-  const [activeChannel, setActiveChannel] = useState(availableChannels[0]?.id ?? "whatsapp");
+  // Sync activeChannel to first available channel once contactInfo loads
+  useEffect(() => {
+    if (contactInfo.loading) return;
+    const first = availableChannels[0]?.id;
+    if (first) setActiveChannel(first);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactInfo.loading]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
@@ -177,8 +185,8 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
                 <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-amber-text)]">
                   Social Presence Detected
                 </span>
-                {biz.website && (
-                  <a href={biz.website} target="_blank" rel="noreferrer"
+                {biz.website && safeHref(biz.website) && (
+                  <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
                     className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
                     <ExternalLink className="h-3.5 w-3.5" /> View Profile
                   </a>
@@ -232,7 +240,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
         {/* ── OPPORTUNITY SCORE ─────────────────────────────────────────── */}
         <div className="mb-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
-          <ScoreRingWithLabel score={oppScore} size={88} />
+          <ScoreRingWithLabel score={oppScore} size={88} label={opportunityLabel(oppScore)} />
           <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
             Estimated
           </span>

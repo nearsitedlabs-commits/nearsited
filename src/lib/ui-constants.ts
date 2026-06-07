@@ -58,25 +58,6 @@ export const OPPORTUNITY_INDICATORS: Record<string, { label: string; color: stri
   no_website:  { label: "No Website Found",     color: "text-[var(--badge-red-text)] border-[var(--badge-red-border)] bg-[var(--badge-red-bg)]",         dotColor: "bg-[var(--badge-red-text)]" },
 };
 
-/**
- * Map a business's website_status + score to an opportunity indicator key.
- */
-export function getOpportunityLevel(websiteStatus: string, score: number | null): string {
-  if (websiteStatus === "has_website") {
-    if (score === null) return "website";
-    if (score >= 70) return "high";
-    if (score >= 40) return "medium";
-    return "low";
-  }
-  if (websiteStatus === "no_website") return "no_website";
-  if (websiteStatus === "social_only") return "social";
-  if (websiteStatus === "platform_only") {
-    if (score !== null && score >= 70) return "high";
-    return "website";
-  }
-  return "medium";
-}
-
 // ── Website Status ────────────────────────────────────────────────────────────
 
 export const WEBSITE_STATUS_LABELS: Record<string, string> = {

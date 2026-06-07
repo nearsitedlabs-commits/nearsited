@@ -21,7 +21,7 @@ export function ScoreRingWithLabel({ score, size = 56, label }: { score: number;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (Math.min(100, Math.max(0, display)) / 100) * circumference;
-  const color = score <= 55 ? "var(--score-high)" : score <= 74 ? "var(--score-mid)" : "var(--score-good)";
+  const color = score < 40 ? "var(--score-high)" : score < 70 ? "var(--score-mid)" : "var(--score-good)";
   const lbl = label ?? scoreLabel(score);
   return (
     <div className="flex flex-col items-center gap-1">

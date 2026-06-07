@@ -47,7 +47,7 @@ export function getOpportunityContext(lead: LeadRow): { text: string; color: str
   const oppScore = effectiveOpportunityScore(lead);
   
   if (lead.website_status === "no_website") {
-    return { text: `No Website — ${oppScore} Opportunity`, color: "text-[var(--score-high)]" };
+    return { text: `No Website — ${oppScore} Opportunity`, color: "text-[var(--score-good)]" };
   }
   if (lead.website_status === "social_only") {
     return { text: `Social Presence — ${oppScore} Opportunity`, color: "text-[var(--score-mid)]" };
@@ -55,7 +55,7 @@ export function getOpportunityContext(lead: LeadRow): { text: string; color: str
   if (lead.website_status === "platform_only") {
     return { text: `Platform — ${oppScore} Opportunity`, color: "text-[var(--text-tertiary)]" };
   }
-  if (oppScore >= 70) return { text: `High Website — ${oppScore}`, color: "text-[var(--score-good)]" };
+  if (oppScore >= 70) return { text: `High Opportunity — ${oppScore}`, color: "text-[var(--score-good)]" };
   if (oppScore >= 40) return { text: `${oppScore} Opportunity`, color: "text-[var(--score-mid)]" };
-  return                     { text: `Low Website — ${oppScore}`, color: "text-[var(--text-tertiary)]" };
+  return                     { text: `Low Opportunity — ${oppScore}`, color: "text-[var(--text-tertiary)]" };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCountUp } from "@/lib/shared-hooks";
+import { safeHref } from "@/lib/url-security";
 import { motion } from "framer-motion";
 import type { AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
@@ -179,9 +180,9 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
             >
               {business.business_type} &middot; {business.city} &middot; {business.address}
             </motion.p>
-            {business.website && (
+            {business.website && safeHref(business.website) && (
               <motion.a
-                href={business.website}
+                href={safeHref(business.website)!}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:underline"

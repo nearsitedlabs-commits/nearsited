@@ -33,7 +33,7 @@ type FilterKey = "all" | "has_website" | "no_website" | "social_only" | "platfor
 
 const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "all",          label: "All" },
-  { key: "has_website",  label: "Weak Website" },
+  { key: "has_website",  label: "Has Website" },
   { key: "no_website",   label: "No Website" },
   { key: "social_only",  label: "Social Only" },
   { key: "platform_only", label: "Platform Only" },
@@ -43,7 +43,7 @@ const FILTERS: { key: FilterKey; label: string }[] = [
 const CHANNEL_FILTERS = ["Email", "WhatsApp", "Contact Form"] as const;
 
 const OPPORTUNITY_BADGES: Record<string, { label: string; style: string }> = {
-  has_website:   { label: "Weak Website Opportunity",  style: "bg-[var(--badge-green-bg)] text-[var(--badge-green-text)] border border-[var(--badge-green-border)]" },
+  has_website:   { label: "Has Website Opportunity",  style: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)] border border-[var(--badge-indigo-border)]" },
   no_website:    { label: "No Website Opportunity",     style: "bg-[var(--badge-red-bg)] text-[var(--badge-red-text)] border border-[var(--badge-red-border)]" },
   social_only:   { label: "Social Presence Opportunity", style: "bg-[var(--badge-amber-bg)] text-[var(--badge-amber-text)] border border-[var(--badge-amber-border)]" },
   platform_only: { label: "Platform Dependency Opportunity", style: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)] border border-[var(--badge-indigo-border)]" },
@@ -71,7 +71,7 @@ function getOpportunityContext(pitch: Pitch): string | null {
       return `Website Score ${perf} → ${potential} · Potential Opportunity +${potential - perf}`;
     }
     if (perf != null) return `Website Score: ${perf}/100`;
-    return "Weak Website Opportunity — performance issues identified";
+    return "Website Opportunity — performance issues identified";
   }
   if (wf === "social_only") return "Social Presence Opportunity — no owned website yet";
   if (biz.website_status === "platform_only") return "Platform Dependency — no owned website, reliant on third party";

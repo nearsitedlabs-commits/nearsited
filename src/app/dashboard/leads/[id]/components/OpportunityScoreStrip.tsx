@@ -1,5 +1,6 @@
 "use client";
 
+import { opportunityLabel } from "@/lib/scoring";
 import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
 
 type Props = {
@@ -20,7 +21,7 @@ export function OpportunityScoreStrip({ opportunityScore, isVerified, hasAudit, 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
       <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
-      <ScoreRingWithLabel score={opportunityScore} size={88} />
+      <ScoreRingWithLabel score={opportunityScore} size={88} label={opportunityLabel(opportunityScore)} />
       <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${chip.cls}`}>
         {chip.label}
       </span>

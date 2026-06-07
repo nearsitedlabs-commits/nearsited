@@ -248,7 +248,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   if (!hasAudit && !hasDesign) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
-        <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
           <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"} className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
             <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
           </Link>

@@ -45,7 +45,7 @@ export default async function DashboardPage() {
 
   const { data: recentLeads } = await supabase
     .from("businesses")
-    .select("id, name, business_type, city, website_status, performance_score, design_score, opportunity_score, rating, review_count, discovered_at, flagged_for_outreach")
+    .select("id, name, business_type, city, website, website_status, performance_score, design_score, opportunity_score, rating, review_count, discovered_at, flagged_for_outreach")
     .eq("user_id", user.id)
     .order("discovered_at", { ascending: false })
     .limit(5);

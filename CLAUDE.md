@@ -159,6 +159,12 @@ v2 dormant: `mockups`, `subscriptions`, `territories`. Storage bucket: `recordin
 Labels: 0–39 Poor(red) · 40–69 Needs Improvement(amber) · 70–84 Good(green) · 85+ Strong(deep green).
 Issue point deductions come from Gemini; projection = `min(95, score + sum(top3 deductions))`.
 
+**Opportunity score input — always use `blendQualityForOpportunity()`:**
+`computeOpportunityScore(qualityScore, reviewCount, rating, businessType)` must receive the result of `blendQualityForOpportunity(mobilePerf, desktopPerf, designScore)` — NOT raw `max(mobile, desktop)`.
+- `blendQualityForOpportunity`: averages mobile+desktop perf (never max), then blends in design at 60/40 when present
+- Write paths: `api/audit` (uses avg perf + existing design), `api/analyze-design` (recomputes after design runs), `api/leads`, `api/businesses/[id]`
+- UI fallbacks: pass `(null, performance_score, design_score)` when separate mobile/desktop not available
+
 ---
 
 ## Website Classification — `classifyWebsite(url)` in [`src/lib/types.ts`](src/lib/types.ts:81)
@@ -189,7 +195,7 @@ Routing happens server-side in [`page.tsx`](src/app/dashboard/leads/[id]/page.ts
 
 **Social-only workflow** ([`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx)): Detects social platforms from `business.website` via `detectSocialPlatforms()`, shows Digital Presence Analysis card, Website Opportunity Impact estimates (Trust/Lead Capture/Search/Brand Control), channel-specific outreach tabs (WhatsApp/Instagram DM/Facebook Message/Email), social-aware pitch generation via `/api/pitch` with `workflow:"social_only"` + `socialPlatforms[]`. No audit/design scores shown.
 
-**No-digital-presence workflow** ([`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx)): Shows "Why This Is An Opportunity" reasons, Website Opportunity benefits (Visibility/Trust/Lead Gen/Customer Experience), phone-based outreach, pitch via `/api/pitch` with `workflow:"no_digital_presence"`. No audit/design analysis.
+**No-digital-presence workflow** ([`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx)): Shows "Why This Is An Opportunity" reasons, Website Opportunity benefits (Visibility/Trust/Lead Gen/Customer Experience), **channel tabs (Email/WhatsApp)** with contact hints, pitch via `/api/pitch` with `workflow:"no_digital_presence"` + `channel`. No audit/design analysis.
 
 All three workflows share: contact info fetch (`/api/contact-info`), background rating refresh (`/api/refresh-ratings`), pipeline status dropdown, pitch generation with tone/length controls, PDF export, Share Link, toast system.
 
@@ -238,7 +244,7 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 |---|---|---|---|
 | `/api/discover` | [`src/app/api/discover/route.ts`](src/app/api/discover/route.ts) | ✅ Live | **3 parallel Nearby Search queries** (keyword, keyword+type, 1.5×radius), dedup by place_id, **NDJSON streaming** (results→enrichment→done), places_cache enrichment, website classification, businesses upsert |
 | `/api/audit` | [`src/app/api/audit/route.ts`](src/app/api/audit/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (fetching→mobile→desktop→complete→result→done), **7-day audit cache** with `force` param, PageSpeed mobile+desktop, SEO category, AbortController timeout (60s), retry on 500/429, admin client writes, businesses score update |
-| `/api/analyze-design` | [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (screenshot→analysis→persisting→complete→result→done), **7-day design cache** with `force` param, ScreenshotOne + Gemini 3.5 Flash, point_deduction+impact in prompt, mobile+desktop concurrent, admin client writes |
+| `/api/analyze-design` | [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (screenshot→analysis→persisting→complete→result→done), **7-day design cache** with `force` param, ScreenshotOne + Gemini 3.5 Flash, point_deduction+impact in prompt, mobile+desktop concurrent, admin client writes, **recomputes + stores opportunity_score after design analysis** (blends stored perf_score + new design_score) |
 | `/api/pitch` | [`src/app/api/pitch/route.ts`](src/app/api/pitch/route.ts) | ✅ Enhanced | gemini-3.5-flash, header auth, 6 lead-type angles, real data citation, tone/length/focus, **workflow param** (`website`/`social_only`/`no_digital_presence`), **channel param** (`email`/`whatsapp`), **socialPlatforms[]** for contextual prompts, saves to pitches (admin) |
 | `/api/pipeline` | [`src/app/api/pipeline/route.ts`](src/app/api/pipeline/route.ts) | ✅ Live | POST add, PATCH update status, **6 canonical statuses** (pitch_generated removed) |
 | `/api/export/pdf` | [`src/app/api/export/pdf/route.ts`](src/app/api/export/pdf/route.ts) | ✅ Live | jsPDF, business name+scores+issues, downloadable `<business>-audit.pdf` |
@@ -256,7 +262,7 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 | Lead Detail | `/dashboard/leads/[id]` | — **Three-Workflow Routing** (see § below) — | ✅ Live | Routes by `detectLeadWorkflow()` based on `website_status` |
 | Lead Detail (Website) | `/dashboard/leads/[id]` | [`lead-detail-client.tsx`](src/app/dashboard/leads/[id]/lead-detail-client.tsx) | ✅ Live | Overview/Audit/Issues/History tabs, 6 sub-scores (reactive to Mobile/Desktop toggle), expanded Core Web Vitals, top issues with point deductions, AI pitch generation (tone/length + error display), **Copy Pitch**, **Share Link**, PDF export, **pipeline status dropdown**, **Run Audit / Run Design Analysis** buttons, **auto-pipeline** on first audit (toast), **toast system** (fixed bottom-right), **contact info fetch**, **channel selection** (email/whatsapp) |
 | Lead Detail (Social Only) | `/dashboard/leads/[id]` | [`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx) | ✅ Live | Social platform badges, Digital Presence Analysis card, Website Opportunity Impact estimates, channel tabs (WhatsApp/Instagram/Facebook/Email), social-aware pitch gen, Client Call Summary |
-| Lead Detail (No Digital Presence) | `/dashboard/leads/[id]` | [`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx) | ✅ Live | No Digital Presence badge, Why This Is An Opportunity, Website Opportunity benefits, Ready-to-Send Outreach (phone/channel), Client Call Summary, PDF export, Share Link |
+| Lead Detail (No Digital Presence) | `/dashboard/leads/[id]` | [`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx) | ✅ Live | No Digital Presence badge, Why This Is An Opportunity, Website Opportunity benefits, **channel tabs (Email/WhatsApp)** with contact hints, pitch gen with `channel` param, Client Call Summary, PDF export, Share Link |
 | Discover | `/dashboard/discover` | [`page.tsx`](src/app/dashboard/discover/page.tsx) | ✅ Live | City/business type search, radius slider, Save Search, **NDJSON streaming**, **progress panels**, audit/design analysis, pipeline add, session storage, client-side filters |
 | Opportunity Review | `/dashboard/audit` | [`page.tsx`](src/app/dashboard/audit/page.tsx) | ✅ Live | URL input, **9-step progress checklist**, **sessionStorage persistence**, **expanded Core Web Vitals**, **plain English summaries**, **Save as Lead** banner, ephemeral pitch generation, 90s timeout |
 | Pipeline | `/dashboard/pipeline` | [`page.tsx`](src/app/dashboard/pipeline/page.tsx) | ✅ Live | Table, status dropdown with optimistic updates, 7 canonical stages |
@@ -270,7 +276,7 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 ### ✅ Library Code
 | File | Purpose |
 |---|---|
-| [`src/lib/scoring.ts`](src/lib/scoring.ts) | Scores: computeOverall, uxDesignScore, trustScore, uxInteractionScore, projection, blendedQuality, scoreLabel, scoreColor, scoreColorClasses |
+| [`src/lib/scoring.ts`](src/lib/scoring.ts) | Scores: computeOverall, uxDesignScore, trustScore, uxInteractionScore, projection, blendedQuality, scoreLabel, scoreColor, scoreColorClasses, **blendQualityForOpportunity** (avg perf + design blend), **computeOpportunityScore**, opportunityLabel, opportunityBadgeVariant, websiteWeakness, businessViabilityMultiplier, getIndustryMultiplier, estimatedOpportunity |
 | [`src/lib/types.ts`](src/lib/types.ts) | WebsiteStatus enum, classifyWebsite() with extensive SOCIAL_DOMAINS + PLATFORM_DOMAINS lists |
 | [`src/lib/ui-constants.ts`](src/lib/ui-constants.ts) | PIPELINE_LABELS (6 statuses, pitch_generated removed), PIPELINE_SALES_STATUSES, OPPORTUNITY_INDICATORS, PITCH_STATUS_LABELS, LEAD_TYPE_LABELS, WEBSITE_STATUS_LABELS, badge styles, IMPACT_PILL_STYLES, getOpportunityLevel() |
 | [`src/lib/lead-types.ts`](src/lib/lead-types.ts) | **NEW** — `LeadWorkflow` type (`website`/`social_only`/`no_digital_presence`), `detectLeadWorkflow()`, `detectSocialPlatforms()`, `getSocialOpportunityReasons()`, `getNoDigitalOpportunityReasons()`, `getSocialImpactEstimates()`, `getDigitalFoundationRecommendations()` |
@@ -503,6 +509,7 @@ These patterns ensure future AI iterations can work with the codebase without br
 9. **[v2]** Trying to run Playwright on Vercel (→ it needs Runtime B worker server).
 10. **[v2]** Running UX analysis synchronously in an API route (→ queue-only, it's 30–120s).
 11. Inline score computation instead of importing from `scoring.ts`.
+11b. Passing `max(mobile, desktop)` directly to `computeOpportunityScore` — always use `blendQualityForOpportunity(mobilePerf, desktopPerf, designScore)` as the quality input. Max inflates quality → understates opportunity (MySyara bug: desktop 90 → score 19 instead of 62).
 12. Writing `category` instead of `business_type` on territories/businesses.
 13. Using `LeadDetailClient` for all lead types — route via `detectLeadWorkflow()` in `page.tsx` instead (social_only → `SocialOpportunityPage`, no_website → `NoDigitalPresencePage`).
 14. Scraping contact info synchronously in the response — use `GET /api/contact-info` with 5s timeout + fire-and-forget admin cache write instead.

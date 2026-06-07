@@ -64,7 +64,7 @@ function AnimatedCount({ value, duration = 600 }: { value: number; duration?: nu
 // ── Opportunity type badges ────────────────────────────────────────────────────
 
 const OPPORTUNITY_TYPE_BADGES: Record<string, { label: string; style: string }> = {
-  has_website:   { label: "Weak Website", style: "bg-[var(--badge-green-bg)] text-[var(--badge-green-text)] border border-[var(--badge-green-border)]" },
+  has_website:   { label: "Has Website", style: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)] border border-[var(--badge-indigo-border)]" },
   no_website:    { label: "No Website",   style: "bg-[var(--badge-red-bg)] text-[var(--badge-red-text)] border border-[var(--badge-red-border)]" },
   social_only:   { label: "Social Only",  style: "bg-[var(--badge-amber-bg)] text-[var(--badge-amber-text)] border border-[var(--badge-amber-border)]" },
   platform_only: { label: "Platform Only", style: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)] border border-[var(--badge-indigo-border)]" },

@@ -7,6 +7,7 @@ import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { businessTypes } from "@/lib/data/businessTypes";
 import { OUTREACH_REASONS } from "@/lib/ui-constants";
 import { estimatedOpportunity, computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
+import { safeHref } from "@/lib/url-security";
 import { AnimatedScoreRing } from "./AnimatedScoreRing";
 import { ProgressPanel } from "./ProgressPanel";
 import type { BusinessResult } from "./types";
@@ -216,9 +217,9 @@ export function ResultCard({
               <MapPin className="size-[15px]" />
             </a>
           )}
-          {business.website && (
+          {business.website && safeHref(business.website) && (
             <a
-              href={business.website}
+              href={safeHref(business.website)!}
               target="_blank"
               rel="noreferrer"
               className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
