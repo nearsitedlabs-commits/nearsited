@@ -95,7 +95,7 @@ export function ResultCard({
     >
       {/* Thin accent bar — analysis or outreach-flagged */}
       <div
-        className={`hidden md:block w-[2px] self-stretch flex-shrink-0 ${
+        className={`block w-[2px] self-stretch flex-shrink-0 ${
           isAnalyseLoading || business.flagged_for_outreach
             ? "bg-[var(--accent)]"
             : "bg-transparent"
@@ -108,8 +108,12 @@ export function ResultCard({
           <Loader2 className="h-5 w-5 animate-spin text-[var(--accent)]" />
         </div>
       ) : (() => {
+        const mobilePf  = business.audit?.mobile?.performance_score ?? null;
+        const desktopPf = business.audit?.desktop?.performance_score ?? null;
         const verifiedPerf =
-          business.audit?.mobile?.performance_score ?? null;
+          mobilePf != null || desktopPf != null
+            ? Math.max(mobilePf ?? 0, desktopPf ?? 0)
+            : null;
         if (verifiedPerf != null) {
           const oppScore = computeOpportunityScore(
             verifiedPerf,
@@ -131,7 +135,16 @@ export function ResultCard({
           rating: business.rating ?? null,
           user_ratings_total: business.review_count ?? null,
         });
-        return <AnimatedScoreRing score={est} size={52} variant="estimate" />;
+        const canBeAnalysed =
+          business.website_status !== "no_website" &&
+          business.website_status !== "social_only";
+        return (
+          <AnimatedScoreRing
+            score={est}
+            size={52}
+            variant={canBeAnalysed ? "estimate" : "opportunity"}
+          />
+        );
       })()}
 
       {/* Website-status badge — mobile: next to score ring; desktop: own column */}
@@ -148,6 +161,12 @@ export function ResultCard({
           <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--text-primary)] truncate leading-snug">
             {business.name}
           </span>
+          {business.flagged_for_outreach && !isAnalyseLoading && (
+            <span className="md:hidden inline-flex items-center gap-1 rounded-md border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+              <Flag className="h-2.5 w-2.5" />
+              Outreach
+            </span>
+          )}
           {isAnalyseLoading && ap && (
             <ProgressPanel ap={ap} onCancel={() => onCancelAnalysis(business.id)} />
           )}
@@ -226,16 +245,24 @@ export function ResultCard({
         {(() => {
           if (isAnalyseLoading)
             return (
-              <button
-                type="button"
-                disabled
-                className="cursor-not-allowed text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[120px] md:flex-none text-center"
-              >
-                <span className="inline-flex items-center justify-center gap-1.5">
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                  Analysing…
-                </span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href={`/dashboard/leads/${business.id}?from=discover&analyze=1`}
+                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[64px] md:flex-none text-center"
+                >
+                  View
+                </Link>
+                <button
+                  type="button"
+                  disabled
+                  className="cursor-not-allowed text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[120px] md:flex-none text-center"
+                >
+                  <span className="inline-flex items-center justify-center gap-1.5">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Analysing…
+                  </span>
+                </button>
+              </div>
             );
           if (ap?.phase === "error")
             return (

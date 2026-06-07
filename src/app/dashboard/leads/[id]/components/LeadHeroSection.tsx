@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Loader2, MapPin, RefreshCw, TrendingUp } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, MapPin, Pencil, RefreshCw, TrendingUp } from "lucide-react";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
@@ -11,9 +11,9 @@ type LeadHeroSectionProps = {
   biz: {
     id: string;
     name: string;
-    business_type: string;
-    address: string;
-    city: string;
+    business_type: string | null;
+    address: string | null;
+    city: string | null;
     place_id: string | null;
     website: string | null;
     website_status: string;
@@ -28,6 +28,7 @@ type LeadHeroSectionProps = {
   handlePipelineChange: (newStatus: string) => Promise<void>;
   handleFullAnalysis: () => Promise<void>;
   handleCancelAnalysis: () => void;
+  onEditClick?: () => void;
   backTo?: string;
 };
 
@@ -39,6 +40,7 @@ export function LeadHeroSection({
   handlePipelineChange,
   handleFullAnalysis,
   handleCancelAnalysis,
+  onEditClick,
   backTo = "leads",
 }: LeadHeroSectionProps) {
   return (
@@ -53,11 +55,23 @@ export function LeadHeroSection({
       <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-          <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] lg:max-w-[50vw] break-words [text-wrap:balance]">
-            {biz.name}
-          </h1>
+          <div className="mt-1 flex items-start gap-2">
+            <h1 className="text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] lg:max-w-[50vw] break-words [text-wrap:balance]">
+              {biz.name}
+            </h1>
+            {onEditClick && (
+              <button
+                type="button"
+                onClick={onEditClick}
+                title="Edit business details"
+                className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+            )}
+          </div>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            {biz.business_type} · {biz.city} · {biz.address}
+            {[biz.business_type, biz.city, biz.address].filter(Boolean).join(" · ")}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {biz.place_id && (

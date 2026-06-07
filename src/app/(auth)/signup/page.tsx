@@ -69,15 +69,15 @@ function SignupPageContent() {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    // If there's an error (e.g. "User already registered") OR the user already
-    // exists (empty identities), show the same generic success state to prevent
-    // account enumeration. The user cannot distinguish between:
-    //   - a new account created
-    //   - the email is already registered
-    //   - a transient server error
-    if (signUpError || (signUpData.user && signUpData.user.identities?.length === 0)) {
+    // Empty identities = email already registered
+    if (signUpData.user && signUpData.user.identities?.length === 0) {
+      setError("An account with this email already exists. Use the sign in link below.");
       setLoading(false);
-      setSuccess(true);
+      return;
+    }
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
       return;
     }
     setLoading(false);

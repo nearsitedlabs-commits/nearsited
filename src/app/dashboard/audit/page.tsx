@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Circle, Globe, Loader2, Mail, MapPin, Monitor, Plus, RefreshCw, Search, Smartphone, X } from "lucide-react";
+import { computeOpportunityScore } from "@/lib/scoring";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "framer-motion";
@@ -346,6 +347,12 @@ export default function AuditPage() {
   const [saveLeadName, setSaveLeadName] = useState("");
   const [saveLeadCity, setSaveLeadCity] = useState("");
   const [saveLeadType, setSaveLeadType] = useState("");
+  const [mapsLookupUrl, setMapsLookupUrl] = useState("");
+  const [mapsLookupLoading, setMapsLookupLoading] = useState(false);
+  const [mapsLookupHint, setMapsLookupHint] = useState<string | null>(null);
+  const [mapsRating, setMapsRating] = useState<number | null>(null);
+  const [mapsReviewCount, setMapsReviewCount] = useState<number | null>(null);
+  const [mapsPlaceId, setMapsPlaceId] = useState<string | null>(null);
   const [designRetrying, setDesignRetrying] = useState<{ mobile: boolean; desktop: boolean }>({ mobile: false, desktop: false });
   const [hasCompletedAudit, setHasCompletedAudit] = useState(false);
   const [showExampleModal, setShowExampleModal] = useState(false);
@@ -755,6 +762,41 @@ export default function AuditPage() {
     }
   }, [url, auditResult, designResult]);
 
+  const handleMapsLookup = useCallback(async () => {
+    const rawUrl = mapsLookupUrl.trim();
+    if (!rawUrl) return;
+    setMapsLookupLoading(true);
+    setMapsLookupHint(null);
+    try {
+      const res = await fetch(`/api/places-lookup?mapsUrl=${encodeURIComponent(rawUrl)}`);
+      const data = await res.json() as { found: boolean; name?: string; city?: string; suggested_business_type?: string; rating?: number; review_count?: number; place_id?: string; website?: string };
+      if (!data.found) {
+        setMapsLookupHint("No business found. Fill in details manually below.");
+      } else {
+        const urlWasEmpty = !url.trim();
+        if (data.website && urlWasEmpty) setUrl(data.website);
+        if (data.name) setSaveLeadName(data.name);
+        if (data.city) setSaveLeadCity(data.city);
+        if (data.suggested_business_type) setSaveLeadType(data.suggested_business_type);
+        if (data.rating != null) setMapsRating(data.rating);
+        if (data.review_count != null) setMapsReviewCount(data.review_count);
+        if (data.place_id) setMapsPlaceId(data.place_id);
+        const parts: string[] = [];
+        if (data.rating != null) parts.push(`${data.rating.toFixed(1)}★`);
+        if (data.review_count != null && data.review_count > 0) parts.push(`${data.review_count} reviews`);
+        const ratingText = parts.length ? ` · ${parts.join(" · ")}` : "";
+        const hint = data.website && urlWasEmpty
+          ? `Found "${data.name}" — website auto-filled${ratingText}`
+          : `Found "${data.name}"${ratingText}`;
+        setMapsLookupHint(hint);
+      }
+    } catch {
+      setMapsLookupHint("Lookup failed. Fill in details manually.");
+    } finally {
+      setMapsLookupLoading(false);
+    }
+  }, [mapsLookupUrl, url]);
+
   const handleSaveLead = useCallback(async (skipDetails = false) => {
     if (!url.trim()) return;
     setSaveLeadError(null);
@@ -770,6 +812,9 @@ export default function AuditPage() {
           businessType: skipDetails ? undefined : saveLeadType || undefined,
           audit: auditResult,
           ...(designResult ? { design: designResult } : {}),
+          ...(mapsRating != null ? { rating: mapsRating } : {}),
+          ...(mapsReviewCount != null ? { reviewCount: mapsReviewCount } : {}),
+          ...(mapsPlaceId ? { placeId: mapsPlaceId } : {}),
         }),
       });
       const data = await res.json() as { success?: boolean; business_id?: string; error?: string };
@@ -780,7 +825,7 @@ export default function AuditPage() {
     } finally {
       setSavingLead(false);
     }
-  }, [url, saveLeadName, saveLeadCity, saveLeadType, auditResult, designResult, router]);
+  }, [url, saveLeadName, saveLeadCity, saveLeadType, auditResult, designResult, mapsRating, mapsReviewCount, mapsPlaceId, router]);
 
   const handleAddToPipeline = useCallback(async () => {
     if (!url.trim() || !auditResult) return;
@@ -884,6 +929,11 @@ export default function AuditPage() {
     setPitchResult(null);
     setPipelineAdded(false);
     setPipelineError(null);
+    setMapsLookupUrl("");
+    setMapsLookupHint(null);
+    setMapsRating(null);
+    setMapsReviewCount(null);
+    setMapsPlaceId(null);
   };
 
   // ── Idle state ─────────────────────────────────────────────────────────────────
@@ -928,6 +978,39 @@ export default function AuditPage() {
                 <Search className="h-4 w-4" />
                 Analyse Website
               </button>
+            </div>
+            {/* Maps link — improves opportunity score */}
+            <div className="mt-4 border-t border-[var(--border)] pt-4">
+              <div className="mb-1.5 flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                <span className="text-xs text-[var(--text-secondary)]">
+                  Google Maps link <span className="text-[var(--text-muted)]">— optional, improves opportunity score</span>
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={mapsLookupUrl}
+                  onChange={(e) => setMapsLookupUrl(e.target.value)}
+                  placeholder="Paste Google Maps link…"
+                  className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleMapsLookup(); } }}
+                />
+                <button
+                  type="button"
+                  onClick={() => void handleMapsLookup()}
+                  disabled={!mapsLookupUrl.trim() || mapsLookupLoading}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {mapsLookupLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                  Look up
+                </button>
+              </div>
+              {mapsLookupHint && (
+                <p className={`mt-1 text-xs ${mapsLookupHint.startsWith("Found") ? "text-[var(--score-good)]" : "text-[var(--text-tertiary)]"}`}>
+                  {mapsLookupHint}
+                </p>
+              )}
             </div>
             {/* Example URL chips */}
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
@@ -1129,6 +1212,40 @@ export default function AuditPage() {
             </button>
           </div>
 
+          {/* Maps link — visible in active/done state to add social proof */}
+          <div className="mt-4 border-t border-[var(--border)] pt-4">
+            <div className="mb-1.5 flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+              <span className="text-xs text-[var(--text-secondary)]">
+                Google Maps link <span className="text-[var(--text-muted)]">— improves opportunity score accuracy</span>
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={mapsLookupUrl}
+                onChange={(e) => setMapsLookupUrl(e.target.value)}
+                placeholder="Paste Google Maps link…"
+                className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleMapsLookup(); } }}
+              />
+              <button
+                type="button"
+                onClick={() => void handleMapsLookup()}
+                disabled={!mapsLookupUrl.trim() || mapsLookupLoading}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {mapsLookupLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                Look up
+              </button>
+            </div>
+            {mapsLookupHint && (
+              <p className={`mt-1 text-xs ${mapsLookupHint.startsWith("Found") ? "text-[var(--score-good)]" : "text-[var(--text-tertiary)]"}`}>
+                {mapsLookupHint}
+              </p>
+            )}
+          </div>
+
           {/* Progress checklist */}
           {showProgress && (
             <div className="mt-4">
@@ -1234,6 +1351,40 @@ export default function AuditPage() {
         {/* Results */}
         {auditResult && !(auditResult.mobile.status === "timeout" && auditResult.desktop.status === "timeout") && (
           <div className="mt-6 space-y-6">
+            {/* Opportunity Score */}
+            {(() => {
+              const bestPerf = Math.max(
+                auditResult.mobile.performance_score ?? 0,
+                auditResult.desktop.performance_score ?? 0,
+              );
+              if (!bestPerf) return null;
+              const oppScore = computeOpportunityScore(bestPerf, mapsReviewCount ?? 0, mapsRating ?? 0, undefined);
+              const isVerified = mapsRating != null;
+              return (
+                <div className="flex items-center justify-between rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-4">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
+                      {isVerified ? "Opportunity Score" : "Estimated Opportunity Score"}
+                    </p>
+                    {!isVerified && (
+                      <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
+                        Add a Google Maps link above for a more accurate score
+                      </p>
+                    )}
+                    {isVerified && mapsRating != null && (
+                      <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
+                        Based on performance + {mapsRating.toFixed(1)}★
+                        {mapsReviewCount != null && mapsReviewCount > 0 ? ` · ${mapsReviewCount} reviews` : ""}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <span className="text-4xl font-bold text-[var(--accent)]">{oppScore}</span>
+                    <span className="text-sm text-[var(--text-tertiary)]"> / 100</span>
+                  </div>
+                </div>
+              );
+            })()}
             {/* Performance Scores */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
               <h2 className="mb-4 text-lg font-medium text-[var(--text-primary)]">Performance Scores</h2>
@@ -1414,6 +1565,34 @@ export default function AuditPage() {
               <p className="mb-3 text-xs text-[var(--text-secondary)]">
                 Not a local business? Leave city and type blank — score will be based on performance only.
               </p>
+              {/* Google Maps lookup */}
+              <div className="mb-3">
+                <p className="mb-1.5 text-xs font-medium text-[var(--text-tertiary)]">Find on Google Maps <span className="font-normal text-[var(--text-muted)]">(optional — auto-fills details below)</span></p>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={mapsLookupUrl}
+                    onChange={(e) => setMapsLookupUrl(e.target.value)}
+                    placeholder="Paste Google Maps link…"
+                    className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleMapsLookup(); } }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleMapsLookup}
+                    disabled={!mapsLookupUrl.trim() || mapsLookupLoading}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {mapsLookupLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                    Look up
+                  </button>
+                </div>
+                {mapsLookupHint && (
+                  <p className={`mt-1 text-xs ${mapsLookupHint.startsWith("Found") ? "text-[var(--score-good)]" : "text-[var(--text-tertiary)]"}`}>
+                    {mapsLookupHint}
+                  </p>
+                )}
+              </div>
               <div className="grid gap-2 sm:grid-cols-3">
                 <input
                   type="text"
@@ -1511,7 +1690,7 @@ export default function AuditPage() {
               </div>
 
               {showPitchResult && pitchResult && (
-                <div className="mt-4">
+                <div className="mt-4 space-y-2">
                   <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-5">
                     <div className="mb-3 flex items-center justify-between">
                       <span className="text-xs font-medium text-[var(--text-tertiary)]">Pitch Preview</span>
@@ -1526,6 +1705,18 @@ export default function AuditPage() {
                       {pitchResult}
                     </p>
                   </div>
+                  <p className="text-xs text-[var(--text-tertiary)]">
+                    {savedBusinessId ? (
+                      <>
+                        Customise tone, channel &amp; format on the{" "}
+                        <Link href={`/dashboard/leads/${savedBusinessId}`} className="text-[var(--accent)] hover:underline">
+                          lead page →
+                        </Link>
+                      </>
+                    ) : (
+                      "Save as lead to unlock tone, channel & format options."
+                    )}
+                  </p>
                 </div>
               )}
             </div>

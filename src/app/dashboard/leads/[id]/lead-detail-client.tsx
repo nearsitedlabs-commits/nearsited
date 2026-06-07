@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Loader2, MapPin, TrendingUp } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, MapPin, Pencil, TrendingUp } from "lucide-react";
 import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
@@ -29,6 +29,7 @@ import { LeadExportSection } from "./components/LeadExportSection";
 import { QuotaErrorBanner } from "./components/QuotaErrorBanner";
 import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
 import { OpportunityScoreStrip } from "./components/OpportunityScoreStrip";
+import { BusinessEditPanel } from "./components/BusinessEditPanel";
 import { AnalysisProgressBanner } from "./components/AnalysisProgressBanner";
 import { DesignErrorBanner } from "./components/DesignErrorBanner";
 import { IssuesCard } from "./components/IssuesCard";
@@ -61,6 +62,7 @@ type Props = {
   pipelineStatus: string | null;
   savedPitch: SavedPitch | null;
   backTo?: string;
+  autoAnalyze?: boolean;
 };
 
 // ── Conditional animation wrappers ────────────────────────────────────────────
@@ -77,20 +79,32 @@ function MaybeFadeUp({ reduce, children }: { reduce: boolean; children: React.Re
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
+function urlToDisplayName(name: string): string {
+  if (!name || name.includes(" ")) return name;
+  if (!name.includes(".") && !name.startsWith("http")) return name;
+  let n = name.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
+  n = n.split(/[./?#]/)[0];
+  n = n.replace(/[-_]/g, " ").trim();
+  n = n.replace(/\b\w/g, (c) => c.toUpperCase());
+  return n || name;
+}
+
+export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch, backTo = "leads", autoAnalyze = false }: Props) {
   const { toast, showToast, setToast } = useToast();
   const shouldReduce = !!useReducedMotion();
   const [showAllIssues, setShowAllIssues] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
+  const [showEditPanel, setShowEditPanel] = useState(false);
+  const [editOverrides, setEditOverrides] = useState<{ name?: string; city?: string | null; business_type?: string | null; opportunity_score?: number | null; rating?: number | null; review_count?: number | null }>({});
 
-  const biz = business as {
+  const biz = { ...(business as {
     id: string; name: string; business_type: string; address: string; city: string;
     place_id: string | null; website: string | null; website_status: WebsiteStatus;
     rating: number | null; review_count: number | null; performance_score: number | null;
     design_score: number | null; opportunity_score: number | null;
     audited_at: string | null; design_analyzed_at: string | null;
-  };
+  }), ...editOverrides };
 
   // ── Hooks ──────────────────────────────────────────────────────────────────
 
@@ -162,12 +176,26 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         rating: biz.rating ?? null,
         user_ratings_total: biz.review_count ?? null,
       });
+  // When no audit rows exist (quick-audit saves to businesses cols only, not audits table),
+  // computeOverall returns 0. Fall back to stored opportunity_score for the call summary.
+  const hasAuditRows = !!(mobileAudit || desktopAudit);
+  const summaryOverall   = hasAuditRows ? overall   : (biz.opportunity_score ?? overall);
+  const summaryProjScore = hasAuditRows ? projScore : (biz.opportunity_score ?? projScore);
   const clientCallSummary         = buildClientCallSummary(
-    biz.name, biz.business_type ?? "business", biz.city,
-    overall, projScore, opportunityDelta,
+    urlToDisplayName(biz.name), biz.business_type ?? "business", biz.city,
+    summaryOverall, summaryProjScore, opportunityDelta,
     allIssues as { title: string; detail: string; impact: string }[],
     mobilePerfScore, desktopPerfScore, biz.rating, biz.review_count,
   );
+
+  // ── Auto-start analysis when directed from discover with ?analyze=1 ─────────
+
+  useEffect(() => {
+    if (autoAnalyze && !hasAuditRows && hasWebsite && !analysis.runningFullAnalysis) {
+      analysis.handleFullAnalysis();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentional mount-only — auto-start once
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
@@ -227,7 +255,17 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
           <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{biz.name}</h1>
+              <div className="mt-1 flex items-start gap-2">
+                <h1 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{urlToDisplayName(biz.name)}</h1>
+                <button
+                  type="button"
+                  onClick={() => setShowEditPanel((v) => !v)}
+                  title="Edit business details"
+                  className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {currentPipelineStatus ? (
@@ -240,7 +278,9 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             </div>
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-[var(--text-secondary)]">{biz.business_type} · {biz.city} · {biz.address}</span>
+            <span className="text-sm text-[var(--text-secondary)]">
+              {[biz.business_type, biz.city, biz.address].filter(Boolean).join(" · ")}
+            </span>
             <div className="flex items-center gap-2">
               {biz.place_id && (
                 <a href={`https://www.google.com/maps/place/?q=place_id:${biz.place_id}`} target="_blank" rel="noreferrer" className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
@@ -254,6 +294,22 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               )}
             </div>
           </div>
+          {showEditPanel && (
+            <div className="mt-4">
+              <BusinessEditPanel
+                bizId={biz.id}
+                initialName={biz.name}
+                initialCity={biz.city}
+                initialBusinessType={biz.business_type}
+                onSaved={(updated) => {
+                  setEditOverrides((prev) => ({ ...prev, ...updated }));
+                  setShowEditPanel(false);
+                  showToast("Business details updated");
+                }}
+                onClose={() => setShowEditPanel(false)}
+              />
+            </div>
+          )}
           <div className="mt-8 space-y-6">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-10 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
@@ -341,8 +397,25 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               handlePipelineChange={handlePipelineChange}
               handleFullAnalysis={analysis.handleFullAnalysis}
               handleCancelAnalysis={analysis.handleCancelAnalysis}
+              onEditClick={() => setShowEditPanel((v) => !v)}
               backTo={backTo}
             />
+            {showEditPanel && (
+              <div className="mb-4">
+                <BusinessEditPanel
+                  bizId={biz.id}
+                  initialName={biz.name}
+                  initialCity={biz.city}
+                  initialBusinessType={biz.business_type}
+                  onSaved={(updated) => {
+                    setEditOverrides((prev) => ({ ...prev, ...updated }));
+                    setShowEditPanel(false);
+                    showToast("Business details updated");
+                  }}
+                  onClose={() => setShowEditPanel(false)}
+                />
+              </div>
+            )}
           </MaybeFadeUp>
 
           <MaybeFadeUp reduce={shouldReduce}>

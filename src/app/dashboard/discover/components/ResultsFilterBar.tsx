@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/Tooltip";
 
 const SORT_OPTIONS = [
-  { value: "opportunity-desc", label: "Estimated Opportunity" },
-  { value: "rating-desc", label: "Rating (High to Low)" },
-  { value: "outreach-first", label: "Flagged for Outreach First" },
+  { value: "opportunity-desc", label: "Estimated Opportunity", short: "Opportunity" },
+  { value: "rating-desc", label: "Rating (High to Low)", short: "Rating" },
+  { value: "outreach-first", label: "Flagged for Outreach First", short: "Outreach first" },
 ];
 
 const FILTER_TABS = [
@@ -41,6 +41,8 @@ export function ResultsFilterBar({
   onSortToggle,
   onFilterChange,
 }: ResultsFilterBarProps) {
+  const currentSortShort = SORT_OPTIONS.find((o) => o.value === sortOption)?.short ?? "Sort";
+
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-5 py-3.5 shadow-[var(--brand-shadow-sm)]">
       <span className="flex items-baseline gap-1">
@@ -66,7 +68,7 @@ export function ResultsFilterBar({
             onClick={onSortToggle}
             className="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
           >
-            Sort
+            {currentSortShort}
             <ChevronDown className={`h-3 w-3 transition-transform duration-150 ${sortDropdownOpen ? "rotate-180" : ""}`} />
           </button>
           <AnimatePresence>

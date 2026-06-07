@@ -123,12 +123,24 @@ export default function DiscoverPage() {
   useEffect(() => { if (!cityQ && citiesFullRef.current.length > 0) { setCities(citiesFullRef.current); } }, [cityQ]);
   useEffect(() => { function h(e: MouseEvent) { if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false); } document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h); }, []);
 
+  // Hydrate audit data from DB once userId resolves — restores verified scores after navigation
+  useEffect(() => {
+    if (!userId || !results.length || !audited.size) return;
+    fetchPersistedAudits(results.map((r) => r.id), supabase).then((m) => {
+      if (!m.size) return;
+      setResults((prev) => prev.map((r) => { const p = m.get(r.id); return p ? { ...r, audit: p } : r; }));
+    }).catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]); // only when userId first resolves
+
   const flagged = useMemo(() => results.filter((b) => b.flagged_for_outreach).length, [results]);
 
   const processed = useMemo(() => {
     const f = results.filter((b) => filter === "all" || b.website_status === filter);
     const score = (b: BusinessResult) => {
-      const v = b.audit?.mobile?.performance_score;
+      const mobile  = b.audit?.mobile?.performance_score ?? null;
+      const desktop = b.audit?.desktop?.performance_score ?? null;
+      const v = mobile != null || desktop != null ? Math.max(mobile ?? 0, desktop ?? 0) : null;
       return v != null ? computeOpportunityScore(v, b.review_count ?? 0, b.rating ?? 0, b.business_type ?? undefined) : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
     };
     return [...f].sort((a, b) => {
@@ -153,7 +165,7 @@ export default function DiscoverPage() {
       };
       const apr = fetch("/api/audit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ businessId: id, website, force: true }), signal });
       const dpr = fetch("/api/analyze-design", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ businessId: id, website, force: true }), signal });
-      const ap = (async () => { try { const r = await apr; if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? "Audit failed"); await readStream(r, (s, l) => { setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: s, label: l, phase: "audit" }); return n; }); }, (d) => { auditData = { mobile: d.mobile as AuditResult["mobile"], desktop: d.desktop as AuditResult["desktop"] }; }); if (auditData) { setResults((r) => r.map((b) => b.id === id ? { ...b, audit: auditData! } : b)); setAudited((a) => { const n = new Set(a); n.add(id); save(SS.AUDITED, [...n]); return n; }); } } catch (e) { auditErr = e instanceof Error ? e.message : "Audit failed"; } })();
+      const ap = (async () => { try { const r = await apr; if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? "Audit failed"); await readStream(r, (s, l) => { setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: s, label: l, phase: "audit" }); return n; }); }, (d) => { auditData = { mobile: d.mobile as AuditResult["mobile"], desktop: d.desktop as AuditResult["desktop"] }; }); if (auditData) { setResults((prev) => { const next = prev.map((b) => b.id === id ? { ...b, audit: auditData! } : b); save(SS.RESULTS, next, () => {}); return next; }); setAudited((a) => { const n = new Set(a); n.add(id); save(SS.AUDITED, [...n]); return n; }); } } catch (e) { auditErr = e instanceof Error ? e.message : "Audit failed"; } })();
       const dp = (async () => { try { const r = await dpr; if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? "Design failed"); await readStream(r, (s, l) => { setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: s, label: l, phase: "design" }); return n; }); }, (d) => { designData = d; }); if (designData) { const dd = designData; const m = (dd as Record<string, unknown>).mobile as Record<string, unknown> | undefined; const dt = (dd as Record<string, unknown>).desktop as Record<string, unknown> | undefined; const sc = (m?.design_score as number) ?? (dt?.design_score as number); if (sc) setResults((r) => r.map((b) => b.id === id ? { ...b, design_score: sc } : b)); setAnalysed((a) => { const n = new Set(a); n.add(id); save(SS.ANALYSED, [...n]); return n; }); } } catch (e) { designErr = e instanceof Error ? e.message : "Design failed"; } })();
       await Promise.all([ap, dp]); if (!mounted.current) return;
       if (auditErr) throw new Error(auditErr);
@@ -235,7 +247,7 @@ export default function DiscoverPage() {
             <ResultsFilterBar totalCount={results.length} flaggedCount={flagged} sortOption={sort} sortDropdownOpen={sortOpen} websiteFilter={filter} sortRef={sortRef}
               onSortChange={(v) => { setSort(v); setSortOpen(false); }} onSortToggle={() => setSortOpen((v) => !v)} onFilterChange={setFilter} />
             <div className="flex items-center justify-between px-1">
-              <p className="text-xs text-[var(--text-tertiary)]">~ Estimated opportunity. Analyse any business for the verified opportunity score.</p>
+              <p className="text-xs text-[var(--text-tertiary)]">~ Estimated score for businesses with a website. No-website leads show their opportunity score directly.</p>
               <PoweredByGoogle />
             </div>
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">

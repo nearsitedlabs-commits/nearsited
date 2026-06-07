@@ -4,7 +4,7 @@
 export function buildClientCallSummary(
   businessName: string,
   businessType: string,
-  city: string,
+  city: string | null | undefined,
   overallScore: number,
   projScore: number,
   opportunityDelta: number,
@@ -32,7 +32,7 @@ export function buildClientCallSummary(
 
   return [
     `━━ Current Situation ━━`,
-    `${businessName} — ${businessType} in ${city}${ratingStr}${perfStr}`,
+    `${businessName} — ${businessType}${city ? ` in ${city}` : ""}${ratingStr}${perfStr}`,
     `Overall score: ${overallScore}/100`,
     ``,
     `━━ Opportunity ━━`,

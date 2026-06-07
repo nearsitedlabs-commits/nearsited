@@ -9,13 +9,14 @@ import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ from?: string }>;
+  searchParams: Promise<{ from?: string; analyze?: string }>;
 };
 
 export default async function LeadDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const { from } = await searchParams;
+  const { from, analyze } = await searchParams;
   const fromSource = from || "leads";
+  const autoAnalyze = analyze === "1";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -81,6 +82,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
           pipelineStatus={pipelineRow?.status ?? null}
           savedPitch={savedPitch as { id: string; subject: string; body: string; tone: string } | null}
           backTo={fromSource}
+          autoAnalyze={autoAnalyze}
         />
       );
   }
