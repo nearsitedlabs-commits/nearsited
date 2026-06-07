@@ -17,6 +17,14 @@ export const GET = withAuth(async ({ user, supabase }) => {
     .select("tier, audits_used, audits_limit, dodo_customer_id, dodo_subscription_id")
     .maybeSingle();
 
+  // Self-heal: bump stale free-tier limits created before FREE_AUDIT_LIMIT was raised
+  const storedTier = (subRow as { tier?: string } | null)?.tier ?? "free";
+  const storedLimit = (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT;
+  if (storedTier === "free" && storedLimit < FREE_AUDIT_LIMIT) {
+    await (admin as any).from("subscriptions").update({ audits_limit: FREE_AUDIT_LIMIT }).eq("user_id", user.id);
+    console.log(`[CHECK-SUBSCRIPTION] Healed stale free limit ${storedLimit}→${FREE_AUDIT_LIMIT} for user=...${user.id.slice(-4)}`);
+  }
+
   // 3. Resolve the Dodo customer ID
   const dodo = getDodoClient();
   let dodoCustomerId: string | null = (subRow as { dodo_customer_id?: string } | null)?.dodo_customer_id ?? null;
