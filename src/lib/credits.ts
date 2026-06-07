@@ -23,14 +23,16 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     .maybeSingle();
   if (data) return data as SubRow;
 
-  // No row — provision free tier
+  // No row — provision free tier with monthly reset from day one
+  const now = new Date();
+  const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
   const row: SubRow = {
     tier: "free",
     audits_used: 0,
     audits_limit: FREE_AUDIT_LIMIT,
     searches_used: 0,
     searches_limit: FREE_SEARCH_LIMIT,
-    credits_reset_at: null,
+    credits_reset_at: nextReset,
   };
   await subTable().upsert({ user_id: userId, ...row }, { onConflict: "user_id", ignoreDuplicates: true });
   return row;

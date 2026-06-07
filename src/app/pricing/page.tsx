@@ -39,7 +39,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How many credits do I get?",
-    a: "Free: 2 full analyses to try it out (lifetime, not monthly). Starter: 25 full analyses per month. Agency: 100 full analyses per month. Each full analysis uses 2 credits — 1 for the performance audit and 1 for the design analysis. Paid plan credits reset at the start of each billing month. Unused credits do not roll over.",
+    a: "Free: 10 full analyses per month. Starter: 25 full analyses per month. Agency: 100 full analyses per month. Each full analysis uses 2 credits — 1 for the performance audit and 1 for the design analysis. Credits reset at the start of each calendar month. Unused credits do not roll over.",
   },
   {
     q: "What happens when I run out?",
