@@ -229,7 +229,7 @@ export function OpportunityCard({
             <div className="flex items-center gap-1.5">
               {lead.place_id && (
                 <a
-                  href={`https://www.google.com/maps/place/?q=place_id:${lead.place_id}`}
+                  href={`https://www.google.com/maps/search/?api=1&query_place_id=${lead.place_id}&query=${encodeURIComponent(lead.name)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]"

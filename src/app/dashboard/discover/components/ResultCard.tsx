@@ -208,7 +208,7 @@ export function ResultCard({
         <div className="flex items-center gap-2.5 justify-end">
           {business.place_id && (
             <a
-              href={`https://www.google.com/maps/place/?q=place_id:${business.place_id}`}
+              href={`https://www.google.com/maps/search/?api=1&query_place_id=${business.place_id}&query=${encodeURIComponent(business.name)}`}
               target="_blank"
               rel="noreferrer"
               className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"

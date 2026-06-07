@@ -192,7 +192,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
                   </a>
                 )}
                 {biz.place_id && (
-                  <a href={`https://www.google.com/maps/place/?q=place_id:${biz.place_id}`} target="_blank" rel="noreferrer"
+                  <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}&query=${encodeURIComponent(biz.name)}`} target="_blank" rel="noreferrer"
                     className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
                     <MapPin className="h-3.5 w-3.5" /> Map
                   </a>
