@@ -61,9 +61,11 @@ function safeRedirect(destination: string | null): string {
 
 async function ensureSubscription(userId: string) {
   const admin = createAdminClient();
+  const now = new Date();
+  const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin as any).from("subscriptions").upsert(
-    { user_id: userId, tier: "free", audits_limit: FREE_AUDIT_LIMIT, audits_used: 0 },
+    { user_id: userId, tier: "free", audits_limit: FREE_AUDIT_LIMIT, audits_used: 0, credits_reset_at: nextReset },
     { onConflict: "user_id", ignoreDuplicates: true }
   );
 }
