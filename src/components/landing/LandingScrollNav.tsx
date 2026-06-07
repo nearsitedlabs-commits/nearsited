@@ -2,15 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Home, Search, Zap, FileText, Users, CreditCard } from "lucide-react";
+import { Home, BookOpen, Sparkles, FileText, Briefcase, CreditCard } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
 
 const NAV_SECTIONS = [
   { id: "hero",     label: "Overview",      Icon: Home },
-  { id: "how",      label: "How it works",  Icon: Search },
-  { id: "why",      label: "Why Nearsited", Icon: Zap },
+  { id: "how",      label: "How it works",  Icon: BookOpen },
+  { id: "why",      label: "Why Nearsited", Icon: Sparkles },
   { id: "report",   label: "Sample report", Icon: FileText },
-  { id: "usecases", label: "Use cases",     Icon: Users },
+  { id: "usecases", label: "Use cases",     Icon: Briefcase },
   { id: "pricing",  label: "Pricing",       Icon: CreditCard },
 ] as const;
 
@@ -117,8 +117,8 @@ function NavDot({ section, isActive }: { section: Section; isActive: boolean }) 
           whileHover={{
             width: 32,
             height: 32,
-            backgroundColor: "rgba(255,255,255,0.08)",
-            borderColor: "rgba(255,255,255,0.18)",
+            backgroundColor: isActive ? "rgba(138,151,119,0.26)" : "rgba(255,255,255,0.08)",
+            borderColor: isActive ? "rgba(138,151,119,0.65)" : "rgba(255,255,255,0.18)",
           }}
           transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
           style={{ border: "1px solid" }}
@@ -163,7 +163,7 @@ export function LandingScrollNav() {
           <motion.div
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {inner}
           </motion.div>
