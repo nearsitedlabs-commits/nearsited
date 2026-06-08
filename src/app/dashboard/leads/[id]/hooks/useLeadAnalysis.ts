@@ -24,6 +24,7 @@ export function useLeadAnalysis({
   websiteStatus,
   pitchTone,
   pitchLength,
+  hasAudit = false,
   showToast,
   setQuotaError,
   startQuotaTimer,
@@ -34,6 +35,7 @@ export function useLeadAnalysis({
   websiteStatus: string;
   pitchTone: string;
   pitchLength: string;
+  hasAudit?: boolean;
   showToast: (msg: string) => void;
   setQuotaError: (error: string | null) => void;
   startQuotaTimer: (seconds: number) => void;
@@ -107,44 +109,50 @@ export function useLeadAnalysis({
       abortControllerRef.current = abortController;
       const { signal } = abortController;
 
-      // Phase 1: Audit stream
-      console.log("[LEAD] Phase 1: fetching /api/audit...");
-      const auditRes = await fetch("/api/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId, website }),
-        signal,
-      });
+      if (hasAudit) {
+        // Audit already exists — skip Phase 1 and mark its steps as pre-completed
+        console.log("[LEAD] Skipping Phase 1 (audit already exists), going straight to design...");
+        setCompletedKeys([...AUDIT_STEP_KEYS]);
+      } else {
+        // Phase 1: Audit stream
+        console.log("[LEAD] Phase 1: fetching /api/audit...");
+        const auditRes = await fetch("/api/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ businessId, website }),
+          signal,
+        });
 
-      if (!auditRes.ok) {
-        const errBody = await auditRes.json().catch(() => null);
-        throw new Error(errBody?.error ?? `Audit failed (${auditRes.status})`);
-      }
+        if (!auditRes.ok) {
+          const errBody = await auditRes.json().catch(() => null);
+          throw new Error(errBody?.error ?? `Audit failed (${auditRes.status})`);
+        }
 
-      if (auditRes.body) {
-        const reader = auditRes.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        while (true) {
-          if (signal.aborted) return;
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            let parsed: Record<string, unknown> | null = null;
-            try { parsed = JSON.parse(line); } catch { continue; }
-            if (!parsed) continue;
-            if (parsed.type === "progress" && parsed.step) {
-              const key = parsed.step === "complete" ? "audit_complete" : parsed.step as string;
-              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-            } else if (parsed.type === "result") {
-              setCompletedKeys([...AUDIT_STEP_KEYS]);
-              setActiveKeys([]);
-            } else if (parsed.type === "error") {
-              throw new Error((parsed.message as string) ?? "Audit failed");
+        if (auditRes.body) {
+          const reader = auditRes.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          while (true) {
+            if (signal.aborted) return;
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              let parsed: Record<string, unknown> | null = null;
+              try { parsed = JSON.parse(line); } catch { continue; }
+              if (!parsed) continue;
+              if (parsed.type === "progress" && parsed.step) {
+                const key = parsed.step === "complete" ? "audit_complete" : parsed.step as string;
+                setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+              } else if (parsed.type === "result") {
+                setCompletedKeys([...AUDIT_STEP_KEYS]);
+                setActiveKeys([]);
+              } else if (parsed.type === "error") {
+                throw new Error((parsed.message as string) ?? "Audit failed");
+              }
             }
           }
         }
@@ -250,7 +258,7 @@ export function useLeadAnalysis({
       setRunningFullAnalysis(false);
       abortControllerRef.current = null;
     }
-  }, [businessId, website, websiteStatus, pitchTone, pitchLength, router, showToast, onPitchResult]);
+  }, [businessId, website, websiteStatus, pitchTone, pitchLength, hasAudit, router, showToast, onPitchResult]);
 
   const handleCancelAnalysis = useCallback(() => {
     const controller = abortControllerRef.current;

@@ -126,6 +126,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     websiteStatus: biz.website_status,
     pitchTone: pitch.pitchTone,
     pitchLength: pitch.pitchLength,
+    hasAudit: !!biz.audited_at && !biz.design_analyzed_at,
     showToast,
     setQuotaError: quota.setQuotaError,
     startQuotaTimer: quota.startQuotaTimer,

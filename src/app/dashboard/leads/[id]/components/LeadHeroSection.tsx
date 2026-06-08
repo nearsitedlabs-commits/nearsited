@@ -126,7 +126,13 @@ export function LeadHeroSection({
                   ) : (
                     <RefreshCw className="h-3.5 w-3.5" />
                   )}
-                  {runningFullAnalysis ? "Analysing…" : (biz.audited_at ? "Re-analyse" : "Analyse")}
+                  {runningFullAnalysis
+                    ? "Analysing…"
+                    : biz.audited_at && !biz.design_analyzed_at
+                      ? "Retry Design"
+                      : biz.audited_at
+                        ? "Re-analyse"
+                        : "Analyse"}
                 </button>
                 {runningFullAnalysis && (
                   <button
