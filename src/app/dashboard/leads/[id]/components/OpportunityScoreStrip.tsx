@@ -8,10 +8,9 @@ type Props = {
   isVerified: boolean;
   hasAudit: boolean;
   hasWebsite: boolean;
-  opportunityDelta: number;
 };
 
-export function OpportunityScoreStrip({ opportunityScore, isVerified, hasAudit, hasWebsite, opportunityDelta }: Props) {
+export function OpportunityScoreStrip({ opportunityScore, isVerified, hasAudit, hasWebsite }: Props) {
   const chip = isVerified
     ? { label: "Verified", cls: "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)] border-[var(--badge-green-border)]" }
     : hasAudit
@@ -25,11 +24,6 @@ export function OpportunityScoreStrip({ opportunityScore, isVerified, hasAudit, 
       <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${chip.cls}`}>
         {chip.label}
       </span>
-      {isVerified && opportunityDelta > 0 && (
-        <p className="text-xs text-[var(--text-tertiary)]">
-          +{opportunityDelta} pt{opportunityDelta !== 1 ? "s" : ""} improvement potential after fixes
-        </p>
-      )}
       {!hasAudit && (
         <p className="text-xs text-[var(--text-tertiary)]">Run an audit to get a verified score</p>
       )}

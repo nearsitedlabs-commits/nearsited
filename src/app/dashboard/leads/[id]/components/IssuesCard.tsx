@@ -22,9 +22,10 @@ type Props = {
   showAll: boolean;
   onToggleShowAll: () => void;
   reducedMotion: boolean;
+  projDelta?: number;
 };
 
-export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion }: Props) {
+export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion, projDelta }: Props) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
       <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Top Issues Impacting Score</h2>
@@ -60,6 +61,11 @@ export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion }: 
             >
               {showAll ? "Show less" : `+${issues.length - 3} more issue${issues.length - 3 !== 1 ? "s" : ""}`}
             </button>
+          )}
+          {projDelta != null && projDelta > 0 && (
+            <p className="pt-1 text-xs text-[var(--text-tertiary)]">
+              Fix these issues → <span className="font-semibold text-[var(--score-good)]">+{projDelta} pts</span> site quality improvement
+            </p>
           )}
         </motion.div>
       )}

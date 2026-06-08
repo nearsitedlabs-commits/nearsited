@@ -68,8 +68,8 @@ type Props = {
 // ── Conditional animation wrappers ────────────────────────────────────────────
 
 function LayoutWrapper({ reduce, children }: { reduce: boolean; children: React.ReactNode }) {
-  if (reduce) return <>{children}</>;
-  return <StaggerContainer>{children}</StaggerContainer>;
+  if (reduce) return <div className="space-y-6">{children}</div>;
+  return <StaggerContainer className="space-y-6">{children}</StaggerContainer>;
 }
 
 function MaybeFadeUp({ reduce, children }: { reduce: boolean; children: React.ReactNode }) {
@@ -252,22 +252,20 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
           <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"} className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
             <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
           </Link>
-          <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-              <div className="mt-1 flex items-start gap-2">
-                <h1 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{urlToDisplayName(biz.name)}</h1>
-                {!biz.place_id && (
-                  <button
-                    type="button"
-                    onClick={() => setShowEditPanel((v) => !v)}
-                    title="Edit business details"
-                    className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
+          <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
+          <div className="mt-1 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 flex items-start gap-2">
+              <h1 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{urlToDisplayName(biz.name)}</h1>
+              {!biz.place_id && (
+                <button
+                  type="button"
+                  onClick={() => setShowEditPanel((v) => !v)}
+                  title="Edit business details"
+                  className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               {hasWebsite && (
@@ -399,10 +397,10 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               handlePipelineChange={handlePipelineChange}
               handleFullAnalysis={analysis.handleFullAnalysis}
               handleCancelAnalysis={analysis.handleCancelAnalysis}
-              onEditClick={() => setShowEditPanel((v) => !v)}
+              onEditClick={!biz.place_id ? () => setShowEditPanel((v) => !v) : undefined}
               backTo={backTo}
             />
-            {showEditPanel && (
+            {showEditPanel && !biz.place_id && (
               <div className="mb-4">
                 <BusinessEditPanel
                   bizId={biz.id}
@@ -432,7 +430,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 isVerified={hasAudit && hasDesign}
                 hasAudit={hasAudit}
                 hasWebsite={hasWebsite}
-                opportunityDelta={opportunityDelta}
               />
             </motion.div>
           </MaybeFadeUp>
@@ -479,6 +476,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     showAll={showAllIssues}
                     onToggleShowAll={() => setShowAllIssues((v) => !v)}
                     reducedMotion={shouldReduce}
+                    projDelta={opportunityDelta}
                   />
                 </motion.div>
                 <motion.div variants={sectionCard}>

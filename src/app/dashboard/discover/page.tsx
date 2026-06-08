@@ -45,20 +45,36 @@ function load<T>(key: string): T | null {
   catch { return null; }
 }
 
-// ─── Persisted Audits ────────────────────────────────────────────────────────
+// ─── Persisted Scores ────────────────────────────────────────────────────────
 
-async function fetchPersistedAudits(ids: string[], sb: SupabaseClient): Promise<Map<string, AuditResult>> {
-  const map = new Map<string, AuditResult>();
-  const { data, error } = await sb.from("audits").select("business_id, strategy, performance_score, seo_score, fcp, lcp, tbt, cls").in("business_id", ids).order("created_at", { ascending: false });
-  if (error || !data) return map;
-  const mobile = new Map<string, StrategyResult>(), desktop = new Map<string, StrategyResult>();
-  for (const r of data as AuditRow[]) {
-    const s: StrategyResult = { performance_score: (r.performance_score as number) ?? null, seo_score: (r.seo_score as number) ?? null, fcp: (r.fcp as string) ?? null, lcp: (r.lcp as string) ?? null, tbt: (r.tbt as string) ?? null, cls: (r.cls as string) ?? null, status: "ok" };
-    if (r.strategy === "mobile") mobile.set(r.business_id as string, s); else if (r.strategy === "desktop") desktop.set(r.business_id as string, s);
+async function fetchPersistedData(
+  ids: string[],
+  sb: SupabaseClient
+): Promise<{ audits: Map<string, AuditResult>; designScores: Map<string, number> }> {
+  const [auditResp, designResp] = await Promise.all([
+    sb.from("audits").select("business_id, strategy, performance_score, seo_score, fcp, lcp, tbt, cls").in("business_id", ids).order("created_at", { ascending: false }),
+    sb.from("businesses").select("id, design_score").in("id", ids),
+  ]);
+
+  const audits = new Map<string, AuditResult>();
+  if (!auditResp.error && auditResp.data) {
+    const mobile = new Map<string, StrategyResult>(), desktop = new Map<string, StrategyResult>();
+    for (const r of auditResp.data as AuditRow[]) {
+      const s: StrategyResult = { performance_score: (r.performance_score as number) ?? null, seo_score: (r.seo_score as number) ?? null, fcp: (r.fcp as string) ?? null, lcp: (r.lcp as string) ?? null, tbt: (r.tbt as string) ?? null, cls: (r.cls as string) ?? null, status: "ok" };
+      if (r.strategy === "mobile") mobile.set(r.business_id as string, s); else if (r.strategy === "desktop") desktop.set(r.business_id as string, s);
+    }
+    const empty = (): StrategyResult => ({ performance_score: null, seo_score: null, fcp: null, lcp: null, tbt: null, cls: null, status: "error" });
+    for (const id of new Set([...mobile.keys(), ...desktop.keys()])) audits.set(id, { mobile: mobile.get(id) ?? empty(), desktop: desktop.get(id) ?? empty() });
   }
-  const empty = (): StrategyResult => ({ performance_score: null, seo_score: null, fcp: null, lcp: null, tbt: null, cls: null, status: "error" });
-  for (const id of new Set([...mobile.keys(), ...desktop.keys()])) map.set(id, { mobile: mobile.get(id) ?? empty(), desktop: desktop.get(id) ?? empty() });
-  return map;
+
+  const designScores = new Map<string, number>();
+  if (!designResp.error && designResp.data) {
+    for (const r of designResp.data as { id: string; design_score: number | null }[]) {
+      if (r.design_score != null) designScores.set(r.id, r.design_score);
+    }
+  }
+
+  return { audits, designScores };
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -123,12 +139,17 @@ export default function DiscoverPage() {
   useEffect(() => { if (!cityQ && citiesFullRef.current.length > 0) { setCities(citiesFullRef.current); } }, [cityQ]);
   useEffect(() => { function h(e: MouseEvent) { if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false); } document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h); }, []);
 
-  // Hydrate audit data from DB once userId resolves — restores verified scores after navigation
+  // Hydrate audit + design scores from DB once userId resolves — restores verified scores after navigation
   useEffect(() => {
-    if (!userId || !results.length || !audited.size) return;
-    fetchPersistedAudits(results.map((r) => r.id), supabase).then((m) => {
-      if (!m.size) return;
-      setResults((prev) => prev.map((r) => { const p = m.get(r.id); return p ? { ...r, audit: p } : r; }));
+    if (!userId || !results.length) return;
+    fetchPersistedData(results.map((r) => r.id), supabase).then(({ audits, designScores }) => {
+      if (!audits.size && !designScores.size) return;
+      setResults((prev) => prev.map((r) => {
+        const a = audits.get(r.id);
+        const ds = designScores.get(r.id);
+        if (!a && ds == null) return r;
+        return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) };
+      }));
     }).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]); // only when userId first resolves
@@ -209,7 +230,7 @@ export default function DiscoverPage() {
           if (t === "progress") continue;
           if (t === "results") { const b = (ch.data as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); setVisible(30); setFetching(false); setSubmitting(false); setResKey((k) => k + 1); gotInit = true; continue; }
           if (t === "enrichment") { const upd = (ch.updated as { id: string; website: string | null; phone: string | null; website_status: string; flagged_for_outreach?: boolean }[]) ?? []; if (upd.length) { const m = new Map(upd.map((u) => [u.id, u])); setResults((pr) => pr.map((b) => { const e = m.get(b.id); return e ? { ...b, website: e.website ?? b.website, phone: e.phone ?? b.phone, website_status: e.website_status as WebsiteStatus, flagged_for_outreach: e.flagged_for_outreach ?? b.flagged_for_outreach } : b; })); } continue; }
-          if (t === "done") { const b = (ch.businesses as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); if (b.length) fetchPersistedAudits(b.map((x) => x.id), supabase).then((m) => { setResults((pr) => pr.map((r) => { const p = m.get(r.id); return p ? { ...r, audit: p } : r; })); }).catch(() => {}); continue; }
+          if (t === "done") { const b = (ch.businesses as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); if (b.length) fetchPersistedData(b.map((x) => x.id), supabase).then(({ audits, designScores }) => { setResults((pr) => pr.map((r) => { const a = audits.get(r.id); const ds = designScores.get(r.id); if (!a && ds == null) return r; return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) }; })); }).catch(() => {}); continue; }
           if (t === "error") throw new Error((ch.message as string) ?? "Error");
         }
       }
