@@ -395,14 +395,24 @@ export default function DashboardClient({
                 }}
               >
                 {leads.map((lead) => {
-                  const score = lead.performance_score ?? lead.design_score;
-                  const isAnalysed = score !== null;
-                  const ringScore = isAnalysed ? score : estimatedOpportunity({
-                    website_status: lead.website_status,
-                    website: lead.website,
-                    user_ratings_total: lead.review_count,
-                    rating: lead.rating,
-                  });
+                  const hasAudit = lead.performance_score !== null || lead.design_score !== null;
+                  const oppScore = lead.opportunity_score
+                    ?? (hasAudit
+                      ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
+                      : estimatedOpportunity({
+                          website_status: lead.website_status,
+                          website: lead.website,
+                          user_ratings_total: lead.review_count,
+                          rating: lead.rating,
+                        }));
+                  const label = opportunityLabel(oppScore);
+                  const variant = opportunityBadgeVariant(oppScore);
+                  const badgeMap: Record<string, string> = {
+                    green:  "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
+                    amber:  "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
+                    indigo: "text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
+                    red:    "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
+                  };
 
                   return (
                     <motion.div
@@ -414,7 +424,7 @@ export default function DashboardClient({
                       onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
                       className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-[var(--bg-elevated)] p-3 text-left transition-colors duration-150 hover:border-[var(--border)] hover:bg-[var(--bg-surface)]"
                     >
-                      <ScoreRing score={ringScore} size={36} variant={isAnalysed ? "opportunity" : "estimate"} />
+                      <ScoreRing score={oppScore} size={36} variant={hasAudit ? "opportunity" : "estimate"} />
 
                       {/* Name + meta — full width, badge in subtitle row so name isn't crushed */}
                       <div className="min-w-0 flex-1">
@@ -437,31 +447,9 @@ export default function DashboardClient({
                         </div>
                       </div>
 
-                      {/* Opportunity level badge — shrink-0, no fixed width */}
-                      {(() => {
-                        const oppScore = lead.opportunity_score
-                          ?? (isAnalysed
-                            ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
-                            : estimatedOpportunity({
-                                website_status: lead.website_status,
-                                website: lead.website,
-                                user_ratings_total: lead.review_count,
-                                rating: lead.rating,
-                              }));
-                        const label = opportunityLabel(oppScore);
-                        const variant = opportunityBadgeVariant(oppScore);
-                        const map: Record<string, string> = {
-                          green:  "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
-                          amber:  "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
-                          indigo: "text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
-                          red:    "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
-                        };
-                        return (
-                          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${map[variant] ?? ""}`}>
-                            {label}
-                          </span>
-                        );
-                      })()}
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${badgeMap[variant] ?? ""}`}>
+                        {label}
+                      </span>
                     </motion.div>
                   );
                 })}
