@@ -9,7 +9,7 @@ Workflow: **discover** local businesses → **classify** web presence → **audi
 Goal: walk an agency rep into a prospect meeting with real scores, ranked issues, and a written pitch — in under 2 minutes.
 
 ## Environment
-- Stack: Next.js 16.2.6 (App Router, Turbopack) · TypeScript · Tailwind · Supabase (DB+Auth+Storage) · Gemini 3.5 Flash · ScreenshotOne · Google Places/PageSpeed · **jsPDF** · **lucide-react** · **Radix UI** · **recharts**. **[v2]** Playwright · job queue · worker server.
+- Stack: Next.js 16.2.6 (App Router, Turbopack) · TypeScript · Tailwind · Supabase (DB+Auth+Storage) · Gemini 2.5 Flash · ScreenshotCore · Google Places/PageSpeed · **jsPDF** · **lucide-react** · **Radix UI** · **recharts**. **[v2]** Playwright · job queue · worker server.
 - **Project root: `c:/Projects/nearsited`** — all npm commands run here.
 - Dev server: `npm run dev` → localhost:3000. Env changes need a restart.
 - Theme: **dark** (near-black navy `#0a0e12`, sage green accent `#8A9777`). CSS variables in [`src/app/globals.css`](src/app/globals.css).
@@ -28,7 +28,7 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 4. **Admin client for every server-side write** (routes AND workers). Session client is for `auth.getUser()` only. (Server `auth.uid()` is null → blocks session-client inserts.)
 5. **Thin route handlers.** Analysis logic in exported functions; handler validates+auths+calls. Lets a function move from a sync route to a queue worker without rewrite.
 6. **Log every external call + every DB error.** `[ROUTENAME]` prefix; on DB failure log full `{code,message,details,hint}`.
-7. **Timeout every external call** (AbortController): PageSpeed 60s, ScreenshotOne 30s, Gemini 30s, Playwright nav 30s / session 120s. Retry once on 500/429 only (never 403/400/abort).
+7. **Timeout every external call** (AbortController): PageSpeed 60s, ScreenshotCore 15s, Gemini 30s, Playwright nav 30s / session 120s. Retry once on 500/429 only (never 403/400/abort).
 
 ---
 
@@ -73,13 +73,13 @@ Settings      /dashboard/settings  ✅
 
 ## External APIs (verified July 2026)
 
-### Gemini — `gemini-3.5-flash`
-- ⚠️ `gemini-1.5-flash` and `gemini-2.x` are dead/legacy. Stable ID is exactly `gemini-3.5-flash`. Define once: `const GEMINI_MODEL = "gemini-3.5-flash"`.
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`
+### Gemini — `gemini-2.5-flash`
+- ⚠️ Model status: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **alive GA, recommended** (5× cheaper than 3.5 Flash); `gemini-3.5-flash` = alive but avoid. Define once: `const GEMINI_MODEL = "gemini-2.5-flash"` in [`src/lib/gemini.ts`](src/lib/gemini.ts).
+- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 - Auth: **header** `x-goog-api-key: process.env.GEMINI_API_KEY` (NOT query param).
 - Multimodal: `parts:[{ inline_data:{ mime_type:"image/png", data:<base64> } }, { text:<prompt> }]`. For UX, send multiple `inline_data` frame parts in one call.
 - Always: prompt for JSON → strip ```json fences → JSON.parse in try/catch → log raw text on parse fail.
-- Cost (real): $1.50/M in, $9/M out, $0.15/M cached. NOT free. Static design ≈ ₹0.60/strategy; UX frame-seq ≈ ₹1.50/strategy. At scale consider Flash-Lite ($0.25/$1.50) for analysis, keep 3.5 Flash for pitches.
+- Cost (real): $0.30/M in, $2.50/M out. Free tier: 1,500 req/day, 15 RPM, 1M TPM. Static design ≈ ₹0.18/strategy; UX frame-seq ≈ ₹0.45/strategy. Free tier covers ~750 full lead analyses/day before paid tier needed.
 - Used in: `/api/analyze-design` (design critique), `/api/pitch` (pitch generation), `/api/gemini-test` (smoke test).
 
 ### Google Places / Geocoding / PageSpeed — one key
@@ -89,10 +89,10 @@ Settings      /dashboard/settings  ✅
 - Run mobile + desktop concurrently (`Promise.allSettled`). PageSpeed free; Nearby Search ₹2.67/platform; Place Details ₹0.25.
 - Used in: `/api/discover` (geocoding + Places + Place Details), `/api/audit` (PageSpeed).
 
-### ScreenshotOne (v1 static screenshots)
-- `process.env.SCREENSHOT_API_KEY`. Full-page, mobile ~390px / desktop ~1440px. arraybuffer → base64.
-- `ignore_host_errors=true`; log `returned_status_code`. Charged only for successful renders. Free 200/mo → $17/2,000.
-- Behind a `takeScreenshot()` abstraction in [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts:52) so the self-hosted Playwright swap touches one file.
+### ScreenshotCore (v1 static screenshots)
+- `process.env.SCREENSHOT_API_KEY`. Full-page, mobile 390px / desktop 1440px. arraybuffer → base64. 15s AbortController timeout.
+- Params: `url`, `access_key`, `viewport_width/height`, `format=png`, `block_ads=true`, `block_cookie_banners=true`.
+- Behind a `takeScreenshot()` abstraction in [`src/lib/screenshot.ts`](src/lib/screenshot.ts) so the self-hosted Playwright swap touches one file.
 
 ### Playwright (v2 — Runtime B only)
 - Headless Chromium on the worker. ~500MB/instance, 30–120s/session. Frame-sequence capture (NOT raw video).
@@ -222,7 +222,7 @@ All three workflows share: contact info fetch (`/api/contact-info`), background 
 
 **Request body:** `businessId`, `tone` (professional/friendly/luxury), `length` (short/medium/detailed), `channel` (email/whatsapp), `workflow` (website/social_only/no_digital_presence), `socialPlatforms[]`, `focus`, `opening` (direct/question/empathy/data), `urgency` (low/medium/high).
 
-Pulls real data: latest `audits` (perf, lcp, fcp) + latest `design_analyses` (design_score, top-3 issues) + [v2] `ux_analyses` (ux issues). Honours tone/length/focus. Saves to `pitches` with `lead_type`+`tone`. Model: `gemini-3.5-flash`, header auth. JSON only response.
+Pulls real data: latest `audits` (perf, lcp, fcp) + latest `design_analyses` (design_score, top-3 issues) + [v2] `ux_analyses` (ux issues). Honours tone/length/focus. Saves to `pitches` with `lead_type`+`tone`. Model: `gemini-2.5-flash`, header auth. JSON only response.
 
 ---
 
@@ -244,8 +244,8 @@ UI completion via Supabase Realtime subscription on ux_analyses (preferred), or 
 |---|---|---|---|
 | `/api/discover` | [`src/app/api/discover/route.ts`](src/app/api/discover/route.ts) | ✅ Live | **3 parallel Nearby Search queries** (keyword, keyword+type, 1.5×radius), dedup by place_id, **NDJSON streaming** (results→enrichment→done), places_cache enrichment, website classification, businesses upsert |
 | `/api/audit` | [`src/app/api/audit/route.ts`](src/app/api/audit/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (fetching→mobile→desktop→complete→result→done), **7-day audit cache** with `force` param, PageSpeed mobile+desktop, SEO category, AbortController timeout (60s), retry on 500/429, admin client writes, businesses score update |
-| `/api/analyze-design` | [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (screenshot→analysis→persisting→complete→result→done), **7-day design cache** with `force` param, ScreenshotOne + Gemini 3.5 Flash, point_deduction+impact in prompt, mobile+desktop concurrent, admin client writes, **recomputes + stores opportunity_score after design analysis** (blends stored perf_score + new design_score) |
-| `/api/pitch` | [`src/app/api/pitch/route.ts`](src/app/api/pitch/route.ts) | ✅ Enhanced | gemini-3.5-flash, header auth, 6 lead-type angles, real data citation, tone/length/focus, **workflow param** (`website`/`social_only`/`no_digital_presence`), **channel param** (`email`/`whatsapp`), **socialPlatforms[]** for contextual prompts, saves to pitches (admin) |
+| `/api/analyze-design` | [`src/app/api/analyze-design/route.ts`](src/app/api/analyze-design/route.ts) | ✅ Live | **NDJSON streaming with progress steps** (screenshot→analysis→persisting→complete→result→done), **7-day design cache** with `force` param, ScreenshotCore + Gemini 2.5 Flash, point_deduction+impact in prompt, mobile+desktop concurrent, admin client writes, **recomputes + stores opportunity_score after design analysis** (blends stored perf_score + new design_score) |
+| `/api/pitch` | [`src/app/api/pitch/route.ts`](src/app/api/pitch/route.ts) | ✅ Enhanced | gemini-2.5-flash, header auth, 6 lead-type angles, real data citation, tone/length/focus, **workflow param** (`website`/`social_only`/`no_digital_presence`), **channel param** (`email`/`whatsapp`), **socialPlatforms[]** for contextual prompts, saves to pitches (admin) |
 | `/api/pipeline` | [`src/app/api/pipeline/route.ts`](src/app/api/pipeline/route.ts) | ✅ Live | POST add, PATCH update status, **6 canonical statuses** (pitch_generated removed) |
 | `/api/export/pdf` | [`src/app/api/export/pdf/route.ts`](src/app/api/export/pdf/route.ts) | ✅ Live | jsPDF, business name+scores+issues, downloadable `<business>-audit.pdf` |
 | `/api/contact-info` | [`src/app/api/contact-info/route.ts`](src/app/api/contact-info/route.ts) | ✅ Live | Scrapes website for email (mailto regex, 5s timeout), returns phone from `businesses.phone`, caches to `contact_info` JSONB column, 30-day cache TTL, admin client write |
@@ -329,7 +329,7 @@ All v1 phases are now COMPLETE. Specific items:
 - [x] Toast notification system
 
 **Phase 3 — Pitch:**
-- [x] Rebuild `pitch/route.ts` (gemini-3.5-flash, lead-type branching, cites real data, tone/length/focus)
+- [x] Rebuild `pitch/route.ts` (gemini-2.5-flash, lead-type branching, cites real data, tone/length/focus)
 - [x] Pitch generation with error display + console logging
 
 **Phase 4 — Dashboard & polish:**
@@ -499,7 +499,7 @@ These patterns ensure future AI iterations can work with the codebase without br
 
 ## Don't Repeat These (each a real past bug)
 1. Writing `website_url`/`gmb_*`/`category` (DROPPED → `website`/`place_id`/`rating`/`review_count`/`business_type`).
-2. `gemini-1.5-flash` (SHUT DOWN → `gemini-3.5-flash`).
+2. `gemini-1.5-flash` / `gemini-2.0-flash` (SHUT DOWN → `gemini-2.5-flash`). Never use `gemini-3.5-flash` — 5× more expensive with no quality gain for this workload.
 3. Session client for server INSERT → RLS 42501 silent fail (→ admin client).
 4. Returning 200 after a failed insert (→ surface `persisted:false`).
 5. `npm run dev` from wrong directory — run from `c:/Projects/nearsited`.

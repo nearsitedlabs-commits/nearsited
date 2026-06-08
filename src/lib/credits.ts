@@ -122,29 +122,33 @@ export async function checkSearch(userId: string): Promise<{ allowed: boolean; s
 }
 
 /**
- * Increments searches_used by 1 atomically using optimistic concurrency control.
- * Retries up to 3 times on concurrent modification. Called after a successful discover search.
+ * Increments searches_used by 1. Ensures the subscription row exists first, then
+ * does a simple read-then-update keyed only on user_id. This avoids the optimistic
+ * concurrency lock (.eq("searches_used", current)) which silently no-ops when the
+ * column value is NULL — a common state when columns are added to existing rows without
+ * a backfill (NULL ≠ 0 in PostgreSQL, so the WHERE clause matches 0 rows and Supabase
+ * returns { error: null } with no rows written).
  */
 export async function deductSearch(userId: string): Promise<void> {
-  const MAX_RETRIES = 3;
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    const { data } = await subTable().select("searches_used").eq("user_id", userId).maybeSingle();
-    const current = (data as { searches_used: number } | null)?.searches_used ?? 0;
-    const newValue = current + 1;
+  await getSubscription(userId); // ensure row exists before updating
 
-    const { error } = await subTable()
-      .update({ searches_used: newValue })
-      .eq("user_id", userId)
-      .eq("searches_used", current)
-      .select("searches_used");
+  const { data } = await subTable()
+    .select("searches_used")
+    .eq("user_id", userId)
+    .maybeSingle();
 
-    if (!error) {
-      console.log(`[CREDITS] search deducted user=...${userId.slice(-4)} now=${newValue}`);
-      return;
-    }
+  const current = (data as { searches_used: number } | null)?.searches_used ?? 0;
 
-    console.warn(`[CREDITS] search retry ${attempt + 1}/${MAX_RETRIES} for user=...${userId.slice(-4)}`);
+  const { error } = await subTable()
+    .update({ searches_used: current + 1 })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error(`[CREDITS] deductSearch failed for user=...${userId.slice(-4)}`, {
+      code: error.code,
+      message: error.message,
+    });
+  } else {
+    console.log(`[CREDITS] search deducted user=...${userId.slice(-4)} now=${current + 1}`);
   }
-
-  console.error(`[CREDITS] failed to deduct search for user=...${userId.slice(-4)} after ${MAX_RETRIES} attempts`);
 }

@@ -436,8 +436,8 @@ export async function POST(request: NextRequest) {
             console.log("[AUDIT] Audit complete — ephemeral (not persisted)");
           }
 
-          // 8. Deduct credit for fresh (non-cached) audit
-          await deductCredit(user.id);
+          // 8. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free)
+          if (shouldPersist) await deductCredit(user.id);
 
           // 9. Stream result + done
           const responseBody: AuditResponse = {

@@ -1,6 +1,6 @@
 // Single source of truth for the Gemini model ID.
 // Never inline this string in route files — import from here.
-export const GEMINI_MODEL = "gemini-3.5-flash";
+export const GEMINI_MODEL = "gemini-2.5-flash";
 export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 export const GEMINI_URL = `${GEMINI_BASE_URL}/${GEMINI_MODEL}:generateContent`;
 

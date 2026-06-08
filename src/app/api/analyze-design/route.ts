@@ -283,8 +283,8 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 10. Deduct credit for fresh (non-cached) analysis
-          await deductCredit(user.id);
+          // 10. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free)
+          if (shouldPersist) await deductCredit(user.id);
 
           // 11. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
