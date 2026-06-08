@@ -395,8 +395,7 @@ export async function POST(request: NextRequest) {
           const BATCH_SIZE = 50;
           for (let batchStart = 0; batchStart < businessRows.length; batchStart += BATCH_SIZE) {
             const batch = businessRows.slice(batchStart, batchStart + BATCH_SIZE);
-            const { data: upserted, error: upsertError } = await supabase
-              .from("businesses")
+            const { data: upserted, error: upsertError } = await (adminClient.from("businesses") as ReturnType<typeof adminClient.from>)
               .upsert(batch, {
                 onConflict: "place_id,user_id",
                 ignoreDuplicates: false,
@@ -405,10 +404,8 @@ export async function POST(request: NextRequest) {
 
             if (upsertError) {
               console.error("[DISCOVER] Batch upsert failed:", upsertError);
-              // Still add the rows we intended to upsert so the client gets partial results
-              for (const row of batch) {
-                upsertedBusinesses.push(row as Record<string, unknown>);
-              }
+              // Do NOT push locally-constructed rows — they were never persisted,
+              // and phantom IDs cause "lead not found" when navigated to later.
             } else if (upserted) {
               upsertedBusinesses.push(...(upserted as Record<string, unknown>[]));
             }
