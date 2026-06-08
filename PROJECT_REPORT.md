@@ -1,6 +1,6 @@
 # Nearsited — Complete Project Report
 
-> **Generated:** June 5, 2026 · **Last updated:** June 6, 2026
+> **Generated:** June 5, 2026 · **Last updated:** June 8, 2026
 > **Project:** Nearsited by Again Labs  
 > **Repository:** `c:/Projects/nearsited`
 
@@ -38,7 +38,7 @@
 | **Tagline** | "Turn local businesses with weak websites into your next client" |
 | **Target User** | Web design agencies doing outbound prospecting |
 | **Core Workflow** | Discover → Classify → Audit → Analyze Design → Generate Pitch → Track Pipeline |
-| **Current Status** | Free beta (paid plans launching soon) |
+| **Current Status** | Live — paid plans active via Dodo Payments |
 | **Primary Problem Solved** | Eliminates the most time-consuming parts of agency prospecting: researching, auditing, and writing personalized pitches |
 
 ### Core Value Proposition
@@ -1086,34 +1086,37 @@ Used when UX analysis data is available (v2 feature).
 
 ### 14.1 Current State
 
-Nearsited is currently in **free beta** — all features are accessible without payment. The credits widget displays: "Free Beta · Full access · Paid plans launching soon".
+Nearsited is **live with paid plans** via Dodo Payments. Free users get a lifetime credit allowance; paid plans unlock higher monthly limits with auto-reset.
 
-### 14.2 Planned Product Tiers
+### 14.2 Product Tiers
 
 ([`src/lib/products.ts`](src/lib/products.ts) + [`src/lib/dodo.ts`](src/lib/dodo.ts))
 
-| Product | Billing | Est. Price | Audits/Month |
-|---------|---------|------------|--------------|
-| Starter | Monthly | $19/mo | 50 |
-| Starter | Annual | ~$190/yr | 50 |
-| Agency | Monthly | $49/mo | 200 |
-| Agency | Annual | ~$490/yr | 200 |
+| Plan | Billing | Price | Analyses | Searches |
+|------|---------|-------|----------|----------|
+| Free | Lifetime | $0 | 20 total | 1 total |
+| Starter | Monthly | $19/mo | 50/mo | 3/mo |
+| Starter | Annual | $180/yr ($15/mo) | 50/mo | 3/mo |
+| Agency | Monthly | $49/mo | 200/mo | 10/mo |
+| Agency | Annual | $468/yr ($39/mo) | 200/mo | 10/mo |
+
+Free credits do not reset — they are a one-time lifetime allowance. Paid plan credits reset monthly on `credits_reset_at`.
 
 ### 14.3 Credit System ([`src/lib/credits.ts`](src/lib/credits.ts))
 
 - **`getSubscription()`** — Provisions a free-tier subscription on first lookup if none exists
 - **`checkCredit()`** — Checks if user has available credits (with monthly auto-reset on `credits_reset_at`)
 - **`deductCredit()`** — Optimistic concurrency control with 3 retry attempts
-- **`FREE_AUDIT_LIMIT = 10`** — Audit limit for free tier (note: contradicts some UI showing "50 free audits")
+- **`FREE_AUDIT_LIMIT = 20`** — Lifetime credit allowance for free tier (1 search + 20 analyses)
 
 ### 14.4 Dodo Payments Integration
 
 - Dodo client singleton configured in [`src/lib/dodo.ts`](src/lib/dodo.ts)
 - Product ID mapping to Dodo product catalog
-- Webhook at [`/api/webhooks/dodo`](src/app/api/webhooks/dodo/route.ts) handles subscription lifecycle events
+- Webhook at [`/api/webhooks/dodo`](src/app/api/webhooks/dodo/route.ts) handles subscription lifecycle events (creation, renewal, cancellation)
 - Subscription sync scripts in `/scripts/sync-*.mjs`
-
-**Note:** Billing enforcement (gating features based on plan) is not yet fully implemented — the credit system is in place but feature gating is not active during the free beta.
+- Dodo auto-detects test vs live mode via `S-` prefix on API key
+- No discount codes or promo codes are configured
 
 ---
 

@@ -190,189 +190,84 @@ export function ResultCard({
       </div>
 
       {/* Icon links — desktop only, fixed 4-slot grid so columns always align */}
-      <div className="hidden md:grid grid-cols-4 flex-shrink-0 w-[112px] items-center gap-0">
-        {/* Flag slot */}
-        <div className="flex items-center justify-center w-7 h-7">
-          {business.flagged_for_outreach && (
-            <span title={business.outreach_reason ? OUTREACH_REASONS[business.outreach_reason] ?? "Flagged for outreach" : "Flagged for outreach"}>
-              <Flag className="size-[13px] text-[var(--accent)]" />
-            </span>
-          )}
-        </div>
-        {/* Maps slot */}
+      {/* Icon links — 3 fixed slots (MapPin/Globe/Phone). Flag is shown via accent bar. */}
+      <div className="hidden md:grid grid-cols-3 flex-shrink-0 w-[84px]">
         <div className="flex items-center justify-center w-7 h-7">
           {business.place_id && (
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query_place_id=${business.place_id}&query=${encodeURIComponent(business.name)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
-              title="View on Google Maps"
-            >
+            <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${business.place_id}&query=${encodeURIComponent(business.name)}`} target="_blank" rel="noreferrer" className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150" title="View on Google Maps">
               <MapPin className="size-[15px]" />
             </a>
           )}
         </div>
-        {/* Globe slot */}
         <div className="flex items-center justify-center w-7 h-7">
           {business.website && safeHref(business.website) && (
-            <a
-              href={safeHref(business.website)!}
-              target="_blank"
-              rel="noreferrer"
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
-              title={business.website}
-            >
+            <a href={safeHref(business.website)!} target="_blank" rel="noreferrer" className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150" title={business.website}>
               <Globe className="size-[15px]" />
             </a>
           )}
         </div>
-        {/* Phone slot */}
         <div className="flex items-center justify-center w-7 h-7">
           {business.phone && (
-            <a
-              href={`tel:${business.phone}`}
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
-              title={business.phone}
-            >
+            <a href={`tel:${business.phone}`} className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150" title={business.phone}>
               <Phone className="size-[15px]" />
             </a>
           )}
         </div>
       </div>
 
-      {/* Action buttons — full-width on mobile (forces wrap), fixed on desktop */}
-      <div className="flex items-center gap-2 w-full md:w-auto md:flex-shrink-0 md:min-w-[260px] md:justify-end">
+      {/* Action buttons — full-width on mobile, fixed 244px on desktop so columns always align */}
+      <div className="flex items-center gap-2 w-full md:w-[244px] md:flex-shrink-0">
         {/* Analyse Opportunity */}
         {(() => {
+          {/* Left action — always w-[160px] on desktop so +Add stays in the same column */}
           if (isAnalyseLoading)
             return (
-              <div className="flex items-center gap-1.5">
-                <Link
-                  href={`/dashboard/leads/${business.id}?from=discover&analyze=1`}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
-                >
-                  View
-                </Link>
-                <button
-                  type="button"
-                  disabled
-                  className="cursor-not-allowed whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[100px] md:flex-none text-center"
-                >
-                  <span className="inline-flex items-center justify-center gap-1.5">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    Analysing…
-                  </span>
+              <div className="flex items-center gap-2 flex-1 md:w-[160px] md:flex-none">
+                <Link href={`/dashboard/leads/${business.id}?from=discover&analyze=1`} className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none">View</Link>
+                <button type="button" disabled className="cursor-not-allowed inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[80px] md:flex-none">
+                  <Loader2 className="h-3 w-3 animate-spin" />Analysing…
                 </button>
               </div>
             );
           if (ap?.phase === "error")
             return (
-              <button
-                type="button"
-                onClick={() =>
-                  onAnalyseOpportunity(business.id, business.website!)
-                }
-                className="cursor-pointer text-xs px-2.5 py-2 rounded-lg border border-red-500/30 text-[var(--badge-red-text)] hover:bg-red-500/10 transition-colors duration-150 flex-1 md:w-[120px] md:flex-none text-center"
-                title={ap.label}
-              >
+              <button type="button" onClick={() => onAnalyseOpportunity(business.id, business.website!)} className="cursor-pointer whitespace-nowrap text-xs py-2 rounded-lg border border-red-500/30 text-[var(--badge-red-text)] hover:bg-red-500/10 transition-colors duration-150 flex-1 md:w-[160px] md:flex-none text-center" title={ap.label}>
                 Retry
               </button>
             );
           if (isAnalyseDone)
             return (
-              <div className="flex items-center gap-1.5">
-                <Link
-                  href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
-                >
-                  View
-                </Link>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onAnalyseOpportunity(business.id, business.website!)
-                  }
-                  className="cursor-pointer whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[100px] md:flex-none text-center"
-                >
+              <div className="flex items-center gap-2 flex-1 md:w-[160px] md:flex-none">
+                <Link href={`/dashboard/leads/${business.id}?from=discover`} className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none">View</Link>
+                <button type="button" onClick={() => onAnalyseOpportunity(business.id, business.website!)} className="cursor-pointer whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[80px] md:flex-none text-center">
                   Re-analyse
                 </button>
               </div>
             );
           if (showAnalyseButton)
             return (
-              <div className="flex items-center gap-1.5">
-                <Link
-                  href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
-                >
-                  View
-                </Link>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onAnalyseOpportunity(business.id, business.website!)
-                  }
-                  className="cursor-pointer whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[100px] md:flex-none text-center"
-                >
+              <div className="flex items-center gap-2 flex-1 md:w-[160px] md:flex-none">
+                <Link href={`/dashboard/leads/${business.id}?from=discover`} className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none">View</Link>
+                <button type="button" onClick={() => onAnalyseOpportunity(business.id, business.website!)} className="cursor-pointer whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[80px] md:flex-none text-center">
                   Analyse
                 </button>
               </div>
             );
-          // No site to analyse — show "View" link for non-website lead types
-          if (
-            business.website_status === "no_website" ||
-            business.website_status === "social_only" ||
-            business.website_status === "unknown"
-          ) {
-            return (
-              <Link
-                href={`/dashboard/leads/${business.id}?from=discover`}
-                className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[172px] md:flex-none text-center"
-              >
-                View Opportunity
-              </Link>
-            );
-          }
           return (
-            <span className="text-xs italic text-[var(--text-tertiary)] flex-1 md:w-[120px] md:flex-none text-center leading-tight">
-              {NO_ACTION_LABEL[business.website_status] ?? ""}
-            </span>
+            <Link href={`/dashboard/leads/${business.id}?from=discover`} className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[160px] md:flex-none text-center">
+              View Opportunity
+            </Link>
           );
         })()}
 
-        {/* Pipeline */}
+        {/* Pipeline — always w-[76px] on desktop */}
         {isInPipeline ? (
-          <button
-            type="button"
-            onClick={() => onRemoveFromPipeline(business.id)}
-            disabled={pipelineLoadingId === business.id}
-            className="cursor-pointer text-xs font-medium px-3 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500/10 transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 flex-1 md:w-[90px] md:flex-none text-center"
-          >
-            {pipelineLoadingId === business.id ? (
-              <span className="flex items-center justify-center gap-1.5">
-                <div className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-red-500 border-t-transparent" />
-                Removing…
-              </span>
-            ) : (
-              "Remove"
-            )}
+          <button type="button" onClick={() => onRemoveFromPipeline(business.id)} disabled={pipelineLoadingId === business.id} className="cursor-pointer whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500/10 transition-colors duration-150 disabled:opacity-50 flex-1 md:w-[76px] md:flex-none text-center">
+            {pipelineLoadingId === business.id ? <span className="inline-flex items-center justify-center gap-1"><div className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-red-500 border-t-transparent" />…</span> : "Remove"}
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={() => onAddToPipeline(business.id)}
-            disabled={pipelineLoadingId === business.id}
-            className="cursor-pointer text-xs font-medium px-3 py-2 rounded-lg border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 flex-1 md:w-[90px] md:flex-none text-center"
-          >
-            {pipelineLoadingId === business.id ? (
-              <span className="flex items-center justify-center gap-1.5">
-                <div className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-[var(--accent)] border-t-transparent" />
-                Adding…
-              </span>
-            ) : (
-              "+ Add"
-            )}
+          <button type="button" onClick={() => onAddToPipeline(business.id)} disabled={pipelineLoadingId === business.id} className="cursor-pointer whitespace-nowrap text-xs font-medium py-2 rounded-lg border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-colors duration-150 disabled:opacity-50 flex-1 md:w-[76px] md:flex-none text-center">
+            {pipelineLoadingId === business.id ? <span className="inline-flex items-center justify-center gap-1"><div className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-[var(--accent)] border-t-transparent" />…</span> : "+ Add"}
           </button>
         )}
       </div>

@@ -48,10 +48,10 @@ Pipeline            ✅
 Pitches             ✅
 Settings            ✅
 USAGE
-  Credits 100/100 · Resets in 30 days · [Buy More — disabled, no Stripe]
+  Credits 18/20 · Resets monthly (paid plans) · [Buy More → Dodo Payments checkout]
 [avatar · Free Plan]
 ```
-7 nav items (no Coming Soon section). Credits widget always visible (UI wired, Stripe deferred).
+7 nav items (no Coming Soon section). Credits widget always visible. Billing live via **Dodo Payments** (not Stripe).
 
 ### 3.2 Pages (V1 — All Built ✅)
 | Page | Route | Status | Features |
@@ -241,10 +241,19 @@ Pitch pulls real data: latest audit (performance, LCP, FCP), latest design analy
 ## 9. V1 vs V2
 
 ### ✅ V1 (Built)
-Discover + Classify · Performance Audit (6 scores) · Design Analysis (Gemini static vision) · Leads page · Lead Detail (all tabs except UX/Competitors; pipeline dropdown; reactive Mobile/Desktop scores; expanded Core Web Vitals; Copy Pitch; Share Link; Run Audit/Design buttons; auto-pipeline; toast system) · Dashboard (with stubs) · Pitch Generation (lead-type branched, error display) · Pipeline · PDF Report · Share Link (clipboard URL) · Credits UI (no Stripe) · Settings · Quick Site Audit (step progress checklist, sessionStorage persistence, plain-English summaries, Save as Lead) · Saved Searches.
+Discover + Classify · Performance Audit (6 scores) · Design Analysis (Gemini static vision) · Leads page · Lead Detail (all tabs except UX/Competitors; pipeline dropdown; reactive Mobile/Desktop scores; expanded Core Web Vitals; Copy Pitch; Share Link; Run Audit/Design buttons; auto-pipeline; toast system) · Dashboard · Pitch Generation (lead-type branched, workflow/channel params) · Pipeline · PDF Report · Share Link · Credits enforcement · Settings · Quick Site Audit · Saved Searches · **Dodo Payments billing (live — Starter $19/mo, Agency $49/mo)**.
 
-### V2 (Stub in UI, Build Later)
-**UX Analysis** (Playwright + queue + worker + Storage) · Radar / decay monitoring · Competitor Intelligence · Mockup Generation · Pitch Deck + Loom export · Campaigns · Templates · Reports · Integrations · Stripe billing + credit enforcement · Email sending in-product · Vertical Intelligence Packs · Share Link.
+**Pricing tiers (live):**
+| Plan | Price | Analyses/mo | Searches/mo |
+|---|---|---|---|
+| Free | $0 | 20 lifetime credits | 1 lifetime |
+| Starter | $19/mo ($180/yr) | 50 | 3 |
+| Agency | $49/mo ($468/yr) | 200 | 10 |
+
+Free tier = 20 audit credits at signup (covers ~10 full lead analyses). No time limit, no card required. Monthly reset on paid plans only. Team seats **not yet built** (removed from pricing page).
+
+### V2 (Build Later)
+**UX Analysis** (Playwright + queue + worker + Storage) · Radar / decay monitoring · Competitor Intelligence · Mockup Generation · Pitch Deck + Loom export · Campaigns · Templates · Reports · Integrations · Team seats / multi-user · Email sending in-product · Vertical Intelligence Packs.
 
 > v2 sequencing note: UX Analysis is built first among v2 features because it establishes the worker server + queue + Storage that Radar and self-hosted screenshots also use.
 
@@ -256,7 +265,7 @@ Font: **Geist** (UI, weights 300/400/500/600), **Switzer** (hero headlines only,
 Score rings: SVG circular progress, colour-coded (score-good/score-mid/score-high CSS vars).
 Impact pills: High=red, Medium=amber, Low=green.
 Layout: fixed sidebar (w-60) + main (flex-1, max-w-7xl centered). v2 nav items removed entirely.
-Credits widget always visible, "Buy More" disabled (no Stripe).
+Credits widget always visible. "Buy More" links to Dodo Payments checkout (live). Free tier: 20 lifetime credits. Paid plans reset monthly.
 Screenshot thumbnails 16:9, rounded (`rounded-xl`), bordered.
 
 ---
