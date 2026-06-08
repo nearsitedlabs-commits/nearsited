@@ -415,61 +415,53 @@ export default function DashboardClient({
                       className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-[var(--bg-elevated)] p-3 text-left transition-colors duration-150 hover:border-[var(--border)] hover:bg-[var(--bg-surface)]"
                     >
                       <ScoreRing score={ringScore} size={36} variant={isAnalysed ? "opportunity" : "estimate"} />
+
+                      {/* Name + meta — full width, badge in subtitle row so name isn't crushed */}
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <p dir="auto" className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--text-primary)]">
-                            {lead.name}
-                          </p>
+                        <p dir="auto" className="truncate text-sm font-medium text-[var(--text-primary)]">
+                          {lead.name}
+                        </p>
+                        <div className="mt-0.5 flex items-center gap-1.5 min-w-0">
                           {(() => {
                             const badge = OPPORTUNITY_TYPE_BADGES[lead.website_status];
                             if (!badge) return null;
                             return (
-                              <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase ${badge.style}`}>
+                              <span className={`shrink-0 inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase ${badge.style}`}>
                                 {badge.label}
                               </span>
                             );
                           })()}
+                          <span className="truncate text-xs text-[var(--text-tertiary)]">
+                            {lead.city} · {timeAgo(lead.discovered_at, now)}
+                          </span>
                         </div>
-                        <p className="truncate text-xs text-[var(--text-tertiary)]">
-                          {lead.business_type} · {lead.city} · {timeAgo(lead.discovered_at, now)}
-                        </p>
                       </div>
 
-                      <div className="shrink-0 flex items-center justify-end gap-2 w-[180px]">
-                        {!isAnalysed && (
-                          <Link
-                            href={`/dashboard/leads/${lead.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="rounded-md border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-1 text-[10px] font-medium text-[var(--accent)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:bg-[var(--accent-tint)]"
-                          >
-                            Analyse
-                          </Link>
-                        )}
-                        {(() => {
-                          const oppScore = lead.opportunity_score
-                            ?? (isAnalysed
-                              ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
-                              : estimatedOpportunity({
-                                  website_status: lead.website_status,
-                                  website: lead.website,
-                                  user_ratings_total: lead.review_count,
-                                  rating: lead.rating,
-                                }));
-                          const label = opportunityLabel(oppScore);
-                          const variant = opportunityBadgeVariant(oppScore);
-                          const map: Record<string, string> = {
-                            green:  "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
-                            amber:  "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
-                            indigo: "text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
-                            red:    "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
-                          };
-                          return (
-                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${map[variant] ?? ""}`}>
-                              {label}
-                            </span>
-                          );
-                        })()}
-                      </div>
+                      {/* Opportunity level badge — shrink-0, no fixed width */}
+                      {(() => {
+                        const oppScore = lead.opportunity_score
+                          ?? (isAnalysed
+                            ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
+                            : estimatedOpportunity({
+                                website_status: lead.website_status,
+                                website: lead.website,
+                                user_ratings_total: lead.review_count,
+                                rating: lead.rating,
+                              }));
+                        const label = opportunityLabel(oppScore);
+                        const variant = opportunityBadgeVariant(oppScore);
+                        const map: Record<string, string> = {
+                          green:  "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
+                          amber:  "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
+                          indigo: "text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
+                          red:    "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
+                        };
+                        return (
+                          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium whitespace-nowrap ${map[variant] ?? ""}`}>
+                            {label}
+                          </span>
+                        );
+                      })()}
                     </motion.div>
                   );
                 })}
