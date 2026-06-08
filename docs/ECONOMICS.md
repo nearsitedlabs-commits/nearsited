@@ -74,10 +74,10 @@ One "full workflow" = 1 discover search + analyse 1 business (audit + design + p
 |---|---|
 | Revenue | $0 |
 | 20 analyses × $0.066 | −$1.32 |
-| 1 search session | −$0.52 |
-| **Net per free user** | **−$1.84** |
+| 3 search sessions × $0.52 | −$1.56 |
+| **Net per free user** | **−$2.88** |
 
-Free users are subsidised — acceptable as CAC if they convert. If they never convert, $1.84 is the cost of churn.
+Free users are subsidised — acceptable as CAC if they convert. If they never convert, $2.88 is the cost of churn.
 
 ### Starter — $19/mo
 | | |

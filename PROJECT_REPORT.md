@@ -1094,7 +1094,7 @@ Nearsited is **live with paid plans** via Dodo Payments. Free users get a lifeti
 
 | Plan | Billing | Price | Analyses | Searches |
 |------|---------|-------|----------|----------|
-| Free | Lifetime | $0 | 20 total | 1 total |
+| Free | Lifetime | $0 | 20 total | 3 total |
 | Starter | Monthly | $19/mo | 50/mo | 3/mo |
 | Starter | Annual | $180/yr ($15/mo) | 50/mo | 3/mo |
 | Agency | Monthly | $49/mo | 200/mo | 10/mo |

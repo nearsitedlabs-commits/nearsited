@@ -35,11 +35,11 @@ Nearsited finds local businesses with weak or missing websites, audits their per
 
 | Plan | Monthly | Annual | Analyses/mo | City Searches/mo |
 |---|---|---|---|---|
-| **Free** | $0 | — | 20 (lifetime, not monthly) | 1 (lifetime) |
+| **Free** | $0 | — | 20 (lifetime, not monthly) | 3 (lifetime) |
 | **Starter** | $19/mo | $180/yr ($15/mo) | 50 | 3 |
 | **Agency** | $49/mo | $468/yr ($39/mo) | 200 | 10 |
 
-**Free tier detail:** New users get 20 audit credits at signup (covers ~10 full lead analyses: audit + design each). 1 city search lifetime. No time limit — stays until credits run out. No credit card required.
+**Free tier detail:** New users get 20 audit credits at signup (covers ~10 full lead analyses: audit + design each). 3 city searches lifetime. No time limit — stays until credits run out. No credit card required.
 
 **What counts as 1 analysis credit:** Running either a performance audit OR a design analysis on one business = 1 credit. A full analysis (both audit + design) = 2 credits.
 
@@ -55,6 +55,8 @@ Nearsited finds local businesses with weak or missing websites, audits their per
 - Discount / coupon codes
 - Referral system
 
+**Pricing note (internal):** $19/mo may filter in the wrong customers — low expectations, personal-expense mindset, high churn. Competitors at $49–99 price to filter for serious agencies. Before locking pricing, pressure-test with 5 real outreach conversations: ask what they'd expect to pay and whether $19 makes them more or less serious. You may find the lower price actively hurts conversion among the ICP you actually want.
+
 ---
 
 ## Target Customer
@@ -65,7 +67,7 @@ Nearsited finds local businesses with weak or missing websites, audits their per
 **Best fit markets (English-speaking, purchasing power):**
 - USA, UK, Australia — freelancers and small agencies, $19/mo is low friction
 - Singapore, Dubai — agencies with budgets, $49/mo Agency plan makes sense
-- NOT recommended for first outreach: Philippines, Pakistan, Bangladesh, Bangladesh — lower purchasing power makes $19/mo a harder sell; high churn risk
+- NOT recommended for first outreach: Philippines, Pakistan, Bangladesh — lower purchasing power makes $19/mo a harder sell; high churn risk
 
 ---
 

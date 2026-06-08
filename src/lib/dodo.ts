@@ -27,6 +27,6 @@ export const DODO_PRODUCTS: Record<string, { tier: "starter" | "agency"; limit: 
 };
 
 export const FREE_AUDIT_LIMIT = 20; // 10 full workflows per month (audit + design each)
-export const FREE_SEARCH_LIMIT = 1;
+export const FREE_SEARCH_LIMIT = 3;
 
 export type PlanTier = "free" | "starter" | "agency";
