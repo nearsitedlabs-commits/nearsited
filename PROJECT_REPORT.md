@@ -655,7 +655,7 @@ The following features are planned but not yet implemented (stubs exist for some
 | **Templates** | Pitch template management | Stub page exists |
 | **Reports** | Advanced reporting dashboard | Planned |
 | **Integrations** | CRM integration (HubSpot, etc.) | Planned |
-| **Billing Enforcement** | Credit gating based on plan | Partially implemented |
+| **Billing Enforcement** | Credit gating based on plan | ✅ Implemented — all three analysis routes gate on `checkCredit()`/`checkSearch()` |
 | **In-product Email Sending** | Send emails directly from Nearsited | Planned |
 
 ---
@@ -750,8 +750,8 @@ All API routes use Zod schemas for input validation:
 | Issue | Severity | Description | Status |
 |-------|----------|-------------|--------|
 | Missing `SCREENSHOT_API_KEY` from env validation | Critical | ScreenshotOne API key not checked at startup | ✅ Fixed |
-| Admin client overuse bypasses RLS | Critical | Excessive use of service-role client where session client would work | — |
-| No cookie consent mechanism | Critical | GDPR compliance risk | — |
+| Admin client overuse bypasses RLS | Critical | Excessive use of service-role client where session client would work | ✅ Fixed — 4 locations now use `scopedAdmin(user.id)` for reads |
+| No cookie consent mechanism | Critical | GDPR compliance risk | ✅ Fixed |
 | No rate limiting on `/api/checkout` | High | Billing abuse vector | ✅ Fixed |
 | Share link token expiration not enforced | High | Expired share links still accessible | ✅ Fixed |
 | Weak CSP with `'unsafe-inline'` `'unsafe-eval'` | Medium | Relaxed for Next.js but reduces XSS protection | — |
@@ -1208,7 +1208,7 @@ The pre-launch audit ([`plans/pre-launch-audit-report.md`](plans/pre-launch-audi
 | C-13 | Time claims contradict (2min vs 3min vs 3sec) | Marketing | ✅ Fixed |
 | C-14 | Stale RAF closure in ScoreRing | Animation | ✅ Fixed |
 
-### High (28 → 4 unresolved)
+### High (28 → 0 unresolved ✅)
 
 Key high-severity issues include:
 - ~~Missing rate limiting on `/api/checkout`~~ ✅ Fixed
@@ -1323,15 +1323,15 @@ Resolved low items:
 - ~~Missing `aria-expanded` on accordion triggers~~ → ✅ Added to ObjectionsSection + LandingFAQ accordion trigger buttons
 - ~~Admin cache TTL too long (60s) — staleness risk in serverless (L-3)~~ → ✅ Lowered to 30s; documented that serverless cold starts always re-fetch
 - ~~Oversized API route files (L-1)~~ → ✅ Refactored [`analyze-design/route.ts`](src/app/api/analyze-design/route.ts) (741→362), [`pitch/route.ts`](src/app/api/pitch/route.ts) (626→490), [`discover/route.ts`](src/app/api/discover/route.ts) (582→378). Extracted shared logic into [`stream-utils.ts`](src/lib/api/stream-utils.ts), [`retry.ts`](src/lib/api/retry.ts), [`sanitize.ts`](src/lib/api/sanitize.ts), [`gemini.ts`](src/lib/gemini.ts), [`screenshot.ts`](src/lib/screenshot.ts), [`design-analysis.ts`](src/lib/design-analysis.ts), [`places-types.ts`](src/lib/data/places-types.ts)
-- ~~No video demo (L-11)~~ → ✅ Created [`VideoDemoSection.tsx`](src/components/landing/VideoDemoSection.tsx) — mock video player with play button, gradient placeholder, CTA. Wired into [`LandingPageClient.tsx`](src/components/landing/LandingPageClient.tsx)
-- ~~No competitor comparison (L-12)~~ → ✅ Created [`CompetitorComparisonSection.tsx`](src/components/landing/CompetitorComparisonSection.tsx) — 3-column comparison grid (Manual vs Nearsited). Wired into [`LandingPageClient.tsx`](src/components/landing/LandingPageClient.tsx)
-- ~~No blog/resources (L-13)~~ → ✅ Created [`BlogResourcesSection.tsx`](src/components/landing/BlogResourcesSection.tsx) — 3 blog post placeholder cards. Wired into [`LandingPageClient.tsx`](src/components/landing/LandingPageClient.tsx)
+- No video demo (L-11) → 🗑 Component deleted — placeholder with no real content is worse than nothing for the ICP
+- No competitor comparison (L-12) → 🗑 Component deleted — placeholder comparison with no real data removed
+- No blog/resources (L-13) → 🗑 Component deleted — 3 placeholder cards with dead links removed; a real teardown post can be written when ready
 - ~~Missing `lang` attribute on HTML~~ → ✅ Already present (`lang="en"` in [`src/app/layout.tsx`](src/app/layout.tsx:47))
 - ~~No `rel="noopener"` on external links~~ → ✅ All `target="_blank"` links already carry `rel="noreferrer"` (which implies noopener)
 - ~~No CI pipeline (L-2)~~ → ✅ Added [`/.github/workflows/ci.yml`](.github/workflows/ci.yml) — type-check + lint + test on push/PR to master
 - ~~No PWA manifest~~ → ✅ Added [`/public/manifest.json`](public/manifest.json) with brand colors, linked via `metadata.manifest` in root layout
 
-22/23 resolved. 1 remaining: No full service worker caching strategy — deferred to v2 (no-op blocker already in place for webview safety).
+19/23 resolved. 4 deferred: No full service worker caching strategy (v2); video demo, competitor comparison, blog/resources sections (placeholder components removed — real content needed before wiring in).
 
 ---
 
