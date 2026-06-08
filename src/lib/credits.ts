@@ -75,18 +75,19 @@ export async function deductCredit(userId: string): Promise<void> {
     const newValue = current + 1;
 
     // Optimistic update: only succeeds if audits_used hasn't changed since we read it
-    const { error } = await subTable()
+    // Must check data.length > 0 — Supabase returns { data: [], error: null } for 0 rows matched
+    const { data: updated, error } = await subTable()
       .update({ audits_used: newValue })
       .eq("user_id", userId)
       .eq("audits_used", current)
       .select("audits_used");
 
-    if (!error) {
+    if (!error && Array.isArray(updated) && updated.length > 0) {
       console.log(`[CREDITS] deducted user=...${userId.slice(-4)} now=${newValue}`);
       return;
     }
 
-    // If the update matched 0 rows (race), retry
+    // 0 rows matched (concurrent modification) → retry
     console.warn(`[CREDITS] retry ${attempt + 1}/${MAX_RETRIES} for user=...${userId.slice(-4)}: concurrent modification detected`);
   }
 

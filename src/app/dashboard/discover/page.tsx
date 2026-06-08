@@ -195,6 +195,7 @@ export default function DiscoverPage() {
       if (auditErr) throw new Error(auditErr);
       if (designErr) { console.warn("[DISCOVER] Design analysis failed (non-fatal):", designErr); showToast("Performance audit complete, but design analysis unavailable. Try again later."); setAnalysed((prev) => new Set(prev).add(id)); }
       setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "done", label: "Analysis complete", phase: "done" }); return n; });
+      window.dispatchEvent(new CustomEvent("credits:updated"));
     } catch (e) { if (e instanceof DOMException && e.name === "AbortError") { abortRef.current.delete(id); return; } const m = e instanceof Error ? e.message : "Analysis failed"; setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "error", label: m, phase: "error", error: m }); return n; }); }
     finally { abortRef.current.delete(id); }
   }, [showToast]);

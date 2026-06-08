@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Toast } from "@/components/ui/Toast";
 
@@ -14,7 +14,7 @@ export default function CreditsWidget() {
   const hasShownToast = useRef(false);
 
   // Fetch subscription data client-side — avoids blocking the dashboard layout
-  useEffect(() => {
+  const refresh = useCallback(() => {
     fetch("/api/check-subscription")
       .then((res) => res.json())
       .then((data) => {
@@ -22,10 +22,18 @@ export default function CreditsWidget() {
           setSub({ tier: data.tier, audits_used: data.audits_used ?? 0, audits_limit: data.audits_limit ?? 20 });
         }
       })
-      .catch(() => {
-        // Silent fail — widget gracefully degrades
-      });
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    refresh();
+    window.addEventListener("credits:updated", refresh);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.removeEventListener("credits:updated", refresh);
+      window.removeEventListener("focus", refresh);
+    };
+  }, [refresh]);
 
   const tier = sub?.tier ?? "free";
   const used = sub?.audits_used ?? 0;

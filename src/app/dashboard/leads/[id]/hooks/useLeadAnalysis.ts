@@ -233,6 +233,7 @@ export function useLeadAnalysis({
         console.warn("[LEAD] Pitch auto-generation failed:", pitchErr);
       });
 
+      window.dispatchEvent(new CustomEvent("credits:updated"));
       router.refresh();
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
