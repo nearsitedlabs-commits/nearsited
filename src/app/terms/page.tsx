@@ -11,7 +11,7 @@ export default function TermsPage() {
         <h1 className="text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.1] tracking-[-0.02em] text-[var(--text-primary)]">
           Terms of Service
         </h1>
-        <p className="mt-2 text-sm text-[var(--text-tertiary)]">Last updated: June 2026</p>
+        <p className="mt-2 text-sm text-[var(--text-tertiary)]">Last updated: June 8, 2026</p>
 
         <div className="mt-10 space-y-8 text-sm leading-7 text-[var(--text-secondary)]">
           <section>
@@ -29,18 +29,18 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-medium text-[var(--text-primary)]">3. Beta Access & Future Billing</h2>
+            <h2 className="text-lg font-medium text-[var(--text-primary)]">3. Subscriptions & Billing</h2>
             <p className="mt-3">
-              <strong className="text-[var(--text-primary)]">Free beta:</strong> Nearsited is currently in free beta. All features are available at no charge during this period. No payment information is required to create an account or use the service.
+              <strong className="text-[var(--text-primary)]">Free tier:</strong> All accounts start on a free tier with a lifetime allowance of credits. No payment information is required to create an account or use the service within the free tier limits.
             </p>
             <p className="mt-2">
-              <strong className="text-[var(--text-primary)]">Paid plans:</strong> Paid subscription plans are in development. When paid plans launch, we will notify registered users by email with at least 30 days notice before any charges apply. You will never be charged without explicit opt-in.
+              <strong className="text-[var(--text-primary)]">Paid plans:</strong> Starter ($19/month) and Agency ($49/month) plans are available via Dodo Payments. You will never be charged without explicitly subscribing to a paid plan. Subscription charges are billed in advance on a monthly or annual basis.
             </p>
             <p className="mt-2">
-              <strong className="text-[var(--text-primary)]">Planned pricing:</strong> Indicative pricing of $19/month (Starter) and $49/month (Agency) is shown on the pricing page for planning purposes. Final pricing may change before billing launches. Early beta users will receive preferential pricing.
+              <strong className="text-[var(--text-primary)]">Cancellation:</strong> You may cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. We do not offer refunds for partial billing periods.
             </p>
             <p className="mt-2">
-              <strong className="text-[var(--text-primary)]">Price lock:</strong> Once billing launches, your first-year price will be locked. After 12 months, we may change prices with 30 days notice.
+              <strong className="text-[var(--text-primary)]">Price changes:</strong> We may change subscription prices with 30 days notice by email. Continued use after a price change takes effect constitutes acceptance of the new price.
             </p>
           </section>
 

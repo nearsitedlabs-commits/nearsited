@@ -18,15 +18,15 @@ You are responsible for maintaining the confidentiality of your account credenti
 
 ---
 
-## 3. Beta Access & Future Billing
+## 3. Subscriptions & Billing
 
-**Free beta:** Nearsited is currently in free beta. All features are available at no charge during this period. No payment information is required to create an account or use the service.
+**Free tier:** All accounts start on a free tier with a lifetime allowance of credits. No payment information is required to create an account or use the service within the free tier limits.
 
-**Paid plans:** Paid subscription plans are in development. When paid plans launch, we will notify registered users by email with at least 30 days notice before any charges apply. You will never be charged without explicit opt-in.
+**Paid plans:** Starter ($19/month) and Agency ($49/month) plans are available via Dodo Payments. You will never be charged without explicitly subscribing to a paid plan. Subscription charges are billed in advance on a monthly or annual basis.
 
-**Planned pricing:** Indicative pricing of $19/month (Starter) and $49/month (Agency) is shown on the pricing page for planning purposes. Final pricing may change before billing launches. Early beta users will receive preferential pricing.
+**Cancellation:** You may cancel your subscription at any time. Cancellation takes effect at the end of the current billing period. We do not offer refunds for partial billing periods.
 
-**Price lock:** Once billing launches, your first-year price will be locked. After 12 months, we may change prices with 30 days notice.
+**Price changes:** We may change subscription prices with 30 days notice by email. Continued use after a price change takes effect constitutes acceptance of the new price.
 
 ---
 
