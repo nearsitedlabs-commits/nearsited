@@ -16,6 +16,7 @@ import {
   cleanGeminiJson,
 } from "@/lib/pitch/prompts";
 import { GEMINI_URL } from "@/lib/gemini";
+import { retryWithBackoff } from "@/lib/api/retry";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const GEMINI_TIMEOUT_MS = 30_000;
@@ -342,23 +343,21 @@ Urgency: ${urgencyInstruction(urgency)}${focus && focus !== "all" ? `\nFocus par
     let parsedPitch: ParsedPitch;
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
-
-      const geminiResponse = await fetch(GEMINI_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": geminiApiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7 },
+      const geminiResponse = await retryWithBackoff(
+        (signal) => fetch(GEMINI_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": geminiApiKey,
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7 },
+          }),
+          signal,
         }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
+        { timeoutMs: GEMINI_TIMEOUT_MS },
+      );
 
       console.log("[PITCH] Gemini HTTP status:", geminiResponse.status);
 

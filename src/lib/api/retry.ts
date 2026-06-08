@@ -35,7 +35,7 @@ export async function retryWithBackoff(
       const response = await fetchFn(controller.signal);
       clearTimeout(timeoutId);
 
-      if (response.status === 503) {
+      if (response.status === 429 || response.status === 503) {
         if (attempt < maxAttempts) {
           const delay = delays[attempt - 1];
           console.log(

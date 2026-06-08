@@ -135,7 +135,9 @@ export async function POST(request: NextRequest) {
           writeStep(controller, encoder, "mobile-screenshot", "Taking mobile screenshot…");
           const mobile: StrategyResult = await runStrategy("mobile", trimmedWebsite, screenshotKey, geminiKey);
 
-          // Step 2: Desktop screenshot + analysis (sequential — reduces concurrent Gemini load)
+          // Step 2: Brief pause so desktop Gemini call doesn't hit burst rate limits
+          await new Promise((r) => setTimeout(r, 2000));
+
           writeStep(controller, encoder, "desktop-screenshot", "Taking desktop screenshot…");
           const desktop: StrategyResult = await runStrategy("desktop", trimmedWebsite, screenshotKey, geminiKey);
 
