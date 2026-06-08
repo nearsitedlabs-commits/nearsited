@@ -34,7 +34,13 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     searches_limit: FREE_SEARCH_LIMIT,
     credits_reset_at: nextReset,
   };
-  await subTable().upsert({ user_id: userId, ...row }, { onConflict: "user_id", ignoreDuplicates: true });
+  const { error: upsertError } = await subTable().upsert({ user_id: userId, ...row }, { onConflict: "user_id", ignoreDuplicates: true });
+  if (upsertError) {
+    console.error(`[CREDITS] getSubscription upsert failed for user=...${userId.slice(-4)}`, {
+      code: upsertError.code,
+      message: upsertError.message,
+    });
+  }
   return row;
 }
 
@@ -63,35 +69,32 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
 }
 
 /**
- * Increments audits_used by 1 atomically using optimistic concurrency control.
- * Retries up to 3 times if a concurrent request modifies the row between read and write.
- * Called after a successful non-cached audit.
+ * Increments audits_used by 1. Ensures the subscription row exists first, then
+ * does a simple read-then-update without optimistic concurrency (which silently
+ * fails when the row doesn't exist yet and returns 0 rows matched).
  */
 export async function deductCredit(userId: string): Promise<void> {
-  const MAX_RETRIES = 3;
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    const { data } = await subTable().select("audits_used").eq("user_id", userId).maybeSingle();
-    const current = (data as { audits_used: number } | null)?.audits_used ?? 0;
-    const newValue = current + 1;
+  await getSubscription(userId); // ensure row exists before updating
 
-    // Optimistic update: only succeeds if audits_used hasn't changed since we read it
-    // Must check data.length > 0 — Supabase returns { data: [], error: null } for 0 rows matched
-    const { data: updated, error } = await subTable()
-      .update({ audits_used: newValue })
-      .eq("user_id", userId)
-      .eq("audits_used", current)
-      .select("audits_used");
+  const { data } = await subTable()
+    .select("audits_used")
+    .eq("user_id", userId)
+    .maybeSingle();
 
-    if (!error && Array.isArray(updated) && updated.length > 0) {
-      console.log(`[CREDITS] deducted user=...${userId.slice(-4)} now=${newValue}`);
-      return;
-    }
+  const current = (data as { audits_used: number } | null)?.audits_used ?? 0;
 
-    // 0 rows matched (concurrent modification) → retry
-    console.warn(`[CREDITS] retry ${attempt + 1}/${MAX_RETRIES} for user=...${userId.slice(-4)}: concurrent modification detected`);
+  const { error } = await subTable()
+    .update({ audits_used: current + 1 })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error(`[CREDITS] deductCredit failed for user=...${userId.slice(-4)}`, {
+      code: error.code,
+      message: error.message,
+    });
+  } else {
+    console.log(`[CREDITS] deducted user=...${userId.slice(-4)} now=${current + 1}`);
   }
-
-  console.error(`[CREDITS] failed to deduct credit for user=...${userId.slice(-4)} after ${MAX_RETRIES} attempts`);
 }
 
 /**
