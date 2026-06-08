@@ -24,12 +24,12 @@ Nearsited runs across **two runtime environments** because the workloads have fu
 │  Railway / Render / Fly.io — always-on, Chrome installed      │
 │  • Playwright interaction recording (30–120s per site)        │
 │  • Radar territory scans (scheduled)                          │
-│  • Self-hosted screenshots (replaces ScreenshotOne at scale)  │
+│  • Self-hosted screenshots (replaces ScreenshotCore at scale) │
 │  • Writes frames to Supabase Storage, rows via admin client   │
 └─────────────────────────────────────────────────────────────┘
 
          Both talk to:  Supabase (Postgres + Auth + Storage)
-         External:      Google Places/PageSpeed · Gemini · ScreenshotOne
+         External:      Google Places/PageSpeed · Gemini · ScreenshotCore
 ```
 
 **Why two runtimes:** Vercel serverless functions cap at ~60s, have no persistent Chrome, and limited RAM — fine for API calls to PageSpeed/Gemini, impossible for a 90-second Playwright session that needs ~500MB of headless Chrome. The worker server exists solely for long-running, browser-heavy, or scheduled work. **V1 ships entirely on Runtime A.** Runtime B appears only when building UX analysis / Radar (v2).
@@ -126,7 +126,7 @@ worker/                                 # Runtime B (v2) — separate deploy
 |---|---|---|---|---|---|
 | `/api/discover` | POST | A | **NDJSON stream** | 3 parallel queries + enrichment, batched upserts (50/batch) | ✅ Live |
 | `/api/audit` | POST | A | **NDJSON stream** | PageSpeed audit with progress steps, 7d cache | ✅ Live |
-| `/api/analyze-design` | POST | A | **NDJSON stream** | ScreenshotOne + Gemini, progress steps, 7d cache | ✅ Live |
+| `/api/analyze-design` | POST | A | **NDJSON stream** | ScreenshotCore + Gemini 2.5 Flash, progress steps, 7d cache | ✅ Live |
 | `/api/pitch` | POST | A | sync | Pitch generation (lead-type branched, cites real data) | ✅ Rebuilt |
 | `/api/pipeline` | POST/PATCH | A | sync | Add/update pipeline | ✅ Live |
 | `/api/export/pdf` | GET | A | sync | PDF audit report download | ✅ Live |
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
 
 **`/api/audit`** — PageSpeed Insights for mobile + desktop concurrently. Requests both `category=performance` and `category=seo`. **Streams progress via NDJSON**: `fetching` → `mobile` → `desktop` → `complete` → `result` → `done`. **7-day audit cache**: checks `audits` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately (regular JSON); cache miss runs live PageSpeed. `force: true` bypasses cache. Extracts metrics via `extractMetrics()`. Inserts 2 rows via admin client. Updates businesses `performance_score`, `audited_at`, `flagged_for_outreach`. **30s** AbortController timeout (reduced from 60s). Retries once on 500/429. Logged with `[AUDIT]`.
 
-**`/api/analyze-design`** — ScreenshotOne full-page screenshot → Gemini 3.5 Flash vision critique. **Streams progress via NDJSON**: `mobile-screenshot` → `mobile-analysis` → `desktop-analysis` → `persisting` → `complete` → `result` → `done`. **7-day design cache**: checks `design_analyses` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately. `force: true` bypasses cache. Returns structured JSON: `{ design_score, criteria_scores: {...}, issues: [{title,detail,point_deduction,impact}] }`. Mobile + desktop run concurrently. Inserts via admin client, updates businesses. 30s timeout per external call. Logged with `[DESIGN]`.
+**`/api/analyze-design`** — ScreenshotCore full-page screenshot → Gemini 2.5 Flash vision critique. **Streams progress via NDJSON**: `mobile-screenshot` → `mobile-analysis` → `desktop-analysis` → `persisting` → `complete` → `result` → `done`. **7-day design cache**: checks `design_analyses` table for fresh mobile+desktop rows; cache hit returns `{cached:true}` immediately. `force: true` bypasses cache. Returns structured JSON: `{ design_score, criteria_scores: {...}, issues: [{title,detail,point_deduction,impact}] }`. Mobile + desktop run sequentially (2s pause between to respect Gemini 15 RPM free tier). Inserts via admin client, updates businesses. ScreenshotCore 15s timeout, Gemini 30s timeout. **Credits deducted only when `businessId` is provided (persisted mode)** — ephemeral quick-audit runs are credit-free. Logged with `[DESIGN]`.
 
 **`/api/pitch`** — Fetches business + latest audit + latest design analysis → builds 6 lead-type angles → Gemini generates subject+body → saves to `pitches` table via admin client. Supports tone/length/focus. Logged with `[PITCH]`.
 
@@ -216,10 +216,11 @@ UI gets completion via **Supabase Realtime** subscription on the `ux_analyses` t
 
 **PageSpeed returns performance ONLY by default.** For SEO add `&category=performance&category=seo`. ✅ Both categories are now requested in [`src/app/api/audit/route.ts`](nearsited/src/app/api/audit/route.ts:43-44). Run mobile + desktop concurrently (`Promise.allSettled`), **30s** timeout each (reduced from 60s/90s).
 
-### 6.2 Gemini — `gemini-3.5-flash` (verified June 2026)
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`
+### 6.2 Gemini — `gemini-2.5-flash` (verified June 2026)
+- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 - Auth: **header** `x-goog-api-key: <GEMINI_API_KEY>` (NOT query param). Key from Google AI Studio.
-- Define once: `const GEMINI_MODEL = 'gemini-3.5-flash'`.
+- Define once in [`src/lib/gemini.ts`](src/lib/gemini.ts): `const GEMINI_MODEL = 'gemini-2.5-flash'`. All routes import `GEMINI_URL` from there — never inline the string.
+- Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **recommended** (5× cheaper than 3.5 Flash); `gemini-3.5-flash` = alive but avoid.
 - Multimodal request:
 ```ts
 body: JSON.stringify({
@@ -230,17 +231,15 @@ body: JSON.stringify({
 })
 ```
 - Always: prompt for JSON → strip ```json fences → JSON.parse in try/catch → log raw text on failure.
-- **Pricing (real):** $1.50/M input, $9.00/M output, $0.15/M cached.
-  - Static design (1 image ~1k tokens + prompt + ~800 out) ≈ **₹0.60/strategy**, ~₹1.20 mobile+desktop.
-  - UX frame sequence (8 frames ~8k tokens + prompt + ~1k out) ≈ **₹1.50/strategy**.
-  - At scale, route design/UX through cheaper Gemini Flash-Lite ($0.25/$1.50) if cost pressures (see §11).
+- **Pricing:** $0.30/M input, $2.50/M output. Free tier: 1,500 req/day, 15 RPM, 1M TPM.
+  - Static design (1 image ~1k tokens + prompt + ~800 out) ≈ **₹0.18/strategy**, ~₹0.36 mobile+desktop.
+  - UX frame sequence (8 frames ~8k tokens + prompt + ~1k out) ≈ **₹0.45/strategy**.
 
-### 6.3 ScreenshotOne (v1 static screenshots)
-- `process.env.SCREENSHOT_API_KEY`. Full-page. Mobile ~390px / desktop ~1440px.
+### 6.3 ScreenshotCore (v1 static screenshots)
+- `process.env.SCREENSHOT_API_KEY`. Full-page. Mobile 390px / desktop 1440px. **15s** AbortController timeout.
+- Params: `url`, `access_key`, `viewport_width/height`, `format=png`, `block_ads=true`, `block_cookie_banners=true`.
 - Response → arraybuffer → base64 for Gemini.
-- `ignore_host_errors=true` to capture bot-blocking sites; log `returned_status_code` if non-2xx.
-- **Charged only for successful renders.** Free 200/mo → $17/2,000 → $79/10,000.
-- Behind a `takeScreenshot()` abstraction in `analyze-design/route.ts` so the self-hosted Playwright swap (§10.4) touches one function.
+- Behind a `takeScreenshot()` abstraction in [`src/lib/screenshot.ts`](src/lib/screenshot.ts) so the self-hosted Playwright swap (§10.4) touches one function.
 
 ### 6.4 Playwright (v2 — Runtime B only)
 - Headless Chromium on the worker server. ~500MB RAM/instance, 30–120s/session.
@@ -439,7 +438,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=          # NEVER NEXT_PUBLIC_
 GOOGLE_PLACES_API_KEY=              # Places + Geocoding + PageSpeed
 GEMINI_API_KEY=                     # from Google AI Studio
-SCREENSHOT_API_KEY=                 # ScreenshotOne
+SCREENSHOT_API_KEY=                 # ScreenshotCore
 # v2:
 QUEUE_API_KEY=                      # Inngest/Trigger.dev
 WORKER_URL=                         # Runtime B base URL (if direct calls needed)
@@ -459,7 +458,7 @@ GEMINI_API_KEY=
 - **Never return a fake 200.** Analysis succeeded but write failed → `{ persisted: false, errors: [...] }`. Route itself failed → 500.
 - External failures caught per-strategy (`Promise.allSettled`); one strategy failing never kills the other.
 - Retry once on transient HTTP 500/429; never on 403/400/AbortError.
-- Timeouts: PageSpeed 60s, ScreenshotOne 30s, Gemini 30s, Playwright nav 30s / total session 120s.
+- Timeouts: PageSpeed 30s, ScreenshotCore 15s, Gemini 30s, Playwright nav 30s / total session 120s.
 
 ---
 
@@ -472,7 +471,7 @@ GEMINI_API_KEY=
 | V2.2 | + Worker server (Railway/Render/Fly.io) + Playwright | UX analysis build |
 | V2.3 | + Supabase Storage `recordings` bucket | UX analysis build |
 | V2.4 | Worker also runs Radar scans | Radar feature |
-| V2.5 | Worker also serves self-hosted screenshots | ScreenshotOne cost > ~₹2,500/mo |
+| V2.5 | Worker also serves self-hosted screenshots | ScreenshotCore cost > ~₹2,500/mo |
 
 The worker server, queue, and storage are introduced **together** for UX analysis, then reused by Radar and self-hosted screenshots. No workload adds a new infrastructure *category* — they share Runtime B.
 

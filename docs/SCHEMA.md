@@ -357,9 +357,11 @@ create table public.mockups (
 ```
 
 ### 2.10 `subscriptions`
-Billing / audit-credit tracking. Provisioned on signup via [`getSubscription()`](src/lib/credits.ts:17) (free tier) and updated by the Dodo Payments webhook ([`src/app/api/webhooks/dodo/route.ts`](src/app/api/webhooks/dodo/route.ts)) when users subscribe, upgrade, or cancel. `audits_used` is decremented atomically via optimistic concurrency control (see §10). On downgrade/cancel, `audits_used` is capped to `FREE_AUDIT_LIMIT` (10) to prevent over-limit states.
+Billing / audit-credit tracking. Provisioned on signup via [`getSubscription()`](src/lib/credits.ts:17) (free tier) and updated by the Dodo Payments webhook ([`src/app/api/webhooks/dodo/route.ts`](src/app/api/webhooks/dodo/route.ts)) when users subscribe, upgrade, or cancel. On downgrade/cancel, `audits_used` is capped to `FREE_AUDIT_LIMIT` to prevent over-limit states.
 
-`tier`: `free | starter | agency`.
+**Credit deduction rules (June 2026):** `deductCredit` fires only when `businessId` is present (persisted mode). Ephemeral quick-audit runs (`/dashboard/audit`, no businessId) are credit-free. `deductSearch` uses a simple user_id-only UPDATE — no optimistic concurrency lock (removed after NULL-column silent-failure bug).
+
+`tier`: `free | starter | agency`. Free limits: `FREE_AUDIT_LIMIT = 20`, `FREE_SEARCH_LIMIT = 3` (defined in `src/lib/dodo.ts`).
 ```sql
 create table public.subscriptions (
   id                     uuid primary key default extensions.uuid_generate_v4(),
@@ -367,8 +369,10 @@ create table public.subscriptions (
   dodo_customer_id       text,            -- Dodo Payments customer ID
   dodo_subscription_id   text,            -- Dodo Payments subscription ID
   tier                   text,            -- free | starter | agency
-  audits_used            integer default 0,   -- atomic optimistic-lock counter (§10)
-  audits_limit           integer default 10,  -- FREE_AUDIT_LIMIT = 10, starter=50, agency=200
+  audits_used            integer default 0,
+  audits_limit           integer default 20,  -- FREE_AUDIT_LIMIT = 20, starter=50, agency=200
+  searches_used          integer default 0,
+  searches_limit         integer default 3,   -- FREE_SEARCH_LIMIT = 3, starter=3, agency=10
   credits_reset_at       timestamptz,
   created_at             timestamptz default now()
 );

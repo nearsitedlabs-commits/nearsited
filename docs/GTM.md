@@ -90,4 +90,4 @@ Nearsited finds local businesses with weak or missing websites, audits their per
 ---
 
 ## Tech Stack (for technical prospects)
-Next.js, Supabase, Google PageSpeed, Gemini AI (design analysis + pitch generation), ScreenshotOne. Hosted on Vercel. Data is per-user, not shared.
+Next.js, Supabase, Google PageSpeed, Gemini AI (design analysis + pitch generation), ScreenshotCore. Hosted on Vercel. Data is per-user, not shared.

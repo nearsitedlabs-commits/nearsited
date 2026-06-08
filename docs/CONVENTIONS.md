@@ -45,7 +45,7 @@ Every route/job logs with a `[ROUTENAME]` prefix. External calls log HTTP status
 Analysis logic lives in exported functions; the route handler validates + auths + calls. This is what lets `runAudit()` / `analyzeDesign()` move from a sync route to a queue worker without a rewrite. UX analysis depends on this — its logic runs in a worker, not a route.
 
 ### Rule 7 — Timeout Every External Call
-AbortController on everything: PageSpeed **30s** (reduced from 60s), ScreenshotOne 30s, Gemini 30s, Playwright nav 30s / session 120s. Retry once on transient 500/429; never on 403/400/AbortError.
+AbortController on everything: PageSpeed **30s**, ScreenshotCore **15s**, Gemini 30s, Playwright nav 30s / session 120s. Retry once on transient 500/429; never on 403/400/AbortError.
 
 ---
 
@@ -62,9 +62,9 @@ Tables were created with names that didn't match later code (`score` vs `perform
 **Rule:** Rule 1. Schema first.
 
 ### 2.3 Stale Model Names
-Scaffolded with `gemini-1.5-flash`; by build time it was shut down — every Gemini call 404'd.
-**Rule:** never hardcode the model in business logic; `const GEMINI_MODEL = 'gemini-3.5-flash'` at the top of each call-site. Run the `/api/gemini-test` smoke test before any new Gemini integration to confirm the model ID is current.
-**Current confirmed (May 2026):** `gemini-3.5-flash`.
+Scaffolded with `gemini-1.5-flash`; by build time it was shut down — every Gemini call 404'd. Happened again when `gemini-2.0-flash` was deprecated June 2026.
+**Rule:** never hardcode the model string in any route or library. Define it once in [`src/lib/gemini.ts`](src/lib/gemini.ts) and import `GEMINI_URL` everywhere. Run the `/api/gemini-test` smoke test before any new Gemini integration to confirm the model ID is live.
+**Current confirmed (June 2026):** `gemini-2.5-flash`. Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-3.5-flash` = alive but 5× more expensive — avoid.
 
 ### 2.4 Synchronous Without Timeout
 PageSpeed with no timeout hung routes on slow/broken sites.
@@ -160,7 +160,7 @@ Append a row whenever a non-obvious decision is made.
 | 3 | `places_cache` writes via admin client, no user INSERT policy | Shared global resource — user RLS scoping would defeat the purpose | May 2026 |
 | 4 | `analyze-design` (and all analysis) inserts via admin client | Routes derive user_id from session; server `auth.uid()` is null → RLS blocks session-client writes | May 2026 |
 | 5 | Separate `GEMINI_API_KEY` from `GOOGLE_PLACES_API_KEY` | Security: one mega-key is a single point of catastrophic failure; separate keys restrict independently | May 2026 |
-| 6 | `gemini-3.5-flash` via `x-goog-api-key` header | `gemini-1.5-flash` shut down May 2026; header auth is the documented current pattern | May 2026 |
+| 6 | `gemini-2.5-flash` via `x-goog-api-key` header, defined once in `src/lib/gemini.ts` | `gemini-1.5-flash` shut down; `gemini-2.0-flash` deprecated June 2026; `gemini-3.5-flash` is 5× more expensive with no quality gain — use 2.5 Flash | June 2026 |
 | 7 | Synchronous routes for v1 (no job queue) | Zero cost to build; queue added in v2 with first async feature; thin-wrapper convention makes migration cheap | May 2026 |
 | 8 | 5-value website classification (has/no/social/platform/unknown) | Two-value (has/no) produced 100% false positives on social-only businesses; social vs platform are distinct pitch angles | May 2026 |
 | 9 | UX/Design + Trust scores from Gemini vision, not PageSpeed | PageSpeed doesn't measure design quality or trust signals — needs visual inspection | May 2026 |

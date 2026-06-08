@@ -29,26 +29,24 @@ Google gives a **$200/month free credit** — first ~6,250 Nearby Searches or ~1
 
 PageSpeed Insights API: **free** (requires billing enabled but no per-call charge).
 
-### ScreenshotOne
-$17 per 2,000 screenshots = **$0.0085/screenshot**.
+### ScreenshotCore
+Per-screenshot pricing (check current plan at screenshotcore.com).
 
-| Operation | Screenshots | Cost (USD) | Cost (INR) |
-|---|---|---|---|
-| Design analysis | 2 (mobile + desktop) | $0.017 | ₹1.4 |
+| Operation | Screenshots | Notes |
+|---|---|---|
+| Design analysis | 2 (mobile + desktop) | 390px + 1440px, PNG, full-page |
 
-Free tier: 200 screenshots/month (covers ~100 design analyses free).
-
-### Gemini 3.5 Flash
-$1.50/M input tokens, $9.00/M output tokens. Cached: $0.15/M.
+### Gemini 2.5 Flash
+$0.30/M input tokens, $2.50/M output tokens. Free tier: 1,500 req/day, 15 RPM, 1M TPM.
 
 | Operation | Est. tokens | Cost (USD) | Cost (INR) |
 |---|---|---|---|
-| Design analysis (1 strategy) | ~3k in / ~600 out | ~$0.0045 + $0.0054 = $0.010 | ₹0.84 |
-| Design analysis (both strategies) | ~6k in / ~1.2k out | ~$0.020 | ₹1.68 |
-| Pitch generation | ~2k in / ~500 out | ~$0.0075 | ₹0.63 |
-| **Full analysis (audit + design + pitch)** | | **~$0.028** | **~₹2.35** |
+| Design analysis (1 strategy) | ~3k in / ~600 out | ~$0.0009 + $0.0015 = $0.0024 | ₹0.20 |
+| Design analysis (both strategies) | ~6k in / ~1.2k out | ~$0.0048 | ₹0.40 |
+| Pitch generation | ~2k in / ~500 out | ~$0.0019 | ₹0.16 |
+| **Full analysis (audit + design + pitch)** | | **~$0.007** | **~₹0.58** |
 
-> Switch to Flash-Lite ($0.25/$1.50) for design analysis at scale → cuts Gemini cost by ~83%.
+> Free tier (1,500 req/day) covers ~750 full lead analyses/day before paid tier is needed.
 
 ---
 
@@ -121,7 +119,7 @@ At current scale (pre-revenue, <50 users), you will not exceed the free credit. 
 |---|---|
 | Vercel (Pro) | ~$20 |
 | Supabase (Pro) | ~$25 |
-| ScreenshotOne (2,000 screenshots) | ~$17 |
+| ScreenshotCore | per plan |
 | Domain + misc | ~$5 |
 | **Total fixed** | **~$67/mo** |
 
@@ -141,7 +139,7 @@ At 10 paying customers (target):
 1. **Switch design analysis to Gemini Flash-Lite** — saves ~$0.017/analysis (83% Gemini cost reduction, minimal quality drop for standard sites)
 2. **7-day audit cache** — already implemented; prevents re-running PageSpeed on revisited leads
 3. **places_cache** — already implemented; prevents re-calling Place Details for known businesses
-4. **ScreenshotOne → self-hosted Playwright** (v2) — eliminates screenshot cost entirely once worker server is running
+4. **ScreenshotCore → self-hosted Playwright** (v2) — eliminates screenshot cost entirely once worker server is running
 5. **Google $200 credit** — effectively zero Google cost until ~300 active monthly users
 
 ---
