@@ -6,9 +6,7 @@ import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/li
 import { businessWebsiteSchema } from "@/lib/validation";
 import { writeJson, writeStep } from "@/lib/api/stream-utils";
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
-import { sanitizeError } from "@/lib/api/sanitize";
-import { takeScreenshot, MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from "@/lib/screenshot";
-import { analyzeScreenshot, type StrategyResult } from "@/lib/design-analysis";
+import { runStrategy, type StrategyResult } from "@/lib/design-analysis";
 
 // ── Route ────────────────────────────────────────────────────────────────────
 
@@ -133,65 +131,13 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Step 1: Screenshot + analysis — both strategies run concurrently
-          // Send BOTH screenshot step events before Promise.allSettled so the
-          // client sees both "mobile-screenshot" and "desktop-screenshot" as
-          // ACTIVE (spinning) simultaneously
+          // Step 1: Mobile screenshot + analysis
           writeStep(controller, encoder, "mobile-screenshot", "Taking mobile screenshot…");
+          const mobile: StrategyResult = await runStrategy("mobile", trimmedWebsite, screenshotKey, geminiKey);
+
+          // Step 2: Desktop screenshot + analysis (sequential — reduces concurrent Gemini load)
           writeStep(controller, encoder, "desktop-screenshot", "Taking desktop screenshot…");
-
-          const [mobileResult, desktopResult] = await Promise.allSettled([
-            (async () => {
-              const screenshot = await takeScreenshot(trimmedWebsite, MOBILE_VIEWPORT, screenshotKey);
-              if (!screenshot.ok) {
-                return { status: "error" as const, error: sanitizeError(screenshot.error) };
-              }
-
-              const analysis = await analyzeScreenshot(screenshot.base64, geminiKey);
-              if (!analysis.ok) {
-                const err = analysis.error === "AI_SERVICE_BUSY" ? analysis.error : `Analysis failed: ${analysis.error}`;
-                return { status: "error" as const, error: err };
-              }
-
-              return {
-                status: "ok" as const,
-                design_score: analysis.data.design_score,
-                criteria_scores: analysis.data.criteria_scores,
-                issues: analysis.data.issues,
-                raw_analysis: analysis.data,
-              };
-            })(),
-            (async () => {
-              const screenshot = await takeScreenshot(trimmedWebsite, DESKTOP_VIEWPORT, screenshotKey);
-              if (!screenshot.ok) {
-                return { status: "error" as const, error: sanitizeError(screenshot.error) };
-              }
-
-              const analysis = await analyzeScreenshot(screenshot.base64, geminiKey);
-              if (!analysis.ok) {
-                const err = analysis.error === "AI_SERVICE_BUSY" ? analysis.error : `Analysis failed: ${analysis.error}`;
-                return { status: "error" as const, error: err };
-              }
-
-              return {
-                status: "ok" as const,
-                design_score: analysis.data.design_score,
-                criteria_scores: analysis.data.criteria_scores,
-                issues: analysis.data.issues,
-                raw_analysis: analysis.data,
-              };
-            })(),
-          ]);
-
-          const mobile: StrategyResult =
-            mobileResult.status === "fulfilled"
-              ? mobileResult.value
-              : { status: "error", error: mobileResult.reason instanceof Error ? mobileResult.reason.message : "Unknown error" };
-
-          const desktop: StrategyResult =
-            desktopResult.status === "fulfilled"
-              ? desktopResult.value
-              : { status: "error", error: desktopResult.reason instanceof Error ? desktopResult.reason.message : "Unknown error" };
+          const desktop: StrategyResult = await runStrategy("desktop", trimmedWebsite, screenshotKey, geminiKey);
 
           console.log("[DESIGN] Mobile result:", mobile.status, mobile.design_score ?? "");
           console.log("[DESIGN] Desktop result:", desktop.status, desktop.design_score ?? "");

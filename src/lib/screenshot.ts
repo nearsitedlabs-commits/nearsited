@@ -6,7 +6,7 @@
 
 export const SCREENSHOTCORE_URL = "https://screenshotcore.com/api/v1/screenshot";
 
-export const SCREENSHOT_TIMEOUT_MS = 30_000;
+export const SCREENSHOT_TIMEOUT_MS = 15_000;
 
 export const MOBILE_VIEWPORT = { width: 390, height: 844 };
 export const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
@@ -28,7 +28,6 @@ export async function takeScreenshot(
   const params = new URLSearchParams({
     url,
     access_key: accessKey,
-    full_page: "true",
     viewport_width: String(viewport.width),
     viewport_height: String(viewport.height),
     format: "png",
