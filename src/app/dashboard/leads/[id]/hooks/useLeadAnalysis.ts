@@ -100,6 +100,7 @@ export function useLeadAnalysis({
     setRunningFullAnalysis(true);
     setCompletedKeys([]);
     setActiveKeys([]);
+    setDesignError(null);
 
     try {
       const abortController = new AbortController();
@@ -240,8 +241,11 @@ export function useLeadAnalysis({
         console.log("[LEAD] handleFullAnalysis aborted by user");
         return;
       }
+      const msg = err instanceof Error ? err.message : "Analysis failed";
       console.error("[LEAD] Full analysis failed:", err);
-      showToast("Analysis failed — please try again.");
+      showToast(msg.length < 120 ? msg : "Analysis failed — please try again.");
+      // Refresh even on error so any partial results (e.g. a completed audit) are visible
+      router.refresh();
     } finally {
       setRunningFullAnalysis(false);
       abortControllerRef.current = null;
