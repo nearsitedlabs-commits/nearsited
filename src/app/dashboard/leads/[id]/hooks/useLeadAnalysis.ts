@@ -243,6 +243,7 @@ export function useLeadAnalysis({
       });
 
       window.dispatchEvent(new CustomEvent("credits:updated"));
+      window.dispatchEvent(new CustomEvent("nearsited:analysis:completed", { detail: { businessId } }));
       router.refresh();
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {

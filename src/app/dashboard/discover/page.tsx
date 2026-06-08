@@ -150,9 +150,35 @@ export default function DiscoverPage() {
         if (!a && ds == null) return r;
         return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) };
       }));
+      // Sync button state: mark businesses that already have audit/design data in DB
+      if (audits.size) setAudited((prev) => { const n = new Set(prev); for (const id of audits.keys()) n.add(id); return n; });
+      if (designScores.size) setAnalysed((prev) => { const n = new Set(prev); for (const id of designScores.keys()) n.add(id); return n; });
     }).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]); // only when userId first resolves
+
+  // Keep a ref to results so the event handler below never goes stale
+  const resultsRef = useRef<typeof results>([]);
+  useEffect(() => { resultsRef.current = results; }, [results]);
+
+  // React immediately when analysis completes elsewhere (lead detail page) — handles router-cache case
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { businessId } = (e as CustomEvent<{ businessId: string }>).detail;
+      if (!resultsRef.current.some((r) => r.id === businessId)) return;
+      setAudited((prev) => new Set([...prev, businessId]));
+      setAnalysed((prev) => new Set([...prev, businessId]));
+      fetchPersistedData([businessId], supabase).then(({ audits, designScores }) => {
+        setResults((prev) => prev.map((r) => {
+          if (r.id !== businessId) return r;
+          const a = audits.get(r.id); const ds = designScores.get(r.id);
+          return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) };
+        }));
+      }).catch(() => {});
+    };
+    window.addEventListener("nearsited:analysis:completed", handler);
+    return () => window.removeEventListener("nearsited:analysis:completed", handler);
+  }, []); // stable — reads results via ref
 
   const flagged = useMemo(() => results.filter((b) => b.flagged_for_outreach).length, [results]);
 
