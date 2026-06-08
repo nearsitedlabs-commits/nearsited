@@ -34,18 +34,12 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative mx-auto grid min-h-[calc(100svh-var(--nav-height,80px))] items-center max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:px-8 md:py-20 lg:px-10" style={{ contentVisibility: "auto" }}>
+    <section id="hero" className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-6 pb-16 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10" style={{ contentVisibility: "auto" }}>
       <CanvasBackground />
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
-        <motion.div {...fadeUp(0)}>
-          <Badge color="indigo" dot>
-            Find businesses that need websites
-          </Badge>
-        </motion.div>
-
-        <motion.div {...fadeUp(0.1)} className="space-y-5">
+        <motion.div {...fadeUp(0)} className="space-y-5">
           <h1 className="text-[clamp(2.8rem,5.5vw,5.5rem)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
             Your next client is out there
             <br />
@@ -56,7 +50,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           </p>
         </motion.div>
 
-        <motion.div {...fadeUp(0.2)} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+        <motion.div {...fadeUp(0.15)} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Button
             variant="primary"
             icon={<Search className="h-4 w-4" />}
@@ -75,7 +69,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           </Button>
         </motion.div>
 
-        <motion.div {...fadeUp(0.3)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
+        <motion.div {...fadeUp(0.25)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
