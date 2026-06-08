@@ -416,31 +416,31 @@ export default function DashboardClient({
                     >
                       <ScoreRing score={ringScore} size={36} variant={isAnalysed ? "opportunity" : "estimate"} />
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <p dir="auto" className="truncate text-sm font-medium text-[var(--text-primary)]">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <p dir="auto" className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--text-primary)]">
                             {lead.name}
                           </p>
                           {(() => {
                             const badge = OPPORTUNITY_TYPE_BADGES[lead.website_status];
                             if (!badge) return null;
                             return (
-                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase ${badge.style}`}>
+                              <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase ${badge.style}`}>
                                 {badge.label}
                               </span>
                             );
                           })()}
                         </div>
-                        <p className="text-xs text-[var(--text-tertiary)]">
+                        <p className="truncate text-xs text-[var(--text-tertiary)]">
                           {lead.business_type} · {lead.city} · {timeAgo(lead.discovered_at, now)}
                         </p>
                       </div>
 
-                      <>
+                      <div className="shrink-0 flex items-center justify-end gap-2 w-[180px]">
                         {!isAnalysed && (
                           <Link
                             href={`/dashboard/leads/${lead.id}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="shrink-0 rounded-md border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-1 text-[10px] font-medium text-[var(--accent)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:bg-[var(--accent-tint)]"
+                            className="rounded-md border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-1 text-[10px] font-medium text-[var(--accent)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:bg-[var(--accent-tint)]"
                           >
                             Analyse
                           </Link>
@@ -464,12 +464,12 @@ export default function DashboardClient({
                             red:    "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
                           };
                           return (
-                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${map[variant] ?? ""}`}>
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${map[variant] ?? ""}`}>
                               {label}
                             </span>
                           );
                         })()}
-                      </>
+                      </div>
                     </motion.div>
                   );
                 })}

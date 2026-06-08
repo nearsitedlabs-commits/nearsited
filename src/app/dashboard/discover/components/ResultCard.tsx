@@ -156,82 +156,83 @@ export function ResultCard({
 
       {/* Name + meta */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--text-primary)] truncate leading-snug">
             {business.name}
           </span>
-          {isAnalyseLoading && ap && (
-            <ProgressPanel ap={ap} onCancel={() => onCancelAnalysis(business.id)} />
-          )}
           {business.rating != null && !isAnalyseLoading && (
             <span className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] whitespace-nowrap shrink-0">
               <span className="text-[var(--badge-amber-text)]">★</span>
               {business.rating.toFixed(1)}
               {business.review_count != null && business.review_count > 0 && (
-                <span className="text-[var(--text-tertiary)]">
-                  ({business.review_count})
-                </span>
+                <span className="text-[var(--text-tertiary)]">({business.review_count})</span>
               )}
             </span>
           )}
         </div>
-        <div className="mt-0.5 flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs font-normal text-[var(--text-tertiary)] truncate tracking-wide">
-            {typeDisplay}
-            {typeDisplay && cityDisplay ? " · " : ""}
-            {cityDisplay}
-          </span>
-          {business.flagged_for_outreach && !isAnalyseLoading && (
-            <span className="md:hidden inline-flex items-center gap-1 rounded-md border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
-              <Flag className="h-2.5 w-2.5" />
-              Outreach
+        {isAnalyseLoading && ap ? (
+          <ProgressPanel ap={ap} onCancel={() => onCancelAnalysis(business.id)} />
+        ) : (
+          <div className="mt-0.5 flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-normal text-[var(--text-tertiary)] truncate tracking-wide">
+              {typeDisplay}
+              {typeDisplay && cityDisplay ? " · " : ""}
+              {cityDisplay}
+            </span>
+            {business.flagged_for_outreach && (
+              <span className="md:hidden inline-flex items-center gap-1 rounded-md border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+                <Flag className="h-2.5 w-2.5" />
+                Outreach
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Icon links — desktop only, fixed 4-slot grid so columns always align */}
+      <div className="hidden md:grid grid-cols-4 flex-shrink-0 w-[112px] items-center gap-0">
+        {/* Flag slot */}
+        <div className="flex items-center justify-center w-7 h-7">
+          {business.flagged_for_outreach && (
+            <span title={business.outreach_reason ? OUTREACH_REASONS[business.outreach_reason] ?? "Flagged for outreach" : "Flagged for outreach"}>
+              <Flag className="size-[13px] text-[var(--accent)]" />
             </span>
           )}
         </div>
-      </div>
-
-      {/* Icon links — desktop only */}
-      <div className="hidden md:flex flex-shrink-0 w-[168px] items-center justify-end gap-3">
-        {business.flagged_for_outreach && (
-          <span
-            title={
-              business.outreach_reason
-                ? OUTREACH_REASONS[business.outreach_reason] ??
-                  "Flagged for outreach"
-                : "Flagged for outreach"
-            }
-            className="flex-shrink-0"
-          >
-            <Flag className="size-[13px] text-[var(--accent)]" />
-          </span>
-        )}
-        <div className="flex items-center gap-2.5 justify-end">
+        {/* Maps slot */}
+        <div className="flex items-center justify-center w-7 h-7">
           {business.place_id && (
             <a
               href={`https://www.google.com/maps/search/?api=1&query_place_id=${business.place_id}&query=${encodeURIComponent(business.name)}`}
               target="_blank"
               rel="noreferrer"
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
+              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
               title="View on Google Maps"
             >
               <MapPin className="size-[15px]" />
             </a>
           )}
+        </div>
+        {/* Globe slot */}
+        <div className="flex items-center justify-center w-7 h-7">
           {business.website && safeHref(business.website) && (
             <a
               href={safeHref(business.website)!}
               target="_blank"
               rel="noreferrer"
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
+              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
               title={business.website}
             >
               <Globe className="size-[15px]" />
             </a>
           )}
+        </div>
+        {/* Phone slot */}
+        <div className="flex items-center justify-center w-7 h-7">
           {business.phone && (
             <a
               href={`tel:${business.phone}`}
-              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150 flex-shrink-0"
+              className="cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-150"
               title={business.phone}
             >
               <Phone className="size-[15px]" />
@@ -241,7 +242,7 @@ export function ResultCard({
       </div>
 
       {/* Action buttons — full-width on mobile (forces wrap), fixed on desktop */}
-      <div className="flex items-center gap-2 w-full md:w-auto md:flex-shrink-0 md:min-w-[216px] md:justify-end">
+      <div className="flex items-center gap-2 w-full md:w-auto md:flex-shrink-0 md:min-w-[260px] md:justify-end">
         {/* Analyse Opportunity */}
         {(() => {
           if (isAnalyseLoading)
@@ -249,14 +250,14 @@ export function ResultCard({
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover&analyze=1`}
-                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[64px] md:flex-none text-center"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
                 >
                   View
                 </Link>
                 <button
                   type="button"
                   disabled
-                  className="cursor-not-allowed text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[120px] md:flex-none text-center"
+                  className="cursor-not-allowed whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-tertiary)] opacity-60 flex-1 md:w-[100px] md:flex-none text-center"
                 >
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -283,7 +284,7 @@ export function ResultCard({
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[90px] md:flex-none text-center"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
                 >
                   View
                 </Link>
@@ -292,7 +293,7 @@ export function ResultCard({
                   onClick={() =>
                     onAnalyseOpportunity(business.id, business.website!)
                   }
-                  className="cursor-pointer text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[90px] md:flex-none text-center"
+                  className="cursor-pointer whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[100px] md:flex-none text-center"
                 >
                   Re-analyse
                 </button>
@@ -303,7 +304,7 @@ export function ResultCard({
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[64px] md:flex-none text-center"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[72px] md:flex-none text-center"
                 >
                   View
                 </Link>
@@ -312,21 +313,22 @@ export function ResultCard({
                   onClick={() =>
                     onAnalyseOpportunity(business.id, business.website!)
                   }
-                  className="cursor-pointer text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[120px] md:flex-none text-center"
+                  className="cursor-pointer whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 flex-1 md:w-[100px] md:flex-none text-center"
                 >
-                  Analyse Opportunity
+                  Analyse
                 </button>
               </div>
             );
           // No site to analyse — show "View" link for non-website lead types
           if (
             business.website_status === "no_website" ||
-            business.website_status === "social_only"
+            business.website_status === "social_only" ||
+            business.website_status === "unknown"
           ) {
             return (
               <Link
                 href={`/dashboard/leads/${business.id}?from=discover`}
-                className="inline-flex items-center justify-center text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[120px] md:flex-none text-center"
+                className="inline-flex items-center justify-center whitespace-nowrap text-xs font-medium px-2.5 py-2 rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 flex-1 md:w-[172px] md:flex-none text-center"
               >
                 View Opportunity
               </Link>
