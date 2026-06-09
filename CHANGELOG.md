@@ -3,6 +3,45 @@
 
 ---
 
+## [Unreleased] — 2026-06-09
+
+### Security (8 fixes)
+- Atomic credit deduction via PostgreSQL RPC (race condition fix)
+- CSRF protection via Origin/Referer validation in middleware
+- Webhook idempotency via Redis-backed event dedup
+- ScreenshotCore API key moved from URL param to HTTP header
+- Dual-layer HTML sanitization for AI-generated content (server + client)
+- Database error messages sanitized across 6 API routes
+- Strict rate limiter (5 req/60s) applied to /api/data/clear
+- Confirmation gate (confirm: true) added to /api/data/clear
+
+### Code Quality (5 fixes)
+- Pervasive `as any` type erasure eliminated — typed query builders in scoped-admin.ts
+- 1,774-line audit page refactored into 6 focused components (now 1,097 lines)
+- NDJSON stream parsing consolidated into shared readNdjsonStream
+- Error boundaries added for 5 dashboard route segments
+- All 45 files updated to import from 'lib/motion' instead of framer-motion directly
+
+### Frontend & UX (7 fixes)
+- Custom 404 page created (not-found.tsx)
+- Mobile hamburger menu added to landing page nav
+- Canvas animations respect prefers-reduced-motion (3 components)
+- Password strength meter on signup page
+- Newsletter signup connected to Resend API
+- Password reset redirect URL fixed + PKCE code exchange
+- SamplePitchSection and OpportunityAtlas integrated into landing page
+
+### Configuration (3 fixes)
+- Dodo product IDs moved from hardcoded values to environment variables (4 new vars)
+- README dead docs links fixed
+- Dashboard sidebar logo now links to /dashboard
+
+### Infrastructure (2 fixes)
+- Public/ boilerplate assets cleaned up (7 files removed)
+- Cookie consent dismiss now records choice to localStorage
+
+---
+
 ## 1. src/app/page.tsx — Landing Page
 
 - Hero trust bar + CTA: "Audit **100** businesses free" → "Audit **50** businesses free" (3 placements)
