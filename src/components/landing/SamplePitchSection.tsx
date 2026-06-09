@@ -42,9 +42,9 @@ const PITCH_EXAMPLES: Record<PitchTab, {
           I ran a quick audit of <span className="font-medium text-[var(--text-primary)]">brightsmile.ae</span> and found several issues quietly costing you new patients.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
-          <li><span className="text-[var(--score-high)]">4.2s mobile load time</span> — 53% of visitors leave before seeing your content</li>
-          <li><span className="text-[var(--score-high)]">No local SEO</span> — you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
-          <li><span className="text-[var(--score-high)]">Missing trust signals</span> — no SSL badge or social proof above the fold</li>
+          <li><span className="text-[var(--score-high)]">4.2s mobile load time</span>: 53% of visitors leave before seeing your content</li>
+          <li><span className="text-[var(--score-high)]">No local SEO</span>: you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
+          <li><span className="text-[var(--score-high)]">Missing trust signals</span>: no SSL badge or social proof above the fold</li>
         </ul>
         <p>Fixing these could recover <span className="font-medium text-[var(--score-good)]">an estimated $1,000–$3,000/month</span> in missed revenue. Happy to walk you through the full audit?</p>
       </div>
@@ -58,7 +58,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi,</p>
         <p>
-          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--text-primary)]">Marina Legal Consultants</span> — great Google reviews, but no website.
+          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--text-primary)]">Marina Legal Consultants</span>, great Google reviews but no website.
         </p>
         <p>Every day without a website, potential clients searching &ldquo;legal consultant Dubai Marina&rdquo; are going to competitors who have one. Your 4.7★ reputation deserves more than a Google listing.</p>
         <ul className="list-disc space-y-1.5 pl-4">
@@ -78,14 +78,14 @@ const PITCH_EXAMPLES: Record<PitchTab, {
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi Blue Wave team,</p>
         <p>
-          Your <span className="font-medium text-[var(--text-primary)]">Instagram</span> looks incredible — 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
+          Your <span className="font-medium text-[var(--text-primary)]">Instagram</span> looks incredible. 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
           <li>No website = no way to take online reservations</li>
-          <li>No Google search presence — invisible to people who don&rsquo;t already know you</li>
+          <li>No Google search presence: invisible to people who don&rsquo;t already know you</li>
           <li>If Instagram changes its algorithm, you lose everything overnight</li>
         </ul>
-        <p>A website would turn your existing followers into bookings you control — with an online menu, reservation form, and Google visibility. Worth a 10-minute conversation?</p>
+        <p>A website would turn your existing followers into bookings you control, with an online menu, reservation form, and Google visibility. Worth a 10-minute conversation?</p>
       </div>
     ),
   },
@@ -97,12 +97,12 @@ const PITCH_EXAMPLES: Record<PitchTab, {
       <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
         <p>Hi,</p>
         <p>
-          I found <span className="font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</span> on Fresha — great reviews, but no website of your own.
+          I found <span className="font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</span> on Fresha, great reviews, but no website of your own.
         </p>
         <p>Right now every booking goes through Fresha&rsquo;s platform. That means you&rsquo;re paying a commission on every appointment, you don&rsquo;t own your client list, and if Fresha changes its terms you lose everything overnight.</p>
         <ul className="list-disc space-y-1.5 pl-4">
           <li>No Google search presence outside the Fresha listing</li>
-          <li>No direct bookings — every client goes through a third party</li>
+          <li>No direct bookings: every client goes through a third party</li>
           <li>No brand story, no portfolio, no SEO you control</li>
         </ul>
         <p>A professional website would give you direct bookings, your own client database, and visibility on Google. Would you be open to a quick call?</p>
@@ -132,14 +132,14 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
             <SectionLabel>Sample pitches</SectionLabel>
             <SectionTitle>Every opportunity type gets a tailored pitch.</SectionTitle>
             <SectionSub>
-              Pitches are generated from real opportunity data — not templates. The angle changes completely depending on whether the business has no website, social-only, platform-only, or a weak one.
+              Pitches are generated from real opportunity data, not templates. The angle changes completely depending on whether the business has no website, social-only, platform-only, or a weak one.
             </SectionSub>
 
             <div className="mt-8 space-y-4">
               {[
-                { icon: Zap,       text: "Angle adapts to the opportunity type — new build, social conversion, or improvement" },
+                { icon: Zap,       text: "Angle adapts to the opportunity type: new build, social conversion, or improvement" },
                 { icon: FileText,  text: "Adjustable tone: professional, friendly, or luxury" },
-                { icon: TrendingUp, text: "Cites real data — performance scores, missing features, estimated impact" },
+                { icon: TrendingUp, text: "Cites real data: performance scores, missing features, estimated impact" },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
@@ -233,7 +233,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
               </div>
 
               <p className="mt-4 text-center text-xs text-[var(--text-tertiary)]">
-                Every pitch is unique. No templates — pitch angle, evidence, and tone are all generated from the opportunity.
+                Every pitch is unique. No templates. Pitch angle, evidence, and tone are all generated from the opportunity.
               </p>
             </Card>
           </div>

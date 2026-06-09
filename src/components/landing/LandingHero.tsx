@@ -23,13 +23,26 @@ const OPP_TYPES = ["no_website", "social_only", "has_website"] as const;
 type OppType = (typeof OPP_TYPES)[number];
 
 const PITCHES: Record<OppType, string> = {
-  no_website: `&ldquo;Hi — I noticed Marina Legal has great reviews but no website. You&rsquo;re invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries.&rdquo;`,
-  social_only: `&ldquo;Hi — Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website — you don&rsquo;t own it and can&rsquo;t rank on Google. A website turns your followers into reservations you control.&rdquo;`,
-  has_website: `&ldquo;Hi — I analysed Bright Smile Dental&rsquo;s website and found 5 critical issues costing you patients. A redesign would improve your online presence and directly increase bookings.&rdquo;`,
+  no_website: `&ldquo;Hi, I noticed Marina Legal has great reviews but no website. You&rsquo;re invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries.&rdquo;`,
+  social_only: `&ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it and can&rsquo;t rank on Google. A website turns your followers into reservations you control.&rdquo;`,
+  has_website: `&ldquo;Hi, I analysed Bright Smile Dental&rsquo;s website and found 5 critical issues costing you patients. A redesign would improve your online presence and directly increase bookings.&rdquo;`,
+};
+
+const PITCHES_PLAIN: Record<OppType, string> = {
+  no_website: `"Hi, I noticed Marina Legal has great reviews but no website. You're invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries."`,
+  social_only: `"Hi, Blue Wave's Instagram looks great. But Instagram isn't a website. You don't own it and can't rank on Google. A website turns your followers into reservations you control."`,
+  has_website: `"Hi, I analysed Bright Smile Dental's website and found 5 critical issues costing you patients. A redesign would improve your online presence and directly increase bookings."`,
 };
 
 export function LandingHero({ navigate }: { navigate: (href: string) => void }) {
   const [activeOpp, setActiveOpp] = useState<OppType>("no_website");
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(PITCHES_PLAIN[activeOpp]);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
   const easeOut = [0.25, 0.1, 0.25, 1] as const;
   const fadeUp = (delay: number) => ({
     initial: { opacity: 0, y: 16 },
@@ -39,9 +52,11 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-6 pb-16 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10" style={{ contentVisibility: "auto" }}>
+    <section id="hero" className="relative" style={{ contentVisibility: "auto" }}>
       <OpportunityAtlas />
       <CanvasBackground />
+
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-6 pb-16 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10">
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
@@ -52,7 +67,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             <em className="italic not-italic">without a website.</em>
           </h1>
           <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
-            Nearsited finds hyperlocal businesses with <strong className="text-[var(--text-primary)] font-medium">no website</strong>, social-only presence, platform-only listings, or weak websites — ranks them by opportunity score, and generates a tailored pitch for each type in under 2 minutes.
+            Find and pitch businesses that need a website. In under 2 minutes.
           </p>
         </motion.div>
 
@@ -79,7 +94,6 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />249 business types</span>
         </motion.div>
       </div>
 
@@ -95,7 +109,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunities · Dubai</p>
-              <Badge color="green" dot>Live scan</Badge>
+              <Badge color="green" dot>Sample scan</Badge>
             </div>
 
             {/* Opportunity rows */}
@@ -136,7 +150,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
               <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
                 <MessageSquare className="h-3 w-3 text-[var(--accent)]" />
-                AI pitch — ready to send
+                AI pitch · ready to send
               </div>
               <p className="text-sm leading-7 text-[var(--text-secondary)] italic" dangerouslySetInnerHTML={{ __html: PITCHES[activeOpp] }} />
               <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--border)] pt-3">
@@ -147,6 +161,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           </Card>
         </div>
       </motion.div>
+      </div>
     </section>
   );
 }

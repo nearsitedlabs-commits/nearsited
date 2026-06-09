@@ -1,6 +1,8 @@
 "use client";
 
 import { Search, Target, Mail, TrendingUp, Info } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
@@ -11,34 +13,30 @@ const HIERARCHY = [
   {
     number: "01",
     title: "Find opportunities",
-    desc: "Enter a city + business category. Nearsited surfaces hyperlocal businesses with no website, social-only presence, or weak websites — ranked by opportunity score, not alphabetically.",
+    desc: "Enter a city + business category. Nearsited surfaces hyperlocal businesses with no website, social-only presence, or weak websites, ranked by opportunity score, not alphabetically.",
     icon: Search,
-    statKey: "Surface rate",
-    statValue: "40–60% of local businesses qualify",
+    note: "Every market is different. See who shows up in yours.",
   },
   {
     number: "02",
     title: "Understand the gap",
-    desc: "Every lead gets an opportunity score (0–100) backed by website presence, performance, mobile, SEO, design, and trust analysis. The higher the score, the hotter the lead — drill into the issues to see exactly what to pitch.",
+    desc: "Every lead gets an opportunity score (0–100) backed by website presence, performance, mobile, SEO, design, and trust analysis. The higher the score, the hotter the lead. Drill into the issues to see exactly what to pitch.",
     icon: Target,
-    statKey: "Issues per lead",
-    statValue: "4–7 critical issues found",
+    note: "Real issues found in every scan. No generic scores.",
   },
   {
     number: "03",
     title: "Generate outreach",
-    desc: "One click generates a personalised pitch tailored to the opportunity type — website build, redesign, or improvement. Adjust tone, copy, and send.",
+    desc: "One click generates a personalised pitch tailored to the opportunity type: website build, redesign, or improvement. Adjust tone, copy, and send.",
     icon: Mail,
-    statKey: "Pitch generation",
-    statValue: "Under 2 seconds",
+    note: "Pitch generated in under 2 seconds.",
   },
   {
     number: "04",
     title: "Win more website projects",
     desc: "Track every lead through a pipeline: New → Contacted → Proposal → Won. Whether it's a new build or a redesign, close it without spreadsheets.",
     icon: TrendingUp,
-    statKey: "Pipeline close rate",
-    statValue: "2–3× higher conversion†",
+    note: "Your pipeline, your conversion data.",
   },
 ];
 
@@ -60,7 +58,7 @@ export function HowItWorksSection() {
           <SectionLabel>The workflow</SectionLabel>
           <SectionTitle className="text-center">Four steps to your next website project.</SectionTitle>
           <SectionSub className="mx-auto text-center">
-            From finding the right lead to closing the deal — every step is designed to remove friction and shorten your sales cycle.
+            From finding the right lead to closing the deal, every step is designed to remove friction and shorten your sales cycle.
           </SectionSub>
         </div>
 
@@ -69,7 +67,7 @@ export function HowItWorksSection() {
             const Icon = step.icon;
             return (
               <motion.div key={step.number} {...anim(i * 0.1)}>
-                <Card variant="default" padding="lg" className="grid gap-5 md:grid-cols-[80px_1fr_240px] md:items-center md:gap-6">
+                <Card variant="default" padding="lg" className="grid gap-5 md:grid-cols-[80px_1fr_200px] md:items-center md:gap-6">
                   {/* Desktop: standalone number column */}
                   <div className="hidden md:flex items-start">
                     <span className="text-[3rem] font-medium italic tracking-[-0.04em] text-[var(--text-tertiary)]/40 leading-none">
@@ -103,20 +101,35 @@ export function HowItWorksSection() {
                     <p className="text-sm leading-7 text-[var(--text-secondary)]">{step.desc}</p>
                   </div>
 
-                  {/* Stat box */}
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-center">
-                    <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{step.statKey}</p>
-                    <p className="mt-1.5 text-sm font-medium text-[var(--accent)]">{step.statValue}</p>
-                  </div>
+                  {/* Note box — pipeline visual for step 4 */}
+                  {step.number === "04" ? (
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3">
+                      <div className="flex items-center justify-between gap-1">
+                        {["New", "Contacted", "Proposal", "Won"].map((stage, i) => (
+                          <div key={stage} className="flex flex-col items-center gap-1">
+                            <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium ${
+                              i === 0 ? "bg-[var(--accent)] text-white" :
+                              i < 3 ? "bg-[var(--accent-tint)] text-[var(--accent)]" :
+                              "bg-[var(--accent-tint)] text-[var(--accent)]"
+                            }`}>
+                              {i + 1}
+                            </div>
+                            <span className="text-[10px] text-[var(--text-tertiary)] whitespace-nowrap">{stage}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-[10px] text-center text-[var(--text-tertiary)]">Built-in pipeline. No spreadsheets needed.</p>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-center">
+                      <p className="text-xs leading-5 text-[var(--text-tertiary)]">{step.note}</p>
+                    </div>
+                  )}
                 </Card>
               </motion.div>
             );
           })}
         </div>
-
-        <p className="mt-3 text-right text-xs text-[var(--text-tertiary)]">
-          † Based on early beta user reports. Results vary by market and outreach effort.
-        </p>
 
         {/* ── Scoring explainer — surfaced from FAQ for prominence ────────────── */}
         <motion.div
@@ -153,13 +166,21 @@ export function HowItWorksSection() {
                 </div>
 
                 <p className="mt-3 text-xs leading-6 text-[var(--text-tertiary)]">
-                  Agencies report that leads with a score above 70 convert at <strong className="text-[var(--text-primary)]">3× the rate</strong> of those below 30.
-                  Use it to prioritise — not to disqualify.
+                  Use the score to prioritise, not to disqualify. A low score just means a different kind of pitch.
                 </p>
               </div>
             </div>
           </div>
         </motion.div>
+
+        {/* Soft CTA after workflow */}
+        <div className="mt-10 text-center">
+          <Link href="/signup">
+            <Button variant="primary" icon={<Search className="h-4 w-4" />} className="px-8 py-3 text-base">
+              Find your first opportunity
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

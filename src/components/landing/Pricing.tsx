@@ -69,6 +69,7 @@ const PLANS: Plan[] = [
     features: [
       "200 opportunity analyses per month",
       "10 city searches per month",
+      "White-label shareable reports",
     ],
     featured: true,
     monthlyProductId:
@@ -83,11 +84,10 @@ const PLANS: Plan[] = [
 ];
 
 const SHARED_FEATURES = [
-  "All 4 opportunity types — no website, social, platform, weak site",
+  "All 4 opportunity types: no website, social, platform, weak site",
   "Unlimited AI pitch generation",
   "Unlimited pipeline management",
   "PDF audit exports",
-  "Shareable report links",
 ];
 
 // ── Animation config ──────────────────────────────────────────────────────────
@@ -141,7 +141,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
             Start finding clients this week.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
-            Start with 10 free opportunity analyses — no credit card needed.
+            Start with 10 free opportunity analyses. No credit card needed.
           </p>
         </motion.div>
 
@@ -155,7 +155,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
         >
           <span className="font-medium text-[var(--accent)]">Beta pricing</span>
           <span className="mx-2 text-[var(--text-tertiary)]">·</span>
-          <span className="text-[var(--text-secondary)]">Your rate is locked for 12 months. No surprise increases.</span>
+          <span className="text-[var(--text-secondary)]">Lock in your rate for 12 months. When beta ends, you keep your rate for another 12 months minimum. No surprises.</span>
         </motion.div>
 
         {/* Monthly / Annual toggle */}
@@ -348,7 +348,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
             </span>
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-              Built by an agency, for agencies
+              Built by an agency founder who needed this
             </span>
           </motion.div>
         )}

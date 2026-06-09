@@ -18,7 +18,7 @@ type Objection = {
 const OBJECTIONS: Objection[] = [
   {
     objection: "I already have enough clients.",
-    response: "Great — then you know the value of a warm pipeline. Nearsited lets you cherry-pick the best opportunities without cold outreach. Keep your pipeline full so you never have a slow month.",
+    response: "Great. Then you know the value of a warm pipeline. Nearsited lets you cherry-pick the best opportunities without cold outreach. Keep your pipeline full so you never have a slow month.",
     answer: "How this helps you close more deals: A full pipeline means you can fire underpaying clients and replace them with better projects.",
   },
   {
@@ -30,7 +30,7 @@ const OBJECTIONS: Objection[] = [
     objection: "I can find leads myself on Google Maps.",
     response: (
       <div className="space-y-3">
-        <p>Google Maps is a directory. It shows you businesses — it can&rsquo;t tell you which ones have no website, which have a 4-second load time, or which are running entirely off Instagram.</p>
+        <p>Google Maps is a directory. It shows you businesses, but can&rsquo;t tell you which ones have no website, which have a 4-second load time, or which are running entirely off Instagram.</p>
         <p className="font-medium text-[var(--text-primary)]">What Maps can&rsquo;t do:</p>
         <ul className="list-disc space-y-1 pl-4">
           <li>Filter for businesses with no website, social-only, or platform-only presence</li>
@@ -45,18 +45,18 @@ const OBJECTIONS: Objection[] = [
   },
   {
     objection: "My clients aren't on page 1 of Google anyway.",
-    response: "Some of your best prospects aren't on Google at all — they have no website, or they're running everything from an Instagram page. Nearsited finds those businesses too. For the ones that do have a website, you're pitching revenue recovery from real, measurable problems — not vague SEO promises.",
+    response: "Some of your best prospects aren't on Google at all. They have no website, or they're running everything from an Instagram page. Nearsited finds those businesses too. For the ones that do have a website, you're pitching revenue recovery from real, measurable problems, not vague SEO promises.",
     answer: "How this helps you close more deals: You're pitching a clear gap they already have. Much easier to say yes to than ranking promises.",
   },
   {
     objection: "I don't do cold outreach.",
-    response: "This isn't cold outreach. Every opportunity on Nearsited has a clear, measurable gap — whether that's a broken website or no website at all. You're not guessing — you're responding to evidence they can see themselves. It's warm.",
-    answer: "How this helps you close more deals: Evidence-based outreach converts 3–5× better than cold email. You're helping, not selling.",
+    response: "This isn't cold outreach. Every opportunity on Nearsited has a clear, measurable gap — whether that's a broken website or no website at all. You're not guessing. You're responding to evidence they can see themselves. It's warm.",
+    answer: "How this helps you close more deals: You're reaching out with a diagnosis, not a pitch. That's a completely different conversation.",
   },
   {
     objection: "I already use Apollo or Hunter for prospecting.",
-    response: "Apollo and Hunter find contact details. They don't tell you whether a business's website is worth redesigning — or whether one even exists. Nearsited finds a different kind of lead: businesses where the website itself is the gap. No website, social-only, platform-only, or a broken site. You're not blasting emails — you're reaching out with a diagnosis.",
-    answer: "How this helps you close more deals: Apollo gives you email addresses. Nearsited gives you reasons to reach out. Used together, they're a complete prospecting stack — find the gap with Nearsited, send the message with Apollo.",
+    response: "Apollo and Hunter find contact details. They don't tell you whether a business's website is worth redesigning — or whether one even exists. Nearsited finds a different kind of lead: businesses where the website itself is the gap. No website, social-only, platform-only, or a broken site. You're not blasting emails. You're reaching out with a diagnosis.",
+    answer: "How this helps you close more deals: Apollo gives you email addresses. Nearsited gives you reasons to reach out. Used together, they're a complete prospecting stack. Find the gap with Nearsited, send the message with Apollo.",
   },
 ];
 

@@ -19,10 +19,10 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
             <div className="relative z-10">
               <Badge color="indigo" dot>Start finding website opportunities today</Badge>
               <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--text-primary)]">
-                Your next client is out there — without a website.
+                Your next client is out there, without a website.
               </h2>
               <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
-                Enter a city and business type. Find businesses with no website, social-only presence, or weak websites — with a ready-to-send pitch for each one. All in under 2 minutes.
+                Enter a city and business type. Find businesses with no website, social-only presence, or weak websites, with a ready-to-send pitch for each one. All in under 2 minutes.
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
                 <Button variant="primary" icon={<Search className="h-4 w-4" />} onClick={() => navigate("/signup")} className="w-full px-8 py-3 text-base sm:w-auto">
@@ -47,10 +47,10 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
               <div className="relative z-10">
                 <Badge color="indigo" dot>Start finding website opportunities today</Badge>
                 <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--text-primary)]">
-                  Your next client is out there — without a website.
+                  Your next client is out there, without a website.
                 </h2>
                 <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
-                  Enter a city and business type. Find businesses with no website, social-only presence, or weak websites — with a ready-to-send pitch for each one. All in under 2 minutes.
+                  Enter a city and business type. Find businesses with no website, social-only presence, or weak websites, with a ready-to-send pitch for each one. All in under 2 minutes.
                 </p>
                 <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
                   <Button variant="primary" icon={<Search className="h-4 w-4" />} onClick={() => navigate("/signup")} className="w-full px-8 py-3 text-base sm:w-auto">

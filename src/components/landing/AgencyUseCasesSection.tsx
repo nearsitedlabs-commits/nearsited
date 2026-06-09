@@ -13,29 +13,26 @@ const USE_CASES = [
   {
     icon: Users,
     title: "Solo freelancers",
-    desc: "Stop spending 10 hours/week prospecting. Surface qualified leads in seconds — no-website, social-only, and weak websites — pitch with evidence, and close new projects without cold outreach.",
-    stat: "Avg. 3 new clients/month*",
+    desc: "Stop spending hours prospecting. Surface qualified leads in seconds: no-website, social-only, and weak websites. Pitch with evidence, and close new projects without cold outreach.",
     cta: "Start as a solo",
   },
   {
     icon: Building2,
     title: "Small agencies",
     desc: "Replace cold email with warm, evidence-based outreach. Give your team a pipeline of scored opportunities with ready-to-send pitches tailored to each opportunity type.",
-    stat: "2–3× faster sales cycle*",
+    feature: "White-label shareable reports",
     cta: "Start as an agency",
   },
   {
     icon: Palette,
     title: "Design studios",
-    desc: "Turn your portfolio into prospecting fuel. Find businesses with dated visual design, check their opportunity score, and walk into discovery calls with real evidence — not guesses.",
-    stat: "Evidence-led pitches",
+    desc: "Turn your portfolio into prospecting fuel. Find businesses with dated visual design, check their opportunity score, and walk into discovery calls with real evidence, not guesses.",
     cta: "Start finding clients",
   },
   {
     icon: TrendingUp,
     title: "SEO agencies",
-    desc: "Find businesses with poor PageSpeed, missing local SEO, and no SSL — ranked by opportunity score so you know exactly who to call first. Pitch with real data in under 2 minutes.",
-    stat: "4–7 technical issues per lead",
+    desc: "Find businesses with poor PageSpeed, missing local SEO, and no SSL, ranked by opportunity score so you know exactly who to call first. Pitch with real data in under 2 minutes.",
     cta: "Start finding leads",
   },
 ];
@@ -50,7 +47,7 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
           <SectionLabel>Who it&rsquo;s for</SectionLabel>
           <SectionTitle className="text-center">Built for agencies that prospect locally.</SectionTitle>
           <SectionSub className="mx-auto text-center">
-            Whether you&rsquo;re a solo freelancer, a small agency, or a specialist studio — the workflow is the same. Find the gap. Pitch the fix. Close the project.
+            Whether you&rsquo;re a solo freelancer, a small agency, or a specialist studio, the workflow is the same. Find the gap. Pitch the fix. Close the project.
           </SectionSub>
         </div>
 
@@ -66,7 +63,11 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
                   <h3 className="text-lg font-medium text-[var(--text-primary)]">{uc.title}</h3>
                   <p className="mt-2 flex-1 text-sm leading-7 text-[var(--text-secondary)]">{uc.desc}</p>
                   <div className="mt-6 border-t border-[var(--border)] pt-4">
-                    <p className="text-xs text-[var(--accent)] font-medium mb-3">{uc.stat}</p>
+                    {"feature" in uc && uc.feature && (
+                      <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
+                        {uc.feature}
+                      </p>
+                    )}
                     <Button variant="primary" className="w-full" onClick={() => navigate("/signup")}>
                       {uc.cta} →
                     </Button>
@@ -88,7 +89,11 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{uc.title}</h3>
                     <p className="mt-2 flex-1 text-sm leading-7 text-[var(--text-secondary)]">{uc.desc}</p>
                     <div className="mt-6 border-t border-[var(--border)] pt-4">
-                      <p className="text-xs text-[var(--accent)] font-medium mb-3">{uc.stat}</p>
+                      {"feature" in uc && uc.feature && (
+                        <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
+                          {uc.feature}
+                        </p>
+                      )}
                       <Button variant="primary" className="w-full" onClick={() => navigate("/signup")}>
                         {uc.cta} →
                       </Button>
@@ -99,9 +104,6 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
             })}
           </StaggerContainer>
         )}
-        <p className="mt-6 text-center text-xs text-[var(--text-tertiary)]">
-          * Based on early beta user reports. Results vary by market, business type, and outreach effort.
-        </p>
       </div>
     </section>
   );

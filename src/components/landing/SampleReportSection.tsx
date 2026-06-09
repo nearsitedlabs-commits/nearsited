@@ -67,10 +67,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$3,000–$8,000</p>
-                    </div>
                   </div>
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
                     <div className="flex items-center gap-2 mb-4">
@@ -133,10 +129,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$2,000–$6,000</p>
-                    </div>
                   </div>
 
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
@@ -145,7 +137,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <span className="text-sm font-medium text-[var(--score-high)]">No web presence detected</span>
                     </div>
                     <p className="text-sm leading-7 text-[var(--text-secondary)]">
-                      This business has no website. All online visibility relies on a single Google Business listing — no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
+                      This business has no website. All online visibility relies on a single Google Business listing, no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
                     </p>
                   </div>
 
@@ -166,7 +158,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
+                      &ldquo;Hi, I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
                     </p>
                   </div>
                 </>
@@ -184,10 +176,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,500–$4,000</p>
                     </div>
                   </div>
 
@@ -218,7 +206,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website — you don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
+                      &ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
                     </p>
                   </div>
                 </>
@@ -236,10 +224,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,200–$3,500</p>
                     </div>
                   </div>
 
@@ -270,7 +254,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform — you&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
+                      &ldquo;Hi, I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform. You&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
                     </p>
                   </div>
                 </>
@@ -294,10 +278,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <Badge color="green">Verified</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$3,000–$8,000</p>
                     </div>
                   </div>
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
@@ -366,10 +346,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$2,000–$6,000</p>
-                    </div>
                   </div>
 
                   <div className="mt-6 rounded-xl border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
@@ -378,7 +354,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                       <span className="text-sm font-medium text-[var(--score-high)]">No web presence detected</span>
                     </div>
                     <p className="text-sm leading-7 text-[var(--text-secondary)]">
-                      This business has no website. All online visibility relies on a single Google Business listing — no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
+                      This business has no website. All online visibility relies on a single Google Business listing, no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
                     </p>
                   </div>
 
@@ -399,7 +375,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
+                      &ldquo;Hi, I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
                     </p>
                   </div>
                 </motion.div>
@@ -422,10 +398,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <Badge color="indigo">Social Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,500–$4,000</p>
                     </div>
                   </div>
 
@@ -456,7 +428,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website — you don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
+                      &ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
                     </p>
                   </div>
                 </motion.div>
@@ -479,10 +451,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <Badge color="indigo">Platform Only</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Est. project value</p>
-                      <p className="mt-1 text-lg font-bold text-[var(--score-good)]">$1,200–$3,500</p>
                     </div>
                   </div>
 
@@ -513,7 +481,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--text-tertiary)] mb-2">AI-generated pitch angle</p>
                     <p className="text-sm leading-7 text-[var(--text-secondary)] italic">
-                      &ldquo;Hi — I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform — you&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
+                      &ldquo;Hi, I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform. You&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
                     </p>
                   </div>
                 </motion.div>

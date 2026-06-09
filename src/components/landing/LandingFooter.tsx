@@ -55,7 +55,7 @@ export function LandingFooter() {
               <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">NearSited</span>
               </div>
               <p className="max-w-sm text-sm leading-7 text-[var(--text-tertiary)]">
-                Discover untapped opportunities — businesses that need websites, redesigns, or a stronger online presence.
+                Discover untapped opportunities: businesses that need websites, redesigns, or a stronger online presence.
               </p>
 
               {/* ── Newsletter signup ── */}

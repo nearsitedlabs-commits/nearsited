@@ -10,15 +10,15 @@ import { useAccordion } from "@/lib/shared-hooks";
 const faqs = [
   {
     q: "How does Nearsited help me win more website projects?",
-    a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, platform-only listings, and weak websites — then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
+    a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, platform-only listings, and weak websites, then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
   },
   {
     q: "What kind of businesses does Nearsited find?",
-    a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels — 249 business types across 16 industries in any city.",
+    a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels. 249 business types across 16 industries in any city.",
   },
   {
     q: "How accurate is the opportunity score?",
-    a: "The opportunity score combines website weakness and business viability into a single 0–100 number — higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Agencies report that leads with an opportunity score above 70 convert at 3× the rate of those below 30. Use it to prioritise, not to disqualify.",
+    a: "The opportunity score combines website weakness and business viability into a single 0–100 number. Higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Agencies report that leads with an opportunity score above 70 convert at 3× the rate of those below 30. Use it to prioritise, not to disqualify.",
   },
   {
     q: "Do I need technical skills to use it?",
@@ -30,15 +30,15 @@ const faqs = [
   },
   {
     q: "How is this different from cold email tools?",
-    a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling — you're showing them a problem they already have. That's why reply rates are 3–5× higher.",
+    a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling. You're showing them a problem they already have. That's why reply rates are 3–5× higher.",
   },
   {
     q: "How current is the business data? Are these businesses still active?",
-    a: "Business data comes directly from Google Places, which is updated continuously by businesses and Google's crawlers. You're seeing live Google reviews, ratings, and website data — not a static database. That said, some businesses close or update without immediately reflecting it on Google. Leads with reviews in the last 30 days and an active rating are almost always still open. We recommend a quick Google check before reaching out.",
+    a: "Business data comes directly from Google Places, which is updated continuously by businesses and Google's crawlers. You're seeing live Google reviews, ratings, and website data, not a static database. That said, some businesses close or update without immediately reflecting it on Google. Leads with reviews in the last 30 days and an active rating are almost always still open. We recommend a quick Google check before reaching out.",
   },
   {
     q: "Which cities and countries does Nearsited cover?",
-    a: "Nearsited works in any city where Google Places has data — which covers most major and mid-size cities globally. You can search 29,000+ cities worldwide. Results quality is highest in English-speaking markets and India, where our beta users are concentrated. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
+    a: "Nearsited works in any city where Google Places has data, which covers most major and mid-size cities globally. You can search 29,000+ cities worldwide. Results quality is highest in English-speaking markets and India, where our beta users are concentrated. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
   },
 ];
 

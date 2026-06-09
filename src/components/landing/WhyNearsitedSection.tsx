@@ -10,20 +10,20 @@ import { motion, useReducedMotion } from "@/lib/motion";
 const TRADITIONAL_CONS = [
   "No way to find businesses that have no website at all",
   "Cannot discover social-only or platform-only businesses",
-  "Manual website checking — one business at a time",
-  "No prioritisation — you guess who to contact first",
+  "Manual website checking, one business at a time",
+  "No prioritisation, you guess who to contact first",
   "Generic cold outreach with no supporting evidence",
-  "No built-in pipeline — spreadsheets or external CRM required",
+  "No built-in pipeline. Spreadsheets or external CRM required.",
   "Hours of research before a single pitch is sent",
 ];
 
 const NEARSITED_PROS = [
   "Finds businesses with no website, social-only, and platform-only presence",
-  "Surfaces weak websites ranked by opportunity score — not quality score",
-  "Every lead gets an estimated score instantly — analyse only the best to save credits",
-  "Pitch angle changes completely per lead type — not one generic template",
+  "Surfaces weak websites ranked by opportunity score, not quality score",
+  "Every lead gets an estimated score instantly. Analyse only the best to save credits.",
+  "Pitch angle changes completely per lead type. Not one generic template.",
   "Generates evidence-based pitches citing real audit data",
-  "Built-in pipeline — track every lead from discovery to closed deal",
+  "Built-in pipeline to track every lead from discovery to closed deal",
   "From search to pitch-ready lead in under 2 minutes",
 ];
 
@@ -45,7 +45,7 @@ export function WhyNearsitedSection() {
           <SectionLabel>Why Nearsited</SectionLabel>
           <SectionTitle className="text-center">Other tools find bad websites. Nearsited finds every opportunity.</SectionTitle>
           <SectionSub className="mx-auto text-center">
-            Most tools show you which sites score low. Nearsited goes further — it finds the businesses with <em>no website at all</em>, ranks by who&rsquo;s worth approaching (not just who has problems), and writes a different pitch for every lead type.
+            Most tools show you which sites score low. Nearsited goes further. It finds the businesses with <em>no website at all</em>, ranks by who&rsquo;s worth approaching (not just who has problems), and writes a different pitch for every lead type.
           </SectionSub>
         </div>
 
@@ -94,7 +94,7 @@ export function WhyNearsitedSection() {
         {/* Lead type badges */}
         <div className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
           <p className="mb-4 text-center text-[0.7rem] uppercase tracking-[0.18em] text-[var(--text-tertiary)]">
-            Four types of website opportunity — all found in one search
+            Four types of website opportunity, all found in one search
           </p>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <motion.div {...anim(0)} className="h-full">
