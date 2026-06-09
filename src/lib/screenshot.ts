@@ -1,18 +1,16 @@
 /**
  * ScreenshotCore integration for full-page screenshots.
  *
- * # Security: API key transmission
+ * The ScreenshotCore API key (`SCREENSHOT_API_KEY`) is transmitted as the
+ * `access_key` URL query parameter. ScreenshotCore does **not** support
+ * header-based authentication (`x-api-key`), so the key is passed in the
+ * URL. This is a known limitation of the ScreenshotCore API.
  *
- * The ScreenshotCore API key (`SCREENSHOT_API_KEY`) is transmitted via the
- * `x-api-key` HTTP header — **not** as a URL query parameter. This prevents
- * the key from appearing in:
- * - Server access logs (Nginx, Vercel, etc.)
- * - Intermediary proxy / load-balancer logs
- * - Browser network inspector tools on the client side
- *
- * If ScreenshotCore's API format changes in the future, verify header-based
- * auth still works before falling back to `?access_key=` in the URL. For more
- * context see the security audit report at `docs/LAUNCH_READINESS_AUDIT.md`.
+ * # Security note
+ * Because the key appears in the URL, it may be visible in server access logs
+ * (Nginx, Vercel, etc.) and intermediary proxy / load-balancer logs. If
+ * ScreenshotCore adds header-based auth in the future, prefer that over the
+ * query-parameter approach to keep keys out of log files.
  */
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -35,8 +33,8 @@ export type ScreenshotResult =
 /**
  * Take a full-page screenshot via ScreenshotCore and return base64-encoded PNG bytes.
  *
- * The API key is sent via the `x-api-key` HTTP header (not the URL) to avoid
- * leaking credentials in request logs. See module-level doc comment above.
+ * The API key is sent as the `access_key` URL query parameter. See the
+ * module-level doc comment above for security implications.
  */
 export async function takeScreenshot(
   url: string,
@@ -50,6 +48,7 @@ export async function takeScreenshot(
     format: "png",
     block_ads: "true",
     block_cookie_banners: "true",
+    access_key: accessKey,
   });
 
   const controller = new AbortController();
@@ -58,9 +57,6 @@ export async function takeScreenshot(
   try {
     const response = await fetch(`${SCREENSHOTCORE_URL}?${params}`, {
       signal: controller.signal,
-      headers: {
-        "x-api-key": accessKey,
-      },
     });
 
     console.log(
