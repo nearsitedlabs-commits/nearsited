@@ -113,8 +113,7 @@ export default function LoginPage() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   autoFocus
-                  className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors duration-150 ease-out focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50"
-                  style={{ borderColor: "rgba(255,255,255,0.08)" }}
+                  className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors duration-150 ease-out focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--border)]"
                 />
               </div>
             </div>
@@ -138,8 +137,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-11 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors duration-150 ease-out focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50"
-                  style={{ borderColor: "rgba(255,255,255,0.08)" }}
+                  className="h-[52px] w-full rounded-lg border bg-[var(--bg-elevated)] pl-10 pr-11 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition-colors duration-150 ease-out focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--border)]"
                 />
                 <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -191,7 +189,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }} />
+              <span className="w-full border-t border-[var(--border)]" />
             </div>
             <div className="relative flex justify-center">
               <span
@@ -208,8 +206,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogleLogin}
             disabled={loading || googleLoading}
-            className="flex h-[52px] w-full cursor-pointer items-center justify-center gap-3 rounded-lg border bg-[var(--bg-elevated)] px-4 text-sm font-medium text-[var(--text-secondary)] transition-all duration-150 ease-out hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ borderColor: "rgba(255,255,255,0.08)" }}
+            className="flex h-[52px] w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-4 text-sm font-medium text-[var(--text-secondary)] transition-all duration-150 ease-out hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {googleLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

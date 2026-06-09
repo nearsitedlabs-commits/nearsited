@@ -177,6 +177,13 @@ input, select, textarea, button, option {
  * below the fixed nav. Sections targeted via hash links
  * should have `scroll-margin-top: var(--nav-height)`. */
 :root {
+  /* Typography scale tokens */
+  --text-hero:     clamp(3.5rem, 5.5vw, 5.8rem);  /* Hero H1 — Switzer / Geist */
+  --text-display:  2.5rem;                          /* Section headings — Geist */
+  --text-2xl: 1.5rem;
+  --text-xl:  1.25rem;
+  --text-lg:  1.125rem;
+
   --nav-height: 80px;
   --sidebar-width: 240px;
 

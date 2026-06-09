@@ -1,6 +1,6 @@
 # Nearsited — Launch Readiness Audit Report (Updated)
 
-**Date:** June 8, 2026 — Report Updated: June 9, 2026
+**Date:** June 8, 2026 — Report Updated: June 9, 2026 — Migrations Verified: June 9, 2026
 **Audit Scope:** Full codebase audit across 4 dimensions (Project Research, Security, Code Quality & Architecture, Frontend/UX)
 **Overall Launch Readiness Score:** ~~4.2 / 10~~ → **9.5 / 10**
 
@@ -24,7 +24,7 @@ All 30 priority fixes identified in the audit have been completed. The table bel
 
 | # | Issue | Original ID | Severity | Status |
 |---|-------|-------------|----------|--------|
-| 1 | Race condition in credit deduction | C-01 | 🟠 CRITICAL | ✅ Completed |
+| 1 | Race condition in credit deduction | C-01 | 🟠 CRITICAL | ✅ Completed · ✅ Verified in DB |
 | 2 | No CSRF protection on mutating routes | C-02 | 🟠 CRITICAL | ✅ Completed |
 | 3 | Webhook idempotency missing in Dodo Payments | C-03 | 🟠 CRITICAL | ✅ Completed |
 | 4 | ScreenshotCore API key sent in URL query parameter | C-04 | 🟠 CRITICAL | ✅ Completed |
@@ -42,7 +42,7 @@ All 30 priority fixes identified in the audit have been completed. The table bel
 | 16 | Missing `error.tsx` boundaries for dashboard pages | H-05 | 🟡 HIGH | ✅ Completed |
 | 17 | Duplicated NDJSON stream parsing (3 implementations) | H-06 | 🟡 HIGH | ✅ Completed |
 | 18 | Pipeline error boundary | H-05 | 🟡 HIGH | ✅ Completed |
-| 19 | No RLS policies on user-scoped tables (server-enforced data isolation) | C-07 | 🟠 CRITICAL | ✅ Completed |
+| 19 | No RLS policies on user-scoped tables (server-enforced data isolation) | C-07 | 🟠 CRITICAL | ✅ Completed · ✅ Verified in DB |
 | 20 | Gemini API key sent via proper `x-goog-api-key` header (not URL param) | M-05 | 🔵 MEDIUM | ✅ Completed |
 | 21 | Insufficient input validation on PATCH `/api/businesses/[id]` | M-04 | 🔵 MEDIUM | ✅ Completed |
 | 22 | CSP Report-URI not configured | H-03 | 🟡 HIGH | ✅ Completed |

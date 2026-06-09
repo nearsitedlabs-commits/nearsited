@@ -46,7 +46,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
         <motion.div {...fadeUp(0)} className="space-y-5">
-          <h1 className="text-[clamp(2.8rem,5.5vw,5.5rem)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
+          <h1 className="text-[var(--text-hero)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
             Your next client is out there
             <br />
             <em className="italic not-italic">without a website.</em>

@@ -276,7 +276,7 @@ export default function DashboardClient({
             {/* 1. Ready to Pitch */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
-              className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
+              className="rounded-xl border border-[var(--accent)]/30 bg-[var(--bg-surface)] p-5 flex flex-col gap-3"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Ready to Pitch</p>
@@ -292,7 +292,7 @@ export default function DashboardClient({
             {/* 2. In Pipeline */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 flex flex-col gap-3"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">In Pipeline</p>
@@ -308,7 +308,7 @@ export default function DashboardClient({
             {/* 3. Active Conversations */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 flex flex-col gap-3"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Conversations</p>
@@ -324,7 +324,7 @@ export default function DashboardClient({
             {/* 4. Leads */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 flex flex-col gap-3"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 flex flex-col gap-3"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Leads</p>
