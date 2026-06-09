@@ -2,7 +2,8 @@
 
 import { useCountUp } from "@/lib/shared-hooks";
 import { safeHref } from "@/lib/url-security";
-import { motion } from "framer-motion";
+import { sanitizeHtml } from "@/lib/api/sanitize";
+import { motion } from "@/lib/motion";
 import type { AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -333,7 +334,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                     transition={{ duration: 0.3, delay: i * 0.06 }}
                   >
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
-                    {issue.detail}
+                    {sanitizeHtml(issue.detail)}
                   </motion.li>
                 ))}
               </ul>
@@ -358,8 +359,8 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{issue.title}</p>
-                        <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{issue.detail}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{sanitizeHtml(issue.title)}</p>
+                        <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{sanitizeHtml(issue.detail)}</p>
                       </div>
                       <div className="ml-3 flex flex-col items-end gap-1">
                         <ImpactPill impact={issue.impact ?? "Medium"} />

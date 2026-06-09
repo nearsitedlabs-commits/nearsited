@@ -7,6 +7,7 @@ import { Suspense, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Mail, Lock, User, Loader2, Eye, EyeOff } from "lucide-react";
 import AuthCard from "@/components/auth/AuthCard";
+import PasswordStrengthMeter from "@/components/auth/PasswordStrengthMeter";
 
 const AuthBackground = dynamic(
   () => import("@/components/auth/AuthBackground"),
@@ -229,6 +230,9 @@ function SignupPageContent() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+
+              {/* Password strength meter */}
+              <PasswordStrengthMeter password={password} />
             </div>
 
             {/* Submit */}

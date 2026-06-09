@@ -7,6 +7,7 @@ export function CanvasBackground({ fixed = false }: { fixed?: boolean }) {
 
   useEffect(() => {
     if (window.matchMedia("(max-width: 767px)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");

@@ -32,6 +32,10 @@ export const REQUIRED_ENV_VARS = [
   "SUPABASE_SERVICE_ROLE_KEY",
   "DODO_API_KEY",
   "DODO_WEBHOOK_SECRET",
+  "DODO_PRODUCT_STARTER_MONTHLY",
+  "DODO_PRODUCT_STARTER_ANNUAL",
+  "DODO_PRODUCT_AGENCY_MONTHLY",
+  "DODO_PRODUCT_AGENCY_ANNUAL",
   "UPSTASH_REDIS_REST_URL",
   "UPSTASH_REDIS_REST_TOKEN",
   "GOOGLE_PLACES_API_KEY",
@@ -39,6 +43,23 @@ export const REQUIRED_ENV_VARS = [
   "SCREENSHOT_API_KEY",
   "RESEND_API_KEY",
   "ADMIN_EMAIL",
+] as const;
+
+/**
+ * Optional environment variables — recognised but not required for startup.
+ *
+ * These are documented here because they control behaviour that must be
+ * configured in production (e.g. CSRF protection), but their absence should
+ * not prevent the server from starting in development.
+ */
+export const OPTIONAL_ENV_VARS = [
+  "NEXT_PUBLIC_SITE_URL",           // Used by CSRF origin validation in middleware
+  "CSRF_ALLOWED_ORIGINS",           // Comma-separated additional origins for CSRF
+  "RESEND_AUDIENCE_ID",             // Resend audience ID for newsletter subscriptions
+  "NEXT_PUBLIC_DODO_PRODUCT_STARTER_MONTHLY",  // Client-side: overrides hardcoded pricing IDs
+  "NEXT_PUBLIC_DODO_PRODUCT_STARTER_ANNUAL",
+  "NEXT_PUBLIC_DODO_PRODUCT_AGENCY_MONTHLY",
+  "NEXT_PUBLIC_DODO_PRODUCT_AGENCY_ANNUAL",
 ] as const;
 
 /**

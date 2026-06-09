@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, Check } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { FadeUp } from "@/lib/motion";

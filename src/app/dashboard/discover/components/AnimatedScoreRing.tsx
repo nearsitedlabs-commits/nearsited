@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReducedMotion, animate as motionAnimate } from "framer-motion";
+import { useReducedMotion, animate as motionAnimate } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 
 type AnimScoreProps = {

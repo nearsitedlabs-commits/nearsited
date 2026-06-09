@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { withAuth } from "@/lib/api/with-auth";
+import { expensiveOpLimiter } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dataClearSchema } from "@/lib/validation";
 
@@ -13,7 +14,8 @@ const TABLE_MAP: Record<Scope, string> = {
   saved_searches: "territories",
 };
 
-export const POST = withAuth(async ({ request, user }) => {
+export const POST = withAuth(
+  async ({ request, user }) => {
   const body = await request.json().catch(() => ({}));
   
   // ── Zod validation ──────────────────────────────────────────────────────
@@ -29,17 +31,18 @@ export const POST = withAuth(async ({ request, user }) => {
   const table = TABLE_MAP[scope as Scope];
   const admin = createAdminClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error, count } = await (admin.from(table) as any)
+  const { error, count } = await (admin.from(table) as unknown as ReturnType<typeof admin.from>)
     .delete({ count: "exact" })
     .eq("user_id", user.id);
 
   if (error) {
-    console.error(`[DATA/CLEAR] scope=${scope} DB error`, { code: error.code, message: error.message });
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(`[DATA/CLEAR] scope=${scope} DB error`, { code: error.code, message: error.message, details: error.details, hint: error.hint });
+    return NextResponse.json({ error: "An internal error occurred" }, { status: 500 });
   }
 
   const deleted = count ?? 0;
   console.log(`[DATA/CLEAR] scope=${scope} deleted=${deleted} user=...${user.id.slice(-4)}`);
   return NextResponse.json({ deleted });
-});
+  },
+  { limiter: expensiveOpLimiter },
+);

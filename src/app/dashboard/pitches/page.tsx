@@ -7,7 +7,7 @@ import { ArrowLeft, Copy, ExternalLink, FileText, Loader2, Search, Trash2, Check
 import { Toast } from "@/components/ui/Toast";
 import { detectLeadWorkflow } from "@/lib/lead-types";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

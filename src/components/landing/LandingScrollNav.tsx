@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "@/lib/motion";
 import { Home, BookOpen, Sparkles, FileText, Briefcase, CreditCard } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
 

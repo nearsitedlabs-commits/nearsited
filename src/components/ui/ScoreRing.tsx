@@ -1,7 +1,7 @@
 "use client";
 
 import { useCountUp } from "@/lib/shared-hooks";
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 
 type ScoreRingProps = {
   score: number | null | undefined;

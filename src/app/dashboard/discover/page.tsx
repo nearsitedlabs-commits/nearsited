@@ -14,7 +14,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { Toast } from "@/components/ui/Toast";
 import { estimatedOpportunity, computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "@/lib/motion";
 
 import { DiscoverForm } from "./components/DiscoverForm";
 import { ResultCard } from "./components/ResultCard";

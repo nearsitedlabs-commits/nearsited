@@ -1,0 +1,11 @@
+page.tsx: 1774 - lines (reduced by 677 lines, 38%)
+
+Component breakdown:
+  AuditForm.tsx: 203 lines
+  AuditProgressPanel.tsx: 83 lines
+  AuditResultsPanel.tsx: 361 lines
+  ExampleReportModal.tsx: 262 lines
+  PitchAndPipelinePanel.tsx: 184 lines
+  SaveLeadForm.tsx: 205 lines
+  index.ts: 7 lines
+  types.ts: 29 lines

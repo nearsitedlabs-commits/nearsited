@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Eye } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "@/lib/motion";
 import { fadeUpVariants } from "@/lib/motion";
 import type { LeadRow } from "./types";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { animate as motionAnimate, useReducedMotion } from "framer-motion";
+import { animate as motionAnimate, useReducedMotion } from "@/lib/motion";
 import { scoreLabel } from "@/lib/scoring";
 
 export function ScoreRingWithLabel({ score, size = 56, label }: { score: number; size?: number; label?: string }) {

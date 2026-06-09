@@ -131,9 +131,13 @@ export const checkoutSchema = z.object({
 
 /**
  * Data clear body.
+ * Requires explicit `confirm: true` to prevent accidental destruction of user data.
  */
 export const dataClearSchema = z.object({
   scope: dataClearScopeSchema,
+  confirm: z.literal(true, {
+    message: "Confirmation required — set confirm to true to proceed",
+  }),
 });
 
 /**

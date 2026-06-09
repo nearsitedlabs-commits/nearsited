@@ -5,7 +5,7 @@ import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 import { FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 const PROOF_POINTS = [
   { stat: "249", label: "business types covered across 13 industry categories" },

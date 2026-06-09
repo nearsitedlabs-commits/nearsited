@@ -74,7 +74,7 @@ Settings      /dashboard/settings  ✅
 ## External APIs (verified July 2026)
 
 ### Gemini — `gemini-2.5-flash`
-- ⚠️ Model status: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **alive GA, recommended** (5× cheaper than 3.5 Flash); `gemini-3.5-flash` = alive but avoid. Define once: `const GEMINI_MODEL = "gemini-2.5-flash"` in [`src/lib/gemini.ts`](src/lib/gemini.ts).
+- ⚠️ Model status: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **alive GA, recommended**. Define once: `const GEMINI_MODEL = "gemini-2.5-flash"` in [`src/lib/gemini.ts`](src/lib/gemini.ts).
 - Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 - Auth: **header** `x-goog-api-key: process.env.GEMINI_API_KEY` (NOT query param).
 - Multimodal: `parts:[{ inline_data:{ mime_type:"image/png", data:<base64> } }, { text:<prompt> }]`. For UX, send multiple `inline_data` frame parts in one call.
@@ -499,7 +499,7 @@ These patterns ensure future AI iterations can work with the codebase without br
 
 ## Don't Repeat These (each a real past bug)
 1. Writing `website_url`/`gmb_*`/`category` (DROPPED → `website`/`place_id`/`rating`/`review_count`/`business_type`).
-2. `gemini-1.5-flash` / `gemini-2.0-flash` (SHUT DOWN → `gemini-2.5-flash`). Never use `gemini-3.5-flash` — 5× more expensive with no quality gain for this workload.
+2. `gemini-1.5-flash` / `gemini-2.0-flash` (SHUT DOWN → `gemini-2.5-flash`). Always use the canonical model constant from [`src/lib/gemini.ts`](src/lib/gemini.ts).
 3. Session client for server INSERT → RLS 42501 silent fail (→ admin client).
 4. Returning 200 after a failed insert (→ surface `persisted:false`).
 5. `npm run dev` from wrong directory — run from `c:/Projects/nearsited`.

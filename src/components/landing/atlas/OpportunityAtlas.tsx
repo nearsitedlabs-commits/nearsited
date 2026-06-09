@@ -71,6 +71,7 @@ export default function OpportunityAtlas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -326,8 +327,7 @@ export default function OpportunityAtlas() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="absolute inset-0 pointer-events-none"
-      style={{ display: "block" }}
+      className="absolute inset-0 pointer-events-none hidden md:block"
     />
   );
 }

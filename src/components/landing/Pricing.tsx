@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, type Variants } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -32,6 +32,9 @@ type Plan = {
 };
 
 // ── Plans ─────────────────────────────────────────────────────────────────────
+// Product IDs are read from NEXT_PUBLIC_ env vars when available, falling back
+// to the hardcoded sandbox IDs for local development. Set the env vars in
+// deployment to control which products are used without code changes.
 
 const PLANS: Plan[] = [
   {
@@ -47,8 +50,12 @@ const PLANS: Plan[] = [
       "Single user",
     ],
     featured: false,
-    monthlyProductId: "pdt_0NgKrmYBX9pAp9NhbeMqp",
-    annualProductId: "pdt_0NgKs5x6MXKvmMOQemKP2",
+    monthlyProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_STARTER_MONTHLY ??
+      "pdt_0NgKrmYBX9pAp9NhbeMqp",
+    annualProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_STARTER_ANNUAL ??
+      "pdt_0NgKs5x6MXKvmMOQemKP2",
     cta: "Get started →",
     badge: "Most popular",
   },
@@ -64,8 +71,12 @@ const PLANS: Plan[] = [
       "10 city searches per month",
     ],
     featured: true,
-    monthlyProductId: "pdt_0NgKsF0ROmm9U603GRqMm",
-    annualProductId: "pdt_0NgKsQO5UXCVGZskhrv89",
+    monthlyProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_MONTHLY ??
+      "pdt_0NgKsF0ROmm9U603GRqMm",
+    annualProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_ANNUAL ??
+      "pdt_0NgKsQO5UXCVGZskhrv89",
     cta: "Get started →",
     badge: "Best value",
   },

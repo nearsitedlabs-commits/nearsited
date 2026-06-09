@@ -1,5 +1,18 @@
 /**
  * ScreenshotCore integration for full-page screenshots.
+ *
+ * # Security: API key transmission
+ *
+ * The ScreenshotCore API key (`SCREENSHOT_API_KEY`) is transmitted via the
+ * `x-api-key` HTTP header — **not** as a URL query parameter. This prevents
+ * the key from appearing in:
+ * - Server access logs (Nginx, Vercel, etc.)
+ * - Intermediary proxy / load-balancer logs
+ * - Browser network inspector tools on the client side
+ *
+ * If ScreenshotCore's API format changes in the future, verify header-based
+ * auth still works before falling back to `?access_key=` in the URL. For more
+ * context see the security audit report at `docs/LAUNCH_READINESS_AUDIT.md`.
  */
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -19,7 +32,12 @@ export type ScreenshotResult =
 
 // ── Screenshot function ───────────────────────────────────────────────────────
 
-/** Take a full-page screenshot via ScreenshotCore and return base64-encoded PNG bytes. */
+/**
+ * Take a full-page screenshot via ScreenshotCore and return base64-encoded PNG bytes.
+ *
+ * The API key is sent via the `x-api-key` HTTP header (not the URL) to avoid
+ * leaking credentials in request logs. See module-level doc comment above.
+ */
 export async function takeScreenshot(
   url: string,
   viewport: { width: number; height: number },
@@ -27,7 +45,6 @@ export async function takeScreenshot(
 ): Promise<ScreenshotResult> {
   const params = new URLSearchParams({
     url,
-    access_key: accessKey,
     viewport_width: String(viewport.width),
     viewport_height: String(viewport.height),
     format: "png",
@@ -41,6 +58,9 @@ export async function takeScreenshot(
   try {
     const response = await fetch(`${SCREENSHOTCORE_URL}?${params}`, {
       signal: controller.signal,
+      headers: {
+        "x-api-key": accessKey,
+      },
     });
 
     console.log(

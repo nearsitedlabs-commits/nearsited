@@ -4,7 +4,7 @@ import { Radar } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import Link from "next/link";
 import { FadeIn } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 export default function RadarPage() {
   const shouldReduce = useReducedMotion();

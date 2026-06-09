@@ -9,7 +9,7 @@ import { opportunityInsight, type OpportunityInsight } from "@/lib/opportunity-i
 import { blendQualityForOpportunity, computeOpportunityScore, opportunityLabel, opportunityBadgeVariant } from "@/lib/scoring";
 import { useMemo } from "react";
 import { FadeUp } from "@/lib/motion";
-import { useReducedMotion, motion } from "framer-motion";
+import { useReducedMotion, motion } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

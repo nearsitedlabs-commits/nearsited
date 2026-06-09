@@ -10,7 +10,7 @@
 - Hero opportunity feed: `ScoreRing score={41}` → `score={87} variant="opportunity"` (shows opportunity score, not quality score)
 - Sample report badge: `<Badge color="amber">Score: 41/100</Badge>` → `<Badge color="green">Opportunity: 87/100</Badge>`
 - FAQ Q3 answer: "leads scoring below 50 convert at 3× the rate of leads above 70" → "leads with an opportunity score above 70 convert at 3× the rate of those below 30"
-- All `hello@nearsited.com` references → `nearsitedlabs@gmail.com`
+- All `hello@nearsited.io` references → `nearsitedlabs@gmail.com`
 
 ---
 
@@ -28,20 +28,20 @@
 - Section 3 renamed "Payments & Subscriptions" → "Beta Access & Future Billing"
 - Removed false auto-billing claim: "your subscription automatically converts to the paid Starter plan at $19/month. Payments are processed securely by Lemon Squeezy."
 - Replaced with honest free-beta language: "Paid plans launching soon; you will never be charged without explicit opt-in; indicative pricing shown for planning purposes; early beta users receive preferential pricing"
-- Email: `hello@nearsited.com` → `nearsitedlabs@gmail.com`
+- Email: `hello@nearsited.io` → `nearsitedlabs@gmail.com`
 
 ---
 
 ## 4. src/app/privacy/page.tsx — Privacy Policy
 
 - Section 5 (Your Rights): removed fabricated claim "You can export your data from the dashboard at any time" (feature doesn't exist); replaced with "email us within 30 days" process
-- Email: `hello@nearsited.com` → `nearsitedlabs@gmail.com`
+- Email: `hello@nearsited.io` → `nearsitedlabs@gmail.com`
 
 ---
 
 ## 5. src/app/pricing/page.tsx — Pricing Page
 
-- Email in footer: `hello@nearsited.com` → `nearsitedlabs@gmail.com`
+- Email in footer: `hello@nearsited.io` → `nearsitedlabs@gmail.com`
 
 ---
 
@@ -73,7 +73,7 @@
 - Plan badge: "Trial" → "Beta"
 - Upgrade button: "Upgrade to Agency — $49/mo →" removed; replaced with "See upcoming plans" link to `/pricing`
 - Integrations section: hardcoded "Configured"/"Connected" status rows removed; replaced with honest paragraph + contact link
-- Email: `hello@nearsited.com` → `nearsitedlabs@gmail.com`
+- Email: `hello@nearsited.io` → `nearsitedlabs@gmail.com`
 
 ---
 
@@ -153,13 +153,13 @@
 
 ## 16. docs/legal/TERMS_OF_SERVICE.md
 
-- Email: `hello@nearsited.com` → `nearsitedlabs@gmail.com` (2 occurrences)
+- Email: `hello@nearsited.io` → `nearsitedlabs@gmail.com` (2 occurrences)
 
 ---
 
 ## 17. docs/legal/PRIVACY_POLICY.md
 
-- Email: `hello@nearsited.com` → `nearsitedlabs@gmail.com` (2 occurrences)
+- Email: `hello@nearsited.io` → `nearsitedlabs@gmail.com` (2 occurrences)
 
 ---
 

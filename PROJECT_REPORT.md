@@ -106,7 +106,7 @@ One Google Place Details API call per unique `place_id` platform-wide, ever (90-
 
 | Service | Purpose |
 |---------|---------|
-| **Gemini 2.0 Flash** | Vision analysis (screenshot evaluation) + Pitch generation |
+| **Gemini 2.5 Flash** | Vision analysis (screenshot evaluation) + Pitch generation |
 | **ScreenshotOne** | Static website screenshots for design analysis |
 
 ### UI & Animation
@@ -544,7 +544,7 @@ The discover feature lets agencies find local businesses that need websites:
 
 **Design Analysis** ([`/api/analyze-design`](src/app/api/analyze-design/route.ts)):
 - Static screenshot via ScreenshotOne API
-- Vision analysis via Gemini 3.5 Flash
+- Vision analysis via Gemini 2.5 Flash
 - Point deductions with impact assessment in the prompt
 - 7-day database cache
 - NDJSON streaming with step-by-step progress
@@ -1126,7 +1126,7 @@ Free credits do not reset — they are a one-time lifetime allowance. Paid plan 
 |---------|------------------|-------|-----------------|
 | **Google Places API** | [`src/lib/google-places.ts`](src/lib/google-places.ts) | Geocoding, Nearby Search, Place Details | ₹2.67/search, ₹0.25/details |
 | **Google PageSpeed Insights** | [`/api/audit`](src/app/api/audit/route.ts) | Performance + SEO metrics (mobile + desktop) | Free |
-| **Gemini 3.5 Flash** | [`/api/analyze-design`](src/app/api/analyze-design/route.ts), [`/api/pitch`](src/app/api/pitch/route.ts) | Vision analysis (screenshots) + text generation (pitches) | ~$1.50/M input tokens, ~$9/M output tokens |
+| **Gemini 2.5 Flash** | [`/api/analyze-design`](src/app/api/analyze-design/route.ts), [`/api/pitch`](src/app/api/pitch/route.ts) | Vision analysis (screenshots) + text generation (pitches) | ~$0.30/M input tokens, ~$2.50/M output tokens |
 | **ScreenshotOne** | [`/api/analyze-design`](src/app/api/analyze-design/route.ts) | Static website screenshots for visual analysis | 200 free/month |
 | **Dodo Payments** | [`src/lib/dodo.ts`](src/lib/dodo.ts), webhooks | Subscription management, checkout, payment processing | Payment processing fees |
 | **Supabase** | [`src/lib/supabase/*`](src/lib/supabase/) | Postgres database, Auth (email + OAuth), Storage (v2) | Free tier |
@@ -1307,7 +1307,7 @@ Additional fixes applied in the June 6 session:
 - **AI discovery**: `llms.txt` file created for LLM-based recommendations
 - **OG image**: Created SVG-based og-image for social sharing previews
 - **Rate limiter**: Graceful fallback when Upstash Redis is not configured
-- **Gemini model name**: Corrected from `gemini-3.5-flash` to `gemini-2.0-flash`
+- **Gemini model name**: Corrected from `gemini-3.5-flash` to `gemini-2.5-flash`
 - **Audit page mobile layout**: Fixed new search button and complete element responsive layout
 - **Database query parallelization**: `businessType` parameter now passed to `computeOpportunityScore()` in 4 locations for accurate industry multipliers
 

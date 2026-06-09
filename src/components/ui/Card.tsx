@@ -3,7 +3,7 @@
 import { forwardRef, type HTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 import { FadeUp, DURATION, EASE } from "@/lib/motion";
-import { useReducedMotion, motion } from "framer-motion";
+import { useReducedMotion, motion } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

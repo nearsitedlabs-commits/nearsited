@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import { Loader2, Flag, MapPin, Globe, Phone } from "lucide-react";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { businessTypes } from "@/lib/data/businessTypes";

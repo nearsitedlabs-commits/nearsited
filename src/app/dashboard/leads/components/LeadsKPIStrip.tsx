@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import { useCountUp } from "@/lib/shared-hooks";
 import { fadeUpVariants, staggerVariants } from "@/lib/motion";
 

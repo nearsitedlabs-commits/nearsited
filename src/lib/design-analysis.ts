@@ -5,7 +5,7 @@
  */
 
 import { retryWithBackoff } from "@/lib/api/retry";
-import { sanitizeError } from "@/lib/api/sanitize";
+import { sanitizeError, stripHtml } from "@/lib/api/sanitize";
 import { cleanGeminiJson, GEMINI_URL } from "@/lib/gemini";
 import { takeScreenshot, MOBILE_VIEWPORT, DESKTOP_VIEWPORT } from "@/lib/screenshot";
 
@@ -131,6 +131,15 @@ export async function analyzeScreenshot(
       }
       return { ok: false, error: "Gemini response missing required fields", status: response.status, rawText: text };
     }
+
+    // Strip HTML from all AI-generated issue content to prevent stored XSS.
+    // This ensures any HTML/script returned by Gemini is removed before
+    // persisting to the design_analyses table.
+    data.issues = data.issues.map((issue) => ({
+      ...issue,
+      title: stripHtml(issue.title),
+      detail: stripHtml(issue.detail),
+    }));
 
     return { ok: true, data };
   } catch (err) {

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function ResetPasswordPage() {
@@ -17,17 +17,34 @@ export default function ResetPasswordPage() {
   const [checking, setChecking] = useState(true);
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Verify the user has a valid session (from password reset email link)
+  // Exchange code from email link and verify session
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    async function initSession() {
+      const code = searchParams.get("code");
+
+      // If a code is present (from the password reset email link),
+      // exchange it for a session before checking getUser()
+      if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+          router.replace("/login?error=reset_session_expired");
+          return;
+        }
+      }
+
+      // Verify the user has a valid session (from password reset email link)
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.replace("/login?error=reset_session_expired");
       } else {
         setChecking(false);
       }
-    });
-  }, [supabase, router]);
+    }
+
+    initSession();
+  }, [supabase, router, searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

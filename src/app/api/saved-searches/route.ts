@@ -15,8 +15,8 @@ export async function GET() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("[SAVED-SEARCHES] Fetch error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[SAVED-SEARCHES] Fetch error:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
+    return NextResponse.json({ error: "An internal error occurred" }, { status: 500 });
   }
 
   return NextResponse.json({ searches: data ?? [] });
@@ -58,8 +58,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    console.error("[SAVED-SEARCHES] Insert error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[SAVED-SEARCHES] Insert error:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
+    return NextResponse.json({ error: "An internal error occurred" }, { status: 500 });
   }
 
   return NextResponse.json({ search: data }, { status: 201 });
@@ -84,8 +84,8 @@ export async function DELETE(request: NextRequest) {
     .eq("user_id", user.id);
 
   if (error) {
-    console.error("[SAVED-SEARCHES] Delete error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[SAVED-SEARCHES] Delete error:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
+    return NextResponse.json({ error: "An internal error occurred" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

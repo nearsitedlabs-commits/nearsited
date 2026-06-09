@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDodoClient, DODO_PRODUCTS, FREE_AUDIT_LIMIT } from "@/lib/dodo";
+import { getDodoClient, getDodoProducts, FREE_AUDIT_LIMIT } from "@/lib/dodo";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isProcessed, markProcessed } from "@/lib/webhook-idempotency";
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const headers: Record<string, string> = {};
   req.headers.forEach((v, k) => { headers[k] = v; });
+
+  // ── Extract event ID from raw body before unwrapping ────────────────
+  // Dodo webhook events carry a unique `id` at the top level. We parse it
+  // here rather than from the unwrapped event because the SDK type may not
+  // expose it directly. This ID is used for idempotency deduplication.
+  let dodoEventId: string | null = null;
+  try {
+    const parsed = JSON.parse(rawBody);
+    dodoEventId = (parsed.id as string) ?? null;
+  } catch {
+    // Malformed JSON — will be caught by signature verification below
+  }
 
   // Verify signature
   const dodo = getDodoClient();
@@ -23,7 +36,18 @@ export async function POST(req: NextRequest) {
   const eventType = event.type as string;
   const payload = event.data as Record<string, unknown>;
 
-  console.log(`[DODO/WEBHOOK] event=${eventType}`);
+  console.log(`[DODO/WEBHOOK] event=${eventType} eventId=${dodoEventId ?? "unknown"}`);
+
+  // ── Idempotency check ─────────────────────────────────────────────────
+  // Dodo Payments uses at-least-once delivery. If we've already processed
+  // this event ID, return 200 OK without processing (idempotent ack).
+  if (dodoEventId) {
+    const alreadySeen = await isProcessed(dodoEventId);
+    if (alreadySeen) {
+      console.log(`[DODO/WEBHOOK] Duplicate event ${dodoEventId} (${eventType}) — skipping`);
+      return NextResponse.json({ received: true });
+    }
+  }
 
   const admin = createAdminClient();
 
@@ -38,7 +62,7 @@ export async function POST(req: NextRequest) {
       metadata?: Record<string, string>;
     };
 
-    const productInfo = DODO_PRODUCTS[sub.product_id];
+    const productInfo = getDodoProducts()[sub.product_id];
     const isActive = ["active", "renewed"].includes(sub.status) ||
       ["subscription.active", "subscription.renewed", "subscription.plan_changed"].includes(eventType);
     const isCancelled = ["subscription.cancelled", "subscription.expired", "subscription.failed"].includes(eventType);
@@ -83,11 +107,11 @@ export async function POST(req: NextRequest) {
       // Return the same generic response regardless of why the user wasn't found.
       // This ensures an attacker cannot distinguish between "email not registered"
       // and "subscription not linked" by observing different error messages or codes.
+      if (dodoEventId) await markProcessed(dodoEventId);
       return NextResponse.json({ received: true });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const subTable = (admin as any).from("subscriptions");
+    const subTable = admin.from("subscriptions");
 
     if (isCancelled) {
       // Read current audits_used so we can cap it at the free limit on downgrade
@@ -106,9 +130,13 @@ export async function POST(req: NextRequest) {
           dodo_subscription_id: sub.subscription_id,
         })
         .eq("user_id", userId);
-      if (error) console.error("[DODO/WEBHOOK] Cancel update error", error);
-      else if (cappedUsed < currentUsed) {
-        console.log(`[DODO/WEBHOOK] Capped audits_used from ${currentUsed} to ${cappedUsed} on downgrade for user=...${userId.slice(-4)}`);
+      if (error) {
+        console.error("[DODO/WEBHOOK] Cancel update error", error);
+      } else {
+        if (dodoEventId) await markProcessed(dodoEventId);
+        if (cappedUsed < currentUsed) {
+          console.log(`[DODO/WEBHOOK] Capped audits_used from ${currentUsed} to ${cappedUsed} on downgrade for user=...${userId.slice(-4)}`);
+        }
       }
     } else if (isActive && productInfo) {
       const now = new Date();
@@ -122,8 +150,12 @@ export async function POST(req: NextRequest) {
         audits_used: 0,
         credits_reset_at: resetAt,
       }, { onConflict: "user_id" });
-      if (error) console.error("[DODO/WEBHOOK] Upsert error", error);
-      else console.log(`[DODO/WEBHOOK] Subscription updated: user=...${userId.slice(-4)} tier=${productInfo.tier}`);
+      if (error) {
+        console.error("[DODO/WEBHOOK] Upsert error", error);
+      } else {
+        if (dodoEventId) await markProcessed(dodoEventId);
+        console.log(`[DODO/WEBHOOK] Subscription updated: user=...${userId.slice(-4)} tier=${productInfo.tier}`);
+      }
     }
   }
 

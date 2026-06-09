@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "@/lib/motion";
 
 const TRADITIONAL_CONS = [
   "No way to find businesses that have no website at all",

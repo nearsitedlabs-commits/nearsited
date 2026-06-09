@@ -7,7 +7,7 @@ import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 import { StaggerContainer, FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 const USE_CASES = [
   {

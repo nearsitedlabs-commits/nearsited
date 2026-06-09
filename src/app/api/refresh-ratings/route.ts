@@ -34,8 +34,7 @@ export const POST = withAuth(async ({ request, user, supabase }) => {
   const adminClient = createAdminClient();
 
   // Check staleness in places_cache (shared cache — no user_id column)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: cached } = await (adminClient.from("places_cache") as any)
+  const { data: cached } = await adminClient.from("places_cache")
     .select("ratings_fetched_at")
     .eq("place_id", business.place_id)
     .maybeSingle();
@@ -61,8 +60,7 @@ export const POST = withAuth(async ({ request, user, supabase }) => {
   const now = new Date().toISOString();
 
   // Update places_cache (shared cache — raw admin)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: cacheErr } = await (adminClient.from("places_cache") as any)
+  const { error: cacheErr } = await adminClient.from("places_cache")
     .upsert(
       { place_id: business.place_id, rating, review_count: reviewCount, ratings_fetched_at: now },
       { onConflict: "place_id" },
@@ -70,9 +68,8 @@ export const POST = withAuth(async ({ request, user, supabase }) => {
   if (cacheErr) console.error("[REFRESH-RATINGS] places_cache upsert failed:", cacheErr);
 
   // Update the businesses row for this user
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: bizErr } = await (adminClient.from("businesses") as any)
-    .update({ rating, review_count: reviewCount })
+  const { error: bizErr } = await adminClient.from("businesses")
+    .update({ rating, review_count: reviewCount } as Record<string, unknown>)
     .eq("id", businessId)
     .eq("user_id", user.id);
   if (bizErr) console.error("[REFRESH-RATINGS] businesses update failed:", bizErr);

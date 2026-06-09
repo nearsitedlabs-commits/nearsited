@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "@/lib/motion";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/landing/SectionLabel";

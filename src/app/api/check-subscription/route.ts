@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withAuth } from "@/lib/api/with-auth";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
-import { getDodoClient, DODO_PRODUCTS, FREE_AUDIT_LIMIT } from "@/lib/dodo";
+import { getDodoClient, getDodoProducts, FREE_AUDIT_LIMIT } from "@/lib/dodo";
 
 /**
  * GET /api/check-subscription
@@ -18,16 +18,16 @@ export const GET = withAuth(async ({ user, supabase }) => {
     .maybeSingle();
 
   // Self-heal: bump stale free-tier limits created before FREE_AUDIT_LIMIT was raised
-  const storedTier = (subRow as { tier?: string } | null)?.tier ?? "free";
-  const storedLimit = (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT;
+  const storedTier: string | null = (subRow as unknown as { tier?: string } | null)?.tier ?? "free";
+  const storedLimit: number = (subRow as unknown as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT;
   if (storedTier === "free" && storedLimit < FREE_AUDIT_LIMIT) {
-    await (admin as any).from("subscriptions").update({ audits_limit: FREE_AUDIT_LIMIT }).eq("user_id", user.id);
+    await admin.from("subscriptions").update({ audits_limit: FREE_AUDIT_LIMIT });
     console.log(`[CHECK-SUBSCRIPTION] Healed stale free limit ${storedLimit}→${FREE_AUDIT_LIMIT} for user=...${user.id.slice(-4)}`);
   }
 
   // 3. Resolve the Dodo customer ID
   const dodo = getDodoClient();
-  let dodoCustomerId: string | null = (subRow as { dodo_customer_id?: string } | null)?.dodo_customer_id ?? null;
+  let dodoCustomerId: string | null = (subRow as unknown as { dodo_customer_id?: string } | null)?.dodo_customer_id ?? null;
 
   // If no dodo_customer_id in local DB, try to find it by email via Dodo API
   if (!dodoCustomerId) {
@@ -58,9 +58,9 @@ export const GET = withAuth(async ({ user, supabase }) => {
     return NextResponse.json({
       synced: false,
       reason: "no_dodo_customer",
-      tier: (subRow as { tier?: string } | null)?.tier ?? "free",
-      audits_used: (subRow as { audits_used?: number } | null)?.audits_used ?? 0,
-      audits_limit: (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
+      tier: (subRow as unknown as { tier?: string } | null)?.tier ?? "free",
+      audits_used: (subRow as unknown as { audits_used?: number } | null)?.audits_used ?? 0,
+      audits_limit: (subRow as unknown as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
     });
   }
 
@@ -86,9 +86,9 @@ export const GET = withAuth(async ({ user, supabase }) => {
     return NextResponse.json({
       synced: false,
       reason: "dodo_api_error",
-      tier: (subRow as { tier?: string } | null)?.tier ?? "free",
-      audits_used: (subRow as { audits_used?: number } | null)?.audits_used ?? 0,
-      audits_limit: (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
+      tier: (subRow as unknown as { tier?: string } | null)?.tier ?? "free",
+      audits_used: (subRow as unknown as { audits_used?: number } | null)?.audits_used ?? 0,
+      audits_limit: (subRow as unknown as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
     });
   }
 
@@ -101,26 +101,27 @@ export const GET = withAuth(async ({ user, supabase }) => {
     return NextResponse.json({
       synced: true,
       reason: "no_active_dodo_subscription",
-      tier: (subRow as { tier?: string } | null)?.tier ?? "free",
-      audits_used: (subRow as { audits_used?: number } | null)?.audits_used ?? 0,
-      audits_limit: (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
+      tier: (subRow as unknown as { tier?: string } | null)?.tier ?? "free",
+      audits_used: (subRow as unknown as { audits_used?: number } | null)?.audits_used ?? 0,
+      audits_limit: (subRow as unknown as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
     });
   }
 
   // 6. Check if local state matches Dodo state
-  const productInfo = DODO_PRODUCTS[activeSub.product_id];
+  const productInfo = getDodoProducts()[activeSub.product_id];
   const alreadySynced = productInfo &&
-    (subRow as { tier?: string } | null)?.tier === productInfo.tier &&
-    (subRow as { audits_limit?: number } | null)?.audits_limit === productInfo.limit &&
-    (subRow as { dodo_subscription_id?: string } | null)?.dodo_subscription_id === activeSub.id;
+    (subRow as unknown as { tier?: string } | null)?.tier === productInfo.tier &&
+    (subRow as unknown as { audits_limit?: number } | null)?.audits_limit === productInfo.limit &&
+    (subRow as unknown as { dodo_subscription_id?: string } | null)?.dodo_subscription_id === activeSub.id;
 
   if (alreadySynced) {
+    const row = subRow as unknown as { tier: string; audits_used: number; audits_limit: number };
     return NextResponse.json({
       synced: true,
       reason: "already_in_sync",
-      tier: (subRow as { tier: string }).tier,
-      audits_used: (subRow as { audits_used: number }).audits_used,
-      audits_limit: (subRow as { audits_limit: number }).audits_limit,
+      tier: row.tier,
+      audits_used: row.audits_used,
+      audits_limit: row.audits_limit,
     });
   }
 
@@ -140,11 +141,11 @@ export const GET = withAuth(async ({ user, supabase }) => {
     }, { onConflict: "user_id" });
 
     if (error) {
-      console.error("[CHECK-SUBSCRIPTION] Sync error:", error);
+      console.error("[CHECK-SUBSCRIPTION] Sync error:", { code: error.code, message: error.message, details: error.details, hint: error.hint });
       return NextResponse.json({
         synced: false,
         reason: "sync_error",
-        error: error.message,
+        error: "An internal error occurred",
       }, { status: 500 });
     }
 
@@ -156,7 +157,7 @@ export const GET = withAuth(async ({ user, supabase }) => {
       tier: productInfo.tier,
       audits_used: 0,
       audits_limit: productInfo.limit,
-      previous_tier: (subRow as { tier?: string } | null)?.tier ?? "free",
+      previous_tier: (subRow as unknown as { tier?: string } | null)?.tier ?? "free",
     });
   }
 
@@ -164,8 +165,8 @@ export const GET = withAuth(async ({ user, supabase }) => {
     synced: false,
     reason: "unknown_product",
     product_id: activeSub.product_id,
-    tier: (subRow as { tier?: string } | null)?.tier ?? "free",
-    audits_used: (subRow as { audits_used?: number } | null)?.audits_used ?? 0,
-    audits_limit: (subRow as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
+    tier: (subRow as unknown as { tier?: string } | null)?.tier ?? "free",
+    audits_used: (subRow as unknown as { audits_used?: number } | null)?.audits_used ?? 0,
+    audits_limit: (subRow as unknown as { audits_limit?: number } | null)?.audits_limit ?? FREE_AUDIT_LIMIT,
   });
 });

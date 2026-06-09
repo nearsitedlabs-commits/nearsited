@@ -225,7 +225,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Cache check — only when persisting (need a real businessId to look up cached rows)
-    if (shouldPersist) {
+    if (shouldPersist && businessId) {
       const sa = scopedAdmin(user.id);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const { data: cachedAuditsData, error: cacheReadError } = await sa.from("audits")
@@ -374,8 +374,7 @@ export async function POST(request: NextRequest) {
             ];
 
             for (const row of auditRows) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const { error: insertError } = await (adminSupabase.from("audits") as any)
+              const { error: insertError } = await adminSupabase.from("audits")
                 .insert(row);
 
               if (insertError) {
@@ -394,16 +393,21 @@ export async function POST(request: NextRequest) {
             const outreachReason = isFlagged ? (bestPerfScore < 40 ? "poor_performance" : "needs_improvement") : null;
 
             // 7. Compute opportunity score (rating + review_count already on the business row)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data: businessRow } = await (adminSupabase.from("businesses") as any)
+            const { data: businessRowRaw } = await adminSupabase.from("businesses")
               .select("rating, review_count, business_type, design_score")
-              .eq("id", businessId)
+              .eq("id", businessId!)
               .single();
+            const businessRow = businessRowRaw as unknown as {
+              review_count?: number;
+              rating?: number;
+              business_type?: string | null;
+              design_score?: number | null;
+            } | null;
 
-            const reviewCount = (businessRow as { review_count?: number } | null)?.review_count ?? 0;
-            const rating = (businessRow as { rating?: number } | null)?.rating ?? 0;
-            const businessType = (businessRow as { business_type?: string | null } | null)?.business_type ?? null;
-            const existingDesign = (businessRow as { design_score?: number | null } | null)?.design_score ?? null;
+            const reviewCount = businessRow?.review_count ?? 0;
+            const rating = businessRow?.rating ?? 0;
+            const businessType = businessRow?.business_type ?? null;
+            const existingDesign = businessRow?.design_score ?? null;
             // Use avg(mobile, desktop) not max — max inflates quality and understates opportunity.
             // Blend in design score if already analysed (design analysis runs separately).
             const blendedQ = blendQualityForOpportunity(
@@ -414,8 +418,7 @@ export async function POST(request: NextRequest) {
             const opportunityScore = computeOpportunityScore(blendedQ, reviewCount, rating, businessType);
 
             // 8. Update businesses row
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { error: updateError } = await (adminSupabase.from("businesses") as any)
+            const { error: updateError } = await adminSupabase.from("businesses")
               .update({
                 audited_at: now,
                 performance_score: bestPerfScore,
@@ -423,7 +426,7 @@ export async function POST(request: NextRequest) {
                 flagged_for_outreach: isFlagged,
                 outreach_reason: outreachReason,
               })
-              .eq("id", businessId);
+              .eq("id", businessId!);
 
             if (updateError) {
               console.error("[AUDIT] CRITICAL: update failed for business", businessId, { code: updateError.code, message: updateError.message, details: updateError.details, hint: updateError.hint });
@@ -436,8 +439,19 @@ export async function POST(request: NextRequest) {
             console.log("[AUDIT] Audit complete — ephemeral (not persisted)");
           }
 
-          // 8. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free)
-          if (shouldPersist) await deductCredit(user.id);
+          // 8. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free).
+          //     Uses atomic PostgreSQL RPC that checks the limit INSIDE a locked transaction,
+          //     eliminating the race condition between checkCredit() and deductCredit().
+          if (shouldPersist) {
+            const deducted = await deductCredit(user.id);
+            if (!deducted.success) {
+              console.warn(
+                `[AUDIT] Credit deduction rejected for user=...${user.id.slice(-4)} ` +
+                  `used=${deducted.audits_used}/${deducted.audits_limit} — ` +
+                  "analysis was persisted but credit was not deducted (user at limit)",
+              );
+            }
+          }
 
           // 9. Stream result + done
           const responseBody: AuditResponse = {
@@ -452,7 +466,7 @@ export async function POST(request: NextRequest) {
           console.error("[AUDIT] Stream error:", error);
           writeJson(controller, encoder, {
             type: "error",
-            message: error instanceof Error ? error.message : "Internal server error",
+            message: "An unexpected error occurred during analysis",
           });
           controller.close();
         }

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, User, CreditCard, Key, Trash2, Loader2 } from "lucide-react";
 import SignOutButton from "../sign-out-button";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 type UserData = {
   email: string | null;

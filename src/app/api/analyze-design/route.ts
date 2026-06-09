@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Cache check — only when persisting (need a real businessId to look up cached rows)
-    if (shouldPersist) {
+    if (shouldPersist && businessId) {
       const sa = scopedAdmin(currentUser.id);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const { data: cachedDesignData, error: cacheReadError } = await sa.from("design_analyses")
@@ -188,8 +188,7 @@ export async function POST(request: NextRequest) {
                 continue;
               }
 
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const { error: insertError } = await (adminSupabase.from("design_analyses") as any).insert({
+              const { error: insertError } = await adminSupabase.from("design_analyses").insert({
                 id: crypto.randomUUID(),
                 business_id: businessId,
                 user_id: currentUser.id,
@@ -228,15 +227,14 @@ export async function POST(request: NextRequest) {
             const isFlagged = scoreVal > 0 && scoreVal < 70;
             const outreachReason = isFlagged ? (scoreVal < 40 ? "poor_design" : "design_needs_improvement") : null;
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { error: updateError } = await (adminSupabase.from("businesses") as any)
+            const { error: updateError } = await adminSupabase.from("businesses")
               .update({
                 design_score: bestScore,
                 design_analyzed_at: now,
                 flagged_for_outreach: isFlagged,
                 outreach_reason: outreachReason,
               })
-              .eq("id", businessId);
+              .eq("id", businessId!);
 
             if (updateError) {
               console.error("[DESIGN] CRITICAL: businesses update failed", {
@@ -251,17 +249,20 @@ export async function POST(request: NextRequest) {
 
               // Recompute opportunity_score blending perf + new design score
               if (bestScore != null) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const { data: bizForOpp } = await (adminSupabase.from("businesses") as any)
+                const { data: bizForOppRaw } = await adminSupabase.from("businesses")
                   .select("performance_score, rating, review_count, business_type")
-                  .eq("id", businessId)
+                  .eq("id", businessId!)
                   .single();
-                const bfp = bizForOpp as { performance_score?: number | null; rating?: number | null; review_count?: number | null; business_type?: string | null } | null;
+                const bfp = bizForOppRaw as unknown as {
+                  performance_score?: number | null;
+                  rating?: number | null;
+                  review_count?: number | null;
+                  business_type?: string | null;
+                } | null;
                 if (bfp?.performance_score != null) {
                   const blendedQ = blendQualityForOpportunity(null, bfp.performance_score, bestScore);
                   const newOppScore = computeOpportunityScore(blendedQ, bfp.review_count ?? 0, bfp.rating ?? 0, bfp.business_type ?? null);
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  await (adminSupabase.from("businesses") as any).update({ opportunity_score: newOppScore }).eq("id", businessId);
+                  await adminSupabase.from("businesses").update({ opportunity_score: newOppScore }).eq("id", businessId!);
                   console.log("[DESIGN] Updated opportunity_score with blended quality:", newOppScore);
                 }
               }
@@ -283,8 +284,19 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 10. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free)
-          if (shouldPersist) await deductCredit(user.id);
+          // 10. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free).
+          //     Uses atomic PostgreSQL RPC that checks the limit INSIDE a locked transaction,
+          //     eliminating the race condition between checkCredit() and deductCredit().
+          if (shouldPersist) {
+            const deducted = await deductCredit(user.id);
+            if (!deducted.success) {
+              console.warn(
+                `[DESIGN] Credit deduction rejected for user=...${user.id.slice(-4)} ` +
+                  `used=${deducted.audits_used}/${deducted.audits_limit} — ` +
+                  "analysis was persisted but credit was not deducted (user at limit)",
+              );
+            }
+          }
 
           // 11. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
@@ -307,7 +319,7 @@ export async function POST(request: NextRequest) {
           console.error("[DESIGN] Stream error:", error);
           writeJson(controller, encoder, {
             type: "error",
-            message: error instanceof Error ? error.message : "Internal server error",
+            message: "An unexpected error occurred during analysis",
           });
           controller.close();
         }
@@ -320,7 +332,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[DESIGN] Unexpected error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal server error" },
+      { error: "An unexpected error occurred" },
       { status: 500 },
     );
   }

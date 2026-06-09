@@ -66,11 +66,11 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: existing, error: lookupError } = await (sa.from("businesses") as any)
+    const { data: existingRaw, error: lookupError } = await sa.from("businesses")
       .select("id")
       .eq("website", trimmedUrl)
       .maybeSingle();
+    const existing = existingRaw as unknown as { id: string } | null;
 
     if (lookupError) {
       console.error("[LEADS] Lookup error:", { code: lookupError.code, message: lookupError.message });
@@ -91,8 +91,7 @@ export async function POST(request: NextRequest) {
       if (opportunityScore !== null) updates.opportunity_score = opportunityScore;
 
       if (Object.keys(updates).length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error: updateError } = await (sa.from("businesses") as any)
+        const { error: updateError } = await sa.from("businesses")
           .update(updates)
           .eq("id", existing.id);
         if (updateError) {
@@ -108,8 +107,7 @@ export async function POST(request: NextRequest) {
     try { parsedName = new URL(trimmedUrl).hostname; } catch { /* keep raw URL */ }
 
     const businessId = crypto.randomUUID();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: insertError } = await (sa.from("businesses") as any).insert({
+    const { error: insertError } = await sa.from("businesses").insert({
       id: businessId,
       user_id: user.id,
       name: name?.trim() || parsedName,

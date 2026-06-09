@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Pricing } from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/Button";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "@/lib/motion";
 import { Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 

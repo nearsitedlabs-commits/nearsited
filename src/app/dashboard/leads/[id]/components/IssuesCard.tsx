@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import { ImpactPill } from "./ImpactPill";
 
 type Issue = { title: string; detail: string; point_deduction?: number; impact: "High" | "Medium" | "Low" };

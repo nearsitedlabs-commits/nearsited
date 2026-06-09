@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
+import { z } from "zod";
+
+/**
+ * Zod schema for PATCH /api/businesses/[id] request body.
+ * Validates types, coercions numbers, and rejects unknown fields.
+ */
+const patchBusinessSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  city: z.string().min(1).max(100).optional(),
+  businessType: z.string().min(1).max(100).optional(),
+  placeId: z.string().min(1).max(200).optional(),
+  rating: z.number().min(0).max(5).optional(),
+  reviewCount: z.number().int().min(0).optional(),
+  phone: z.string().min(1).max(30).optional(),
+}).strict();
 
 export async function PATCH(
   request: NextRequest,
@@ -15,22 +30,29 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json() as {
-    name?: string;
-    city?: string;
-    businessType?: string;
-    placeId?: string;
-    rating?: number;
-    reviewCount?: number;
-    phone?: string;
-  };
+  let body: z.infer<typeof patchBusinessSchema>;
+  try {
+    const raw = await request.json();
+    const parsed = patchBusinessSchema.safeParse(raw);
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      console.warn("[BUSINESSES-PATCH] validation failed:", fieldErrors);
+      return NextResponse.json(
+        { error: "Invalid request body", details: fieldErrors },
+        { status: 400 },
+      );
+    }
+    body = parsed.data;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
   const admin = createAdminClient();
 
   // Verify ownership before updating
-  const { data: existing, error: fetchErr } = await (admin as any)
+  const { data: existing, error: fetchErr } = await admin
     .from("businesses")
-    .select("id, user_id, performance_score, design_score, website_status, website, rating, review_count")
+    .select("id, user_id, performance_score, design_score, business_type, website_status, website, rating, review_count")
     .eq("id", id)
     .maybeSingle();
 
@@ -79,7 +101,7 @@ export async function PATCH(
     return NextResponse.json({ success: true, message: "No changes" });
   }
 
-  const { data: updated, error: updateErr } = await (admin as any)
+  const { data: updated, error: updateErr } = await admin
     .from("businesses")
     .update(updates)
     .eq("id", id)

@@ -130,8 +130,7 @@ export const GET = withAuth(async ({ request, user, supabase }) => {
   const parsedContact = contactInfoSchema.safeParse(merged);
   if (parsedContact.success) {
     const adminClient = createAdminClient();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void (adminClient.from("businesses") as any).update({ contact_info: parsedContact.data }).eq("id", businessId);
+    void adminClient.from("businesses").update({ contact_info: parsedContact.data } as unknown as Record<string, unknown>).eq("id", businessId);
   } else {
     console.warn("[CONTACT INFO] Skipping cache — validation failed:", parsedContact.error.issues.map((i) => i.message).join(", "));
   }

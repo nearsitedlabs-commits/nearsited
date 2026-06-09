@@ -2,7 +2,7 @@
 
 import { Compass } from "lucide-react";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 type EmptyStateProps = {
   type: "no-search" | "no-results";

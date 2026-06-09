@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 
 // ── Types ─────────────────────────────────────────────────────────────────────

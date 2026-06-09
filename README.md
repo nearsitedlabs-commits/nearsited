@@ -28,7 +28,7 @@ Nearsited finds local businesses with weak websites or no website at all, shows 
 | **Language** | TypeScript (strict) |
 | **Styling** | Tailwind CSS v4 (dark theme, near-black navy #0a0e12, sage green accent #8A9777) |
 | **Database** | Supabase (Postgres 15 + Auth + Storage) |
-| **AI** | Gemini 3.5 Flash (vision + pitch generation) |
+| **AI** | Gemini 2.5 Flash (vision + pitch generation) |
 | **Screenshots** | ScreenshotOne |
 | **APIs** | Google Places, Geocoding, PageSpeed Insights |
 | **PDF** | jsPDF |
@@ -64,13 +64,11 @@ npm run dev
 nearsited/                      # (c:/Projects/nearsited)
 ├── CLAUDE.md                    # Master rules for AI coding assistants
 ├── docs/
-│   ├── AGENTS.md                # Next.js agent rules
 │   ├── ARCHITECTURE.md          # System architecture (two runtimes)
-│   ├── BUSINESS_GTM_STRATEGY.md # Go-to-market strategy
 │   ├── CONVENTIONS.md           # Coding conventions + decisions log
 │   ├── DESIGN_SYSTEM.md         # Design system specification
 │   ├── DISCOVER_PAGE_LOGIC.md   # Discover page filter/sort logic
-│   ├── MASTER_PROMPT.md         # Master context for AI coding sessions
+│   ├── GTM.md                   # Go-to-market strategy
 │   ├── PRD.md                   # Product requirements
 │   └── SCHEMA.md                # Database schema + migrations
 ├── src/
@@ -109,7 +107,7 @@ nearsited/                      # (c:/Projects/nearsited)
 ### V1 (Live)
 - Google Places discovery + website classification (5 statuses)
 - Performance audit (PageSpeed mobile + desktop, 7-day DB cache)
-- Design analysis (ScreenshotOne + Gemini 3.5 Flash vision, 7-day DB cache)
+- Design analysis (ScreenshotOne + Gemini 2.5 Flash vision, 7-day DB cache)
 - 6-core scoring model (Performance, SEO, Mobile, UX/Design, Trust, Overall) + opportunity scoring
 - Lead Detail: pipeline status dropdown, Mobile/Desktop reactive scores, expanded Core Web Vitals with colour indicators, toast system
 - Pitch generation (6 lead-type branches, tone/length/focus, cites real audit data, clipboard copy)
@@ -144,16 +142,16 @@ nearsited/                      # (c:/Projects/nearsited)
 
 ## Documentation
 
-See the [`docs/`](nearsited/docs/) directory for detailed documentation. [`CLAUDE.md`](nearsited/CLAUDE.md) contains the canonical project rules used by AI coding assistants and is auto-loaded every Claude Code session.
+See the [`docs/`](docs/) directory for detailed documentation. [`CLAUDE.md`](CLAUDE.md) contains the canonical project rules used by AI coding assistants and is auto-loaded every Claude Code session.
 
 | Document | Description |
 |---|---|
-| [`CLAUDE.md`](nearsited/CLAUDE.md) | Master rules, enums, API references, build status — auto-loaded by Claude Code |
-| [`docs/PRD.md`](nearsited/docs/PRD.md) | Product requirements and page specifications |
-| [`docs/ARCHITECTURE.md`](nearsited/docs/ARCHITECTURE.md) | Two-runtime architecture, stack, API routes |
-| [`docs/SCHEMA.md`](nearsited/docs/SCHEMA.md) | Database schema, enums, migrations (authoritative) |
-| [`docs/CONVENTIONS.md`](nearsited/docs/CONVENTIONS.md) | Coding conventions, anti-patterns, decisions log |
-| [`docs/DESIGN_SYSTEM.md`](nearsited/docs/DESIGN_SYSTEM.md) | Design system, tokens, component standards |
-| [`docs/BUSINESS_GTM_STRATEGY.md`](nearsited/docs/BUSINESS_GTM_STRATEGY.md) | Market, positioning, pricing, growth |
+| [`CLAUDE.md`](CLAUDE.md) | Master rules, enums, API references, build status — auto-loaded by Claude Code |
+| [`docs/PRD.md`](docs/PRD.md) | Product requirements and page specifications |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Two-runtime architecture, stack, API routes |
+| [`docs/SCHEMA.md`](docs/SCHEMA.md) | Database schema, enums, migrations (authoritative) |
+| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Coding conventions, anti-patterns, decisions log |
+| [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Design system, tokens, component standards |
+| [`docs/GTM.md`](docs/GTM.md) | Market, positioning, pricing, growth |
 
 Built by [Again Labs](https://againlabs.com).

@@ -418,8 +418,17 @@ export async function POST(request: NextRequest) {
 
           console.log("[DISCOVER] Success - returning:", { total: upsertedBusinesses.length, flagged });
 
-          // Deduct one search from the user's monthly allowance
-          await deductSearch(user.id);
+          // Deduct one search from the user's monthly allowance.
+          // Uses atomic PostgreSQL RPC that checks the limit INSIDE a locked transaction,
+          // eliminating the race condition between checkSearch() and deductSearch().
+          const deducted = await deductSearch(user.id);
+          if (!deducted.success) {
+            console.warn(
+              `[DISCOVER] Search deduction rejected for user=...${user.id.slice(-4)} ` +
+                `used=${deducted.searches_used}/${deducted.searches_limit} — ` +
+                "search results were persisted but credit was not deducted (user at limit)",
+            );
+          }
 
           writeJson(controller, encoder, {
             type: "done",

@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
 // ── Types ─────────────────────────────────────────────────────────────────────

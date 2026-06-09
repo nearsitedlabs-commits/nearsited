@@ -200,7 +200,7 @@ create policy "users manage own audits" on public.audits
 ---
 
 ### 2.5 `design_analyses`  ← two rows per run (STATIC visual)
-Gemini 3.5 Flash vision on **static screenshots** (above-the-fold render). Distinct from `ux_analyses`, which analyses **interaction**. Written via **admin client**. The `issues` JSON powers pitches, PDF reports, and the Lead Detail panel — keep it structured.
+Gemini 2.5 Flash vision on **static screenshots** (above-the-fold render). Distinct from `ux_analyses`, which analyses **interaction**. Written via **admin client**. The `issues` JSON powers pitches, PDF reports, and the Lead Detail panel — keep it structured.
 
 ```sql
 create table public.design_analyses (
@@ -359,7 +359,24 @@ create table public.mockups (
 ### 2.10 `subscriptions`
 Billing / audit-credit tracking. Provisioned on signup via [`getSubscription()`](src/lib/credits.ts:17) (free tier) and updated by the Dodo Payments webhook ([`src/app/api/webhooks/dodo/route.ts`](src/app/api/webhooks/dodo/route.ts)) when users subscribe, upgrade, or cancel. On downgrade/cancel, `audits_used` is capped to `FREE_AUDIT_LIMIT` to prevent over-limit states.
 
-**Credit deduction rules (June 2026):** `deductCredit` fires only when `businessId` is present (persisted mode). Ephemeral quick-audit runs (`/dashboard/audit`, no businessId) are credit-free. `deductSearch` uses a simple user_id-only UPDATE — no optimistic concurrency lock (removed after NULL-column silent-failure bug).
+```sql
+alter table public.subscriptions enable row level security;
+create policy "users_select_own_subscriptions" on public.subscriptions
+  for select to authenticated
+  using (user_id = auth.uid());
+create policy "users_insert_own_subscriptions" on public.subscriptions
+  for insert to authenticated
+  with check (user_id = auth.uid());
+create policy "users_update_own_subscriptions" on public.subscriptions
+  for update to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+create policy "users_delete_own_subscriptions" on public.subscriptions
+  for delete to authenticated
+  using (user_id = auth.uid());
+```
+
+**Credit deduction rules (June 2026):** `deductCredit` fires only when `businessId` is present (persisted mode). Ephemeral quick-audit runs (`/dashboard/audit`, no businessId) are credit-free. Both `deductCredit` and `deductSearch` now use **atomic PostgreSQL functions** ([`deduct_audit_credit`](scripts/migrate-atomic-credits.sql) / [`deduct_search_credit`](scripts/migrate-atomic-credits.sql)) that perform the check and increment inside a single locked transaction (`SELECT … FOR UPDATE` + `SET col = col + 1`), eliminating the race condition where two concurrent requests could both pass the limit check.
 
 `tier`: `free | starter | agency`. Free limits: `FREE_AUDIT_LIMIT = 20`, `FREE_SEARCH_LIMIT = 3` (defined in `src/lib/dodo.ts`).
 ```sql
@@ -620,6 +637,27 @@ In Supabase dashboard → Storage → New bucket: name `recordings`, **private**
 ```
 Use **signed URLs** generated server-side to show frames in the UI — do not make the bucket public.
 
+### 5.13 — Atomic credit deduction functions (race-condition fix)
+
+Creates PostgreSQL functions that atomically check credit limits and deduct credits inside a single locked transaction, eliminating the race condition in the original read-check-write pattern.
+
+```sql
+-- Run from scripts/migrate-atomic-credits.sql OR paste the full content below
+```
+
+The standalone SQL file at [`scripts/migrate-atomic-credits.sql`](scripts/migrate-atomic-credits.sql) contains both functions and is the authoritative source. Callers use `supabase.rpc('deduct_audit_credit', { p_user_id })` via the admin client (see [`src/lib/credits.ts`](src/lib/credits.ts)).
+
+### 5.14 — Row-Level Security audit (comprehensive RLS policies)
+
+Ensures all user-scoped tables have complete per-user RLS policies. Covers `businesses`, `pipeline`, `audits`, `design_analyses`, `territories`, and `places_cache`. Idempotent — safe to re-run.
+
+```sql
+-- Run the full migration script:
+-- scripts/migrate-rls-fix.sql
+```
+
+The authoritative source is [`scripts/migrate-rls-fix.sql`](scripts/migrate-rls-fix.sql). Run this after all other migrations to ensure every table has the correct RLS policies in place.
+
 > **Note on `flagged_for_outreach` and `outreach_reason`:** These columns were added directly by the API routes during development and may not have explicit migration SQL in this section. They were added as part of the businesses table via application-level ALTER TABLE (e.g., `alter table public.businesses add column if not exists flagged_for_outreach boolean default false;`). If they do not exist, add them manually.
 
 ---
@@ -756,7 +794,7 @@ pitches          id, business_id, user_id, subject, body, tone, lead_type,
                  pitch_status, created_at
 mockups          id, business_id, user_id, html_content, preview_url, created_at        [v2]
 subscriptions    id, user_id, dodo_customer_id, dodo_subscription_id, tier,
-                 audits_used, audits_limit, credits_reset_at, created_at                 [atomic OCC on audits_used §10]
+                 audits_used, audits_limit, credits_reset_at, created_at                 [atomic deduction via PG function §5.13]
 share_links      id, business_id, user_id, token, created_at, expires_at                 [admin insert, anon select]
 territories      id, user_id, name, city, business_type,
                  last_scanned_at, alert_enabled, created_at                              [v2 — no radius column]

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import { Search, ExternalLink, Check, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -11,6 +11,11 @@ import { ScoreRing } from "@/components/ui/ScoreRing";
 
 const CanvasBackground = dynamic(
   () => import("@/components/ui/CanvasBackground").then((mod) => ({ default: mod.CanvasBackground })),
+  { ssr: false },
+);
+
+const OpportunityAtlas = dynamic(
+  () => import("@/components/landing/atlas/OpportunityAtlas"),
   { ssr: false },
 );
 
@@ -35,6 +40,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
   return (
     <section id="hero" className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-6 pb-16 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10" style={{ contentVisibility: "auto" }}>
+      <OpportunityAtlas />
       <CanvasBackground />
 
       {/* Left: Copy */}

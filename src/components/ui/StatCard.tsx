@@ -4,7 +4,7 @@ import { type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Card, type CardVariant } from "./Card";
 import { FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

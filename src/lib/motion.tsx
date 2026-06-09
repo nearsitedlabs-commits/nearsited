@@ -25,7 +25,7 @@
  *   ✗ No spinning loaders
  */
 
-import { motion, AnimatePresence, useReducedMotion as _useReducedMotion, type Variants, type Easing } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup, animate, useReducedMotion as _useReducedMotion, type Variants, type Easing } from "framer-motion";
 
 // ── Duration & Easing Tokens ──────────────────────────────────────────────────
 
@@ -239,4 +239,4 @@ export function SkeletonLoader({
 
 // ── Re-exports — always import from here, never directly from "framer-motion" ──
 
-export { motion, AnimatePresence, _useReducedMotion as useReducedMotion, type Variants };
+export { motion, AnimatePresence, LayoutGroup, animate, _useReducedMotion as useReducedMotion, type Variants };

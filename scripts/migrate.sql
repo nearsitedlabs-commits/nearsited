@@ -90,3 +90,9 @@ alter table public.businesses
 
 create index if not exists idx_businesses_opportunity_score
   on public.businesses (opportunity_score desc nulls last);
+
+-- §5.13 — Atomic credit deduction functions (race-condition fix)
+-- Creates PostgreSQL functions that use SELECT ... FOR UPDATE + SET col = col + 1
+-- to atomically check and deduct credits within a single locked transaction.
+-- Run the standalone SQL from scripts/migrate-atomic-credits.sql, or paste it below.
+-- See src/lib/credits.ts for the RPC callers.

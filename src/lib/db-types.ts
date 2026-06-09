@@ -114,7 +114,7 @@ export interface AuditRow {
 /**
  * Maps to the `design_analyses` table (§2.5).
  *
- * Two rows per analysis run (mobile + desktop). Gemini 3.5 Flash vision on
+ * Two rows per analysis run (mobile + desktop). Gemini 2.5 Flash vision on
  * static screenshots. Written via admin client.
  */
 export interface DesignAnalysisRow {
@@ -251,6 +251,15 @@ export interface ShareLinkRow {
   expires_at: string | null;
 }
 
+/**
+ * Maps to the `profiles` table (auth-linked user profiles).
+ * Used by the dodo webhook to look up users by email.
+ */
+export interface ProfileRow {
+  id: string;
+  email: string | null;
+}
+
 // ── Derived / Composite Types ───────────────────────────────────────────────
 
 /**
@@ -313,4 +322,50 @@ export interface ShareData {
   desktopAudit: AuditRow | null;
   mobileDesign: DesignAnalysisRow | null;
   desktopDesign: DesignAnalysisRow | null;
+}
+
+// ── Database Type for Supabase Client ───────────────────────────────────────
+//
+// This is the type shape that @supabase/supabase-js expects for its generic
+// parameter. Each table maps to a "GenericTable"-like shape with Row, Insert,
+// Update, and Relationships keys. This enables type-safe `from()` calls
+// throughout the codebase, eliminating `as any` casts.
+
+/**
+ * Minimal GenericTable shape matching what @supabase/supabase-js expects
+ * internally. Only the keys used by the type system are included.
+ * The intersection with `Record<string, unknown>` satisfies the
+ * Supabase type constraint even for interfaces without an explicit
+ * index signature.
+ */
+type TableDef<Row> = {
+  Row: Row & Record<string, unknown>;
+  Insert: Row & Record<string, unknown>;
+  Update: Partial<Row> & Record<string, unknown>;
+  Relationships: [];
+};
+
+/**
+ * Nearsited's Database type — pass as a generic to `createClient<Database>()`
+ * or `createAdminClient<Database>()` for fully typed query builders.
+ */
+export interface Database {
+  public: {
+    Tables: {
+      businesses: TableDef<BusinessRow>;
+      audits: TableDef<AuditRow>;
+      design_analyses: TableDef<DesignAnalysisRow>;
+      pipeline: TableDef<PipelineRow>;
+      pitches: TableDef<PitchRow>;
+      places_cache: TableDef<PlacesCacheRow>;
+      subscriptions: TableDef<SubscriptionRow>;
+      territories: TableDef<TerritoryRow>;
+      share_links: TableDef<ShareLinkRow>;
+      profiles: TableDef<ProfileRow>;
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
 }

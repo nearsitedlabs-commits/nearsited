@@ -15,17 +15,33 @@ const CanvasBackground = dynamic(
 
 export function LandingFooter() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "subscribed" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "subscribed" | "error">("idle");
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !email.includes("@")) return;
+    const trimmed = email.trim();
+    if (!trimmed || !trimmed.includes("@")) return;
 
-    // Client-side only — no mailing list API integrated yet.
-    // Logs to console for now; shows a thank-you message on success.
-    console.log("[NEWSLETTER] Subscribe:", email.trim());
-    setStatus("subscribed");
-    setEmail("");
+    setStatus("loading");
+
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`API returned ${res.status}`);
+      }
+
+      console.log("[NEWSLETTER] Subscribe succeeded:", trimmed);
+      setStatus("subscribed");
+      setEmail("");
+    } catch (err) {
+      console.error("[NEWSLETTER] Subscribe failed:", err);
+      setStatus("error");
+    }
   }, [email]);
 
   return (
@@ -75,14 +91,16 @@ export function LandingFooter() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="your@email.com"
                         required
+                        disabled={status === "loading"}
                         aria-label="Email for newsletter"
-                        className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]/50"
+                        className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]/50 disabled:opacity-50"
                       />
                       <button
                         type="submit"
-                        className="w-full sm:w-auto shrink-0 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
+                        disabled={status === "loading"}
+                        className="w-full sm:w-auto shrink-0 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Subscribe
+                        {status === "loading" ? "Subscribing…" : "Subscribe"}
                       </button>
                     </motion.form>
                   )}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "@/lib/motion";
 import { X } from "lucide-react";
 
 const COOKIE_CONSENT_KEY = "nearsited_cookie_consent";
 
-type ConsentChoice = "accepted" | "declined";
+type ConsentChoice = "accepted" | "declined" | "dismissed";
 
 export function CookieConsent() {
   // Initialise from localStorage synchronously (lazy state initialiser)
@@ -37,6 +37,8 @@ export function CookieConsent() {
   }
 
   function handleDismiss() {
+    localStorage.setItem(COOKIE_CONSENT_KEY, "dismissed");
+    setConsent("dismissed");
     setVisible(false);
   }
 

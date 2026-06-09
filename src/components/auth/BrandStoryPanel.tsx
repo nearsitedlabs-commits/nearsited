@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, BarChart3, Mail, ListFilter, Check } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { StaggerContainer, FadeUp } from "@/lib/motion";
 import OpportunityPreviewCard from "./OpportunityPreviewCard";
 

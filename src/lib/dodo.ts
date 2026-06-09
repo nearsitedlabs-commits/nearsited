@@ -18,13 +18,68 @@ export function getDodoClient(): DodoPayments {
   return _client;
 }
 
-// Product ID → plan tier + monthly audit limit + monthly search limit
-export const DODO_PRODUCTS: Record<string, { tier: "starter" | "agency"; limit: number; searches: number }> = {
-  pdt_0NgKrmYBX9pAp9NhbeMqp: { tier: "starter", limit: 50,  searches: 3  }, // Starter Monthly
-  pdt_0NgKs5x6MXKvmMOQemKP2: { tier: "starter", limit: 50,  searches: 3  }, // Starter Annual
-  pdt_0NgKsF0ROmm9U603GRqMm: { tier: "agency",  limit: 200, searches: 10 }, // Agency Monthly
-  pdt_0NgKsQO5UXCVGZskhrv89: { tier: "agency",  limit: 200, searches: 10 }, // Agency Annual
-};
+// ── Product-to-tier mapping ────────────────────────────────────────────────────
+
+export type ProductTier = "starter" | "agency";
+
+export interface ProductInfo {
+  tier: ProductTier;
+  /** Monthly audit limit for this product. */
+  limit: number;
+  /** Monthly city-search limit for this product. */
+  searches: number;
+}
+
+let _dodoProducts: Record<string, ProductInfo> | null = null;
+
+/**
+ * Returns the product ID → tier/limit/searches mapping.
+ *
+ * Reads product IDs from environment variables at first call, then caches:
+ * - `DODO_PRODUCT_STARTER_MONTHLY` → `{ tier: "starter", limit: 50,  searches: 3 }`
+ * - `DODO_PRODUCT_STARTER_ANNUAL`  → `{ tier: "starter", limit: 50,  searches: 3 }`
+ * - `DODO_PRODUCT_AGENCY_MONTHLY`  → `{ tier: "agency",  limit: 200, searches: 10 }`
+ * - `DODO_PRODUCT_AGENCY_ANNUAL`   → `{ tier: "agency",  limit: 200, searches: 10 }`
+ *
+ * Throws if any of the required env vars are missing.
+ */
+export function getDodoProducts(): Record<string, ProductInfo> {
+  if (_dodoProducts) return _dodoProducts;
+
+  const starterMonthly = process.env.DODO_PRODUCT_STARTER_MONTHLY;
+  const starterAnnual = process.env.DODO_PRODUCT_STARTER_ANNUAL;
+  const agencyMonthly = process.env.DODO_PRODUCT_AGENCY_MONTHLY;
+  const agencyAnnual = process.env.DODO_PRODUCT_AGENCY_ANNUAL;
+
+  if (!starterMonthly || !starterAnnual || !agencyMonthly || !agencyAnnual) {
+    throw new Error(
+      "Missing one or more DODO_PRODUCT_* environment variables. " +
+      "Ensure DODO_PRODUCT_STARTER_MONTHLY, DODO_PRODUCT_STARTER_ANNUAL, " +
+      "DODO_PRODUCT_AGENCY_MONTHLY, and DODO_PRODUCT_AGENCY_ANNUAL are set."
+    );
+  }
+
+  _dodoProducts = {
+    [starterMonthly]: { tier: "starter", limit: 50,  searches: 3  },
+    [starterAnnual]:  { tier: "starter", limit: 50,  searches: 3  },
+    [agencyMonthly]:  { tier: "agency",  limit: 200, searches: 10 },
+    [agencyAnnual]:   { tier: "agency",  limit: 200, searches: 10 },
+  };
+
+  return _dodoProducts;
+}
+
+/** @deprecated Use `getDodoProducts()` instead — env vars may not be available at import time. */
+export const DODO_PRODUCTS: Record<string, ProductInfo> =
+  typeof window === "undefined"
+    ? (() => {
+        try {
+          return getDodoProducts();
+        } catch {
+          return {};
+        }
+      })()
+    : {};
 
 export const FREE_AUDIT_LIMIT = 20; // 10 full workflows per month (audit + design each)
 export const FREE_SEARCH_LIMIT = 3;

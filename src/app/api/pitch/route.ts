@@ -424,8 +424,7 @@ Urgency: ${urgencyInstruction(urgency)}${focus && focus !== "all" ? `\nFocus par
       const pitchId = crypto.randomUUID();
       const now = new Date().toISOString();
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: insertError } = await (adminSupabase.from("pitches") as any).insert({
+      const { error: insertError } = await adminSupabase.from("pitches").insert({
         id: pitchId,
         user_id: user.id,
         business_id: persistedBusinessId,

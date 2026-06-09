@@ -1,8 +1,16 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { FREE_AUDIT_LIMIT, FREE_SEARCH_LIMIT } from "@/lib/dodo";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const subTable = () => (createAdminClient() as any).from("subscriptions");
+/**
+ * Returns the admin client — bypasses RLS, used only in server code.
+ * The return type omits the Database generic to avoid conflicts with
+ * Supabase's strict RPC typing (the `Functions` key in Database maps
+ * to `{}`, causing `.rpc()` to reject all calls).
+ */
+const admin = createAdminClient();
+
+/** Typed reference to the subscriptions table. */
+const subTable = () => admin.from("subscriptions");
 
 type SubRow = {
   tier: string;
@@ -11,6 +19,15 @@ type SubRow = {
   searches_used: number;
   searches_limit: number;
   credits_reset_at: string | null;
+};
+
+/** Shape returned by the deduct_audit_credit / deduct_search_credit RPC. */
+type DeductResult = {
+  success: boolean;
+  audits_used?: number;
+  audits_limit?: number;
+  searches_used?: number;
+  searches_limit?: number;
 };
 
 /**
@@ -69,32 +86,53 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
 }
 
 /**
- * Increments audits_used by 1. Ensures the subscription row exists first, then
- * does a simple read-then-update without optimistic concurrency (which silently
- * fails when the row doesn't exist yet and returns 0 rows matched).
+ * Atomically checks and deducts one audit credit via the
+ * `deduct_audit_credit` PostgreSQL function.
+ *
+ * Uses `SELECT … FOR UPDATE` + `SET audits_used = audits_used + 1` inside a
+ * single server-side transaction, eliminating the race condition where two
+ * concurrent requests both read `audits_used` before either writes.
+ *
+ * Monthly resets are handled inside the function, so callers no longer need
+ * a separate `checkCredit()` call for correctness (though `checkCredit()` is
+ * still useful as a fast-path early-return to avoid wasted work).
+ *
+ * Returns `{ success, audits_used, audits_limit }`.
  */
-export async function deductCredit(userId: string): Promise<void> {
-  await getSubscription(userId); // ensure row exists before updating
-
-  const { data } = await subTable()
-    .select("audits_used")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  const current = (data as { audits_used: number } | null)?.audits_used ?? 0;
-
-  const { error } = await subTable()
-    .update({ audits_used: current + 1 })
-    .eq("user_id", userId);
+export async function deductCredit(
+  userId: string,
+): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
+  const { data, error } = await admin.rpc("deduct_audit_credit", {
+    p_user_id: userId,
+  });
 
   if (error) {
-    console.error(`[CREDITS] deductCredit failed for user=...${userId.slice(-4)}`, {
+    console.error(`[CREDITS] deductCredit RPC failed for user=...${userId.slice(-4)}`, {
       code: error.code,
       message: error.message,
     });
-  } else {
-    console.log(`[CREDITS] deducted user=...${userId.slice(-4)} now=${current + 1}`);
+    return { success: false, audits_used: 0, audits_limit: 0 };
   }
+
+  const result = data as DeductResult;
+
+  if (!result.success) {
+    console.log(
+      `[CREDITS] deductCredit rejected user=...${userId.slice(-4)} ` +
+        `used=${result.audits_used} limit=${result.audits_limit} — limit reached`,
+    );
+  } else {
+    console.log(
+      `[CREDITS] deducted user=...${userId.slice(-4)} ` +
+        `now=${result.audits_used}/${result.audits_limit}`,
+    );
+  }
+
+  return {
+    success: result.success,
+    audits_used: result.audits_used ?? 0,
+    audits_limit: result.audits_limit ?? 0,
+  };
 }
 
 /**
@@ -122,33 +160,46 @@ export async function checkSearch(userId: string): Promise<{ allowed: boolean; s
 }
 
 /**
- * Increments searches_used by 1. Ensures the subscription row exists first, then
- * does a simple read-then-update keyed only on user_id. This avoids the optimistic
- * concurrency lock (.eq("searches_used", current)) which silently no-ops when the
- * column value is NULL — a common state when columns are added to existing rows without
- * a backfill (NULL ≠ 0 in PostgreSQL, so the WHERE clause matches 0 rows and Supabase
- * returns { error: null } with no rows written).
+ * Atomically checks and deducts one search credit via the
+ * `deduct_search_credit` PostgreSQL function.
+ *
+ * Same atomic pattern as `deductCredit` — eliminates the race condition
+ * by performing the check and increment inside a single locked transaction.
+ *
+ * Returns `{ success, searches_used, searches_limit }`.
  */
-export async function deductSearch(userId: string): Promise<void> {
-  await getSubscription(userId); // ensure row exists before updating
-
-  const { data } = await subTable()
-    .select("searches_used")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  const current = (data as { searches_used: number } | null)?.searches_used ?? 0;
-
-  const { error } = await subTable()
-    .update({ searches_used: current + 1 })
-    .eq("user_id", userId);
+export async function deductSearch(
+  userId: string,
+): Promise<{ success: boolean; searches_used: number; searches_limit: number }> {
+  const { data, error } = await admin.rpc("deduct_search_credit", {
+    p_user_id: userId,
+  });
 
   if (error) {
-    console.error(`[CREDITS] deductSearch failed for user=...${userId.slice(-4)}`, {
+    console.error(`[CREDITS] deductSearch RPC failed for user=...${userId.slice(-4)}`, {
       code: error.code,
       message: error.message,
     });
-  } else {
-    console.log(`[CREDITS] search deducted user=...${userId.slice(-4)} now=${current + 1}`);
+    return { success: false, searches_used: 0, searches_limit: 0 };
   }
+
+  const result = data as DeductResult;
+
+  if (!result.success) {
+    console.log(
+      `[CREDITS] deductSearch rejected user=...${userId.slice(-4)} ` +
+        `used=${result.searches_used} limit=${result.searches_limit} — limit reached`,
+    );
+  } else {
+    console.log(
+      `[CREDITS] search deducted user=...${userId.slice(-4)} ` +
+        `now=${result.searches_used}/${result.searches_limit}`,
+    );
+  }
+
+  return {
+    success: result.success,
+    searches_used: result.searches_used ?? 0,
+    searches_limit: result.searches_limit ?? 0,
+  };
 }

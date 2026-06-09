@@ -64,7 +64,7 @@ Tables were created with names that didn't match later code (`score` vs `perform
 ### 2.3 Stale Model Names
 Scaffolded with `gemini-1.5-flash`; by build time it was shut down — every Gemini call 404'd. Happened again when `gemini-2.0-flash` was deprecated June 2026.
 **Rule:** never hardcode the model string in any route or library. Define it once in [`src/lib/gemini.ts`](src/lib/gemini.ts) and import `GEMINI_URL` everywhere. Run the `/api/gemini-test` smoke test before any new Gemini integration to confirm the model ID is live.
-**Current confirmed (June 2026):** `gemini-2.5-flash`. Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-3.5-flash` = alive but 5× more expensive — avoid.
+**Current confirmed (June 2026):** `gemini-2.5-flash`. Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026.
 
 ### 2.4 Synchronous Without Timeout
 PageSpeed with no timeout hung routes on slow/broken sites.
@@ -160,7 +160,7 @@ Append a row whenever a non-obvious decision is made.
 | 3 | `places_cache` writes via admin client, no user INSERT policy | Shared global resource — user RLS scoping would defeat the purpose | May 2026 |
 | 4 | `analyze-design` (and all analysis) inserts via admin client | Routes derive user_id from session; server `auth.uid()` is null → RLS blocks session-client writes | May 2026 |
 | 5 | Separate `GEMINI_API_KEY` from `GOOGLE_PLACES_API_KEY` | Security: one mega-key is a single point of catastrophic failure; separate keys restrict independently | May 2026 |
-| 6 | `gemini-2.5-flash` via `x-goog-api-key` header, defined once in `src/lib/gemini.ts` | `gemini-1.5-flash` shut down; `gemini-2.0-flash` deprecated June 2026; `gemini-3.5-flash` is 5× more expensive with no quality gain — use 2.5 Flash | June 2026 |
+| 6 | `gemini-2.5-flash` via `x-goog-api-key` header, defined once in `src/lib/gemini.ts` | `gemini-1.5-flash` shut down; `gemini-2.0-flash` deprecated June 2026 — use `gemini-2.5-flash` as the canonical model | June 2026 |
 | 7 | Synchronous routes for v1 (no job queue) | Zero cost to build; queue added in v2 with first async feature; thin-wrapper convention makes migration cheap | May 2026 |
 | 8 | 5-value website classification (has/no/social/platform/unknown) | Two-value (has/no) produced 100% false positives on social-only businesses; social vs platform are distinct pitch angles | May 2026 |
 | 9 | UX/Design + Trust scores from Gemini vision, not PageSpeed | PageSpeed doesn't measure design quality or trust signals — needs visual inspection | May 2026 |
@@ -174,7 +174,7 @@ Append a row whenever a non-obvious decision is made.
 | 17 | **Design + UX scores stored separately; UI shows one blended number with a "Deep Analysis" split toggle** | Casual users want one clean number; power users want the why. Storing both enables both views; blend computed at read time. | May 2026 |
 | 18 | **Worker server, job queue, and Supabase Storage introduced together for UX analysis, then reused by Radar + self-hosted screenshots** | No v2 workload adds a new infrastructure category — they share Runtime B. Cleaner ops, one thing to maintain. | May 2026 |
 | 19 | **UX recordings in a PRIVATE Supabase Storage bucket, read via server-generated signed URLs** | Recordings of third-party sites shouldn't be public; signed URLs scope access without a public bucket | May 2026 |
-| 20 | **Cost-sensitive model routing deferred (note only): Flash-Lite for analysis, 2.0 Flash for pitches** | Gemini 2.0 Flash output is cost-effective at volume; but don't prematurely optimise — revisit when volume justifies. Model name per call-site makes it a 1-line change. | June 2026 |
+| 20 | **Cost-sensitive model routing deferred (note only): Flash-Lite for analysis, 2.5 Flash for pitches** | Gemini 2.5 Flash output is cost-effective at volume; but don't prematurely optimise — revisit when volume justifies. Model name per call-site makes it a 1-line change. | June 2026 |
 | 21 | **`businesses` table includes `flagged_for_outreach` + `outreach_reason` columns for lead scoring** | Enables the dashboard to surface "opportunities" without re-querying website_status each time; set during discover/audit/design | May 2026 |
 | 22 | **Discover page persists search results to sessionStorage** | Prevents losing results on accidental navigation/refresh; cache keyed by form state | May 2026 |
 | 23 | **Pitch generation returns JSON only, not markdown body** | Cleaner UI rendering; Gemini prompt explicitly requests `{"subject": "...", "body": "..."}` with no fences | May 2026 |

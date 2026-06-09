@@ -44,7 +44,7 @@ Nearsited runs across **two runtime environments** because the workloads have fu
 | Language | TypeScript (strict) | A + B | |
 | Styling | Tailwind CSS v4 | A | **Dark theme** (near-black navy `#0a0e12`, sage green accent `#8A9777`), CSS variables in `globals.css`. |
 | DB + Auth + Storage | Supabase (Postgres 15, GoTrue, Storage) | — | Free → Pro at ~500 users. |
-| AI (vision + pitch + UX) | Gemini 3.5 Flash | A + B | `gemini-3.5-flash`. Multimodal. |
+| AI (vision + pitch + UX) | Gemini 2.5 Flash | A + B | `gemini-2.5-flash`. Multimodal. |
 | Static screenshots | ScreenshotOne | A | v1. Swap for self-hosted Playwright at scale. |
 | Interaction recording | Playwright (headless Chromium) | **B** | v2. Cannot run on Vercel. |
 | Job queue | Inngest **or** Trigger.dev | A↔B | v2. Free tier covers early scale. |
@@ -220,7 +220,7 @@ UI gets completion via **Supabase Realtime** subscription on the `ux_analyses` t
 - Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 - Auth: **header** `x-goog-api-key: <GEMINI_API_KEY>` (NOT query param). Key from Google AI Studio.
 - Define once in [`src/lib/gemini.ts`](src/lib/gemini.ts): `const GEMINI_MODEL = 'gemini-2.5-flash'`. All routes import `GEMINI_URL` from there — never inline the string.
-- Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **recommended** (5× cheaper than 3.5 Flash); `gemini-3.5-flash` = alive but avoid.
+- Model history: `gemini-1.5-flash` = dead; `gemini-2.0-flash` = deprecated June 2026; `gemini-2.5-flash` = **recommended**.
 - Multimodal request:
 ```ts
 body: JSON.stringify({
@@ -425,7 +425,7 @@ When ScreenshotOne volume gets expensive, implement `getScreenshot()` against th
 ---
 
 ## 13. Cost-Sensitive Model Routing (V2 Note)
-Gemini 3.5 Flash is capable but not cheap on output ($9/M). For high-volume image/UX analysis, consider routing analysis calls to **Gemini Flash-Lite** ($0.25/$1.50 — ~6× cheaper) and reserving 3.5 Flash for pitch generation where quality matters most. Keep the model name in `GEMINI_MODEL` per call-site so this is a one-line change per route. Decision deferred until volume justifies it; do not prematurely optimise.
+If volume increases significantly, consider routing analysis calls to **Gemini Flash-Lite** ($0.25/$1.50 — ~6× cheaper) and reserving Gemini 2.5 Flash for pitch generation where quality matters most. Keep the model name in `GEMINI_MODEL` per call-site so this is a one-line change per route. Decision deferred until volume justifies it; do not prematurely optimise.
 
 ---
 
