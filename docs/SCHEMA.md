@@ -58,10 +58,11 @@ Mirror of Supabase auth users. One row per registered user, created on signup (t
 
 ```sql
 create table public.profiles (
-  id         uuid primary key,              -- equals auth.users.id (NOT auto-generated)
-  email      text,
-  full_name  text,
-  created_at timestamptz default now()
+  id                uuid primary key,              -- equals auth.users.id (NOT auto-generated)
+  email             text,
+  full_name         text,
+  notification_prefs jsonb default '{"audit_complete":true,"pitch_generated":true,"low_credits":true,"weekly_digest":true}'::jsonb,
+  created_at        timestamptz default now()
 );
 
 alter table public.profiles enable row level security;
@@ -70,6 +71,14 @@ create policy "users read/update own profile" on public.profiles
   using (id = auth.uid()) with check (id = auth.uid());
 ```
 `id` is NOT defaulted — it must equal the auth user's id.
+
+**`notification_prefs` keys** (all boolean, default `true`):
+| Key | Description |
+|---|---|
+| `audit_complete` | Email when an audit finishes |
+| `pitch_generated` | Email when a pitch is generated |
+| `low_credits` | Email when credits drop below 5 |
+| `weekly_digest` | Weekly pipeline activity digest |
 
 ---
 
@@ -288,18 +297,20 @@ JSON shapes: §8.
 
 ### 2.7 `pipeline`  ← lead funnel
 Status realigned for v1 (§3.2). Legacy `stage` column dropped.
+`stage_entered_at` added in §5.15 for time-in-stage tracking on pipeline cards.
 
 ```sql
 create table public.pipeline (
-  id          uuid primary key default extensions.uuid_generate_v4(),
-  business_id uuid references public.businesses(id) on delete cascade,
-  user_id     uuid references public.profiles(id)  on delete cascade,
+  id               uuid primary key default extensions.uuid_generate_v4(),
+  business_id      uuid references public.businesses(id) on delete cascade,
+  user_id          uuid references public.profiles(id)  on delete cascade,
 
-  status      text default 'new_lead',   -- §3.2 canonical
-  notes       text,
+  status           text default 'new_lead',   -- §3.2 canonical
+  notes            text,
+  stage_entered_at timestamptz,               -- set on status change; used for time-in-stage UI
 
-  created_at  timestamptz default now(),
-  updated_at  timestamptz default now(),
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now(),
 
   constraint pipeline_business_user_unique unique (business_id, user_id),
   constraint pipeline_status_check check (status in (
@@ -658,6 +669,37 @@ Ensures all user-scoped tables have complete per-user RLS policies. Covers `busi
 
 The authoritative source is [`scripts/migrate-rls-fix.sql`](scripts/migrate-rls-fix.sql). Run this after all other migrations to ensure every table has the correct RLS policies in place.
 
+### 5.15 — Add `stage_entered_at` to pipeline (pipeline time-in-stage tracking)
+
+Required by the Pipeline kanban refactor (2026-06). Enables `"{N}d in stage"` display with staleness-based coloring.
+
+```sql
+ALTER TABLE public.pipeline
+ADD COLUMN IF NOT EXISTS stage_entered_at TIMESTAMPTZ;
+
+UPDATE public.pipeline
+SET stage_entered_at = updated_at
+WHERE stage_entered_at IS NULL;
+```
+
+**Behaviour:** Set automatically by [`src/app/api/pipeline/route.ts`](src/app/api/pipeline/route.ts) PATCH handler — only when the `status` field actually changes. Backfilled with `updated_at` for existing rows.
+
+### 5.16 — Add `notification_prefs` to profiles (Settings page — notification toggles)
+
+Required by the Settings page Notifications section. Defaults all toggles to ON.
+
+```sql
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT jsonb_build_object(
+  'audit_complete', true,
+  'pitch_generated', true,
+  'low_credits', true,
+  'weekly_digest', true
+);
+```
+
+The authoritative source is [`scripts/migrate-notification-prefs.sql`](scripts/migrate-notification-prefs.sql). Run this after section 5.15.
+
 > **Note on `flagged_for_outreach` and `outreach_reason`:** These columns were added directly by the API routes during development and may not have explicit migration SQL in this section. They were added as part of the businesses table via application-level ALTER TABLE (e.g., `alter table public.businesses add column if not exists flagged_for_outreach boolean default false;`). If they do not exist, add them manually.
 
 ---
@@ -775,7 +817,7 @@ Trimmed Lighthouse object, not the raw ~500KB:
 ## 10. Quick Reference — Full Column Map
 
 ```
-profiles         id, email, full_name, created_at
+profiles         id, email, full_name, notification_prefs, created_at
 businesses       id, user_id, name, place_id, business_type, address, city, phone,
                  website, website_status, rating, review_count,
                  performance_score, design_score, ux_score,
@@ -789,7 +831,7 @@ design_analyses  id, business_id, user_id, strategy, design_score,
 ux_analyses      id, business_id, user_id, strategy, ux_score, criteria_scores,
                  issues, interactions, frame_paths, recording_url, raw_analysis,
                  analyzed_at                                                     [V2, 2 rows/run, INTERACTION, queue-only]
-pipeline         id, business_id, user_id, status, notes, created_at, updated_at
+pipeline         id, business_id, user_id, status, notes, stage_entered_at, created_at, updated_at
 pitches          id, business_id, user_id, subject, body, tone, lead_type,
                  pitch_status, created_at
 mockups          id, business_id, user_id, html_content, preview_url, created_at        [v2]
