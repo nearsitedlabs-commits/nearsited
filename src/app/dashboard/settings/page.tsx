@@ -277,6 +277,7 @@ export default function SettingsPage() {
       }
     }
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase]);
 
   // ── Upgrade helpers ─────────────────────────────────────────────────────
@@ -804,9 +805,6 @@ export default function SettingsPage() {
               {(["leads", "pipeline", "pitches", "saved_searches"] as ClearScope[]).map((scope) => {
                 const isConfirming = confirming === scope;
                 const isDimmed = confirming !== null && !isConfirming;
-                const count = clearCounts?.[scope] ?? 0;
-                const isLeads = scope === "leads";
-                const itemLabel = scope === "leads" ? "businesses" : scope === "saved_searches" ? "saved searches" : scope;
 
                 return (
                   <div
