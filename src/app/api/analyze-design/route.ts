@@ -131,15 +131,12 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Step 1: Mobile screenshot + analysis
-          writeStep(controller, encoder, "mobile-screenshot", "Taking mobile screenshot…");
-          const mobile: StrategyResult = await runStrategy("mobile", trimmedWebsite, screenshotKey, geminiKey);
-
-          // Step 2: Brief pause so desktop Gemini call doesn't hit burst rate limits
-          await new Promise((r) => setTimeout(r, 2000));
-
-          writeStep(controller, encoder, "desktop-screenshot", "Taking desktop screenshot…");
-          const desktop: StrategyResult = await runStrategy("desktop", trimmedWebsite, screenshotKey, geminiKey);
+          // Step 1: Run both viewport strategies in parallel for speed
+          writeStep(controller, encoder, "screenshot", "Taking screenshots (mobile + desktop)…");
+          const [mobile, desktop]: [StrategyResult, StrategyResult] = await Promise.all([
+            runStrategy("mobile", trimmedWebsite, screenshotKey, geminiKey),
+            runStrategy("desktop", trimmedWebsite, screenshotKey, geminiKey),
+          ]);
 
           console.log("[DESIGN] Mobile result:", mobile.status, mobile.design_score ?? "");
           console.log("[DESIGN] Desktop result:", desktop.status, desktop.design_score ?? "");
