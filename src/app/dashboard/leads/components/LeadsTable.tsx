@@ -40,7 +40,7 @@ type ClusterInfo = {
 function buildClusters(
   rows: LeadRow[],
   expandedClusters: Set<number>,
-  _setExpandedClusters: React.Dispatch<React.SetStateAction<Set<number>>>
+  setExpandedClusters: React.Dispatch<React.SetStateAction<Set<number>>> // eslint-disable-line @typescript-eslint/no-unused-vars
 ): (LeadRow | { cluster: ClusterInfo; rows: LeadRow[] })[] {
   const result: (LeadRow | { cluster: ClusterInfo; rows: LeadRow[] })[] = [];
   let i = 0;

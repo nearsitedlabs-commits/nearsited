@@ -16,7 +16,7 @@ import {
   estimatedOpportunity,
   computeOpportunityScore,
   blendQualityForOpportunity,
-  _noWebsiteOpportunityScore,
+  noWebsiteOpportunityScore, // eslint-disable-line @typescript-eslint/no-unused-vars
 } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { motion, AnimatePresence } from "@/lib/motion";

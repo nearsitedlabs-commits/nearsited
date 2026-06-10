@@ -46,7 +46,7 @@ type Props = {
  * - Right-aligned action cluster: [+ Pipeline] [PDF] [Share]
  */
 export function LeadHeaderStrip({
-  _businessId,
+  businessId, // eslint-disable-line @typescript-eslint/no-unused-vars
   businessName,
   businessType,
   city,
@@ -142,20 +142,20 @@ export function LeadHeaderStrip({
           ) : (
             <button
               onClick={() => onPipelineChange("new_lead")}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3.5 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
             >
               <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
             </button>
           )}
           <a
             href={`/api/export/pdf?businessId=${placeId ?? ""}`}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
           >
             <FileDown className="h-3.5 w-3.5" /> PDF
           </a>
           <button
             onClick={onShare}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
           >
             <Share2 className="h-3.5 w-3.5" /> Share
           </button>

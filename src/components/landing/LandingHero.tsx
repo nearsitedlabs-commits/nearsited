@@ -19,7 +19,7 @@ const OpportunityAtlas = dynamic(
   { ssr: false },
 );
 
-const _OPP_TYPES = ["no_website", "social_only", "has_website"] as const;
+const OPP_TYPES = ["no_website", "social_only", "has_website"] as const; // eslint-disable-line @typescript-eslint/no-unused-vars
 type OppType = (typeof OPP_TYPES)[number];
 
 const PITCHES: Record<OppType, string> = {

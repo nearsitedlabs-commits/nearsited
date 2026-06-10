@@ -22,7 +22,7 @@ type Props = {
  * - In pipeline → "View"
  * - Won/Lost/Archived → "View"
  */
-export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse, _onPitch }: Props) {
+export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse, onPitch: _onPitch }: Props) {
   const canAnalyse = !!lead.website && (lead.website_status === "has_website" || lead.website_status === "platform_only");
   const hasError = !!progress?.error;
 

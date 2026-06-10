@@ -63,7 +63,7 @@ const LENGTH_LABELS: Record<string, string> = {
  * Expands to reveal advanced options (focus, opening, urgency) on click.
  */
 export function PitchCard({
-  _businessId,
+  businessId, // eslint-disable-line @typescript-eslint/no-unused-vars
   contactInfo,
   outreachChannel,
   setOutreachChannel,
