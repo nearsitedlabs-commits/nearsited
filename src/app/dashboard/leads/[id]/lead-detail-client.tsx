@@ -27,8 +27,9 @@ import { LeadHeroSection } from "./components/LeadHeroSection";
 import { LeadOutreachSection } from "./components/LeadOutreachSection";
 import { LeadExportSection } from "./components/LeadExportSection";
 import { QuotaErrorBanner } from "./components/QuotaErrorBanner";
+import { AIQuotaBanner } from "./components/AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
-import { OpportunityScoreStrip } from "./components/OpportunityScoreStrip";
+import { StatsRow } from "./components/StatsRow";
 import { BusinessEditPanel } from "./components/BusinessEditPanel";
 import { AnalysisProgressBanner } from "./components/AnalysisProgressBanner";
 import { DesignErrorBanner } from "./components/DesignErrorBanner";
@@ -200,6 +201,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handlePipelineChange = useCallback(async (newStatus: string) => {
     const prevStatus = currentPipelineStatus;
     setCurrentPipelineStatus(newStatus);
@@ -222,6 +224,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     }
   }, [biz.id, currentPipelineStatus, showToast]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleShare = useCallback(async () => {
     try {
       const res = await fetch("/api/share", {
@@ -426,11 +429,12 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               animate={{ opacity: 1, y: 0 }}
               transition={shouldReduce ? undefined : { duration: 0.35, ease: EASE_OUT }}
             >
-              <OpportunityScoreStrip
+              <StatsRow
                 opportunityScore={displayOpportunityScore}
                 isVerified={hasAudit && hasDesign}
-                hasAudit={hasAudit}
-                hasWebsite={hasWebsite}
+                estimatedValue={null}
+                reviewVelocity30d={null}
+                localCompetitors={null}
               />
             </motion.div>
           </MaybeFadeUp>

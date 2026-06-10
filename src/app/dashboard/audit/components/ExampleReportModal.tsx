@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { ArrowRight, X } from "lucide-react";
@@ -231,14 +231,14 @@ export function ExampleReportModal({
                     and conversion pathways.
                   </p>
                   <p className="mt-3">
-                    I'd be happy to share a few ideas that could help improve results.
+                    I{"'"}d be happy to share a few ideas that could help improve results.
                   </p>
                 </>
               ) : type === "no_website" ? (
                 <>
                   <p>Hi,</p>
                   <p className="mt-3">
-                    I noticed your business doesn't have a website yet. In today's
+                    I noticed your business doesn{"'"}t have a website yet. In today{"'"}s
                     market, that means potential customers searching for your services may not
                     find you.
                   </p>
@@ -247,15 +247,15 @@ export function ExampleReportModal({
                     and generate leads automatically.
                   </p>
                   <p className="mt-3">
-                    I'd be happy to discuss how we could help.
+                    I{"'"}d be happy to discuss how we could help.
                   </p>
                 </>
               ) : (
                 <>
                   <p>Hi,</p>
                   <p className="mt-3">
-                    I noticed you're doing a great job engaging customers on social media.
-                    However, without a dedicated website, you're leaving search visibility
+                    I noticed you{"'"}re doing a great job engaging customers on social media.
+                    However, without a dedicated website, you{"'"}re leaving search visibility
                     and lead capture on the table.
                   </p>
                   <p className="mt-3">
@@ -263,7 +263,7 @@ export function ExampleReportModal({
                     destination to learn more.
                   </p>
                   <p className="mt-3">
-                    I'd love to show you what that could look like.
+                    I{"'"}d love to show you what that could look like.
                   </p>
                 </>
               )}
