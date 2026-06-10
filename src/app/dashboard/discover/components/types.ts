@@ -24,6 +24,7 @@ export type BusinessResult = {
   phone?: string | null;
   rating?: number;
   review_count?: number;
+  user_ratings_total?: number;
   website_status: string;
   flagged_for_outreach?: boolean;
   outreach_reason?: string | null;

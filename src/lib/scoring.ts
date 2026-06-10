@@ -383,9 +383,34 @@ export function opportunityBadgeVariant(
 // ── Pre-Audit Estimated Opportunity Score ─────────────────────────────────────
 
 /**
+ * Computes the opportunity score for no-website leads using secondary signals
+ * from Google Places (review count + rating) to differentiate within the tier.
+ *
+ * Previously all no-website leads scored ~95, making prioritization impossible.
+ * This formula spreads scores across 80–100 using:
+ *   - Base: 80
+ *   - Review count factor: log(reviews) * 3, capped at +15
+ *   - Rating factor: (rating - 4.0) * 5, capped at +5
+ *
+ * Returns 80–100 for no-website leads.
+ */
+export function noWebsiteOpportunityScore(
+  reviewCount: number = 0,
+  rating: number = 0
+): number {
+  const base = 80;
+  const reviewFactor = Math.min(15, Math.round(Math.log(Math.max(1, reviewCount)) * 3 * 10) / 10);
+  const ratingFactor = Math.min(5, Math.max(0, (rating - 4.0) * 5));
+  return Math.min(100, Math.round(base + reviewFactor + ratingFactor));
+}
+
+/**
  * Estimates a business's opportunity score BEFORE an audit exists.
  * Uses website_status and URL patterns as a redesign probability signal,
  * and review count + rating as a viability signal.
+ *
+ * For no_website leads, uses noWebsiteOpportunityScore() to differentiate
+ * within the tier using social proof signals.
  *
  * Returns 0–100. Used on the Discover page to show a preliminary
  * opportunity estimate until the user clicks "Analyse Opportunity".
@@ -398,6 +423,12 @@ export function estimatedOpportunity(business: {
 }): number {
   const reviews = business.user_ratings_total ?? 0;
   const rating = business.rating ?? 0;
+
+  // No-website leads use the differentiated scoring formula
+  if (business.website_status === "no_website") {
+    return noWebsiteOpportunityScore(reviews, rating);
+  }
+
   let viability = 0.15;
   if (reviews >= 50 && rating >= 4.0) viability = 1.0;
   else if (reviews >= 50) viability = 0.75;
@@ -411,9 +442,7 @@ export function estimatedOpportunity(business: {
   // no_website > social_only > platform_only > bad_website > generic_website
   let redesign = 0.4;
   const url = (business.website ?? "").toLowerCase();
-  if (business.website_status === "no_website") {
-    redesign = 0.95;
-  } else if (business.website_status === "social_only") {
+  if (business.website_status === "social_only") {
     redesign = 0.85;
   } else if (business.website_status === "platform_only") {
     redesign = 0.75;

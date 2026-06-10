@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User, CreditCard, Key, Trash2, Loader2, Bell, Shield, Download, AlertTriangle } from "lucide-react";
 import SignOutButton from "../sign-out-button";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/motion";
+import { Toast } from "@/components/ui/Toast";
 
 type UserData = {
   email: string | null;
@@ -76,18 +77,55 @@ function ConfirmModal({
   onCancel: () => void;
 }) {
   const [typed, setTyped] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const onCancelRef = useRef(onCancel);
+  // Keep ref current after every render (no stale closure, no render-phase mutation)
+  useEffect(() => { onCancelRef.current = onCancel; });
 
-  // Reset typed text when modal closes — use key on parent to remount instead of effect
+  // Focus trap — auto-focuses first element, traps Tab, closes on Escape
+  useEffect(() => {
+    if (!open || !containerRef.current) return;
+    const trigger = document.activeElement as HTMLElement | null;
+    const container = containerRef.current;
+    const focusable = container.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const trap = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { onCancelRef.current(); return; }
+      if (e.key !== "Tab") return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first?.focus();
+      }
+    };
+    document.addEventListener("keydown", trap);
+    return () => {
+      document.removeEventListener("keydown", trap);
+      trigger?.focus();
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const canConfirm = requireType ? typed === requireType : true;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xl">
+      <div
+        ref={containerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-modal-title"
+        className="mx-4 w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xl"
+      >
         <div className="mb-4 flex items-center gap-3">
           {destructive && <AlertTriangle className="h-5 w-5 text-red-400" />}
-          <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+          <h3 id="confirm-modal-title" className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
         </div>
         <p className="text-sm leading-relaxed text-[var(--text-secondary)]">{description}</p>
         {requireType && (
@@ -150,6 +188,7 @@ function Toggle({ checked, onChange, label, disabled }: {
         } ${disabled ? "cursor-not-allowed" : ""}`}
         role="switch"
         aria-checked={checked}
+        aria-label={label}
       >
         <span
           className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
@@ -210,6 +249,13 @@ export default function SettingsPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState<string | null>(null);
+
+  // ── Settings toast ──────────────────────────────────────────────────────
+  const [settingsToast, setSettingsToast] = useState<string | null>(null);
+  const showSettingsToast = useCallback((msg: string) => {
+    setSettingsToast(msg);
+    setTimeout(() => setSettingsToast(null), 3000);
+  }, []);
 
   // ── Fetch counts for danger zone ─────────────────────────────────────────
   const fetchClearCounts = useCallback(async () => {
@@ -410,9 +456,10 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [key]: value }),
       });
+      showSettingsToast("Preference saved");
     } catch {
-      // Revert on failure — silently
       setNotifPrefs((prev) => ({ ...prev, [key]: !value }));
+      showSettingsToast("Failed to save preference");
     }
   }
 
@@ -627,8 +674,8 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* Two-factor auth (stub) */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+              {/* Two-factor auth (stub) — dimmed because it's not yet available */}
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 opacity-50" aria-hidden="true">
                 <div>
                   <span className="text-sm text-[var(--text-secondary)]">Two-factor authentication</span>
                   <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Add an extra layer of security to your account</p>
@@ -932,6 +979,7 @@ export default function SettingsPage() {
       <div className="mx-auto max-w-2xl px-6 py-8">
         {shouldReduce ? pageContent : <FadeUp>{pageContent}</FadeUp>}
       </div>
+      {settingsToast && <Toast message={settingsToast} onClose={() => setSettingsToast(null)} />}
     </div>
   );
 }

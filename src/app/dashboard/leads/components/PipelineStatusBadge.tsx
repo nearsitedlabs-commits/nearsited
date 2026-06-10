@@ -1,17 +1,18 @@
-import { PIPELINE_LABELS, PIPELINE_BADGE_STYLES } from "@/lib/ui-constants";
+import type { OpportunityStatus } from "./types";
+import { STATUS_BADGE } from "./types";
 
-export function PipelineStatusBadge({ status }: { status: string | undefined }) {
+export function PipelineStatusBadge({ status }: { status: OpportunityStatus | undefined }) {
   if (!status) {
     return (
-      <span className="inline-block whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-tertiary)] transition-all duration-300">
-        Not tracked
+      <span className="inline-block whitespace-nowrap rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[10px] font-medium text-blue-400 transition-all duration-300">
+        New
       </span>
     );
   }
-  const badgeClass = PIPELINE_BADGE_STYLES[status] ?? "bg-[var(--bg-elevated)] text-[var(--text-tertiary)] border border-[var(--border)]";
+  const cfg = STATUS_BADGE[status];
   return (
-    <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium transition-all duration-300 ${badgeClass}`}>
-      {PIPELINE_LABELS[status] ?? status}
+    <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-1 text-[10px] font-medium transition-all duration-300 ${cfg.class}`}>
+      {cfg.label}
     </span>
   );
 }

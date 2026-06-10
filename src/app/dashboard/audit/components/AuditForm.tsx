@@ -1,11 +1,23 @@
 "use client";
 
-import { Globe, Loader2, MapPin, Search, X, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Globe, Loader2, MapPin, RotateCcw, Search, X } from "lucide-react";
 import type { AuditStep } from "./types";
 
 // ── Constants ───────────────────────────────────────────────────────────────────
 
 const EXAMPLE_URLS = ["lawfirmdubai.com", "dentalcaretoronto.ca", "accountingbrisbane.com.au"];
+
+// ── Helpers ─────────────────────────────────────────────────────────────────────
+
+function timeAgo(ts?: number | null): string {
+  if (!ts) return "";
+  const mins = Math.floor((Date.now() - ts) / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} minute${mins === 1 ? "" : "s"} ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  return `${Math.floor(hours / 24)} days ago`;
+}
 
 // ── Component ───────────────────────────────────────────────────────────────────
 
@@ -34,6 +46,10 @@ type AuditFormProps = {
   onCancel?: () => void;
   /** Reset/new-search handler (only shown when done) */
   onReset?: () => void;
+  /** Timestamp of when the audit completed (for the status pill) */
+  savedTimestamp?: number | null;
+  /** Google Maps business name (for the status pill) */
+  mapsBusinessName?: string | null;
 };
 
 export function AuditForm({
@@ -49,13 +65,62 @@ export function AuditForm({
   step,
   onCancel,
   onReset,
+  savedTimestamp,
+  mapsBusinessName,
 }: AuditFormProps) {
   const isIdle = step === "idle";
   const isDone = step === "done";
 
+  // ── Complete state — status pill ─────────────────────────────────────────────
+  if (isDone) {
+    const truncatedUrl = url.length > 50 ? url.slice(0, 47) + "…" : url;
+    const googleMapsStatus = mapsBusinessName
+      ? `Linked to ${mapsBusinessName}`
+      : "No Google Maps link added";
+
+    return (
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Left: icon + URL */}
+          <div className="flex min-w-0 items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--score-good)]" />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-[var(--text-primary)]" title={url}>
+                {truncatedUrl}
+              </p>
+              <p className="text-xs text-[var(--text-tertiary)]">
+                Reviewed {timeAgo(savedTimestamp)} · {googleMapsStatus}
+              </p>
+            </div>
+          </div>
+
+          {/* Right: action buttons */}
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={() => onRun()}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Re-run
+            </button>
+            {onReset && (
+              <button
+                onClick={onReset}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              >
+                <X className="h-3 w-3" />
+                New Search
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 sm:p-6">
-      {/* Header — shown in active/done state */}
+      {/* Header — shown in active state */}
       {!isIdle && (
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -63,29 +128,8 @@ export function AuditForm({
               Opportunity Review
             </p>
             <h1 className="mt-1 text-2xl font-medium text-[var(--text-primary)]">
-              {isDone ? "Review Complete" : "Reviewing Opportunity"}
+              Reviewing Opportunity
             </h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {isDone && (
-              <>
-                {onReset && (
-                  <button
-                    onClick={onReset}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-                  >
-                    <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none">
-                      <path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    New Search
-                  </button>
-                )}
-                <div className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-3 py-1.5 text-xs font-medium text-[var(--badge-green-text)]">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Complete
-                </div>
-              </>
-            )}
           </div>
         </div>
       )}
@@ -119,25 +163,21 @@ export function AuditForm({
             <Search className="h-4 w-4" />
           )}
           {running
-            ? step === "auditing"
-              ? "Reviewing…"
-              : "Analysing…"
+            ? "Reviewing…"
             : isIdle
               ? "Analyse Website"
               : "Review Again"}
         </button>
       </div>
 
-      {/* Google Maps lookup */}
+      {/* Google Maps lookup — only in idle / running states */}
       <div className="mt-4 border-t border-[var(--border)] pt-4">
         <div className="mb-1.5 flex items-center gap-1.5">
           <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
           <span className="text-xs text-[var(--text-secondary)]">
             Google Maps link{" "}
             <span className="text-[var(--text-muted)]">
-              {isIdle
-                ? "— optional, improves opportunity score"
-                : "— improves opportunity score accuracy"}
+              — optional, improves opportunity score
             </span>
           </span>
         </div>

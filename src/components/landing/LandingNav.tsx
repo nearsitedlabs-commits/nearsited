@@ -107,7 +107,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const buttons = (
     <div className="flex items-center gap-2 sm:gap-3">
       <Button variant="ghost" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>Sign in</Button>
-      <Button variant="primary" className="text-sm px-3 py-2 sm:px-4 sm:py-2 sm:text-base" onClick={() => navigate("/signup")}>
+      <Button variant="primary" className="px-4 py-2.5 text-sm sm:px-5 sm:text-base" onClick={() => navigate("/signup")}>
         <span className="sm:hidden">Get started</span>
         <span className="hidden sm:inline">Get started free</span>
       </Button>

@@ -19,16 +19,10 @@ const OpportunityAtlas = dynamic(
   { ssr: false },
 );
 
-const OPP_TYPES = ["no_website", "social_only", "has_website"] as const;
+const _OPP_TYPES = ["no_website", "social_only", "has_website"] as const;
 type OppType = (typeof OPP_TYPES)[number];
 
 const PITCHES: Record<OppType, string> = {
-  no_website: `&ldquo;Hi, I noticed Marina Legal has great reviews but no website. You&rsquo;re invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries.&rdquo;`,
-  social_only: `&ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it and can&rsquo;t rank on Google. A website turns your followers into reservations you control.&rdquo;`,
-  has_website: `&ldquo;Hi, I analysed Bright Smile Dental&rsquo;s website and found 5 critical issues costing you patients. A redesign would improve your online presence and directly increase bookings.&rdquo;`,
-};
-
-const PITCHES_PLAIN: Record<OppType, string> = {
   no_website: `"Hi, I noticed Marina Legal has great reviews but no website. You're invisible to clients searching Google. I build legal websites that turn your reputation into new enquiries."`,
   social_only: `"Hi, Blue Wave's Instagram looks great. But Instagram isn't a website. You don't own it and can't rank on Google. A website turns your followers into reservations you control."`,
   has_website: `"Hi, I analysed Bright Smile Dental's website and found 5 critical issues costing you patients. A redesign would improve your online presence and directly increase bookings."`,
@@ -39,7 +33,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
-    navigator.clipboard.writeText(PITCHES_PLAIN[activeOpp]);
+    navigator.clipboard.writeText(PITCHES[activeOpp]);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -52,7 +46,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative" style={{ contentVisibility: "auto" }}>
+    <section id="hero" className="relative overflow-hidden" style={{ contentVisibility: "auto" }}>
       <OpportunityAtlas />
       <CanvasBackground />
 
@@ -108,7 +102,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
         <div className="relative w-full max-w-[440px]">
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunities · Dubai</p>
+              <p className="truncate text-[10px] uppercase tracking-[0.18em] md:tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunities · Dubai</p>
               <Badge color="green" dot>Sample scan</Badge>
             </div>
 
@@ -152,10 +146,11 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                 <MessageSquare className="h-3 w-3 text-[var(--accent)]" />
                 AI pitch · ready to send
               </div>
-              <p className="text-sm leading-7 text-[var(--text-secondary)] italic" dangerouslySetInnerHTML={{ __html: PITCHES[activeOpp] }} />
-              <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--border)] pt-3">
-                <Button variant="secondary" className="flex-1 text-xs">View report</Button>
-                <Button variant="primary" onClick={() => navigate("/signup")} className="flex-1 text-xs">Copy pitch →</Button>
+              <p className="text-sm leading-7 text-[var(--text-secondary)] italic">{PITCHES[activeOpp]}</p>
+              <div className="mt-3 border-t border-[var(--border)] pt-3">
+                <Button variant="primary" onClick={handleCopy} className="w-full text-xs">
+                  {copied ? "Copied!" : "Copy pitch →"}
+                </Button>
               </div>
             </div>
           </Card>

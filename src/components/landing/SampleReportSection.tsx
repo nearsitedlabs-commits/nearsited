@@ -179,10 +179,10 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+                  <div className="mt-6 rounded-xl border border-[var(--score-mid)]/20 bg-[var(--score-mid-tint)] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      <span className="text-sm font-medium text-amber-400">Entire online presence is rented</span>
+                      <AlertTriangle className="h-4 w-4 text-[var(--score-mid)]" />
+                      <span className="text-sm font-medium text-[var(--score-mid)]">Entire online presence is rented</span>
                     </div>
                     <p className="text-sm leading-7 text-[var(--text-secondary)]">
                       This business runs its entire online presence through Instagram. No website means no menu page, no reservation form, no SEO, no owned customer data. If Instagram changes its algorithm or bans the account, the business loses all digital visibility overnight.
@@ -401,10 +401,10 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+                  <div className="mt-6 rounded-xl border border-[var(--score-mid)]/20 bg-[var(--score-mid-tint)] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      <span className="text-sm font-medium text-amber-400">Entire online presence is rented</span>
+                      <AlertTriangle className="h-4 w-4 text-[var(--score-mid)]" />
+                      <span className="text-sm font-medium text-[var(--score-mid)]">Entire online presence is rented</span>
                     </div>
                     <p className="text-sm leading-7 text-[var(--text-secondary)]">
                       This business runs its entire online presence through Instagram. No website means no menu page, no reservation form, no SEO, no owned customer data. If Instagram changes its algorithm or bans the account, the business loses all digital visibility overnight.

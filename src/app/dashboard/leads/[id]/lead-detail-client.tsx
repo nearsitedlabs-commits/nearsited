@@ -20,14 +20,14 @@ import { usePitchGeneration } from "./hooks/usePitchGeneration";
 import { useLeadAnalysis } from "./hooks/useLeadAnalysis";
 
 // Sub-components
-import { SubScore } from "./components/SubScore";
+// import { SubScore } from "./components/SubScore";
 import { ScoreRingWithLabel } from "./components/ScoreRingWithLabel";
 import { buildClientCallSummary } from "./components/OpportunityBullets";
 import { LeadHeroSection } from "./components/LeadHeroSection";
 import { LeadOutreachSection } from "./components/LeadOutreachSection";
 import { LeadExportSection } from "./components/LeadExportSection";
 import { QuotaErrorBanner } from "./components/QuotaErrorBanner";
-import { AIQuotaBanner } from "./components/AIQuotaBanner";
+// import { AIQuotaBanner } from "./components/AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
 import { StatsRow } from "./components/StatsRow";
 import { BusinessEditPanel } from "./components/BusinessEditPanel";

@@ -7,12 +7,17 @@ import { readNdjsonStream } from "@/lib/ndjson";
 import { useToast } from "@/lib/shared-hooks";
 import { businessTypes } from "@/lib/data/businessTypes";
 import type { CityOption } from "@/lib/data/cities";
-import { ArrowLeft, ListFilter } from "lucide-react";
+import { ArrowLeft, ListFilter, Loader2 } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { AuditRow } from "@/lib/db-types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Toast } from "@/components/ui/Toast";
-import { estimatedOpportunity, computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
+import {
+  estimatedOpportunity,
+  computeOpportunityScore,
+  blendQualityForOpportunity,
+  _noWebsiteOpportunityScore,
+} from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { motion, AnimatePresence } from "@/lib/motion";
 
@@ -77,6 +82,51 @@ async function fetchPersistedData(
   return { audits, designScores };
 }
 
+// ─── Tier helpers ────────────────────────────────────────────────────────────
+
+type TierKey = "high" | "medium" | "low";
+
+const TIER_CONFIG: Record<TierKey, { label: string; color: string; bg: string; border: string; minScore: number }> = {
+  high:   { label: "HIGH", color: "text-[var(--score-good)]", bg: "bg-[var(--score-good-tint)]", border: "border-[var(--score-good)]/30", minScore: 70 },
+  medium: { label: "MEDIUM", color: "text-[var(--score-mid)]",  bg: "bg-[var(--score-mid-tint)]",  border: "border-[var(--score-mid)]/30",  minScore: 45 },
+  low:    { label: "LOW",  color: "text-[var(--score-high)]", bg: "bg-[var(--score-high-tint)]", border: "border-[var(--score-high)]/30", minScore: 0 },
+};
+
+const TIER_ORDER: TierKey[] = ["high", "medium", "low"];
+
+function getTier(score: number): TierKey {
+  if (score >= 70) return "high";
+  if (score >= 45) return "medium";
+  return "low";
+}
+
+function getEffectiveScore(business: BusinessResult): number {
+  const mobilePf = business.audit?.mobile?.performance_score ?? null;
+  const desktopPf = business.audit?.desktop?.performance_score ?? null;
+  const designPf = business.design_score ?? null;
+  const hasData = mobilePf != null || desktopPf != null || designPf != null;
+
+  if (hasData) {
+    return computeOpportunityScore(
+      blendQualityForOpportunity(mobilePf, desktopPf, designPf),
+      business.review_count ?? 0,
+      business.rating ?? 0,
+      business.business_type ?? undefined
+    );
+  }
+
+  return estimatedOpportunity({
+    website_status: business.website_status,
+    website: business.website ?? null,
+    rating: business.rating ?? null,
+    user_ratings_total: business.review_count ?? null,
+  });
+}
+
+function canAuditBusiness(business: BusinessResult): boolean {
+  return business.website_status === "has_website" || business.website_status === "platform_only";
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function DiscoverPage() {
@@ -86,7 +136,7 @@ export default function DiscoverPage() {
   const [analyseProg, setAnalyseProg] = useState<Map<string, { step: string; label: string; phase: "audit" | "design" | "done" | "error"; error?: string }>>(new Map());
   const [pipeLoading, setPipeLoading] = useState<string | null>(null);
   const [audited, setAudited] = useState<Set<string>>(new Set()), [analysed, setAnalysed] = useState<Set<string>>(new Set()), [pipeline, setPipeline] = useState<Set<string>>(new Set());
-  const [filter, setFilter] = useState("all"), [sort, setSort] = useState("opportunity-desc"), [visible, setVisible] = useState(50);
+  const [filter, setFilter] = useState("all"), [sort, setSort] = useState("score-desc"), [_visible, setVisible] = useState(50);
   const [showSave, setShowSave] = useState(false);
   const { toast: toastMsg, showToast, setToast } = useToast();
   const [cities, setCities] = useState<CityOption[]>([]), [cityQ, setCityQ] = useState("");
@@ -97,6 +147,9 @@ export default function DiscoverPage() {
   const mounted = useRef(true), sortRef = useRef<HTMLDivElement>(null), formRef = useRef<HTMLFormElement>(null);
   const abortRef = useRef<Map<string, AbortController>>(new Map());
   const supabase = createClient();
+
+  // Per-tier expanded state (show all rows when true)
+  const [tierExpanded, setTierExpanded] = useState<Record<TierKey, boolean>>({ high: false, medium: false, low: false });
 
   useEffect(() => { return () => { mounted.current = false; }; }, []);
 
@@ -139,7 +192,7 @@ export default function DiscoverPage() {
   useEffect(() => { if (!cityQ && citiesFullRef.current.length > 0) { setCities(citiesFullRef.current); } }, [cityQ]);
   useEffect(() => { function h(e: MouseEvent) { if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false); } document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h); }, []);
 
-  // Hydrate audit + design scores from DB once userId resolves — restores verified scores after navigation
+  // Hydrate audit + design scores from DB once userId resolves
   useEffect(() => {
     if (!userId || !results.length) return;
     fetchPersistedData(results.map((r) => r.id), supabase).then(({ audits, designScores }) => {
@@ -150,18 +203,16 @@ export default function DiscoverPage() {
         if (!a && ds == null) return r;
         return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) };
       }));
-      // Sync button state: mark businesses that already have audit/design data in DB
       if (audits.size) setAudited((prev) => { const n = new Set(prev); for (const id of audits.keys()) n.add(id); return n; });
       if (designScores.size) setAnalysed((prev) => { const n = new Set(prev); for (const id of designScores.keys()) n.add(id); return n; });
     }).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]); // only when userId first resolves
+  }, [userId]);
 
-  // Keep a ref to results so the event handler below never goes stale
   const resultsRef = useRef<typeof results>([]);
   useEffect(() => { resultsRef.current = results; }, [results]);
 
-  // React immediately when analysis completes elsewhere (lead detail page) — handles router-cache case
+  // React immediately when analysis completes elsewhere
   useEffect(() => {
     const handler = (e: Event) => {
       const { businessId } = (e as CustomEvent<{ businessId: string }>).detail;
@@ -178,35 +229,50 @@ export default function DiscoverPage() {
     };
     window.addEventListener("nearsited:analysis:completed", handler);
     return () => window.removeEventListener("nearsited:analysis:completed", handler);
-  }, []); // stable — reads results via ref
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const flagged = useMemo(() => results.filter((b) => b.flagged_for_outreach).length, [results]);
 
+  // Compute effective score for each business and memoize
+  const scoredResults = useMemo(() => {
+    return results.map((b) => ({ business: b, score: getEffectiveScore(b) }));
+  }, [results]);
+
+  // Filter + sort
   const processed = useMemo(() => {
-    const f = results.filter((b) => filter === "all" || b.website_status === filter);
-    const score = (b: BusinessResult) => {
-      const mobile  = b.audit?.mobile?.performance_score ?? null;
-      const desktop = b.audit?.desktop?.performance_score ?? null;
-      const design  = b.design_score ?? null;
-      const hasData = mobile != null || desktop != null || design != null;
-      return hasData
-        ? computeOpportunityScore(blendQualityForOpportunity(mobile, desktop, design), b.review_count ?? 0, b.rating ?? 0, b.business_type ?? undefined)
-        : estimatedOpportunity({ website_status: b.website_status, website: b.website ?? null, rating: b.rating ?? null, user_ratings_total: b.review_count ?? null });
-    };
+    const f = scoredResults.filter((sr) => filter === "all" || sr.business.website_status === filter);
     return [...f].sort((a, b) => {
-      if (sort === "rating-desc") return (b.rating ?? 0) - (a.rating ?? 0);
-      if (sort === "outreach-first") {
-        if (a.flagged_for_outreach && !b.flagged_for_outreach) return -1;
-        if (!a.flagged_for_outreach && b.flagged_for_outreach) return 1;
+      switch (sort) {
+        case "reviews-desc":
+          return (b.business.review_count ?? 0) - (a.business.review_count ?? 0);
+        case "rating-desc":
+          return (b.business.rating ?? 0) - (a.business.rating ?? 0);
+        case "name-asc":
+          return a.business.name.localeCompare(b.business.name);
+        case "recency-desc":
+          return 0; // preserves insertion order
+        case "score-desc":
+        default:
+          return b.score - a.score;
       }
-      return score(b) - score(a);
     });
-  }, [results, filter, sort]);
+  }, [scoredResults, filter, sort]);
+
+  // Group into tiers
+  const tiered = useMemo(() => {
+    const groups: Record<TierKey, { business: BusinessResult; score: number }[]> = { high: [], medium: [], low: [] };
+    for (const sr of processed) {
+      const tier = getTier(sr.score);
+      groups[tier].push(sr);
+    }
+    return groups;
+  }, [processed]);
 
   const randomize = useCallback(() => { const pool = citiesFullRef.current; if (!pool.length) return; setCity(pool[Math.floor(Math.random() * pool.length)].value); setBizType(businessTypes[Math.floor(Math.random() * businessTypes.length)].value); }, []);
 
   const analyseOpp = useCallback(async (id: string, website: string) => {
-    setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "starting", label: "Starting opportunity analysis...", phase: "audit" }); return n; });
+    setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "starting", label: "Starting audit…", phase: "audit" }); return n; });
     try {
       const ac = new AbortController(); abortRef.current.set(id, ac); const { signal } = ac;
       let auditData: AuditResult | null = null, designData: Record<string, unknown> | null = null, auditErr: string | null = null, designErr: string | null = null;
@@ -220,7 +286,7 @@ export default function DiscoverPage() {
       await Promise.all([ap, dp]); if (!mounted.current) return;
       if (auditErr) throw new Error(auditErr);
       if (designErr) { console.warn("[DISCOVER] Design analysis failed (non-fatal):", designErr); showToast("Performance audit complete, but design analysis unavailable. Try again later."); setAnalysed((prev) => new Set(prev).add(id)); }
-      setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "done", label: "Analysis complete", phase: "done" }); return n; });
+      setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "done", label: "Analysis complete ✓", phase: "done" }); return n; });
       window.dispatchEvent(new CustomEvent("credits:updated"));
     } catch (e) { if (e instanceof DOMException && e.name === "AbortError") { abortRef.current.delete(id); return; } const m = e instanceof Error ? e.message : "Analysis failed"; setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "error", label: m, phase: "error", error: m }); return n; }); }
     finally { abortRef.current.delete(id); }
@@ -229,6 +295,35 @@ export default function DiscoverPage() {
   const addPipe = useCallback(async (id: string) => { if (!userId) return; setPipeLoading(id); try { const r = await fetch("/api/pipeline", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ businessId: id }) }); const d = await r.json(); if (!r.ok) throw new Error(d?.error ?? "Failed"); if (d.success || d.message === "Already in pipeline") { setPipeline((p) => { const n = new Set(p); n.add(id); save(SS.PIPELINE, [...n]); return n; }); } else throw new Error(d?.message ?? "Failed"); } catch (e) { console.error("Pipeline add error:", e); } finally { setPipeLoading(null); } }, [userId]);
   const removePipe = useCallback(async (id: string) => { if (!userId) return; setPipeLoading(id); try { const r = await fetch("/api/pipeline", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ businessId: id }) }); const d = await r.json(); if (!r.ok) throw new Error(d?.error ?? "Failed"); if (d.success) { setPipeline((p) => { const n = new Set(p); n.delete(id); save(SS.PIPELINE, [...n]); return n; }); } else throw new Error(d?.message ?? "Failed"); } catch (e) { console.error("Pipeline remove error:", e); } finally { setPipeLoading(null); } }, [userId]);
   const cancelAnalysis = useCallback((id: string) => { const c = abortRef.current.get(id); if (c) { c.abort(); abortRef.current.delete(id); } setAnalyseProg((p) => { const n = new Map(p); n.delete(id); return n; }); showToast("Analysis cancelled"); }, [showToast]);
+
+  // ── Bulk actions ──
+  const bulkAddToPipeline = useCallback(async (tier: TierKey) => {
+    const ids = tiered[tier].map((sr) => sr.business.id).filter((id) => !pipeline.has(id));
+    if (!ids.length) return;
+    setPipeLoading("bulk-" + tier);
+    let success = 0;
+    for (const id of ids) {
+      try {
+        const r = await fetch("/api/pipeline", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ businessId: id }) });
+        const d = await r.json();
+        if (d.success || d.message === "Already in pipeline") { setPipeline((p) => { const n = new Set(p); n.add(id); save(SS.PIPELINE, [...n]); return n; }); success++; }
+      } catch { }
+    }
+    setPipeLoading(null);
+    if (success > 0) showToast(`Added ${success} lead${success > 1 ? "s" : ""} to pipeline`);
+  }, [tiered, pipeline, showToast]);
+
+  const bulkAuditAll = useCallback(async (tier: TierKey) => {
+    const auditables = tiered[tier].filter((sr) => canAuditBusiness(sr.business));
+    let audited = 0;
+    for (const { business } of auditables) {
+      if (business.website) {
+        await analyseOpp(business.id, business.website);
+        audited++;
+      }
+    }
+    if (audited > 0) showToast(`Started audit for ${audited} business${audited > 1 ? "es" : ""}`);
+  }, [tiered, analyseOpp, showToast]);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault(); setError(null);
@@ -273,6 +368,24 @@ export default function DiscoverPage() {
 
   const loadSearch = useCallback((s: { city: string; business_type: string; radius?: number }) => { setCity(s.city); setBizType(s.business_type); if (s.radius) setRadius(s.radius); setSavedOpen(false); setTimeout(() => formRef.current?.requestSubmit(), 50); }, []);
 
+  // ── Tier description helper ──
+  const getTierDescription = useCallback((tier: TierKey): string => {
+    const items = tiered[tier];
+    if (!items.length) return "";
+    const allNoWebsite = items.every((sr) => !canAuditBusiness(sr.business));
+    const allHasWebsite = items.every((sr) => canAuditBusiness(sr.business));
+    const minScore = TIER_CONFIG[tier].minScore;
+    const maxScore = tier === "high" ? 100 : tier === "medium" ? 69 : 44;
+
+    if (allNoWebsite) return `All no-website · Score ${minScore}+`;
+    if (allHasWebsite) return `Has site · estimated ${minScore}-${maxScore}`;
+    return `Mixed · Score ${minScore}-${maxScore}`;
+  }, [tiered]);
+
+  // ── Resolve labels from current search params ──
+  const businessTypeLabel = businessTypes.find((t) => t.value === bizType)?.label ?? bizType;
+  const locationLabel = cities.find((c) => c.value === city)?.label ?? city;
+
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8" style={{ background: "var(--bg-base)" }}>
       <div className="mx-auto w-full max-w-7xl space-y-5">
@@ -281,7 +394,7 @@ export default function DiscoverPage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Discovery</p>
-              <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">Find businesses worth <em className="italic text-[var(--accent)]">reaching out to.</em></h1>
+              <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">Find businesses worth reaching out to<em className="italic text-[var(--accent)]"></em></h1>
             </div>
             <Link href="/dashboard/pipeline" className="self-start inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--text-primary)] sm:self-auto"><ListFilter className="h-4 w-4" />View Pipeline →</Link>
           </div>
@@ -295,29 +408,124 @@ export default function DiscoverPage() {
 
         {!fetching && results.length > 0 && (
           <>
-            <ResultsFilterBar totalCount={results.length} flaggedCount={flagged} sortOption={sort} sortDropdownOpen={sortOpen} websiteFilter={filter} sortRef={sortRef}
-              onSortChange={(v) => { setSort(v); setSortOpen(false); }} onSortToggle={() => setSortOpen((v) => !v)} onFilterChange={setFilter} />
+            {/* Header strip + filter chips */}
+            <ResultsFilterBar
+              businessTypeLabel={businessTypeLabel}
+              locationLabel={locationLabel}
+              totalCount={results.length}
+              flaggedCount={flagged}
+              sortOption={sort}
+              sortDropdownOpen={sortOpen}
+              websiteFilter={filter}
+              sortRef={sortRef}
+              onSortChange={(v) => { setSort(v); setSortOpen(false); }}
+              onSortToggle={() => setSortOpen((v) => !v)}
+              onFilterChange={setFilter}
+            />
+
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
+              {/* Tiered list */}
+              {TIER_ORDER.map((tier) => {
+                const items = tiered[tier];
+                if (!items.length) return null;
+                const cfg = TIER_CONFIG[tier];
+                const isExpanded = tierExpanded[tier];
+                const displayItems = isExpanded ? items : items.slice(0, 5);
+                const hidden = items.length - displayItems.length;
+                const allCanAudit = items.some((sr) => canAuditBusiness(sr.business));
+                const bulkLoading = pipeLoading === "bulk-" + tier;
+
+                return (
+                  <div key={tier}>
+                    {/* Tier header */}
+                    <div
+                      className={`flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 md:px-5 py-2 sm:py-1.5 border-b border-[var(--border)] ${cfg.bg}`}
+                      style={{ minHeight: "36px" }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cfg.color} ${cfg.bg} border ${cfg.border}`}
+                        >
+                          {cfg.label} · {items.length} lead{items.length > 1 ? "s" : ""}
+                        </span>
+                        <span className="text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
+                          {getTierDescription(tier)}
+                        </span>
+                      </div>
+
+                      {/* Bulk action */}
+                      <div className="flex items-center gap-2">
+                        {allCanAudit ? (
+                          <button
+                            type="button"
+                            onClick={() => bulkAuditAll(tier)}
+                            disabled={bulkLoading}
+                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                          >
+                            {bulkLoading ? (
+                              <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                            ) : null}
+                            Audit all ({items.length} credits)
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => bulkAddToPipeline(tier)}
+                            disabled={bulkLoading}
+                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                          >
+                            {bulkLoading ? (
+                              <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                            ) : null}
+                            + All to pipeline
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Rows */}
+                    <motion.div key={`${tier}-${resKey}`} initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.03 } } }}>
+                      {displayItems.map((sr) => (
+                        <ResultCard
+                          key={sr.business.id}
+                          business={sr.business}
+                          analyseProgress={analyseProg}
+                          auditedIds={audited}
+                          analysedIds={analysed}
+                          pipelineIds={pipeline}
+                          pipelineLoadingId={pipeLoading}
+                          selectedBusinessType={bizType}
+                          onAnalyseOpportunity={analyseOpp}
+                          onCancelAnalysis={cancelAnalysis}
+                          onAddToPipeline={addPipe}
+                          onRemoveFromPipeline={removePipe}
+                        />
+                      ))}
+                    </motion.div>
+
+                    {/* Collapse toggle */}
+                    {hidden > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setTierExpanded((prev) => ({ ...prev, [tier]: !isExpanded }))}
+                        className="w-full flex items-center justify-center gap-1 px-4 py-1.5 text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors duration-150 border-b border-[var(--border)] cursor-pointer"
+                      >
+                        {isExpanded ? (
+                          <>Show fewer</>
+                        ) : (
+                          <>+ {hidden} more in this tier</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
             <div className="flex items-center justify-between px-1">
-              <p className="text-xs text-[var(--text-tertiary)]">~ Estimated score for businesses with a website. No-website leads show their opportunity score directly.</p>
+              <p className="text-xs text-[var(--text-tertiary)]">No-website scores are estimated from reviews and ratings. Website leads show audit-based scores when available.</p>
               <PoweredByGoogle />
             </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
-              <motion.div key={resKey} initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}>
-                {processed.slice(0, visible).map((b, idx) => (
-                  <div key={b.id} className={idx < Math.min(visible, processed.length) - 1 ? "border-b border-[var(--border)]" : ""}>
-                    <ResultCard business={b} analyseProgress={analyseProg} auditedIds={audited} analysedIds={analysed} pipelineIds={pipeline} pipelineLoadingId={pipeLoading}
-                      selectedBusinessType={bizType} onAnalyseOpportunity={analyseOpp} onCancelAnalysis={cancelAnalysis} onAddToPipeline={addPipe} onRemoveFromPipeline={removePipe} />
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-            {visible < processed.length && (
-              <div className="flex justify-center">
-                <button type="button" onClick={() => setVisible((p) => p + 50)} className="cursor-pointer inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--text-primary)]">
-                  Load more businesses ({processed.length - visible} remaining)
-                </button>
-              </div>
-            )}
           </>
         )}
 

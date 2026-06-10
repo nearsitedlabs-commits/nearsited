@@ -70,6 +70,7 @@ export function usePitchGeneration({
     } finally {
       setGeneratingPitch(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessId, pitchTone, pitchLength, outreachChannel, pitchFocus, pitchOpening, pitchUrgency, setQuotaError, startQuotaTimer]);
 
   const handleCopyPitch = useCallback(() => {

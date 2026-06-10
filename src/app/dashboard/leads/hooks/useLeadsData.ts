@@ -6,6 +6,7 @@ import type { LeadRow } from "../components/types";
 type UseLeadsDataResult = {
   leads: LeadRow[];
   pipelineMap: Map<string, string>;
+  pitchMap: Map<string, boolean>;
   loading: boolean;
   error: string | null;
 };
@@ -13,6 +14,7 @@ type UseLeadsDataResult = {
 export function useLeadsData(): UseLeadsDataResult {
   const [leads, setLeads] = useState<LeadRow[]>([]);
   const [pipelineMap, setPipelineMap] = useState<Map<string, string>>(new Map());
+  const [pitchMap, setPitchMap] = useState<Map<string, boolean>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,6 +49,7 @@ export function useLeadsData(): UseLeadsDataResult {
         opportunity_score: (lead as BusinessRow).opportunity_score as number | null ?? null,
       })));
 
+      // Pipeline data
       const { data: pipelineRows } = await supabase
         .from("pipeline").select("business_id, status").eq("user_id", user.id);
 
@@ -54,11 +57,19 @@ export function useLeadsData(): UseLeadsDataResult {
       for (const row of pipelineRows ?? []) pMap.set(row.business_id, row.status);
       setPipelineMap(pMap);
 
+      // Pitch data (to determine "pitched" status)
+      const { data: pitchRows } = await supabase
+        .from("pitches").select("business_id").eq("user_id", user.id);
+
+      const ptMap = new Map<string, boolean>();
+      for (const row of pitchRows ?? []) ptMap.set(row.business_id, true);
+      setPitchMap(ptMap);
+
       setLoading(false);
     }
 
     init();
   }, []);
 
-  return { leads, pipelineMap, loading, error };
+  return { leads, pipelineMap, pitchMap, loading, error };
 }

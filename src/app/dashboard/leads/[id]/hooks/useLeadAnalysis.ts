@@ -259,6 +259,7 @@ export function useLeadAnalysis({
       setRunningFullAnalysis(false);
       abortControllerRef.current = null;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessId, website, websiteStatus, pitchTone, pitchLength, hasAudit, router, showToast, onPitchResult]);
 
   const handleCancelAnalysis = useCallback(() => {

@@ -41,28 +41,27 @@ This workflow is the spine. Every feature serves it or is deferred.
 ### 3.1 Sidebar
 ```
 Dashboard           ✅
-Opportunities       ✅ (primary working page)
-Opportunity Discovery ✅
-Opportunity Review  ✅
+Find                ✅ (was "Opportunity Discovery")
+Opportunities       ✅ (consolidated from Opportunities + Review)
 Pipeline            ✅
 Pitches             ✅
 Settings            ✅
 USAGE
-  Credits 18/20 · Resets monthly (paid plans) · [Buy More → Dodo Payments checkout]
+  Credits 18/20 · Free credits are lifetime · [Upgrade → Pricing]
 [avatar · Free Plan]
 ```
-7 nav items (no Coming Soon section). Credits widget always visible. Billing live via **Dodo Payments** (not Stripe).
+6 nav items (consolidated for clarity). Credits widget always visible. Billing live via **Dodo Payments** (not Stripe).
 
 ### 3.2 Pages (V1 — All Built ✅)
 | Page | Route | Status | Features |
 |---|---|---|---|
-| Dashboard | `/dashboard` | ✅ Live | Stat cards, recent leads, pipeline funnel, Radar stub, inline lead detail |
+| Dashboard | `/dashboard` | ✅ Live | Compact header + date, next action card (only card), opportunities list with inline stats, pipeline segmented bar |
 | Leads (list) | `/dashboard/leads` | ✅ Live | Full table, search, tab filters, score rings, website badges, pagination 25/page, filter panel |
 | Lead Detail | `/dashboard/leads/[id]` | ✅ Live | Overview/Audit/Issues/History tabs, 6 sub-scores (Mobile/Desktop reactive), top issues with deductions, pipeline dropdown, Copy Pitch, Share Link, Run Audit/Design buttons, auto-pipeline, toast system, expanded Core Web Vitals |
 | Business Discovery | `/dashboard/discover` | ✅ Live | City/business type search, radius slider, results grid, audit/design analysis buttons, session storage, filters |
 | Quick Site Audit | `/dashboard/audit` | ✅ Live | URL input, 9-step visual progress checklist, sessionStorage persistence, expanded Core Web Vitals, plain-English summaries, Save as Lead banner |
 | Pipeline | `/dashboard/pipeline` | ✅ Live | Table with status dropdown (optimistic updates), canonical statuses |
-| Pitches | `/dashboard/pitches` | ✅ Live | List of saved pitches, copy to clipboard, delete |
+| Pitches | `/dashboard/pitches` | ✅ Live | Redesigned cards: business name + type tag + pipeline state, subject + meta + 2-line preview, horizontal action row (Copy/Open in channel/View/overflow menu), collapsible search + filter panel |
 | Settings | `/dashboard/settings` | ✅ Live | Profile view, plan info, API status, sign out |
 | Auth | `/login`, `/signup` | ✅ Live | Email/password + Google OAuth, sign-up with name |
 
@@ -71,15 +70,15 @@ USAGE
 ## 4. Page Specifications
 
 ### 4.1 Dashboard (`/dashboard`)
-✅ **Built.** Full-width layout. Action-first hierarchy with dynamic "Next Best Action" system.
+✅ **Built.** Compact single-column layout. No decorative icons, at most one card on the page.
 
-**Stat cards (4):** Ready to Pitch · In Pipeline · Active Conversations · Leads (with unanalysed count) — ordered by revenue proximity, not collection volume.
+**Header:** Date (small uppercase tertiary text) + workspace label on left, bordered "Discover" button on right. Under 50px tall.
 
-**Next Best Action:** Smart contextual guidance based on user state — shows "Generate Outreach" if flagged leads exist but pipeline is empty, "Analyse Opportunities" if unanalysed leads exist, "Discover More" if everything is analysed.
+**Next Action Card:** The only card on the page. Eyebrow: "Today". Headline: "{N} leads ready to pitch". Sub-line computed from real data (high-opportunity count, user's city). CTA: "Pitch them →".
 
-**Recent Leads:** 5 most recent — name, city, category, score ring, time ago. "View all" → /dashboard/leads.
+**Opportunities List:** No card wrapper. Section header "Opportunities" + "View all →". Inline stat line: "{total} total · {unanalysed} unanalysed · {high} high opportunity · {pipeline} in pipeline · {conv} in conversation". Tight 50px rows, 0.5px borders. 32px score circles (no "~" prefix). Badges: Weak site / No website / Social only / Platform only.
 
-**Pipeline Overview:** count per stage (Prospect / Contacted / In Conversation / Won / Lost), Win Rate %. Empty/small pipelines show contextual action buttons ("Generate Outreach", "Analyse Leads", "Discover More") instead of static "no items" text.
+**Pipeline:** No card wrapper. Horizontal segmented bar proportional to counts. Count line with color rules: zeros in gray, non-zero in stage color. Header "Pipeline" + "Manage →".
 
 **Empty state (first-time user):** centered card with "Find your first opportunity" heading + "Start Discovering →" CTA.
 
@@ -131,7 +130,15 @@ Each step shows: ✓ CheckCircle (green, line-through) when done · ⟳ Loader s
 **Save as Lead banner:** appears after completion — links to /dashboard/discover with explanatory text. Quota error banner (amber, with countdown timer) on AI_QUOTA_EXCEEDED.
 
 ### 4.5 Pitches (`/dashboard/pitches`)
-✅ **Built.** List of saved pitches. Columns: Business · subject · status (Draft/Sent/Replied) · created · actions (Copy/Delete). Tone and lead_type displayed.
+✅ **Built + refactored (June 2026).** Redesigned pitch cards with horizontal action layout.
+
+**Header:** "Pitches" (16px) + inline stats line. Collapsible Filter ▾ trigger on right.
+
+**Search/Filters:** Collapsible panel with "OPPORTUNITY TYPE" and "CHANNEL" labels. Chips show counts, zero-result chips dimmed at 50% opacity. Clear all filters action.
+
+**Pitch Card:** Business name (14px, 500) + compact opportunity type tag + pipeline state ("✓ In pipeline" gray text or "→ Pipeline" button). Subject line + metadata line ("Email · Professional · Score 78 · 9 Jun") + 2-line body preview (sentence-boundary truncated). Bottom action row: [Copy] primary, [Open in email/WhatsApp] secondary (channel-aware), [View ↗] link, [⋯] overflow menu (Regenerate · Edit · Send to pipeline · Delete).
+
+**Empty-space CTA:** Dashed-border card when < 5 pitches: "That's all your pitches. Generate more from Opportunities →".
 
 ### 4.6 Discover (`/dashboard/discover`)
 ✅ **Built.** Search form: city (searchable select with Indian cities), business type (searchable select grouped by category), radius slider (1–100km), Save Search. Results grid with website status badges, rating, audit scores, audit/design analysis buttons, pipeline add. Client-side filters: website status, min ratings, min reviews. Session storage persistence. "Load More" pagination.

@@ -24,7 +24,7 @@ export function ScoreRingWithLabel({ score, size = 56, label }: { score: number;
   const color = score < 40 ? "var(--score-high)" : score < 70 ? "var(--score-mid)" : "var(--score-good)";
   const lbl = label ?? scoreLabel(score);
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div role="img" aria-label={`${lbl}: ${display} out of 100`} className="flex flex-col items-center gap-1">
       <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
           <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.07)"

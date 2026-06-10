@@ -15,6 +15,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-[var(--bg-base)]">
+      {/* Skip navigation for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-lg focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:shadow-xl"
+      >
+        Skip to main content
+      </a>
       <aside className="hidden lg:flex shrink-0 flex-col border-r border-[var(--border)] bg-[var(--bg-surface-2)]" style={{ width: 'var(--sidebar-width, 240px)' }}>
 
         {/* Brand — clicking logo goes to dashboard home */}
@@ -62,7 +69,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </span>
           </Link>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-xs font-bold text-[var(--accent)]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-xs font-bold text-[var(--accent)]">
               {user.email?.charAt(0).toUpperCase() ?? "U"}
             </div>
             <SignOutButton compact={true} />
@@ -70,7 +77,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Main content area — pb-16 on mobile reserves space for the bottom nav */}
-        <main className="flex-1 overflow-auto bg-[var(--bg-base)] pb-16 lg:pb-0">{children}</main>
+        <main id="main-content" className="flex-1 overflow-auto bg-[var(--bg-base)] pb-16 lg:pb-0">{children}</main>
       </div>
 
       <MobileBottomNav />

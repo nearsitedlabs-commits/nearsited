@@ -81,17 +81,25 @@ nearsited/                              # Runtime A (Next.js)
         webhooks/queue/route.ts         # 🟦 queue callback → reads results       [v2]
       dashboard/
         layout.tsx                      # ✅ Sidebar nav layout
-        sidebar-nav.tsx                 # ✅ 7 nav items (no Coming Soon section)
-        page.tsx                        # ✅ Dashboard home (stat cards + recent + pipeline)
+        sidebar-nav.tsx                 # ✅ 6 nav items (consolidated: Find, Opportunities, Pipeline, Pitches)
+        page.tsx                        # ✅ Dashboard home (compact header + next action card + opportunities list + pipeline bar)
         dashboard-client.tsx            # ✅ Dashboard client component
         sign-out-button.tsx             # ✅ Sign out button
         leads/ page.tsx                 # ✅ Leads table (full-width, tabs, filters, pagination)
-        leads/[id]/ page.tsx            # ✅ Lead Detail server component
-        leads/[id]/ lead-detail-client.tsx  # ✅ Lead Detail client (tabs, reactive scores, pipeline dropdown, Copy Pitch, Share, toast, CWV, auto-pipeline)
+        leads/[id]/ page.tsx            # ✅ Lead Detail server component — detectLeadWorkflow() routing
+        leads/[id]/ lead-detail-client.tsx  # ✅ Website Lead Detail (shared components + analysis hooks)
+        leads/[id]/ components/
+          LeadHeaderStrip.tsx           # ✅ Unified header: back, business info, pipeline, PDF, Share
+          StatsRow.tsx                  # ✅ 4-card stats grid (score, est value, velocity, competition)
+          PitchCard.tsx                 # ✅ Single Tone▾ trigger + channel toggle + editable textarea
+          PreCallBrief.tsx              # ✅ HOOK/PAIN/SCOPE/OBJECTION blocks (replaces em-dash)
+          AIQuotaBanner.tsx             # ✅ Gemini 429 handling: countdown, auto-retry, Flash-Lite fallback
+          no-digital-presence-page.tsx  # ✅ No-digital-presence workflow (uses shared components)
+          social-opportunity-page.tsx   # ✅ Social-only workflow (uses shared components)
         discover/ page.tsx              # ✅ Business discovery (search + results + filters)
         audit/ page.tsx                 # ✅ Quick Site Audit (URL input, step checklist, sessionStorage, CWV, summaries)
         pipeline/ page.tsx              # ✅ Pipeline management
-        pitches/ page.tsx               # ✅ Pitches list
+        pitches/ page.tsx               # ✅ Pitches list (redesigned cards with inline actions, overflow menu, filter/search collapsible)
         settings/ page.tsx              # ✅ Settings page
     components/ui/
       SearchableSelect.tsx              # ✅ Reusable searchable dropdown
@@ -305,7 +313,7 @@ Six core scores (v1) + a seventh UX score (v2). Full table + formulas in SCHEMA 
 ## 10. UI Pages (v1 — all ✅ built)
 
 ### Dashboard (`/dashboard`)
-Two-column split. Left (~65%): stat cards (Leads Analyzed, Opportunities, Pitches, In Pipeline) + Recent Leads (5, clickable) + Pipeline Overview funnel + Opportunity Radar [v2] stub. Right (~35%): inline lead detail for selected lead.
+Compact single-column layout. Header with date + workspace label. Single Next Action card (the only card on the page). Opportunities list with inline stats, tight 50px rows, score circles. Pipeline section with horizontal segmented bar and count line (zeros in gray).
 
 ### Leads (`/dashboard/leads`)
 Full-width table. Search bar, tab filters (All/Needs Improvement/Strong Opportunity/Contacted/Archived), filter panel (website status, sort by, order, score range). Score rings, website badges, status badges. Pagination 25/page. Actions: view detail, Google Maps, open website.
@@ -324,22 +332,34 @@ Tabs: Overview · Audit · Issues · History · UX [v2 stub] · Competitors [v2 
 ### Discover (`/dashboard/discover`)
 Search form: city (searchable select), business type (searchable select grouped by category), radius slider, Save Search. **NDJSON streaming results** — renders immediately as Places data arrives, website status badges fill in progressively as enrichment completes. **Progress panels** instead of spinners for audit (✓↳○ steps: fetching→mobile→desktop→complete) and design analysis (✓↳○ steps: screenshot→analysis→persisting→complete). Results grid with website status badges, rating, audit scores, audit/design analysis buttons, pipeline add. Client-side filters (website status, min rating, min reviews). Session storage for results persistence.
 
-### Quick Site Audit (`/dashboard/audit`)
-Renamed from "AI Audit". URL input with Enter key support. Two-phase sequential execution (audit then design) with shared NDJSON streaming.
+### Quick Opportunity Review (`/dashboard/audit`)
+Three-state state machine: **idle** (URL input, example card) → **running** (progress checklist) → **done** (results + actions).
 
-**Progress tracker:** `ALL_STEPS` (9 items — 4 audit + 4 design + 1 "Complete") rendered as a card below the input. `completedKeys: string[]` + `activeKey: string | null` state driven by stream events. Stays visible after completion. "complete" events mapped: audit phase → "audit_complete", design phase → "design_complete" to avoid key collision.
+**State transitions:**
+- `idle` — full URL input card + Google Maps lookup + example opportunity carousel (hidden after first audit).
+- `running` — URL input remains editable; progress checklist (`AuditProgressPanel`) shows 9-step live tracker; Cancel button available.
+- `done` — URL input collapses to a **status pill**: check icon + truncated URL + "Reviewed {relativeTime} · {Google Maps status}" + [Re-run] / [New Search] buttons. Progress checklist is hidden — the user doesn't need to see what already completed.
+
+**Components:**
+- [`AuditForm`](src/app/dashboard/audit/components/AuditForm.tsx) — Handles all three states: idle (full form with URL + Maps lookup + example chips), running (compact form + cancel), done (status pill with re-run/new-search buttons). The same `AuditForm` component is used across all states; it internally switches layout based on `step`.
+- [`AuditProgressPanel`](src/app/dashboard/audit/components/AuditProgressPanel.tsx) — 9-step checklist (`ALL_STEPS`). Only visible in running state. Hidden when `step === "done"`.
+- [`AuditResultsPanel`](src/app/dashboard/audit/components/AuditResultsPanel.tsx) — Score card + performance metrics + design analysis. Score card is **honest about partial data**: all 4 components (mobile/desktop performance + mobile/desktop design) must be `"ok"` to show a composite score; otherwise shows a dashed-ring "—" with a "Pending — {what's missing}" label, a component breakdown line, and an inline retry button. Performance metric rows use `<Tooltip>` (via `@radix-ui/react-tooltip`) for the subtitle instead of inline text. Insight callout dynamically switches between green accent (positive news) and amber warning (negative news like "site is slow").
+- [`ReviewCompleteActions`](src/app/dashboard/audit/components/ReviewCompleteActions.tsx) — Replaces the previous three separate cards ("Save to Opportunities" + "Generate Pitch" + "Add to Pipeline") with a single consolidated card:
+  * **Primary action:** "Generate pitch & save" — one button that saves to Opportunities AND generates a pitch in sequence. Handles partial success (pitch fails after save). Shows pitch preview inline with copy-to-clipboard.
+  * **Secondary row:** "Save without pitch" (opens detail form), "Open full report" (navigates to lead page after save), "+ Pipeline" (adds straight to pipeline with visual confirmation).
+  * Includes all loading states, error states, and the detail form (name/city/type fields) for the save-without-pitch flow.
+
+**Scoring — honest about missing data:**
+- All 4 components complete → full composite opportunity score (blended quality + reviews).
+- Any component failed/timed out → dashed ring with "—" inside, label "Pending — {what's missing}", breakdown line ("Performance 59/100 · SEO 100/100 · Design retry needed"), inline retry button for the failed component.
 
 **SessionStorage:** key `'ai_audit_last_result'`, shape `{ url, auditResult, designResult, timestamp }`. Cleared on new run, restored on mount. `timeAgo()` formats staleness. Timestamp saved from local variable (not state) so it's available in the same async function after API calls.
-
-**Scores:** `METRIC_META` and `metricColor()` (same pattern as Lead Detail). `getPerformanceSummary(mobile, desktop)` + `getDesignSummary(mobileIssues, desktopIssues)` produce indigo-50 summary boxes.
-
-**Save as Lead:** simple Link to `/dashboard/discover` shown after completion — v1 "honest limitation" approach.
 
 ### Pipeline (`/dashboard/pipeline`)
 Table of pipeline businesses with status dropdown (optimistic updates, canonical statuses).
 
 ### Pitches (`/dashboard/pitches`)
-List of saved pitches. Copy to clipboard, delete, status badges (Draft/Sent/Replied).
+List of saved pitches. Redesigned cards: business name + compact opportunity type tag + pipeline state; subject + metadata line + 2-line body preview; horizontal action row (Copy, Open in email/WhatsApp, View ↗, ⋯ overflow menu with Regenerate/Edit/Send to pipeline/Delete). Collapsible search + filter panel with count chips. Empty-space CTA when < 5 pitches.
 
 ### Settings (`/dashboard/settings`)
 Profile view, plan info, API integration status, sign out.
@@ -357,9 +377,8 @@ Login and signup with email/password + Google OAuth. Dashboard sidebar includes 
 │                                                               │
 │ MAIN                                                          │
 │   Dashboard                                                   │
+│   Find                                                        │
 │   Opportunities                                               │
-│   Opportunity Discovery                                       │
-│   Opportunity Review                                          │
 │   Pipeline                                                    │
 │   Pitches                                                     │
 │   Settings                                                    │

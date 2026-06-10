@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useCountUp } from "@/lib/shared-hooks";
 import { motion } from "@/lib/motion";
 
@@ -58,6 +59,8 @@ export function ScoreRing({
   noAnimate = false,
   showTooltip = false,
 }: ScoreRingProps) {
+  const uid = useId().replace(/:/g, "-");
+  const filterId = `glow-${uid}`;
   const clamped = score != null ? Math.max(0, Math.min(100, score)) : 0;
   const { display, done } = useCountUp(noAnimate ? clamped : clamped);
   const displayValue = noAnimate ? clamped : display;
@@ -71,6 +74,8 @@ export function ScoreRing({
         height={size}
         viewBox={`0 0 ${DIM} ${DIM}`}
         className="flex-shrink-0"
+        role="img"
+        aria-label="Score not yet calculated"
       >
         <circle
           cx="22" cy="22" r={R}
@@ -108,7 +113,7 @@ export function ScoreRing({
         className="flex-shrink-0"
       >
         <defs>
-          <filter id="glow-estimate">
+          <filter id={filterId}>
             <feGaussianBlur stdDeviation="1.5" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
@@ -150,7 +155,7 @@ export function ScoreRing({
   }
 
   // ── Solid variants (verified / opportunity) with animation ────────────
-  const isOpp = variant === "opportunity";
+  const _isOpp = variant === "opportunity";
   const offset = CIRCUMFERENCE - (clamped / 100) * CIRCUMFERENCE;
 
   const ring = (
@@ -163,7 +168,7 @@ export function ScoreRing({
       transition={{ duration: 0.8, ease: "easeOut", times: [0, 0.3, 1] }}
     >
       <defs>
-        <filter id={`glow-${isOpp ? "opp" : "ver"}`}>
+        <filter id={filterId}>
           <feGaussianBlur stdDeviation="1.5" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -194,7 +199,7 @@ export function ScoreRing({
         fontSize="11" fontWeight="500"
         fill="var(--text-primary)"
         fontFamily="var(--font-sans, Geist)"
-        animate={isDone ? { filter: `url(#glow-${isOpp ? "opp" : "ver"})` } : {}}
+        animate={isDone ? { filter: `url(#${filterId})` } : {}}
         transition={{ duration: 0.4 }}
       >
         {displayValue}

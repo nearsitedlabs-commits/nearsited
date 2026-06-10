@@ -193,13 +193,35 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Attempt update first
+    // Fetch current pipeline row to compare status before updating
+    const { data: currentRow, error: fetchError } = await supabase
+      .from("pipeline")
+      .select("status")
+      .eq(matchField, matchValue)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("Pipeline fetch error:", fetchError);
+      return NextResponse.json(
+        { error: "Failed to fetch pipeline record" },
+        { status: 500 },
+      );
+    }
+
+    // Build update payload; only stamp stage_entered_at when status actually changes
+    const updatePayload: Record<string, string | null> = {
+      status,
+      updated_at: now,
+    };
+
+    if (currentRow && currentRow.status !== status) {
+      updatePayload.stage_entered_at = now;
+    }
+
     const { data: updatedRows, error: updateError } = await supabase
       .from("pipeline")
-      .update({
-        status,
-        updated_at: now,
-      })
+      .update(updatePayload)
       .eq(matchField, matchValue)
       .eq("user_id", user.id)
       .select("id");
@@ -230,6 +252,7 @@ export async function PATCH(request: NextRequest) {
       user_id: user.id,
       business_id: businessId,
       status,
+      stage_entered_at: now,
       created_at: now,
       updated_at: now,
     });

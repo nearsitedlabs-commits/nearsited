@@ -12,6 +12,7 @@
  * - computeOpportunityScore
  * - opportunityLabel / opportunityBadgeVariant
  * - estimatedOpportunity
+ * - noWebsiteOpportunityScore
  */
 
 import { describe, it, expect } from "vitest";
@@ -31,6 +32,7 @@ import {
   opportunityLabel,
   opportunityBadgeVariant,
   estimatedOpportunity,
+  noWebsiteOpportunityScore,
 } from "../scoring";
 import type { CriteriaScores, UxCriteriaScores, OverallInput, DesignIssue } from "../scoring";
 
@@ -321,11 +323,13 @@ describe("computeOpportunityScore", () => {
 describe("opportunityLabel", () => {
   it('returns "High Opportunity" for >= 70', () => {
     expect(opportunityLabel(70)).toBe("High Opportunity");
+    expect(opportunityLabel(80)).toBe("High Opportunity");
     expect(opportunityLabel(100)).toBe("High Opportunity");
   });
 
   it('returns "Good Opportunity" for 45–69', () => {
     expect(opportunityLabel(45)).toBe("Good Opportunity");
+    expect(opportunityLabel(50)).toBe("Good Opportunity");
     expect(opportunityLabel(60)).toBe("Good Opportunity");
   });
 
@@ -336,6 +340,7 @@ describe("opportunityLabel", () => {
 
   it('returns "Low Opportunity" for < 25', () => {
     expect(opportunityLabel(0)).toBe("Low Opportunity");
+    expect(opportunityLabel(4)).toBe("Low Opportunity");
     expect(opportunityLabel(24)).toBe("Low Opportunity");
   });
 });
@@ -349,10 +354,45 @@ describe("opportunityBadgeVariant", () => {
   it("returns red for < 25", () => expect(opportunityBadgeVariant(0)).toBe("red"));
 });
 
+// ── noWebsiteOpportunityScore ─────────────────────────────────────────────────
+
+describe("noWebsiteOpportunityScore", () => {
+  it("returns base 80 for zero reviews and zero rating", () => {
+    expect(noWebsiteOpportunityScore(0, 0)).toBe(80);
+  });
+
+  it("adds review factor: log(10)*3 ≈ 6.9, capped at +15", () => {
+    // 10 reviews, no rating boost
+    expect(noWebsiteOpportunityScore(10, 4.0)).toBe(87); // 80 + 6.9 ≈ 87
+  });
+
+  it("adds review factor max and rating factor max", () => {
+    // 10000 reviews → log(10000)*3 = 9.21*3 = 27.6, capped at 15
+    // rating 5.0 → (5.0-4.0)*5 = 5, capped at 5
+    expect(noWebsiteOpportunityScore(10000, 5.0)).toBe(100); // 80 + 15 + 5 = 100
+  });
+
+  it("differentiates 639 reviews / 4.9 vs 93 reviews / 4.7", () => {
+    const high = noWebsiteOpportunityScore(639, 4.9);
+    const low = noWebsiteOpportunityScore(93, 4.7);
+    expect(high).toBeGreaterThan(low);
+    expect(high).toBe(100); // 80 + 15(capped) + 4.5 = 99.5 → 100
+    expect(low).toBe(97);   // 80 + 13.8 + 3.5 = 97.3 → 97
+  });
+
+  it("never exceeds 100", () => {
+    expect(noWebsiteOpportunityScore(999999, 5.0)).toBe(100);
+  });
+
+  it("never goes below 80", () => {
+    expect(noWebsiteOpportunityScore(0, 0)).toBe(80);
+  });
+});
+
 // ── estimatedOpportunity ───────────────────────────────────────────────────────
 
 describe("estimatedOpportunity", () => {
-  it("returns 0 for lowest-viability, generic website", () => {
+  it("returns 6 for lowest-viability, generic website", () => {
     const biz = {
       website_status: "has_website",
       website: "https://example.com",
@@ -363,15 +403,16 @@ describe("estimatedOpportunity", () => {
     expect(estimatedOpportunity(biz)).toBe(6);
   });
 
-  it("returns high for no_website + high ratings", () => {
+  it("uses noWebsiteOpportunityScore for no_website leads", () => {
     const biz = {
       website_status: "no_website",
       website: null,
       rating: 4.5,
       user_ratings_total: 100,
     };
-    // viability: 1.0, redesign: 0.95 → 95
-    expect(estimatedOpportunity(biz)).toBe(95);
+    // noWebsiteOpportunityScore(100, 4.5):
+    // base 80 + log(100)*3=13.8 + (4.5-4.0)*5=2.5 = 96.3 → 96
+    expect(estimatedOpportunity(biz)).toBe(96);
   });
 
   it("detects HTTP (non-HTTPS) as weaker signal", () => {

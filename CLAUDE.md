@@ -180,7 +180,7 @@ Match hostname, case-insensitive, strip `www.`/`m.`, match subdomains. Extensive
 
 ---
 
-## Three-Workflow Opportunity Detail Architecture
+## Three-Workflow Opportunity Detail Architecture (Refactored)
 The Lead Detail page at `/dashboard/leads/[id]` routes to **three different components** based on business `website_status` (determined by [`detectLeadWorkflow()`](src/lib/lead-types.ts:21)):
 
 | Workflow | website_status | Component | File |
@@ -193,11 +193,27 @@ Routing happens server-side in [`page.tsx`](src/app/dashboard/leads/[id]/page.ts
 
 **Website workflow** (`lead-detail-client.tsx`): Full audit/design analysis with scores, Core Web Vitals, issue tracking, pipeline management, pitch generation, export. ~1492 lines.
 
-**Social-only workflow** ([`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx)): Detects social platforms from `business.website` via `detectSocialPlatforms()`, shows Digital Presence Analysis card, Website Opportunity Impact estimates (Trust/Lead Capture/Search/Brand Control), channel-specific outreach tabs (WhatsApp/Instagram DM/Facebook Message/Email), social-aware pitch generation via `/api/pitch` with `workflow:"social_only"` + `socialPlatforms[]`. No audit/design scores shown.
+**Social-only workflow** ([`components/social-opportunity-page.tsx`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx)): Detects social platforms from `business.website` via `detectSocialPlatforms()`, shows social platform badges in header, channel-specific outreach tabs (WhatsApp/Email). Uses shared PitchCard, PreCallBrief, StatsRow, LeadHeaderStrip, AIQuotaBanner. Social-aware pitch generation via `/api/pitch` with `workflow:"social_only"` + `socialPlatforms[]`.
 
-**No-digital-presence workflow** ([`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx)): Shows "Why This Is An Opportunity" reasons, Website Opportunity benefits (Visibility/Trust/Lead Gen/Customer Experience), **channel tabs (Email/WhatsApp)** with contact hints, pitch via `/api/pitch` with `workflow:"no_digital_presence"` + `channel`. No audit/design analysis.
+**No-digital-presence workflow** ([`components/no-digital-presence-page.tsx`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx)): Shows "No Digital Presence Found" badge in header. Uses shared PitchCard (Email/WhatsApp channels), PreCallBrief (HOOK/PAIN/SCOPE/OBJECTION), StatsRow, LeadHeaderStrip, AIQuotaBanner. Pitch via `/api/pitch` with `workflow:"no_digital_presence"` + `channel`.
 
-All three workflows share: contact info fetch (`/api/contact-info`), background rating refresh (`/api/refresh-ratings`), pipeline status dropdown, pitch generation with tone/length controls, PDF export, Share Link, toast system.
+All three workflows shared **before** refactor: contact info fetch, rating refresh, pipeline dropdown, 5 dropdowns for pitch controls, PDF export, Share Link, toast.
+All three workflows **after** refactor: contact info fetch, rating refresh, pipeline dropdown — plus 5 **shared components** that eliminated the duplicated pitch UI, score hero, generic cards, em-dash call summaries, and broken quota error banner.
+
+### Shared Components (refactored June 2026)
+| Component | File | Used By | Replaces |
+|---|---|---|---|
+| [`LeadHeaderStrip`](src/app/dashboard/leads/[id]/components/LeadHeaderStrip.tsx) | All 3 pages | Inline hero sections in NDP/Social; `LeadHeroSection` in Website |
+| [`StatsRow`](src/app/dashboard/leads/[id]/components/StatsRow.tsx) | All 3 pages | Standalone `OpportunityScoreStrip` hero circle |
+| [`PitchCard`](src/app/dashboard/leads/[id]/components/PitchCard.tsx) | NDP + Social pages | Inline pitch UI with 5 dropdowns; `LeadOutreachSection` planned |
+| [`PreCallBrief`](src/app/dashboard/leads/[id]/components/PreCallBrief.tsx) | NDP + Social pages | Inline em-dash call summaries |
+| [`AIQuotaBanner`](src/app/dashboard/leads/[id]/components/AIQuotaBanner.tsx) | All 3 pages (via hooks) | `QuotaErrorBanner` (old, lacked countdown/fallback) |
+
+Cards **removed** from all non-website pages:
+- "Why This Is An Opportunity" — generic text, no data
+- "Website Opportunity" — 4 generic benefit subcards (More Visibility / More Trust / Better Lead Gen / Better Customer Experience)
+- Standalone "OPPORTUNITY SCORE" hero — consolidated into StatsRow
+- "Client Call Summary" (em-dash format) — replaced by PreCallBrief
 
 ---
 
@@ -463,23 +479,36 @@ src/components/landing/
 └── Pricing.tsx            ← Only legacy file kept
 ```
 
-### Three-Workflow Lead Detail Pattern
+### Three-Workflow Lead Detail Pattern (Refactored June 2026)
 ```
 src/app/dashboard/leads/[id]/
 ├── page.tsx                                    ← Server component, detectLeadWorkflow(), routes
-├── lead-detail-client.tsx                      ← Website workflow (~360 lines, imports components)
+├── lead-detail-client.tsx                      ← Website workflow (imports components + hooks)
 ├── components/
 │   ├── social-opportunity-page.tsx             ← Social-only workflow
 │   ├── no-digital-presence-page.tsx            ← No-digital-presence workflow
-│   ├── opportunity-score-explanation.tsx       ← Shared score breakdown
+│   ├── LEAD DETAIL SHARED COMPONENTS (refactored):
+│   │   ├── LeadHeaderStrip.tsx                 ← Unified header: back, business info, pipeline, PDF, Share
+│   │   ├── StatsRow.tsx                        ← 4-card stats grid (score, value, velocity, competition)
+│   │   ├── PitchCard.tsx                       ← Single Tone▾ trigger + channel toggle + editable textarea
+│   │   ├── PreCallBrief.tsx                    ← HOOK/PAIN/SCOPE/OBJECTION blocks
+│   │   ├── AIQuotaBanner.tsx                   ← Gemini 429 countdown + auto-retry + Flash-Lite fallback
+│   ├── legacy (still used by website workflow):
+│   │   ├── OpportunityScoreStrip.tsx           ← Replaced by StatsRow for NDP/Social, kept for Website
+│   │   ├── LeadHeroSection.tsx                 ← Replaced by LeadHeaderStrip for NDP/Social, kept for Website
+│   │   ├── LeadOutreachSection.tsx             ← Replaced by PitchCard for NDP/Social, kept for Website
+│   │   ├── QuotaErrorBanner.tsx                ← Replaced by AIQuotaBanner, kept for backward compat
+│   ├── opportunity-score-explanation.tsx       ← Score breakdown (shared)
 │   ├── ScoreRingWithLabel.tsx                  ← Animated SVG ring
 │   ├── SubScore.tsx                            ← Label + value
 │   ├── ImpactPill.tsx                          ← Colored impact badge
 │   ├── OpportunityBullets.tsx                  ← buildClientCallSummary() helper
-│   ├── LeadHeroSection.tsx                     ← Business info + actions
-│   ├── LeadOutreachSection.tsx                 ← Pitch generation + channel UI
 │   ├── LeadExportSection.tsx                   ← PDF + Share
-│   └── QuotaErrorBanner.tsx                    ← Fixed bottom banner
+│   ├── ClientCallSummaryCard.tsx               ← Used by website workflow only
+│   ├── IssuesCard.tsx, AuditDetailsCard.tsx, HistoryCard.tsx, AnalysisProgressBanner.tsx,
+│   │   DesignErrorBanner.tsx, BusinessEditPanel.tsx
+│   └── hooks/
+│       ├── useContactInfo.ts, usePitchGeneration.ts, useQuotaTimer.ts, useLeadAnalysis.ts
 ```
 
 ## AI-Friendly Patterns (for vibecoding sessions)

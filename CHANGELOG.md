@@ -1,9 +1,9 @@
 # Nearsited — Change Log
-*Session: Launch Readiness Audit + Scoring Unification · June 2026*
+*Session: Lead Detail Page Refactor · June 2026*
 
 ---
 
-## [Unreleased] — 2026-06-09
+## [Unreleased] — 2026-06-09 (Lead Detail Page Refactor)
 
 ### Security (8 fixes)
 - Atomic credit deduction via PostgreSQL RPC (race condition fix)
@@ -39,6 +39,26 @@
 ### Infrastructure (2 fixes)
 - Public/ boilerplate assets cleaned up (7 files removed)
 - Cookie consent dismiss now records choice to localStorage
+
+---
+
+### Code Quality & Deduplication — Lead Detail Pages
+- Extracted 5 shared components from duplicated patterns across 3 lead detail page types:
+  - [`LeadHeaderStrip`](src/app/dashboard/leads/[id]/components/LeadHeaderStrip.tsx) — unified header: back link, business info, pipeline, PDF, Share
+  - [`StatsRow`](src/app/dashboard/leads/[id]/components/StatsRow.tsx) — 4-card stats grid replacing standalone score hero
+  - [`PitchCard`](src/app/dashboard/leads/[id]/components/PitchCard.tsx) — single "Tone ▾" trigger with expandable advanced options, editable textarea
+  - [`PreCallBrief`](src/app/dashboard/leads/[id]/components/PreCallBrief.tsx) — HOOK/PAIN/SCOPE/OBJECTION blocks replacing em-dash call summaries
+  - [`AIQuotaBanner`](src/app/dashboard/leads/[id]/components/AIQuotaBanner.tsx) — countdown + auto-retry + Flash-Lite fallback for Gemini 429 errors
+- Refactored [`NoDigitalPresencePage`](src/app/dashboard/leads/[id]/components/no-digital-presence-page.tsx): removed "Why This Is An Opportunity", "Website Opportunity" (4 generic benefits), standalone score hero. ~270 lines reduction.
+- Refactored [`SocialOpportunityPage`](src/app/dashboard/leads/[id]/components/social-opportunity-page.tsx): same treatment. ~130 lines reduction.
+- Updated [`LeadDetailClient`](src/app/dashboard/leads/[id]/lead-detail-client.tsx): replaced `OpportunityScoreStrip` with `StatsRow`.
+
+### UX & Error Handling
+- **AI quota fix**: `AIQuotaBanner` differentiates Gemini API 429 from user credit errors. Shows countdown "Auto-retrying in {N}s…", auto-retries once with 5s backoff, offers "Use lighter model" (Gemini Flash-Lite) fallback on second failure.
+- **PitchCard consolidation**: 5 separate dropdowns (tone/length/focus/opening/urgency) collapsed into a single "Tone ▾" trigger. Default: Friendly + Short + Direct. Advanced options revealed on click.
+
+### Billing UI
+- [`CreditsWidget`](src/components/ui/CreditsWidget.tsx): Fixed "N / M credits used this month" → "N / M free credits used" with tooltip: "Free credits don't reset — upgrade for monthly allowance." (Per GTM.md: free credits are lifetime, not monthly.)
 
 ---
 

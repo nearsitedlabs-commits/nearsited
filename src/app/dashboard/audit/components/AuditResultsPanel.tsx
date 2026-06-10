@@ -2,7 +2,7 @@
 
 import {
   AlertTriangle,
-  ArrowRight,
+  HelpCircle,
   Loader2,
   Monitor,
   RefreshCw,
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
+import { Tooltip } from "@/components/ui/Tooltip";
 import type { StrategyResult, DesignResult, DesignRetrying } from "./types";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -17,14 +18,14 @@ import type { StrategyResult, DesignResult, DesignRetrying } from "./types";
 function getPerformanceSummary(
   mobile: number | null,
   desktop: number | null,
-): string {
-  if (mobile === null && desktop === null) return "";
+): { text: string; isPositive: boolean } {
+  if (mobile === null && desktop === null) return { text: "", isPositive: true };
   const count = (mobile !== null ? 1 : 0) + (desktop !== null ? 1 : 0);
   const avg = ((mobile ?? 0) + (desktop ?? 0)) / count;
-  if (avg >= 85) return "This site loads quickly on both mobile and desktop. Performance is a strength.";
-  if (avg >= 70) return "This site performs reasonably well but has room for improvement, especially on mobile.";
-  if (avg >= 50) return "This site is noticeably slow. Visitors on mobile are likely leaving before it loads.";
-  return "This site is critically slow. Most visitors will abandon it before seeing any content.";
+  if (avg >= 85) return { text: "This site loads quickly on both mobile and desktop. Performance is a strength.", isPositive: true };
+  if (avg >= 70) return { text: "This site performs reasonably well but has room for improvement, especially on mobile.", isPositive: true };
+  if (avg >= 50) return { text: "This site is noticeably slow. Visitors on mobile are likely leaving before it loads.", isPositive: false };
+  return { text: "This site is critically slow. Most visitors will abandon it before seeing any content.", isPositive: false };
 }
 
 function getDesignSummary(
@@ -56,6 +57,33 @@ function getDesignErrorDisplay(
   return { title: "Analysis failed", description: "Click retry to try again." };
 }
 
+/** Check if all four components completed successfully */
+function allComponentsComplete(
+  auditResult: { mobile: StrategyResult; desktop: StrategyResult },
+  designResult: { mobile: DesignResult; desktop: DesignResult } | null,
+): boolean {
+  const perfOk =
+    auditResult.mobile.status === "ok" && auditResult.desktop.status === "ok";
+  if (!designResult) return false;
+  const designOk =
+    designResult.mobile.status === "ok" && designResult.desktop.status === "ok";
+  return perfOk && designOk;
+}
+
+/** Describe what's missing when score can't be computed */
+function getMissingComponents(
+  auditResult: { mobile: StrategyResult; desktop: StrategyResult },
+  designResult: { mobile: DesignResult; desktop: DesignResult } | null,
+): string {
+  const parts: string[] = [];
+  if (auditResult.mobile.status !== "ok") parts.push("mobile performance");
+  if (auditResult.desktop.status !== "ok") parts.push("desktop performance");
+  if (!designResult || designResult.mobile.status !== "ok") parts.push("mobile design");
+  if (!designResult || designResult.desktop.status !== "ok") parts.push("desktop design");
+  if (parts.length === 0) return "analysis incomplete";
+  return `${parts.join(", ")} didn't complete`;
+}
+
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function SubScore({
@@ -68,15 +96,47 @@ function SubScore({
   const color =
     !score
       ? "text-[var(--text-tertiary)]"
-      : score >= 70
+      : score >= 90
         ? "text-[var(--score-good)]"
-        : score >= 40
+        : score >= 50
           ? "text-[var(--score-mid)]"
           : "text-[var(--score-high)]";
   return (
     <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
       <span className="text-sm text-[var(--text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{score ?? "—"}</span>
+    </div>
+  );
+}
+
+// ── Metric Row with Tooltip ────────────────────────────────────────────────────
+
+function MetricRow({ key: metricKey, value }: { key: MetricKey; value: string | null }) {
+  const meta = METRIC_META[metricKey];
+  return (
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <p className="text-xs font-medium text-[var(--text-primary)]">
+            {meta.label}
+          </p>
+          <Tooltip content={meta.subtitle} side="top" maxWidth={220}>
+            <button
+              type="button"
+              className="inline-flex cursor-help items-center rounded-full text-[var(--text-muted)] transition-colors hover:text-[var(--text-tertiary)]"
+              tabIndex={-1}
+              aria-label={`Info about ${meta.label}`}
+            >
+              <HelpCircle className="h-3 w-3" />
+            </button>
+          </Tooltip>
+        </div>
+        <span
+          className={`shrink-0 text-sm font-bold ${metricColor(metricKey, value)}`}
+        >
+          {value ?? "—"}
+        </span>
+      </div>
     </div>
   );
 }
@@ -100,15 +160,6 @@ type AuditResultsPanelProps = {
   savedTimestamp?: number | null;
 };
 
-function timeAgo(ts: number): string {
-  const mins = Math.floor((Date.now() - ts) / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} minute${mins === 1 ? "" : "s"} ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-  return `${Math.floor(hours / 24)} days ago`;
-}
-
 export function AuditResultsPanel({
   auditResult,
   designResult,
@@ -116,7 +167,7 @@ export function AuditResultsPanel({
   mapsReviewCount,
   onRetryDesign,
   designRetrying,
-  savedTimestamp,
+  savedTimestamp, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: AuditResultsPanelProps) {
   if (!auditResult) return null;
 
@@ -139,60 +190,114 @@ export function AuditResultsPanel({
     );
   }
 
-  // ── Timestamp ─────────────────────────────────────────────────────────────────
-  const timestampEl =
-    savedTimestamp ? (
-      <p className="mt-3 text-xs text-[var(--text-tertiary)]">
-        Showing results from {timeAgo(savedTimestamp)}
-      </p>
-    ) : null;
-
   // ── Opportunity Score ─────────────────────────────────────────────────────────
   const mP = auditResult.mobile.performance_score ?? null;
   const dP = auditResult.desktop.performance_score ?? null;
-  const dS =
-    designResult?.mobile?.design_score ?? designResult?.desktop?.design_score ?? null;
+  const mDesignScore = designResult?.mobile?.design_score ?? null;
+  const dDesignScore = designResult?.desktop?.design_score ?? null;
+  const dS = mDesignScore ?? dDesignScore ?? null;
   const hasAnyScore = mP != null || dP != null || dS != null;
+  const allComplete = allComponentsComplete(auditResult, designResult);
 
-  const opportunityScoreEl =
-    hasAnyScore ? (() => {
-      const blendedQ = blendQualityForOpportunity(mP, dP, dS);
-      const oppScore = computeOpportunityScore(
-        blendedQ,
-        mapsReviewCount ?? 0,
-        mapsRating ?? 0,
-        undefined,
-      );
-      const isVerified = mapsRating != null;
-      const hasDesign = dS != null;
-      return (
-        <div className="flex items-center justify-between rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-4">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
-              {isVerified ? "Opportunity Score" : "Estimated Opportunity Score"}
-            </p>
-            {!isVerified && (
-              <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
-                Add a Google Maps link above for a more accurate score
+  const opportunityScoreEl = hasAnyScore ? (
+    allComplete ? (
+      (() => {
+        const blendedQ = blendQualityForOpportunity(mP, dP, dS);
+        const oppScore = computeOpportunityScore(
+          blendedQ,
+          mapsReviewCount ?? 0,
+          mapsRating ?? 0,
+          undefined,
+        );
+        const isVerified = mapsRating != null;
+        return (
+          <div className="flex items-center justify-between rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-4">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
+                {isVerified ? "Opportunity Score" : "Estimated Opportunity Score"}
               </p>
-            )}
-            {isVerified && mapsRating != null && (
-              <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
-                Based on {hasDesign ? "performance + design" : "performance"} +{" "}
-                {mapsRating.toFixed(1)}★
-                {mapsReviewCount != null && mapsReviewCount > 0
-                  ? ` · ${mapsReviewCount} reviews`
-                  : ""}
+              {isVerified && mapsRating != null && (
+                <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
+                  Based on performance + design +{" "}
+                  {mapsRating.toFixed(1)}★
+                  {mapsReviewCount != null && mapsReviewCount > 0
+                    ? ` · ${mapsReviewCount} reviews`
+                    : ""}
+                </p>
+              )}
+            </div>
+            <div className="text-right">
+              <span className="text-4xl font-bold text-[var(--accent)]">{oppScore}</span>
+              <span className="text-sm text-[var(--text-tertiary)]"> / 100</span>
+            </div>
+          </div>
+        );
+      })()
+    ) : (
+      // ── Partial data — honest display ──────────────────────────────────────
+      <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-surface-2)] px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Dashed ring with "—" */}
+            <svg
+              width={48}
+              height={48}
+              viewBox="0 0 48 48"
+              className="shrink-0"
+            >
+              <circle
+                cx="24" cy="24" r="18"
+                fill="none"
+                stroke="var(--border-strong)"
+                strokeWidth="3"
+                strokeDasharray="4 4"
+              />
+              <text
+                x="24" y="28" textAnchor="middle"
+                fontSize="16" fontWeight="500"
+                fill="var(--text-tertiary)"
+                fontFamily="var(--font-sans, Geist)"
+              >
+                —
+              </text>
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                Pending — {getMissingComponents(auditResult, designResult)}
               </p>
-            )}
+              {/* Component breakdown */}
+              <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
+                Performance {mP != null ? mP : "—"}/{dP != null ? dP : "—"}
+                {" · "}SEO{" "}
+                {auditResult.mobile.seo_score != null
+                  ? auditResult.mobile.seo_score
+                  : auditResult.desktop.seo_score != null
+                    ? auditResult.desktop.seo_score
+                    : "—"}
+                {" · "}Design{" "}
+                {dS != null ? `${dS}` : "retry needed"}
+              </p>
+            </div>
           </div>
-          <div className="text-right">
-            <span className="text-4xl font-bold text-[var(--accent)]">{oppScore}</span>
-            <span className="text-sm text-[var(--text-tertiary)]"> / 100</span>
-          </div>
+          {/* Inline retry for missing components */}
+          {(!designResult || designResult.mobile.status !== "ok") && (
+            <button
+              onClick={() => onRetryDesign("mobile")}
+              disabled={designRetrying.mobile}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {designRetrying.mobile ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <RefreshCw className="h-3 w-3" />
+              )}
+              Retry design
+            </button>
+          )}
         </div>
-      );
-    })() : null;
+      </div>
+    )
+  ) : null;
 
   // ── Performance Scores ────────────────────────────────────────────────────────
   const performanceEl = (
@@ -222,26 +327,7 @@ export function AuditResultsPanel({
                     {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((key) => {
                       const rawVal = d[key];
                       return (
-                        <div
-                          key={key}
-                          className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2.5"
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0 flex-1">
-                              <p className="text-xs font-medium text-[var(--text-primary)]">
-                                {METRIC_META[key].label}
-                              </p>
-                              <p className="mt-0.5 text-[10px] text-[var(--text-tertiary)]">
-                                {METRIC_META[key].subtitle}
-                              </p>
-                            </div>
-                            <span
-                              className={`shrink-0 text-sm font-bold ${metricColor(key, rawVal)}`}
-                            >
-                              {rawVal ?? "—"}
-                            </span>
-                          </div>
-                        </div>
+                        <MetricRow key={key} value={rawVal} />
                       );
                     })}
                   </div>
@@ -256,16 +342,24 @@ export function AuditResultsPanel({
         })}
       </div>
 
+      {/* Insight callout — color depends on whether it's good news or bad news */}
       {(() => {
         const summary = getPerformanceSummary(
           auditResult.mobile.performance_score,
           auditResult.desktop.performance_score,
         );
-        return summary ? (
-          <div className="mt-4 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] p-3 text-sm text-[var(--accent)]">
-            {summary}
+        if (!summary.text) return null;
+        return (
+          <div
+            className={`mt-4 rounded-lg border p-3 text-sm ${
+              summary.isPositive
+                ? "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]"
+                : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+            }`}
+          >
+            {summary.text}
           </div>
-        ) : null;
+        );
       })()}
     </div>
   );
@@ -372,7 +466,6 @@ export function AuditResultsPanel({
 
   return (
     <div className="mt-6 space-y-6">
-      {timestampEl}
       {opportunityScoreEl}
       {performanceEl}
       {designEl}

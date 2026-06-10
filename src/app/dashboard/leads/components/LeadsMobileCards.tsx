@@ -1,17 +1,16 @@
-import { Phone } from "lucide-react";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
-import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
-import { effectiveOpportunityScore, getOpportunityContext } from "./helpers";
-import type { LeadRow } from "./types";
+import { effectiveOpportunityScore, deriveOpportunityStatus } from "./helpers";
+import type { LeadRow, OpportunityStatus } from "./types";
 
 type AnalyseProgress = { step: number; phase: string; label: string; error?: string };
 
 type Props = {
   paginated: LeadRow[];
   pipelineMap: Map<string, string>;
+  pitchMap: Map<string, boolean>;
   analysingIds: Set<string>;
   analyseProgress: Map<string, AnalyseProgress>;
   onAnalyse: (leadId: string, website: string) => void;
@@ -21,6 +20,7 @@ type Props = {
 export function LeadsMobileCards({
   paginated,
   pipelineMap,
+  pitchMap,
   analysingIds,
   analyseProgress,
   onAnalyse,
@@ -28,14 +28,15 @@ export function LeadsMobileCards({
 }: Props) {
   const cards = paginated.map((lead) => {
     const pipelineStatus = pipelineMap.get(lead.id);
-    const oppCtx    = getOpportunityContext(lead);
+    const hasPitch = pitchMap.get(lead.id) ?? false;
+    const status: OpportunityStatus = deriveOpportunityStatus(lead, pipelineStatus, hasPitch);
     const ringScore = effectiveOpportunityScore(lead);
 
     const card = (
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 pt-0.5">
-            <ScoreRing score={ringScore} size={52} variant={
+            <ScoreRing score={ringScore} size={44} variant={
               lead.website_status === "has_website" && lead.audited_at ? "opportunity"
               : lead.website_status === "has_website" ? "estimate"
               : "opportunity"
@@ -43,20 +44,18 @@ export function LeadsMobileCards({
           </div>
           <div className="min-w-0 flex-1">
             <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
-            <p className="text-xs text-[var(--text-tertiary)]">{lead.business_type} · {lead.city}</p>
-            {lead.phone && (
-              <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]">
-                <Phone className="h-3 w-3" />{lead.phone}
-              </a>
-            )}
-            <p className={`mt-0.5 text-xs font-medium ${oppCtx.color}`}>{oppCtx.text}</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">
+              {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
+              {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
+              {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
+            </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <WebsiteBadge status={lead.website_status} />
-              <PipelineStatusBadge status={pipelineStatus} />
+              <PipelineStatusBadge status={status} />
             </div>
             <div className="mt-3">
               <LeadActionCell
                 lead={lead}
+                status={status}
                 isAnalysing={analysingIds.has(lead.id)}
                 progress={analyseProgress.get(lead.id)}
                 onAnalyse={onAnalyse}

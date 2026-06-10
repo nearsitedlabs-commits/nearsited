@@ -1,20 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 
-import { ArrowLeft, Copy, FileDown, Loader2, Mail, MapPin, Phone, RefreshCw, Send, Share2, TrendingUp } from "lucide-react";
-import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
-import PipelineSelect from "@/components/ui/PipelineSelect";
+import { FileDown, Share2 } from "lucide-react";
 import { Toast } from "@/components/ui/Toast";
-import { getNoDigitalOpportunityReasons } from "@/lib/lead-types";
-import { estimatedOpportunity, opportunityLabel } from "@/lib/scoring";
-import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
-import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
+import { estimatedOpportunity } from "@/lib/scoring";
+// import { getNoDigitalOpportunityReasons } from "@/lib/lead-types";
 
 import type { BusinessRow } from "@/lib/db-types";
+
+// Shared components
+import { LeadHeaderStrip } from "./LeadHeaderStrip";
+import { StatsRow } from "./StatsRow";
+import { PitchCard } from "./PitchCard";
+import { PreCallBrief } from "./PreCallBrief";
+import type { CallBriefSections } from "./PreCallBrief";
+import { AIQuotaBanner } from "./AIQuotaBanner";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type SavedPitch = { id: string; subject: string; body: string; tone: string };
 
@@ -24,6 +27,17 @@ type Props = {
   savedPitch: SavedPitch | null;
   backTo?: string;
 };
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function buildNoDigitalCallBrief(name: string, type: string, city: string | null): CallBriefSections {
+  return {
+    hook: `${name} — ${type ?? "local business"}${city ? ` in ${city}` : ""}. This business has zero digital footprint, meaning 100% of its market is untapped online.`,
+    pain: "Customers searching online for this service cannot find the business. Every competitor with a website or Google listing captures those leads instead.",
+    scope: "Build a professional website, set up Google Business Profile, create social media accounts, establish a contact funnel (form + phone + booking).",
+    objection: `"We've been fine without a website." Response: You're leaving money on the table. ${(city ? `${city} ` : "")}customers search online first — if they can't find you, they call a competitor who has a site.`,
+  };
+}
 
 // ── No Digital Presence Page ─────────────────────────────────────────────────
 
@@ -37,11 +51,20 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
   const [pitchFocus, setPitchFocus] = useState("all");
-  const [pitchOpening, setPitchOpening] = useState("direct");
-  const [pitchUrgency, setPitchUrgency] = useState("medium");
+  const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
+  const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
   const [toast, setToast] = useState<string | null>(null);
   const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
-  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({ email: null, phone: null, loading: true });
+  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
+    email: null, phone: null, loading: true,
+  });
+
+  // AI quota error state
+  const [aiQuotaError, setAiQuotaError] = useState<string | null>(null);
+  const [aiQuotaTimer, setAiQuotaTimer] = useState(0);
+  const [aiRetryCount, setAiRetryCount] = useState(0);
+  const [isGeminiQuota, setIsGeminiQuota] = useState(false);
+
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
@@ -52,7 +75,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     place_id: string | null; phone: string | null; rating: number | null; review_count: number | null;
   };
 
-  const opportunityReasons = getNoDigitalOpportunityReasons();
   const oppScore = estimatedOpportunity({
     website_status: "no_website",
     website: null,
@@ -60,29 +82,26 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     user_ratings_total: biz.review_count ?? null,
   });
 
-  // Fetch contact info for phone number
+  // Fetch contact info
   useEffect(() => {
     if (!biz.id) return;
     fetch(`/api/contact-info?businessId=${biz.id}`)
       .then((r) => r.json())
       .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
-      .catch((err) => {
-        console.error("[NO-DIGITAL] contact-info fetch failed:", err);
-        setContactInfo((p) => ({ ...p, email: null, loading: false }));
-      });
+      .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
   }, [biz.id]);
 
-  // Background rating refresh — fire-and-forget, never blocks render
+  // Background rating refresh
   useEffect(() => {
     if (!biz.id) return;
     fetch("/api/refresh-ratings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ businessId: biz.id }),
-    }).catch((err) => {
-      console.error("[NO-DIGITAL] refresh-ratings failed:", err);
-    });
+    }).catch(() => {});
   }, [biz.id]);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handlePipelineChange = useCallback(async (newStatus: string) => {
     const prev = currentPipelineStatus;
@@ -96,9 +115,10 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
   }, [biz.id, currentPipelineStatus, showToast]);
 
-  const handleGeneratePitch = useCallback(async () => {
+  const handleGeneratePitch = useCallback(async (force = true) => {
     setGeneratingPitch(true);
     setPitchError(null);
+    setAiQuotaError(null);
     try {
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -107,19 +127,34 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           channel: activeChannel,
           workflow: "no_digital_presence",
           focus: pitchFocus, opening: pitchOpening, urgency: pitchUrgency,
-          force: true,
+          force,
         }),
       });
-      if (res.status === 429) { setPitchError("AI quota exceeded — please try again later."); return; }
+      if (res.status === 429) {
+        setIsGeminiQuota(true);
+        setAiRetryCount((c) => c + 1);
+        setAiQuotaError("AI service is at capacity. Auto-retrying…");
+        // Start countdown
+        setAiQuotaTimer(5);
+        const interval = setInterval(() => {
+          setAiQuotaTimer((prev) => {
+            if (prev <= 1) { clearInterval(interval); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+        return;
+      }
       const data = await res.json();
       if (data.success && data.pitch?.body) {
         setPitchResult({ subject: data.pitch.subject ?? "", body: data.pitch.body });
+        setAiRetryCount(0);
+        setAiQuotaError(null);
       } else {
         setPitchError(data.error ?? "Pitch generation failed.");
       }
     } catch { setPitchError("Network error — please try again."); }
     finally { setGeneratingPitch(false); }
-  }, [biz.id, pitchTone, pitchLength, activeChannel]);
+  }, [biz.id, pitchTone, pitchLength, activeChannel, pitchFocus, pitchOpening, pitchUrgency]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) { showToast("Generate a pitch first"); return; }
@@ -142,300 +177,118 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     } catch { showToast("Network error"); }
   }, [biz.id, showToast]);
 
+  const handleAiRetry = useCallback(() => {
+    handleGeneratePitch(true);
+  }, [handleGeneratePitch]);
+
+  const handleUseFallback = useCallback(() => {
+    // Switch to lighter tone/length for faster generation
+    setPitchTone("friendly");
+    setPitchLength("short");
+    handleGeneratePitch(true);
+  }, [handleGeneratePitch]);
+
+  const clearQuotaTimer = useCallback(() => {
+    setAiQuotaError(null);
+    setAiQuotaTimer(0);
+    setAiRetryCount(0);
+  }, []);
+
+  // Auto-retry once with 5s backoff
+  useEffect(() => {
+    if (!aiQuotaError || aiRetryCount > 1 || aiQuotaTimer > 0) return;
+    // Only auto-retry once
+    if (aiRetryCount === 1) {
+      const t = setTimeout(() => handleGeneratePitch(true), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [aiQuotaError, aiRetryCount, aiQuotaTimer, handleGeneratePitch]);
+
+  // ── Derived data ──────────────────────────────────────────────────────────
+
+  const callBrief = buildNoDigitalCallBrief(biz.name, biz.business_type, biz.city);
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
 
-        {/* ── HERO ──────────────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
-            className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
-          </Link>
-          <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] break-words [text-wrap:balance]">
-                {biz.name}
-              </h1>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                {biz.business_type} · {biz.city} · {biz.address}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-red-border)] bg-[var(--badge-red-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-red-text)]">
-                  No Digital Presence Found
-                </span>
-                {biz.phone && (
-                  <span className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)]">
-                    <Phone className="h-3.5 w-3.5" /> {biz.phone}
-                  </span>
-                )}
-                {biz.place_id && (
-                  <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}&query=${encodeURIComponent(biz.name)}`} target="_blank" rel="noreferrer"
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
-                    <MapPin className="h-3.5 w-3.5" /> Map
-                  </a>
-                )}
-              </div>
-              {/* Google Reviews */}
-              {(biz.rating != null || biz.review_count != null) && (
-                <div className="mt-3 flex items-center gap-3">
-                  {biz.rating != null && (
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-bold text-[var(--score-good)]">{biz.rating.toFixed(1)}</span>
-                      <div className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <svg key={star} className={`h-3.5 w-3.5 ${star <= Math.round(biz.rating!) ? "text-[var(--score-good)]" : "text-[var(--text-muted)]"}`} fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {biz.review_count != null && (
-                    <span className="text-xs text-[var(--text-tertiary)]">{biz.review_count.toLocaleString()} reviews</span>
-                  )}
-                  <PoweredByGoogle />
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {currentPipelineStatus ? (
-                <PipelineSelect
-                  value={currentPipelineStatus}
-                  onChange={handlePipelineChange}
-                  options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
-                />
-              ) : (
-                <button onClick={() => handlePipelineChange("new_lead")}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white">
-                  <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* ── HEADER STRIP ──────────────────────────────────────────────── */}
+        <LeadHeaderStrip
+          businessId={biz.id}
+          businessName={biz.name}
+          businessType={biz.business_type}
+          city={biz.city}
+          address={biz.address}
+          placeId={biz.place_id}
+          phone={biz.phone}
+          rating={biz.rating}
+          reviewCount={biz.review_count}
+          pipelineStatus={currentPipelineStatus}
+          onPipelineChange={handlePipelineChange}
+          onShare={handleShare}
+          backTo={backTo}
+          badge={
+            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-red-border)] bg-[var(--badge-red-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-red-text)]">
+              No Digital Presence Found
+            </span>
+          }
+        />
 
-        {/* ── OPPORTUNITY SCORE ─────────────────────────────────────────── */}
-        <div className="mb-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
-          <ScoreRingWithLabel score={oppScore} size={88} label={opportunityLabel(oppScore)} />
-          <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
-            Estimated
-          </span>
-          <p className="text-xs text-[var(--text-tertiary)]">Based on reputation and absence of web presence</p>
-        </div>
+        {/* ── STATS ROW ─────────────────────────────────────────────────── */}
+        <StatsRow
+          opportunityScore={oppScore}
+          isVerified={false}
+          estimatedValue={null}
+          reviewVelocity30d={null}
+          localCompetitors={null}
+        />
 
-        {/* ── TWO-COLUMN LAYOUT ─────────────────────────────────────────── */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        {/* ── TWO-COLUMN MAIN ───────────────────────────────────────────── */}
+        <div className="grid gap-6 lg:grid-cols-5">
 
-          {/* ════ LEFT COLUMN ════════════════════════════════════════════════ */}
-          <div className="space-y-6 order-2 lg:order-1">
+          {/* ════ LEFT (≈60%) ════════════════════════════════════════════════ */}
+          <div className="space-y-6 lg:col-span-3 order-2 lg:order-1">
 
-            {/* ── WHY THIS IS AN OPPORTUNITY ──────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
-              <ul className="space-y-2">
-                {opportunityReasons.map((reason, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
-                    <span>{reason}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--accent-tint)] px-3 py-2.5">
-                <p className="text-xs font-medium text-[var(--accent)]">Opportunity Level: <span className="font-bold">Very High</span></p>
-                <p className="mt-0.5 text-[10px] text-[var(--accent)]/70">Business currently lacks owned digital assets.</p>
-              </div>
-            </div>
-
-            {/* ── WEBSITE OPPORTUNITY ──────────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity</h2>
-              <p className="mb-3 text-xs text-[var(--text-secondary)]">A professional website provides benefits that no other channel can replace.</p>
-              <div className="space-y-3">
-                {[
-                  { label: "More Visibility", desc: "Websites appear in Google searches. Customers can find you at the exact moment they need your service." },
-                  { label: "More Trust", desc: "A professional website builds credibility instantly. Most consumers research a business online before visiting." },
-                  { label: "Better Lead Generation", desc: "Websites capture leads through contact forms, booking systems, and clear calls-to-action — even when you're closed." },
-                  { label: "Better Customer Experience", desc: "Hours, services, pricing, and location available 24/7. Customers get answers without calling." },
-                ].map((benefit) => (
-                  <div key={benefit.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{benefit.label}</p>
-                    <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{benefit.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+            {/* Pitch card */}
+            <PitchCard
+              businessId={biz.id}
+              contactInfo={contactInfo}
+              outreachChannel={activeChannel}
+              setOutreachChannel={setActiveChannel}
+              pitchConfig={{
+                tone: pitchTone,
+                length: pitchLength,
+                focus: pitchFocus,
+                opening: pitchOpening,
+                urgency: pitchUrgency,
+              }}
+              setPitchConfig={(cfg) => {
+                setPitchTone(cfg.tone as typeof pitchTone);
+                setPitchLength(cfg.length as typeof pitchLength);
+                setPitchFocus(cfg.focus);
+                setPitchOpening(cfg.opening as typeof pitchOpening);
+                setPitchUrgency(cfg.urgency as typeof pitchUrgency);
+              }}
+              canGenerate={true}
+              generatingPitch={generatingPitch}
+              handleGeneratePitch={handleGeneratePitch}
+              pitchError={pitchError}
+              pitchResult={pitchResult}
+              handleCopyPitch={handleCopyPitch}
+            />
           </div>
 
-          {/* ════ RIGHT COLUMN ═══════════════════════════════════════════════ */}
-          <div className="space-y-6 order-1 lg:order-2">
+          {/* ════ RIGHT (≈40%) ═══════════════════════════════════════════════ */}
+          <div className="space-y-6 lg:col-span-2 order-1 lg:order-2">
 
-            {/* ── READY-TO-SEND OUTREACH ────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
+            {/* Pre-Call Brief (replaces old "Client Call Summary") */}
+            <PreCallBrief
+              businessName={biz.name}
+              businessType={biz.business_type}
+              sections={callBrief}
+            />
 
-              {/* Channel tabs */}
-              <div className="mb-4 flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
-                {([
-                  { id: "email" as const, label: "Email", icon: Mail },
-                  { id: "whatsapp" as const, label: "WhatsApp", icon: Phone },
-                ] as const).map((ch) => (
-                  <button
-                    key={ch.id}
-                    type="button"
-                    onClick={() => setActiveChannel(ch.id)}
-                    className={`relative flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-150 ${
-                      activeChannel === ch.id
-                        ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--brand-shadow-xs)]"
-                        : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
-                    }`}
-                  >
-                    <ch.icon className="h-3.5 w-3.5" />
-                    {ch.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Contact hint */}
-              {!contactInfo.loading && (
-                <div className="mb-3">
-                  {activeChannel === "email" && contactInfo.email && (
-                    <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-                      <Mail className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                      <span className="text-xs text-[var(--text-secondary)]">{contactInfo.email}</span>
-                    </div>
-                  )}
-                  {activeChannel === "email" && !contactInfo.email && (
-                    <p className="text-[11px] text-[var(--text-tertiary)]">No email found — pitch will be formatted for email outreach.</p>
-                  )}
-                  {activeChannel === "whatsapp" && contactInfo.phone && (
-                    <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-                      <Phone className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                      <span className="text-xs text-[var(--text-secondary)]">{contactInfo.phone}</span>
-                    </div>
-                  )}
-                  {activeChannel === "whatsapp" && !contactInfo.phone && (
-                    <p className="text-[11px] text-[var(--text-tertiary)]">No phone number found — pitch will be formatted for WhatsApp.</p>
-                  )}
-                </div>
-              )}
-
-              {/* Pitch controls */}
-              <div className="mb-3 space-y-2">
-                <div className="flex flex-wrap gap-2">
-                  <PipelineSelect
-                    value={pitchTone}
-                    onChange={(v) => setPitchTone(v as typeof pitchTone)}
-                    options={[
-                      { value: "professional", label: "Professional" },
-                      { value: "friendly", label: "Friendly" },
-                      { value: "luxury", label: "Luxury" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchLength}
-                    onChange={(v) => setPitchLength(v as typeof pitchLength)}
-                    options={[
-                      { value: "short", label: "Short" },
-                      { value: "medium", label: "Medium" },
-                      { value: "detailed", label: "Detailed" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchFocus}
-                    onChange={(v) => setPitchFocus(v)}
-                    options={[
-                      { value: "all", label: "All angles" },
-                      { value: "seo", label: "Visibility & SEO" },
-                      { value: "trust", label: "Trust" },
-                      { value: "revenue", label: "Revenue" },
-                    ]}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <PipelineSelect
-                    value={pitchOpening}
-                    onChange={(v) => setPitchOpening(v)}
-                    options={[
-                      { value: "direct", label: "Direct" },
-                      { value: "question", label: "Question-led" },
-                      { value: "empathy", label: "Empathy" },
-                      { value: "data", label: "Data-led" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchUrgency}
-                    onChange={(v) => setPitchUrgency(v)}
-                    options={[
-                      { value: "low", label: "Low-key" },
-                      { value: "medium", label: "Medium" },
-                      { value: "high", label: "High urgency" },
-                    ]}
-                  />
-                  <button onClick={handleGeneratePitch} disabled={generatingPitch}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50">
-                    {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-                    {generatingPitch ? "Generating…" : "Generate"}
-                  </button>
-                </div>
-              </div>
-
-              {pitchError && (
-                <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">{pitchError}</div>
-              )}
-
-              {pitchResult ? (
-                <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                  {activeChannel === "email" && pitchResult.subject && (
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
-                  )}
-                  <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
-                  <div className="flex gap-2 mt-2">
-                    <button onClick={handleCopyPitch}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
-                      <Copy className="h-3 w-3" /> Copy
-                    </button>
-                    <button onClick={handleGeneratePitch} disabled={generatingPitch}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50">
-                      {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
-                      Regenerate
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-xs text-[var(--text-tertiary)]">Generate a pitch to start outreach.</p>
-              )}
-            </div>
-
-            {/* ── CLIENT CALL SUMMARY ─────────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h2>
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">Read this 60 seconds before a sales call.</p>
-                </div>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-xs text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
-                {`━━ Current Situation ━━
-${biz.name} — ${biz.business_type ?? "business"} in ${biz.city}
-No website detected · No social media presence found
-${biz.phone ? `Contact number available: ${biz.phone}` : "No contact number available"}
-
-━━ Opportunity ━━
-Business has no owned digital assets. This is a greenfield opportunity to build a complete digital foundation from scratch — website, Google Business profile, and social presence.
-
-━━ Risks ━━
-Customers searching online may not find this business. Competitors with online presence likely capture potential leads.
-
-━━ Suggested Scope ━━
-Build a professional website, set up Google Business Profile, create social media accounts, and establish a contact funnel.`}
-              </div>
-            </div>
-
-            {/* ── EXPORT ──────────────────────────────────────────────────── */}
+            {/* Export */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
@@ -454,6 +307,17 @@ Build a professional website, set up Google Business Profile, create social medi
         </div>
 
       </div>
+
+      {/* AI Quota error banner (replaces old inline pitchError) */}
+      <AIQuotaBanner
+        quotaError={aiQuotaError}
+        isGeminiQuota={isGeminiQuota}
+        quotaRetryTimer={aiQuotaTimer}
+        clearQuotaTimer={clearQuotaTimer}
+        onRetry={handleAiRetry}
+        onUseFallback={handleUseFallback}
+        retryCount={aiRetryCount}
+      />
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>

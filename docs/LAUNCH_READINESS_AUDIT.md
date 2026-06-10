@@ -91,6 +91,7 @@ All 30 priority fixes identified in the audit have been completed. The table bel
 | 28 | Public/ boilerplate cleanup | ✅ Completed | Removed: `next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`, `landing-page-v1.html`, `landing-page-v2-editorial.html` | Cleaned up default Next.js boilerplate SVGs and old landing page design mockups from the public directory |
 | 29 | Cookie consent dismiss persistence | ✅ Completed | [`CookieConsent.tsx`](src/components/CookieConsent.tsx) | Dismiss now records the choice to `localStorage` so returning visitors aren't shown the banner again; preference persists across sessions |
 | 30 | Missing Suspense boundary for `useSearchParams` | ✅ Completed | [`signup/page.tsx`](src/app/%28auth%29/signup/page.tsx), [`reset-password/page.tsx`](src/app/reset-password/page.tsx) | Added `Suspense` wrapper around page components using `useSearchParams()` to comply with Next.js requirements and prevent runtime errors |
+| 31 | Pipeline kanban refactor (layout + score bug + time-in-stage + card actions) | ✅ Completed | See [`PIPELINE_PAGE_LOGIC.md`](docs/PIPELINE_PAGE_LOGIC.md) (new) | Refactored the 530-line pipeline page into 6 focused components. Score bug fixed (inline `getOpportunityContext()` now uses canonical `opportunityLabel()` + passes `businessType`). Added `stage_entered_at` column + migration + API handler. Columns reduced 280px→220px with empty-state collapse. Compact cards (~80px) with ScorePill, TimeInStage, CardActionsMenu. Label cleanup applied. 55 scoring tests all pass. |
 
 ---
 

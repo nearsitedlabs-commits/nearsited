@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Building2, Compass, ScanSearch, Kanban, FileText, Settings,
+  LayoutDashboard, Building2, Compass, Kanban, FileText, Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -10,21 +10,19 @@ export type NavItem = {
 };
 
 export const DASHBOARD_NAV: NavItem[] = [
-  { href: "/dashboard",          label: "Dashboard",             icon: LayoutDashboard },
-  { href: "/dashboard/leads",    label: "Opportunities",         icon: Building2 },
-  { href: "/dashboard/discover", label: "Opportunity Discovery", icon: Compass },
-  { href: "/dashboard/audit",    label: "Opportunity Review",    icon: ScanSearch },
-  { href: "/dashboard/pipeline", label: "Pipeline",              icon: Kanban },
-  { href: "/dashboard/pitches",  label: "Pitches",               icon: FileText },
-  { href: "/dashboard/settings", label: "Settings",              icon: Settings },
+  { href: "/dashboard",          label: "Dashboard",     icon: LayoutDashboard },
+  { href: "/dashboard/discover", label: "Find",           icon: Compass },
+  { href: "/dashboard/leads",    label: "Opportunities",  icon: Building2 },
+  { href: "/dashboard/pipeline", label: "Pipeline",       icon: Kanban },
+  { href: "/dashboard/pitches",  label: "Pitches",        icon: FileText },
+  { href: "/dashboard/settings", label: "Settings",       icon: Settings },
 ];
 
 export const MOBILE_NAV: NavItem[] = [
-  { href: "/dashboard",          label: "Home",      icon: LayoutDashboard },
-  { href: "/dashboard/leads",    label: "Leads",     icon: Building2 },
-  { href: "/dashboard/discover", label: "Discover",  icon: Compass },
-  { href: "/dashboard/audit",    label: "Audit",     icon: ScanSearch },
-  { href: "/dashboard/pipeline", label: "Pipeline",  icon: Kanban },
-  { href: "/dashboard/pitches",  label: "Pitches",   icon: FileText },
-  { href: "/dashboard/settings", label: "Settings",  icon: Settings },
+  { href: "/dashboard",          label: "Home",           icon: LayoutDashboard },
+  { href: "/dashboard/discover", label: "Find",           icon: Compass },
+  { href: "/dashboard/leads",    label: "Leads",          icon: Building2 },
+  { href: "/dashboard/pipeline", label: "Pipeline",       icon: Kanban },
+  { href: "/dashboard/pitches",  label: "Pitches",        icon: FileText },
+  { href: "/dashboard/settings", label: "Settings",       icon: Settings },
 ];

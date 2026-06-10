@@ -62,13 +62,6 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
           </p>
         </motion.div>
 
-        {/* ── Back to home ────────────────────────────────────────────── */}
-        <motion.div {...fadeIn(0.1)} className="text-center">
-          <Link href="/" className="text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]">
-            ← Back to home
-          </Link>
-        </motion.div>
-
         {/* ── Card ────────────────────────────────────────────────────── */}
         <motion.div
           {...cardEnter}
@@ -87,10 +80,10 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
               <motion.div
                 key={error}
                 className="mb-4 rounded-xl border border-[var(--badge-red-border)] bg-[var(--badge-red-bg)] px-4 py-3 text-sm text-[var(--badge-red-text)]"
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: [0, -4, 4, -2, 0] }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
               >
                 {error}
               </motion.div>
@@ -107,7 +100,7 @@ export default function AuthCard({ mode, children, error }: AuthCardProps) {
             {TRUST_INDICATORS.map((item) => (
               <span
                 key={item}
-                className="inline-flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"
+                className="inline-flex items-center gap-1.5 text-sm leading-relaxed text-[var(--text-tertiary)]"
               >
                 <Check className="h-3 w-3 text-[var(--accent)]" />
                 {item}

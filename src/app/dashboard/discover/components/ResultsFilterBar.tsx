@@ -1,24 +1,27 @@
 "use client";
 
-import { Info, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "@/lib/motion";
-import { Tooltip } from "@/components/ui/Tooltip";
 
 const SORT_OPTIONS = [
-  { value: "opportunity-desc", label: "Estimated Opportunity", short: "Opportunity" },
-  { value: "rating-desc", label: "Rating (High to Low)", short: "Rating" },
-  { value: "outreach-first", label: "Flagged for Outreach First", short: "Outreach first" },
+  { value: "score-desc", label: "Score", short: "Score" },
+  { value: "reviews-desc", label: "Review count", short: "Review count" },
+  { value: "rating-desc", label: "Rating", short: "Rating" },
+  { value: "recency-desc", label: "Recency", short: "Recency" },
+  { value: "name-asc", label: "Alphabetical", short: "Alphabetical" },
 ];
 
-const FILTER_TABS = [
+const FILTER_OPTIONS = [
   { value: "all", label: "All" },
-  { value: "has_website", label: "Has Website" },
-  { value: "platform_only", label: "Platform Only" },
-  { value: "social_only", label: "Social Only" },
-  { value: "no_website", label: "No Website" },
+  { value: "has_website", label: "Has site" },
+  { value: "no_website", label: "No site" },
+  { value: "social_only", label: "Social only" },
+  { value: "platform_only", label: "Platform only" },
 ];
 
 type ResultsFilterBarProps = {
+  businessTypeLabel: string;
+  locationLabel: string;
   totalCount: number;
   flaggedCount: number;
   sortOption: string;
@@ -31,6 +34,8 @@ type ResultsFilterBarProps = {
 };
 
 export function ResultsFilterBar({
+  businessTypeLabel,
+  locationLabel,
   totalCount,
   flaggedCount,
   sortOption,
@@ -41,42 +46,40 @@ export function ResultsFilterBar({
   onSortToggle,
   onFilterChange,
 }: ResultsFilterBarProps) {
-  const currentSortShort = SORT_OPTIONS.find((o) => o.value === sortOption)?.short ?? "Sort";
+  const currentSortLabel = SORT_OPTIONS.find((o) => o.value === sortOption)?.label ?? "Score";
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-5 py-3.5 shadow-[var(--brand-shadow-sm)]">
-      <span className="flex items-baseline gap-1">
-        <span className="text-2xl font-normal text-[var(--text-primary)]">{totalCount}</span>
-        <span className="text-sm text-[var(--text-secondary)]">business{totalCount === 1 ? "" : "es"}</span>
-      </span>
+    <div className="space-y-3">
+      {/* Header strip — two lines */}
+      <div className="flex items-end justify-between">
+        <div className="space-y-0.5">
+          <h2 className="text-[13px] font-medium text-[var(--text-primary)]">
+            {businessTypeLabel}s near {locationLabel}
+          </h2>
+          <p className="text-[11px] text-[var(--text-tertiary)]">
+            {totalCount} result{totalCount === 1 ? "" : "s"}
+            {flaggedCount > 0 && (
+              <> · {flaggedCount} flagged</>
+            )}
+            {" · "}
+            Sort:{" "}
+            <button
+              type="button"
+              onClick={onSortToggle}
+              className="inline-flex items-center gap-0.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-150 cursor-pointer"
+            >
+              {currentSortLabel}
+              <ChevronDown className={`h-2.5 w-2.5 transition-transform duration-150 ${sortDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+          </p>
+        </div>
 
-      {flaggedCount > 0 && (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-semibold text-[var(--accent)]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-          {flaggedCount} flagged for outreach
-          <Tooltip content="Flagged when a business has no website, uses only social media (Facebook, Instagram, etc.), or is listed only on a third-party platform (Fresha, Booksy, etc.) — meaning they don't own their digital presence.">
-            <span className="inline-flex cursor-help">
-              <Info className="size-3 opacity-60" />
-            </span>
-          </Tooltip>
-        </span>
-      )}
-
-      <div className="ml-auto flex flex-col sm:flex-row items-end sm:items-center gap-2 w-full sm:w-auto">
         {/* Sort dropdown */}
         <div className="relative" ref={sortRef}>
-          <button
-            type="button"
-            onClick={onSortToggle}
-            className="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-          >
-            {currentSortShort}
-            <ChevronDown className={`h-3 w-3 transition-transform duration-150 ${sortDropdownOpen ? "rotate-180" : ""}`} />
-          </button>
           <AnimatePresence>
             {sortDropdownOpen && (
               <motion.div
-                className="absolute left-0 top-full z-40 mt-1.5 w-52 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
+                className="absolute right-0 top-full z-40 mt-1 w-48 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
@@ -87,7 +90,7 @@ export function ResultsFilterBar({
                     key={opt.value}
                     type="button"
                     onClick={() => { onSortChange(opt.value); }}
-                    className={`cursor-pointer flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm transition-colors hover:bg-[var(--bg-elevated)] ${
+                    className={`cursor-pointer flex w-full items-center gap-2.5 px-4 py-2 text-left text-xs transition-colors hover:bg-[var(--bg-elevated)] ${
                       sortOption === opt.value ? "font-semibold text-[var(--accent)]" : "text-[var(--text-secondary)]"
                     }`}
                   >
@@ -101,31 +104,28 @@ export function ResultsFilterBar({
             )}
           </AnimatePresence>
         </div>
+      </div>
 
-        {/* Filter pills */}
-        <div className="flex flex-wrap gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
-          {FILTER_TABS.map((tab) => (
+      {/* Filter chips */}
+      <div className="flex items-center gap-1.5 text-[11px]">
+        <span className="text-[var(--text-tertiary)] mr-1">Filter:</span>
+        {FILTER_OPTIONS.map((opt) => {
+          const isActive = websiteFilter === opt.value;
+          return (
             <button
-              key={tab.value}
+              key={opt.value}
               type="button"
-              onClick={() => onFilterChange(tab.value)}
-              className={`relative cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 ${
-                websiteFilter === tab.value
-                  ? "text-[var(--text-primary)] font-semibold"
+              onClick={() => onFilterChange(opt.value)}
+              className={`cursor-pointer transition-colors duration-150 px-2 py-0.5 rounded-md ${
+                isActive
+                  ? "text-[var(--text-primary)] font-medium"
                   : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
               }`}
             >
-              {websiteFilter === tab.value && (
-                <motion.div
-                  layoutId="discover-filter-active"
-                  className="absolute inset-0 rounded-lg bg-[var(--bg-surface)] shadow-[var(--brand-shadow-xs)]"
-                  transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                />
-              )}
-              <span className="relative z-10">{tab.label}</span>
+              {opt.label}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Search, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Search } from "lucide-react";
 import { readNdjsonStream } from "@/lib/ndjson";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/motion";
@@ -11,8 +11,7 @@ import {
   AuditForm,
   AuditProgressPanel,
   AuditResultsPanel,
-  PitchAndPipelinePanel,
-  SaveLeadForm,
+  ReviewCompleteActions,
   ExampleReportModal,
 } from "./components";
 import type {
@@ -41,7 +40,7 @@ function timeAgo(ts: number): string {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function AuditPage() {
-  const router = useRouter();
+  const router = useRouter(); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [url, setUrl] = useState("");
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState<AuditStep>("idle");
@@ -59,25 +58,13 @@ export default function AuditPage() {
   const [completedKeys, setCompletedKeys] = useState<string[]>([]);
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
   const [savedTimestamp, setSavedTimestamp] = useState<number | null>(null);
-  const [showPitchResult, setShowPitchResult] = useState(false);
-  const [pitchResult, setPitchResult] = useState<string | null>(null);
-  const [pitchLoading, setPitchLoading] = useState(false);
-  const [pipelineLoading, setPipelineLoading] = useState(false);
-  const [pipelineAdded, setPipelineAdded] = useState(false);
-  const [pipelineError, setPipelineError] = useState<string | null>(null);
-  const [savedBusinessId, setSavedBusinessId] = useState<string | null>(null);
-  const [savingLead, setSavingLead] = useState(false);
-  const [saveLeadError, setSaveLeadError] = useState<string | null>(null);
-  const [showSaveForm, setShowSaveForm] = useState(false);
-  const [saveLeadName, setSaveLeadName] = useState("");
-  const [saveLeadCity, setSaveLeadCity] = useState("");
-  const [saveLeadType, setSaveLeadType] = useState("");
   const [mapsLookupUrl, setMapsLookupUrl] = useState("");
   const [mapsLookupLoading, setMapsLookupLoading] = useState(false);
   const [mapsLookupHint, setMapsLookupHint] = useState<string | null>(null);
   const [mapsRating, setMapsRating] = useState<number | null>(null);
   const [mapsReviewCount, setMapsReviewCount] = useState<number | null>(null);
-  const [mapsPlaceId, setMapsPlaceId] = useState<string | null>(null);
+  const [_mapsPlaceId, setMapsPlaceId] = useState<string | null>(null);
+  const [mapsBusinessName, setMapsBusinessName] = useState<string | null>(null);
   const [designRetrying, setDesignRetrying] = useState<DesignRetrying>({
     mobile: false,
     desktop: false,
@@ -283,8 +270,6 @@ export default function AuditPage() {
 
     setRunning(true);
     setError(null);
-    setPipelineError(null);
-    setPipelineAdded(false);
     setAuditResult(null);
     setDesignResult(null);
     setCompletedKeys([]);
@@ -468,59 +453,7 @@ export default function AuditPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showProgress = running || completedKeys.length > 0;
-
-  const handleGeneratePitch = useCallback(async () => {
-    if (!url.trim() || !auditResult) return;
-    setPitchLoading(true);
-    setPitchResult(null);
-    setShowPitchResult(true);
-
-    try {
-      const res = await fetch("/api/pitch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          website: url.trim(),
-          audit: auditResult,
-          ...(designResult ? { design: designResult } : {}),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 400) {
-          const details = Array.isArray(data?.details)
-            ? ` (${data.details.join(", ")})`
-            : "";
-          throw new Error(
-            `Cannot generate pitch — invalid request${details}. Run the audit first.`,
-          );
-        }
-        throw new Error(data.error ?? "AI service is busy. Please try again.");
-      }
-
-      const p = data.pitch;
-      const subject =
-        typeof p === "object" && p?.subject ? String(p.subject) : "";
-      const body =
-        typeof p === "object" && p?.body
-          ? String(p.body)
-          : typeof p === "string"
-            ? p
-            : "No pitch could be generated.";
-      setPitchResult(subject ? `${subject}\n\n${body}` : body);
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to generate pitch. Please try again.";
-      setPitchResult(message);
-    } finally {
-      setPitchLoading(false);
-    }
-  }, [url, auditResult, designResult]);
+  const showProgress = (running || completedKeys.length > 0) && step !== "done";
 
   const handleMapsLookup = useCallback(async () => {
     const rawUrl = mapsLookupUrl.trim();
@@ -546,10 +479,10 @@ export default function AuditPage() {
       } else {
         const urlWasEmpty = !url.trim();
         if (data.website && urlWasEmpty) setUrl(data.website);
-        if (data.name) setSaveLeadName(data.name);
-        if (data.city) setSaveLeadCity(data.city);
+        if (data.name) setMapsBusinessName(data.name);
+        if (data.city) setMapsLookupHint(`Found "${data.name}" — city: ${data.city}`);
         if (data.suggested_business_type)
-          setSaveLeadType(data.suggested_business_type);
+          setMapsLookupHint(mapsLookupHint ?? null);
         if (data.rating != null) setMapsRating(data.rating);
         if (data.review_count != null) setMapsReviewCount(data.review_count);
         if (data.place_id) setMapsPlaceId(data.place_id);
@@ -569,98 +502,7 @@ export default function AuditPage() {
     } finally {
       setMapsLookupLoading(false);
     }
-  }, [mapsLookupUrl, url]);
-
-  const handleSaveLead = useCallback(
-    async (skipDetails = false) => {
-      if (!url.trim()) return;
-      setSaveLeadError(null);
-      setSavingLead(true);
-      try {
-        const res = await fetch("/api/leads", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            website: url.trim(),
-            name: skipDetails ? undefined : saveLeadName || undefined,
-            city: skipDetails ? undefined : saveLeadCity || undefined,
-            businessType: skipDetails
-              ? undefined
-              : saveLeadType || undefined,
-            audit: auditResult,
-            ...(designResult ? { design: designResult } : {}),
-            ...(mapsRating != null ? { rating: mapsRating } : {}),
-            ...(mapsReviewCount != null
-              ? { reviewCount: mapsReviewCount }
-              : {}),
-            ...(mapsPlaceId ? { placeId: mapsPlaceId } : {}),
-          }),
-        });
-        const data = (await res.json()) as {
-          success?: boolean;
-          business_id?: string;
-          error?: string;
-        };
-        if (!res.ok || !data.success)
-          throw new Error(data.error ?? "Failed to save lead");
-        router.push(`/dashboard/leads/${data.business_id}`);
-      } catch (err) {
-        setSaveLeadError(
-          err instanceof Error ? err.message : "Failed to save lead",
-        );
-      } finally {
-        setSavingLead(false);
-      }
-    },
-    [
-      url,
-      saveLeadName,
-      saveLeadCity,
-      saveLeadType,
-      auditResult,
-      designResult,
-      mapsRating,
-      mapsReviewCount,
-      mapsPlaceId,
-      router,
-    ],
-  );
-
-  const handleAddToPipeline = useCallback(async () => {
-    if (!url.trim() || !auditResult) return;
-    setPipelineError(null);
-    setPipelineLoading(true);
-
-    try {
-      const res = await fetch("/api/pipeline", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          website: url.trim(),
-          audit: auditResult,
-          ...(designResult ? { design: designResult } : {}),
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(
-          data.error ?? data.message ?? "Failed to add to pipeline",
-        );
-      }
-
-      setSavedBusinessId(
-        (data as { business_id?: string }).business_id ?? null,
-      );
-      setPipelineAdded(true);
-    } catch (err) {
-      setPipelineError(
-        err instanceof Error ? err.message : "Failed to add to pipeline",
-      );
-    } finally {
-      setPipelineLoading(false);
-    }
-  }, [url, auditResult, designResult]);
+  }, [mapsLookupUrl, url, mapsLookupHint]);
 
   const handleRetryDesign = useCallback(
     async (strategy: "mobile" | "desktop") => {
@@ -725,34 +567,16 @@ export default function AuditPage() {
     setCompletedKeys([]);
     setActiveKeys([]);
     setSavedTimestamp(null);
-    setShowPitchResult(false);
-    setPitchResult(null);
-    setPipelineAdded(false);
-    setPipelineError(null);
     setMapsLookupUrl("");
     setMapsLookupHint(null);
     setMapsRating(null);
     setMapsReviewCount(null);
     setMapsPlaceId(null);
-  };
-
-  // ── Helper to open the save lead form ────────────────────────────────────────
-  const handleOpenSaveForm = () => {
-    let hostname = url.trim();
-    try {
-      hostname = new URL(url.trim()).hostname;
-    } catch {
-      /* keep raw */
-    }
-    setSaveLeadName(hostname);
-    setSaveLeadCity("");
-    setSaveLeadType("");
-    setSaveLeadError(null);
-    setShowSaveForm(true);
+    setMapsBusinessName(null);
   };
 
   // ── Idle state ──────────────────────────────────────────────────────────────
-  if (step === "idle" && !error && !auditResult && !showProgress) {
+  if (step === "idle" && !error && !auditResult && !running) {
     const mainContent = (
       <>
         <Link
@@ -786,6 +610,8 @@ export default function AuditPage() {
           step={step}
           onCancel={handleCancel}
           onReset={handleReset}
+          savedTimestamp={savedTimestamp}
+          mapsBusinessName={mapsBusinessName}
         />
 
         {/* Example Opportunity Card — hidden once user has run an audit */}
@@ -871,11 +697,7 @@ export default function AuditPage() {
             ) : (
               <div className="mb-5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
                 <p className="text-base font-semibold text-[var(--text-primary)]">
-                  {exampleTab === "no_website"
-                    ? "High Opportunity"
-                    : exampleTab === "platform_only"
-                      ? "High Opportunity"
-                      : "High Opportunity"}
+                  High Opportunity
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                   {exampleTab === "no_website"
@@ -1004,7 +826,7 @@ export default function AuditPage() {
         <ArrowLeft className="h-4 w-4" /> Back to Dashboard
       </Link>
 
-      {/* URL input card */}
+      {/* URL input card (idle/running) OR status pill (done) — AuditForm handles this internally */}
       <AuditForm
         url={url}
         onUrlChange={setUrl}
@@ -1018,16 +840,20 @@ export default function AuditPage() {
         step={step}
         onCancel={handleCancel}
         onReset={handleReset}
+        savedTimestamp={savedTimestamp}
+        mapsBusinessName={mapsBusinessName}
       />
 
-      {/* Progress checklist */}
-      <AuditProgressPanel
-        completedKeys={completedKeys}
-        activeKeys={activeKeys}
-        showProgress={showProgress}
-        running={running}
-        onCancel={handleCancel}
-      />
+      {/* Progress checklist — only shown during active run, not in done state */}
+      {(running || completedKeys.length > 0) && step !== "done" && (
+        <AuditProgressPanel
+          completedKeys={completedKeys}
+          activeKeys={activeKeys}
+          showProgress={showProgress}
+          running={running}
+          onCancel={handleCancel}
+        />
+      )}
 
       {/* Error banner */}
       {error && (
@@ -1099,55 +925,23 @@ export default function AuditPage() {
 
       {/* Results */}
       {auditResult && !bothTimedOut && (
-        <>
-          <AuditResultsPanel
-            auditResult={auditResult}
-            designResult={designResult}
-            mapsRating={mapsRating}
-            mapsReviewCount={mapsReviewCount}
-            onRetryDesign={handleRetryDesign}
-            designRetrying={designRetrying}
-          />
-        </>
+        <AuditResultsPanel
+          auditResult={auditResult}
+          designResult={designResult}
+          mapsRating={mapsRating}
+          mapsReviewCount={mapsReviewCount}
+          onRetryDesign={handleRetryDesign}
+          designRetrying={designRetrying}
+        />
       )}
 
-      {/* Done state actions */}
-      {step === "done" && !error && auditResult && (
-        <div className="mt-6 space-y-4">
-          <SaveLeadForm
-            showSaveForm={showSaveForm}
-            onOpenForm={handleOpenSaveForm}
-            onCloseForm={() => setShowSaveForm(false)}
+      {/* Done state actions — consolidated into ReviewCompleteActions */}
+      {step === "done" && !error && auditResult && !bothTimedOut && (
+        <div className="mt-6">
+          <ReviewCompleteActions
             url={url}
-            saveLeadName={saveLeadName}
-            onSaveLeadNameChange={setSaveLeadName}
-            saveLeadCity={saveLeadCity}
-            onSaveLeadCityChange={setSaveLeadCity}
-            saveLeadType={saveLeadType}
-            onSaveLeadTypeChange={setSaveLeadType}
-            saveLeadError={saveLeadError}
-            savingLead={savingLead}
-            onSaveLead={handleSaveLead}
-            mapsLookupUrl={mapsLookupUrl}
-            onMapsLookupUrlChange={setMapsLookupUrl}
-            mapsLookupLoading={mapsLookupLoading}
-            mapsLookupHint={mapsLookupHint}
-            onMapsLookup={handleMapsLookup}
-          />
-
-          <PitchAndPipelinePanel
             auditResult={auditResult}
             designResult={designResult}
-            showPitchResult={showPitchResult}
-            pitchResult={pitchResult}
-            pitchLoading={pitchLoading}
-            onGeneratePitch={handleGeneratePitch}
-            onRetryDesign={handleRetryDesign}
-            pipelineLoading={pipelineLoading}
-            pipelineAdded={pipelineAdded}
-            pipelineError={pipelineError}
-            onAddToPipeline={handleAddToPipeline}
-            savedBusinessId={savedBusinessId}
           />
         </div>
       )}

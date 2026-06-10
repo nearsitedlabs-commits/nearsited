@@ -13,15 +13,26 @@ const CanvasBackground = dynamic(
   { ssr: false },
 );
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export function LandingFooter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "subscribed" | "error">("idle");
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = email.trim();
-    if (!trimmed || !trimmed.includes("@")) return;
 
+    if (!trimmed) {
+      setValidationError("Please enter your email address.");
+      return;
+    }
+    if (!EMAIL_RE.test(trimmed)) {
+      setValidationError("Please enter a valid email address.");
+      return;
+    }
+    setValidationError(null);
     setStatus("loading");
 
     try {
@@ -86,14 +97,14 @@ export function LandingFooter() {
                       className="flex flex-col sm:flex-row gap-2"
                     >
                       <input
-                        type="email"
+                        type="text"
+                        inputMode="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => { setEmail(e.target.value); setValidationError(null); }}
                         placeholder="your@email.com"
-                        required
                         disabled={status === "loading"}
                         aria-label="Email for newsletter"
-                        className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--accent)]/50 disabled:opacity-50"
+                        className={`min-w-0 flex-1 rounded-lg border bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition disabled:opacity-50 ${validationError ? "border-red-500/50 focus:border-red-500/70" : "border-[var(--border)] focus:border-[var(--accent)]/50"}`}
                       />
                       <button
                         type="submit"
@@ -105,9 +116,9 @@ export function LandingFooter() {
                     </motion.form>
                   )}
                 </AnimatePresence>
-                {status === "error" && (
-                  <p className="mt-1 text-xs text-[var(--status-error-text)]">
-                    Something went wrong. Please try again.
+                {(validationError || status === "error") && (
+                  <p className="mt-2 text-xs text-red-400">
+                    {validationError ?? "Something went wrong. Please try again."}
                   </p>
                 )}
               </div>

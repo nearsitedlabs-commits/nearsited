@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Copy, ExternalLink, Loader2, Search, Trash2, Check, ArrowRight, EllipsisVertical, X } from "lucide-react";
+import { PITCH_STATUS_LABELS } from "@/lib/ui-constants";
 import { Toast } from "@/components/ui/Toast";
 import { FadeUp, StaggerContainer, useReducedMotion } from "@/lib/motion";
 
@@ -104,7 +105,7 @@ export default function PitchesPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useReducedMotion(); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Close overflow menu on click outside
   useEffect(() => {
@@ -158,7 +159,7 @@ export default function PitchesPage() {
   }, [fetchPitches]);
 
   const handleCopy = async (pitch: Pitch) => {
-    const biz = getBusiness(pitch);
+    const _biz = getBusiness(pitch);
     const text = pitch.channel === "whatsapp" ? pitch.body : `Subject: ${pitch.subject}\n\n${pitch.body}`;
     await navigator.clipboard.writeText(text);
     setCopiedId(pitch.id);
@@ -225,6 +226,17 @@ export default function PitchesPage() {
       setAddingToPipeline(null);
     }
   };
+
+  const handleOpenInWhatsApp = useCallback((pitch: Pitch) => {
+    const text = encodeURIComponent(pitch.body ?? "");
+    window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
+  }, []);
+
+  const handleOpenInEmail = useCallback((pitch: Pitch) => {
+    const subject = encodeURIComponent(pitch.subject ?? "");
+    const body = encodeURIComponent(pitch.body ?? "");
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }, []);
 
   // Compute stats
   const stats = useMemo(() => {
@@ -329,11 +341,22 @@ export default function PitchesPage() {
           {/* ── Middle: subject + meta + body preview ────────────────── */}
           <p className="text-[13px] font-medium text-[var(--text-primary)]" dir="auto">{pitch.subject}</p>
 
-          <p className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
-            {[channelLabel, toneLabel, score != null ? `Score ${score}` : null, dateStr]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
+          <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] text-[var(--text-tertiary)]">
+              {[channelLabel, toneLabel, score != null ? `Score ${score}` : null, dateStr]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+            {pitch.pitch_status && pitch.pitch_status !== "draft" && (
+              <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+                pitch.pitch_status === "replied"
+                  ? "border-[var(--badge-green-border)] bg-[var(--badge-green-bg)] text-[var(--badge-green-text)]"
+                  : "border-blue-500/30 bg-blue-500/10 text-blue-400"
+              }`}>
+                {PITCH_STATUS_LABELS[pitch.pitch_status as keyof typeof PITCH_STATUS_LABELS] ?? pitch.pitch_status}
+              </span>
+            )}
+          </div>
 
           <p className="mt-1.5 text-xs text-[var(--text-tertiary)] leading-relaxed line-clamp-2">
             {bodyPreview(pitch.body)}
@@ -357,7 +380,8 @@ export default function PitchesPage() {
             {/* Open in email/WhatsApp — secondary, channel-aware */}
             {pitch.channel === "whatsapp" ? (
               <button
-                onClick={() => handleCopy(pitch)}
+                onClick={() => handleOpenInWhatsApp(pitch)}
+                aria-label="Open pitch in WhatsApp"
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -365,7 +389,8 @@ export default function PitchesPage() {
               </button>
             ) : (
               <button
-                onClick={() => handleCopy(pitch)}
+                onClick={() => handleOpenInEmail(pitch)}
+                aria-label="Open pitch in email client"
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -610,6 +635,11 @@ export default function PitchesPage() {
           </div>
         ) : (
           <>
+            {filteredPitches.length !== pitches.length && (
+              <p className="mb-3 text-xs text-[var(--text-tertiary)]">
+                Showing {filteredPitches.length} of {pitches.length} pitches
+              </p>
+            )}
             <StaggerContainer>
               <div className="space-y-3">
                 {filteredPitches.map((pitch) => renderCard(pitch))}

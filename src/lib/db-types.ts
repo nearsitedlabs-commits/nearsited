@@ -147,6 +147,8 @@ export interface PipelineRow {
   status: PipelineStatus;
   notes: string | null;
 
+  stage_entered_at: string | null;
+
   created_at: string;
   updated_at: string;
 }
@@ -283,6 +285,7 @@ export interface PipelineBusiness {
   // Pipeline fields
   pipeline_id: string;
   pipeline_status: PipelineStatus;
+  stage_entered_at: string | null;
   created_at: string;
 
   // Business fields (subset of BusinessRow)

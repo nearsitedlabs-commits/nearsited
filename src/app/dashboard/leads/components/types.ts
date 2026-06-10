@@ -1,5 +1,18 @@
 import type { WebsiteStatus } from "@/lib/db-types";
 
+/**
+ * Derived lead lifecycle status — computed from pipeline, audit, and pitch data.
+ * Replaces the old "tracked / not tracked" binary with a real taxonomy.
+ */
+export type OpportunityStatus =
+  | "new"           // Just added, no actions taken
+  | "audited"       // Analysis complete
+  | "pitched"       // Pitch generated, not yet sent
+  | "in_pipeline"   // Added to outreach pipeline
+  | "won"           // Closed/converted
+  | "lost"          // Rejected/dead
+  | "archived";     // Manually hidden
+
 export type LeadRow = {
   id: string;
   name: string;
@@ -56,3 +69,23 @@ export const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = 
   { value: "pipeline_in_conversation", label: "In Conversation" },
   { value: "pipeline_won",             label: "Won" },
 ];
+
+/** Semantic colors for each opportunity status pill */
+export const STATUS_BADGE: Record<OpportunityStatus, { label: string; class: string }> = {
+  new:         { label: "New",         class: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
+  audited:     { label: "Audited",     class: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" },
+  pitched:     { label: "Pitched",     class: "border-indigo-500/30 bg-indigo-500/10 text-indigo-400" },
+  in_pipeline: { label: "In pipeline", class: "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" },
+  won:         { label: "Won",         class: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold" },
+  lost:        { label: "Lost",        class: "border-red-500/30 bg-red-500/10 text-red-400" },
+  archived:    { label: "Archived",    class: "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)]" },
+};
+
+/** Site presence labels for the SITE column */
+export const SITE_LABEL: Record<string, { label: string; color: string }> = {
+  no_website:    { label: "None",    color: "text-[var(--score-high)]" },
+  social_only:   { label: "Social",  color: "text-[var(--score-mid)]" },
+  platform_only: { label: "Platform",color: "text-[var(--badge-indigo-text)]" },
+  has_website:   { label: "Has site",color: "text-[var(--text-tertiary)]" },
+  unknown:       { label: "—",       color: "text-[var(--text-tertiary)]" },
+};

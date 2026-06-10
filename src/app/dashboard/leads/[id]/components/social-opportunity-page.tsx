@@ -1,22 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 
-import { ArrowLeft, Copy, ExternalLink, FileDown, Hash, Loader2, Mail, MapPin, MessageCircle, RefreshCw, Send, Share2, TrendingUp, Users, Phone } from "lucide-react";
-import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
-import PipelineSelect from "@/components/ui/PipelineSelect";
+import { FileDown, Hash, Share2 } from "lucide-react";
 import { Toast } from "@/components/ui/Toast";
-import { detectSocialPlatforms, getSocialImpactEstimates, getSocialOpportunityReasons } from "@/lib/lead-types";
-import { estimatedOpportunity, opportunityLabel } from "@/lib/scoring";
+import { estimatedOpportunity } from "@/lib/scoring";
+import { detectSocialPlatforms } from "@/lib/lead-types";
 import { safeHref } from "@/lib/url-security";
 import type { WebsiteStatus } from "@/lib/db-types";
-import { ScoreRingWithLabel } from "./ScoreRingWithLabel";
-import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 import type { BusinessRow } from "@/lib/db-types";
+
+// Shared components
+import { LeadHeaderStrip } from "./LeadHeaderStrip";
+import { StatsRow } from "./StatsRow";
+import { PitchCard } from "./PitchCard";
+import { PreCallBrief } from "./PreCallBrief";
+import type { CallBriefSections } from "./PreCallBrief";
+import { AIQuotaBanner } from "./AIQuotaBanner";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type SavedPitch = { id: string; subject: string; body: string; tone: string };
 
@@ -26,6 +29,23 @@ type Props = {
   savedPitch: SavedPitch | null;
   backTo?: string;
 };
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function buildSocialCallBrief(
+  name: string,
+  type: string,
+  city: string | null,
+  socialPlatforms: string[],
+): CallBriefSections {
+  const platforms = socialPlatforms.length > 0 ? socialPlatforms.join(", ") : "social media";
+  return {
+    hook: `${name} — ${type ?? "local business"}${city ? ` in ${city}` : ""}. Active on ${platforms} but no owned website — every online lead finds them through rented land.`,
+    pain: "Social algorithms control reach. A change in ranking, policy, or ad costs can cut off leads overnight. No website = no presence in Google local search results.",
+    scope: "Build a professional website that integrates with existing social profiles, optimized for local search and mobile visitors. Add contact forms and booking.",
+    objection: `"Our social pages are enough." Response: Social reach is declining algorithmically. A website is your digital storefront — open 24/7, fully under your control, and findable on Google.`,
+  };
+}
 
 // ── Social Opportunity Page ─────────────────────────────────────────────────
 
@@ -39,11 +59,20 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
   const [pitchFocus, setPitchFocus] = useState("all");
-  const [pitchOpening, setPitchOpening] = useState("direct");
-  const [pitchUrgency, setPitchUrgency] = useState("medium");
+  const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
+  const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
   const [toast, setToast] = useState<string | null>(null);
-  const [activeChannel, setActiveChannel] = useState<string>("whatsapp");
-  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({ email: null, phone: null, loading: true });
+  const [activeChannel, setActiveChannel] = useState<string>("email");
+  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
+    email: null, phone: null, loading: true,
+  });
+
+  // AI quota error state
+  const [aiQuotaError, setAiQuotaError] = useState<string | null>(null);
+  const [aiQuotaTimer, setAiQuotaTimer] = useState(0);
+  const [aiRetryCount, setAiRetryCount] = useState(0);
+  const [isGeminiQuota, setIsGeminiQuota] = useState(false);
+
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
@@ -56,8 +85,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   };
 
   const socialPlatforms = detectSocialPlatforms(biz.website);
-  const impactEstimates = getSocialImpactEstimates();
-  const opportunityReasons = getSocialOpportunityReasons();
   const oppScore = estimatedOpportunity({
     website_status: biz.website_status,
     website: biz.website ?? null,
@@ -71,23 +98,21 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     fetch(`/api/contact-info?businessId=${biz.id}`)
       .then((r) => r.json())
       .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
-      .catch((err) => {
-        console.error("[SOCIAL-PAGE] contact-info fetch failed:", err);
-        setContactInfo((p) => ({ ...p, loading: false }));
-      });
+      .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
   }, [biz.id]);
 
-  // Background rating refresh — fire-and-forget, never blocks render
+  // Background rating refresh
   useEffect(() => {
     if (!biz.id) return;
     fetch("/api/refresh-ratings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ businessId: biz.id }),
-    }).catch((err) => {
-      console.error("[SOCIAL-PAGE] refresh-ratings failed:", err);
-    });
+    }).catch(() => {});
   }, [biz.id]);
+
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handlePipelineChange = useCallback(async (newStatus: string) => {
     const prev = currentPipelineStatus;
@@ -101,9 +126,10 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
   }, [biz.id, currentPipelineStatus, showToast]);
 
-  const handleGeneratePitch = useCallback(async () => {
+  const handleGeneratePitch = useCallback(async (force = true) => {
     setGeneratingPitch(true);
     setPitchError(null);
+    setAiQuotaError(null);
     try {
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -113,13 +139,27 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
           workflow: "social_only",
           socialPlatforms,
           focus: pitchFocus, opening: pitchOpening, urgency: pitchUrgency,
-          force: true,
+          force,
         }),
       });
-      if (res.status === 429) { setPitchError("AI quota exceeded — please try again later."); return; }
+      if (res.status === 429) {
+        setIsGeminiQuota(true);
+        setAiRetryCount((c) => c + 1);
+        setAiQuotaError("AI service is at capacity. Auto-retrying…");
+        setAiQuotaTimer(5);
+        const interval = setInterval(() => {
+          setAiQuotaTimer((prev) => {
+            if (prev <= 1) { clearInterval(interval); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+        return;
+      }
       const data = await res.json();
       if (data.success && data.pitch?.subject && data.pitch?.body) {
         setPitchResult({ subject: data.pitch.subject, body: data.pitch.body });
+        setAiRetryCount(0);
+        setAiQuotaError(null);
       } else {
         setPitchError(data.error ?? "Pitch generation failed.");
       }
@@ -145,308 +185,127 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     } catch { showToast("Network error"); }
   }, [biz.id, showToast]);
 
-  // Determine available outreach channels
-  const availableChannels: { id: string; label: string; icon: typeof MessageCircle; contact: string | null }[] = [];
-  if (contactInfo.phone) availableChannels.push({ id: "whatsapp", label: "WhatsApp", icon: Phone, contact: contactInfo.phone });
-  if (socialPlatforms.includes("Instagram")) availableChannels.push({ id: "instagram", label: "Instagram DM", icon: MessageCircle, contact: null });
-  if (socialPlatforms.includes("Facebook")) availableChannels.push({ id: "facebook", label: "Facebook Message", icon: Users, contact: null });
-  if (contactInfo.email) availableChannels.push({ id: "email", label: "Email", icon: Mail, contact: contactInfo.email });
+  const handleAiRetry = useCallback(() => {
+    handleGeneratePitch(true);
+  }, [handleGeneratePitch]);
 
-  // Sync activeChannel to first available channel once contactInfo loads
+  const handleUseFallback = useCallback(() => {
+    setPitchTone("friendly");
+    setPitchLength("short");
+    handleGeneratePitch(true);
+  }, [handleGeneratePitch]);
+
+  const clearQuotaTimer = useCallback(() => {
+    setAiQuotaError(null);
+    setAiQuotaTimer(0);
+    setAiRetryCount(0);
+  }, []);
+
+  // Auto-retry once with 5s backoff
   useEffect(() => {
-    if (contactInfo.loading) return;
-    const first = availableChannels[0]?.id;
-    if (first) setActiveChannel(first);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contactInfo.loading]);
+    if (!aiQuotaError || aiRetryCount > 1 || aiQuotaTimer > 0) return;
+    if (aiRetryCount === 1) {
+      const t = setTimeout(() => handleGeneratePitch(true), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [aiQuotaError, aiRetryCount, aiQuotaTimer, handleGeneratePitch]);
+
+  // ── Derived data ──────────────────────────────────────────────────────────
+
+  const callBrief = buildSocialCallBrief(biz.name, biz.business_type, biz.city, socialPlatforms);
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
 
-        {/* ── HERO ──────────────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
-            className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
-          </Link>
-          <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-              <h1 className="mt-1 text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] break-words [text-wrap:balance]">
-                {biz.name}
-              </h1>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                {biz.business_type} · {biz.city} · {biz.address}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                {/* Social platform badges */}
-                {socialPlatforms.map((platform) => (
-                  <span key={platform}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
-                    <Hash className="h-3 w-3" /> {platform}
-                  </span>
-                ))}
-                <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-amber-text)]">
-                  Social Presence Detected
+        {/* ── HEADER STRIP ──────────────────────────────────────────────── */}
+        <LeadHeaderStrip
+          businessId={biz.id}
+          businessName={biz.name}
+          businessType={biz.business_type}
+          city={biz.city}
+          address={biz.address}
+          placeId={biz.place_id}
+          phone={biz.phone}
+          rating={biz.rating}
+          reviewCount={biz.review_count}
+          pipelineStatus={currentPipelineStatus}
+          onPipelineChange={handlePipelineChange}
+          onShare={handleShare}
+          backTo={backTo}
+          badge={
+            <>
+              {socialPlatforms.map((platform) => (
+                <span key={platform}
+                  className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
+                  <Hash className="h-3 w-3" /> {platform}
                 </span>
-                {biz.website && safeHref(biz.website) && (
-                  <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
-                    <ExternalLink className="h-3.5 w-3.5" /> View Profile
-                  </a>
-                )}
-                {biz.place_id && (
-                  <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}&query=${encodeURIComponent(biz.name)}`} target="_blank" rel="noreferrer"
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
-                    <MapPin className="h-3.5 w-3.5" /> Map
-                  </a>
-                )}
-              </div>
-              {/* Google Reviews */}
-              {(biz.rating != null || biz.review_count != null) && (
-                <div className="mt-3 flex items-center gap-3">
-                  {biz.rating != null && (
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-bold text-[var(--score-good)]">{biz.rating.toFixed(1)}</span>
-                      <div className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <svg key={star} className={`h-3.5 w-3.5 ${star <= Math.round(biz.rating!) ? "text-[var(--score-good)]" : "text-[var(--text-muted)]"}`} fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {biz.review_count != null && (
-                    <span className="text-xs text-[var(--text-tertiary)]">{biz.review_count.toLocaleString()} reviews</span>
-                  )}
-                  <PoweredByGoogle />
-                </div>
+              ))}
+              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-amber-text)]">
+                Social Presence Detected
+              </span>
+              {biz.website && safeHref(biz.website) && (
+                <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
+                  View Profile
+                </a>
               )}
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {currentPipelineStatus ? (
-                <PipelineSelect
-                  value={currentPipelineStatus}
-                  onChange={handlePipelineChange}
-                  options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
-                />
-              ) : (
-                <button onClick={() => handlePipelineChange("new_lead")}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white">
-                  <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+            </>
+          }
+        />
 
-        {/* ── OPPORTUNITY SCORE ─────────────────────────────────────────── */}
-        <div className="mb-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
-          <ScoreRingWithLabel score={oppScore} size={88} label={opportunityLabel(oppScore)} />
-          <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
-            Estimated
-          </span>
-          <p className="text-xs text-[var(--text-tertiary)]">Based on social presence and review signals</p>
-        </div>
+        {/* ── STATS ROW ─────────────────────────────────────────────────── */}
+        <StatsRow
+          opportunityScore={oppScore}
+          isVerified={false}
+          estimatedValue={null}
+          reviewVelocity30d={null}
+          localCompetitors={null}
+        />
 
-        {/* ── TWO-COLUMN LAYOUT ─────────────────────────────────────────── */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        {/* ── TWO-COLUMN MAIN ───────────────────────────────────────────── */}
+        <div className="grid gap-6 lg:grid-cols-5">
 
-          {/* ════ LEFT COLUMN ════════════════════════════════════════════════ */}
-          <div className="space-y-6 order-2 lg:order-1">
-
-            {/* ── DIGITAL PRESENCE CARD ──────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Digital Presence Analysis</h2>
-              <div className="space-y-2">
-                {socialPlatforms.map((platform) => (
-                  <div key={platform} className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-                    <span className="text-sm text-[var(--text-secondary)]">{platform}</span>
-                    <span className="text-xs font-medium text-[var(--score-good)]">Present</span>
-                  </div>
-                ))}
-                <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-                  <span className="text-sm text-[var(--text-secondary)]">Website</span>
-                  <span className="text-xs font-medium text-[var(--score-high)]">Missing</span>
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--accent-tint)] px-3 py-2.5">
-                <p className="text-xs font-medium text-[var(--accent)]">Potential Opportunity: <span className="font-bold">High</span></p>
-              </div>
-            </div>
-
-            {/* ── WHY THIS IS AN OPPORTUNITY ──────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
-              <ul className="space-y-2">
-                {opportunityReasons.map((reason, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
-                    <span>{reason}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* ── WEBSITE OPPORTUNITY IMPACT ──────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Website Opportunity Impact</h2>
-              <div className="space-y-3">
-                {impactEstimates.map((est) => (
-                  <div key={est.label} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-[var(--text-primary)]">{est.label}</span>
-                      <span className={`text-sm font-bold ${
-                        est.impact === "+++" ? "text-[var(--score-good)]" : est.impact === "++" ? "text-[var(--score-mid)]" : "text-[var(--score-high)]"
-                      }`}>{est.impact}</span>
-                    </div>
-                    <p className="text-xs text-[var(--text-tertiary)]">{est.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+          {/* ════ LEFT (≈60%) ════════════════════════════════════════════════ */}
+          <div className="space-y-6 lg:col-span-3 order-2 lg:order-1">
+            <PitchCard
+              businessId={biz.id}
+              contactInfo={contactInfo}
+              outreachChannel={activeChannel as "email" | "whatsapp"}
+              setOutreachChannel={(ch) => setActiveChannel(ch)}
+              pitchConfig={{
+                tone: pitchTone,
+                length: pitchLength,
+                focus: pitchFocus,
+                opening: pitchOpening,
+                urgency: pitchUrgency,
+              }}
+              setPitchConfig={(cfg) => {
+                setPitchTone(cfg.tone as typeof pitchTone);
+                setPitchLength(cfg.length as typeof pitchLength);
+                setPitchFocus(cfg.focus);
+                setPitchOpening(cfg.opening as typeof pitchOpening);
+                setPitchUrgency(cfg.urgency as typeof pitchUrgency);
+              }}
+              canGenerate={true}
+              generatingPitch={generatingPitch}
+              handleGeneratePitch={handleGeneratePitch}
+              pitchError={pitchError}
+              pitchResult={pitchResult}
+              handleCopyPitch={handleCopyPitch}
+            />
           </div>
 
-          {/* ════ RIGHT COLUMN ═══════════════════════════════════════════════ */}
-          <div className="space-y-6 order-1 lg:order-2">
+          {/* ════ RIGHT (≈40%) ═══════════════════════════════════════════════ */}
+          <div className="space-y-6 lg:col-span-2 order-1 lg:order-2">
 
-            {/* ── READY-TO-SEND OUTREACH ────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
+            <PreCallBrief
+              businessName={biz.name}
+              businessType={biz.business_type}
+              sections={callBrief}
+            />
 
-              {/* Channel tabs — only show available channels */}
-              {availableChannels.length > 0 && (
-                <div className="mb-3 flex gap-1 rounded-lg bg-[var(--bg-elevated)] p-1">
-                  {availableChannels.map((ch) => {
-                    const ChIcon = ch.icon;
-                    return (
-                      <button key={ch.id} onClick={() => setActiveChannel(ch.id)}
-                        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                          activeChannel === ch.id ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--shadow-xs)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
-                        }`}>
-                        <ChIcon className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">{ch.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Pitch controls */}
-              <div className="mb-3 space-y-2">
-                <div className="flex flex-wrap gap-2">
-                  <PipelineSelect
-                    value={pitchTone}
-                    onChange={(v) => setPitchTone(v as typeof pitchTone)}
-                    options={[
-                      { value: "professional", label: "Professional" },
-                      { value: "friendly", label: "Friendly" },
-                      { value: "luxury", label: "Luxury" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchLength}
-                    onChange={(v) => setPitchLength(v as typeof pitchLength)}
-                    options={[
-                      { value: "short", label: "Short" },
-                      { value: "medium", label: "Medium" },
-                      { value: "detailed", label: "Detailed" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchFocus}
-                    onChange={(v) => setPitchFocus(v)}
-                    options={[
-                      { value: "all", label: "All angles" },
-                      { value: "trust", label: "Trust" },
-                      { value: "revenue", label: "Revenue" },
-                      { value: "seo", label: "SEO" },
-                    ]}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <PipelineSelect
-                    value={pitchOpening}
-                    onChange={(v) => setPitchOpening(v)}
-                    options={[
-                      { value: "direct", label: "Direct" },
-                      { value: "question", label: "Question-led" },
-                      { value: "empathy", label: "Empathy" },
-                      { value: "data", label: "Data-led" },
-                    ]}
-                  />
-                  <PipelineSelect
-                    value={pitchUrgency}
-                    onChange={(v) => setPitchUrgency(v)}
-                    options={[
-                      { value: "low", label: "Low-key" },
-                      { value: "medium", label: "Medium" },
-                      { value: "high", label: "High urgency" },
-                    ]}
-                  />
-                  <button onClick={handleGeneratePitch} disabled={generatingPitch}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50">
-                    {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-                    {generatingPitch ? "Generating…" : "Generate"}
-                  </button>
-                </div>
-              </div>
-
-              {pitchError && (
-                <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">{pitchError}</div>
-              )}
-
-              {pitchResult ? (
-                <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-                  <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
-                  <p className="whitespace-pre-wrap text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
-                  <div className="flex gap-2 mt-2">
-                    <button onClick={handleCopyPitch}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
-                      <Copy className="h-3 w-3" /> Copy
-                    </button>
-                    <button onClick={handleGeneratePitch} disabled={generatingPitch}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50">
-                      {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
-                      Regenerate
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-xs text-[var(--text-tertiary)]">Generate a pitch to start outreach.</p>
-              )}
-            </div>
-
-            {/* ── CLIENT CALL SUMMARY ─────────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-semibold text-[var(--text-primary)]">Client Call Summary</h2>
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">Read this 60 seconds before a sales call.</p>
-                </div>
-              </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-xs text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
-                {`━━ Current Situation ━━
-${biz.name} — ${biz.business_type ?? "business"} in ${biz.city}
-Active on: ${socialPlatforms.join(", ") || "N/A"}
-No dedicated website found
-
-━━ Opportunity ━━
-A professional website would add credibility, improve search visibility, and create a central hub for customer conversion. Strong social following provides a ready audience.
-
-━━ Risks ━━
-Relying solely on social platforms means algorithm changes can affect reach. No website means limited presence in Google local search results.
-
-━━ Suggested Scope ━━
-Build a professional website that integrates with existing social profiles, optimized for local search and mobile visitors.`}
-              </div>
-            </div>
-
-            {/* ── EXPORT ──────────────────────────────────────────────────── */}
+            {/* Export */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
               <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
@@ -466,8 +325,17 @@ Build a professional website that integrates with existing social profiles, opti
 
       </div>
 
+      <AIQuotaBanner
+        quotaError={aiQuotaError}
+        isGeminiQuota={isGeminiQuota}
+        quotaRetryTimer={aiQuotaTimer}
+        clearQuotaTimer={clearQuotaTimer}
+        onRetry={handleAiRetry}
+        onUseFallback={handleUseFallback}
+        retryCount={aiRetryCount}
+      />
+
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowRight, X } from "lucide-react";
 import type { ExampleTab } from "./types";
 
@@ -71,13 +71,33 @@ export function ExampleReportModal({
   type: ExampleTab;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
+    const trigger = document.activeElement as HTMLElement | null;
+    const container = dialogRef.current;
+    if (container) {
+      const focusable = container.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      focusable[0]?.focus();
+      const trap = (e: KeyboardEvent) => {
+        if (e.key === "Escape") { onCloseRef.current(); return; }
+        if (e.key !== "Tab") return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first?.focus();
+        }
+      };
+      document.addEventListener("keydown", trap);
+      return () => { document.removeEventListener("keydown", trap); trigger?.focus(); };
+    }
+  }, []);
 
   const data = EXAMPLE_DATA[type];
   const isWebsite = type === "weak_website";
@@ -95,19 +115,26 @@ export function ExampleReportModal({
         className="absolute inset-0 bg-[var(--bg-base)]/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] shadow-[var(--brand-shadow-lg)]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="example-modal-title"
+        className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] shadow-[var(--brand-shadow-lg)]"
+      >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--bg-surface-2)] px-6 py-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">
               Preview
             </p>
-            <h2 className="mt-0.5 text-base font-medium text-[var(--text-primary)]">
+            <h2 id="example-modal-title" className="mt-0.5 text-base font-medium text-[var(--text-primary)]">
               Example Report &mdash; {badgeLabel}
             </h2>
           </div>
           <button
             onClick={onClose}
+            aria-label="Close preview"
             className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-surface-1)] hover:text-[var(--text-primary)]"
           >
             <X className="h-4 w-4" />

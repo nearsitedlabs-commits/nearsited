@@ -7,9 +7,11 @@ import { cn } from "@/lib/cn";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "icon";
+export type ButtonSize = "sm" | "base" | "lg";
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
+  size?: ButtonSize;
   icon?: ReactNode;
   loading?: boolean;
 };
@@ -26,10 +28,18 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
     "hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)] ",
   ghost:
     "border border-transparent bg-transparent text-[var(--text-secondary)] " +
-    "hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] ",
+    "hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] " +
+    "focus-visible:border-[var(--accent)]/50 ",
   icon:
     "border border-transparent bg-transparent text-[var(--text-tertiary)] p-2 " +
-    "hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] ",
+    "hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] " +
+    "focus-visible:border-[var(--accent)]/50 ",
+};
+
+const SIZE_STYLES: Record<ButtonSize, string> = {
+  sm:   "px-3 py-1.5 text-xs",
+  base: "",
+  lg:   "px-6 py-3 text-base",
 };
 
 const BASE =
@@ -42,7 +52,7 @@ const BASE =
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", icon, loading, disabled, children, ...props }, ref) => {
+  ({ className, variant = "primary", size, icon, loading, disabled, children, ...props }, ref) => {
     const prefersReduced = useReducedMotion();
 
     const MotionTag = prefersReduced ? "button" : (motion.button as React.ComponentType<ButtonHTMLAttributes<HTMLButtonElement> & { whileHover?: object; whileTap?: object; transition?: object }>);
@@ -59,7 +69,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <MotionTag
         ref={ref}
         disabled={disabled || loading}
-        className={cn(BASE, VARIANT_STYLES[variant], className)}
+        className={cn(BASE, VARIANT_STYLES[variant], size ? SIZE_STYLES[size] : undefined, className)}
         {...motionProps}
         {...props}
       >
