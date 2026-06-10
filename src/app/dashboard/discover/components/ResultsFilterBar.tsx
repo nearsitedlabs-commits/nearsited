@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import { motion, AnimatePresence } from "@/lib/motion";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 const SORT_OPTIONS = [
   { value: "score-desc", label: "Score", short: "Score" },
@@ -59,7 +60,13 @@ export function ResultsFilterBar({
           <p className="text-[11px] text-[var(--text-tertiary)]">
             {totalCount} result{totalCount === 1 ? "" : "s"}
             {flaggedCount > 0 && (
-              <> · {flaggedCount} flagged</>
+              <> · {flaggedCount} flagged
+                <Tooltip content="Flagged when a business has no website, uses only social media (Facebook, Instagram, etc.), or is listed only on a third-party platform (Fresha, Booksy, etc.) — meaning they don't own their digital presence.">
+                  <span className="inline-flex cursor-help ml-0.5 align-text-bottom">
+                    <Info className="size-3 text-[var(--text-tertiary)]" />
+                  </span>
+                </Tooltip>
+              </>
             )}
             {" · "}
             Sort:{" "}
