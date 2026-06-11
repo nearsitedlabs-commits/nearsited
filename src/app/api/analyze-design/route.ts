@@ -143,7 +143,23 @@ export async function POST(request: NextRequest) {
 
           const now = new Date().toISOString();
 
-          // ── Check for Gemini service busy (rate-limited or overloaded) ──
+          // ── Check for Gemini quota exceeded (429) ──
+          const isQuotaExceeded =
+            (mobile.status === "error" && mobile.error === "AI_QUOTA_EXCEEDED") ||
+            (desktop.status === "error" && desktop.error === "AI_QUOTA_EXCEEDED");
+
+          if (isQuotaExceeded) {
+            writeJson(controller, encoder, {
+              type: "error",
+              error: "AI_QUOTA_EXCEEDED",
+              message: "Gemini API quota exceeded. Enable billing at aistudio.google.com for your API key's project, then try again.",
+              retryAfter: 60,
+            });
+            controller.close();
+            return;
+          }
+
+          // ── Check for Gemini service temporarily overloaded (503) ──
           const isServiceBusy =
             (mobile.status === "error" && mobile.error === "AI_SERVICE_BUSY") ||
             (desktop.status === "error" && desktop.error === "AI_SERVICE_BUSY");
@@ -152,7 +168,7 @@ export async function POST(request: NextRequest) {
             writeJson(controller, encoder, {
               type: "error",
               error: "AI_SERVICE_BUSY",
-              message: "AI service is busy. Please try again in a moment.",
+              message: "Gemini is temporarily overloaded. Please try again in 30 seconds.",
               retryAfter: 30,
             });
             controller.close();

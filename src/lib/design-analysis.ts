@@ -76,7 +76,12 @@ export async function analyzeScreenshot(
     console.log("[DESIGN] Gemini response received, length:", rawText?.length);
 
     if (!response.ok) {
-      if (response.status === 429 || response.status === 503) {
+      if (response.status === 429) {
+        console.error("[DESIGN] Gemini 429 quota exceeded. Check billing at aistudio.google.com");
+        return { ok: false, error: "AI_QUOTA_EXCEEDED", status: response.status, rawText: undefined };
+      }
+      if (response.status === 503) {
+        console.error("[DESIGN] Gemini 503 service overloaded (transient)");
         return { ok: false, error: "AI_SERVICE_BUSY", status: response.status, rawText: undefined };
       }
       // Truncate raw error text in responses to avoid leaking AI output
@@ -173,6 +178,9 @@ export async function runStrategy(
   const analysis = await analyzeScreenshot(screenshot.base64, geminiKey);
   if (!analysis.ok) {
     console.log(`[DESIGN] ${strategy} Gemini analysis failed:`, analysis.error);
+    if (analysis.error === "AI_QUOTA_EXCEEDED") {
+      return { status: "error", error: "AI_QUOTA_EXCEEDED" };
+    }
     if (analysis.error === "AI_SERVICE_BUSY") {
       return { status: "error", error: "AI_SERVICE_BUSY" };
     }
