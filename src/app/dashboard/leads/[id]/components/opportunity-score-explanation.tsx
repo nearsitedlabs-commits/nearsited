@@ -196,7 +196,7 @@ function DriverBar({ label, score, description }: Driver) {
         <span className="text-xs font-medium text-[var(--color-text-secondary)]">{label}</span>
         <span className="text-xs font-bold tabular-nums" style={{ color }}>{score}/100</span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-bg-page)]">
+      <div className="h-1.5 w-full overflow-hidden rounded-[var(--radius-sm)] bg-[var(--color-bg-page)]">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${score}%`, backgroundColor: color }}
@@ -293,7 +293,7 @@ export function OpportunityScoreExplanation({
             {types.map(t => (
               <span
                 key={t}
-                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]"}`}
+                className={`inline-flex items-center rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]"}`}
               >
                 {t}
               </span>
@@ -349,7 +349,7 @@ export function OpportunityScoreExplanation({
                     if (process.env.NODE_ENV === "development") console.log("[ANALYTICS] recommendation_clicked", s);
                   }}
                 >
-                  <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                  <span className="h-1 w-1 shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
                   {s}
                 </li>
               ))}

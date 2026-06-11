@@ -11,7 +11,7 @@ const PILL: Record<string, { label: string }> = {
 export function WebsiteBadge({ status }: { status: string }) {
   const p = PILL[status] ?? PILL.unknown;
   return (
-    <span className="inline-flex items-center rounded-full border border-[var(--color-border-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-tertiary)] whitespace-nowrap">
+    <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text-tertiary)] whitespace-nowrap">
       {p.label}
     </span>
   );

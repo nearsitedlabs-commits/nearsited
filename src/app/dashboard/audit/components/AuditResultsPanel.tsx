@@ -123,7 +123,7 @@ function MetricRow({ metricKey, value }: { metricKey: MetricKey; value: string |
           <Tooltip content={meta.subtitle} side="top" maxWidth={220}>
             <button
               type="button"
-              className="inline-flex cursor-help items-center rounded-full text-[var(--text-muted)] transition-colors hover:text-[var(--color-text-tertiary)]"
+              className="inline-flex cursor-help items-center rounded-[var(--radius-sm)] text-[var(--text-muted)] transition-colors hover:text-[var(--color-text-tertiary)]"
               tabIndex={-1}
               aria-label={`Info about ${meta.label}`}
             >

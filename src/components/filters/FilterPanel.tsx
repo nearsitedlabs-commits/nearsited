@@ -229,10 +229,10 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
         >
           {/* Handle + header */}
           <div className="sticky top-0 z-20 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3">
-            <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-[var(--border)]" />
+            <div className="mx-auto mb-2 h-1 w-10 rounded-[var(--radius-sm)] bg-[var(--border)]" />
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[var(--color-text-primary)]">
-                Filters {countActiveFilters(filters) > 0 && <span className="ml-1 rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] text-white">{countActiveFilters(filters)}</span>}
+                Filters {countActiveFilters(filters) > 0 && <span className="ml-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2 py-0.5 text-[10px] text-white">{countActiveFilters(filters)}</span>}
               </span>
               <button onClick={onClose} className="cursor-pointer rounded-[var(--radius-sm)] p-2.5 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]">
                 <X className="h-4 w-4" />

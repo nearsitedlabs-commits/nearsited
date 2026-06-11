@@ -108,7 +108,7 @@ function ImpactPill({ impact }: { impact: string }) {
     ? "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border-[var(--status-warning-text)]/30"
     : "bg-[var(--status-success-bg)] text-[var(--status-success-text)] border-[var(--status-success-text)]/30";
   return (
-    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${color}`}>
+    <span className={`inline-flex items-center rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold uppercase ${color}`}>
       {impact}
     </span>
   );

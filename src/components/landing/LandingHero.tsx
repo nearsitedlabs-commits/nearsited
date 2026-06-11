@@ -130,7 +130,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                   </div>
                   <div className="flex shrink-0 flex-col items-end">
                     <span
-                      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold"
                       style={{ borderColor: `${opp.badgeColor}30`, backgroundColor: `${opp.badgeColor}10`, color: opp.badgeColor }}
                     >
                       {opp.badge}

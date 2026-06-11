@@ -644,7 +644,7 @@ export default function AuditPage() {
                 <button
                   key={tab.key}
                   onClick={() => setExampleTab(tab.key)}
-                  className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                  className={`cursor-pointer rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
                     exampleTab === tab.key
                       ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
                       : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
@@ -728,7 +728,7 @@ export default function AuditPage() {
                 } as Record<ExampleTab, string[]>
               )[exampleTab].map((finding, i) => (
                 <div key={i} className="flex items-center gap-2.5">
-                  <div className="h-1 w-1 shrink-0 rounded-full bg-[var(--text-muted)]" />
+                  <div className="h-1 w-1 shrink-0 rounded-[var(--radius-sm)] bg-[var(--text-muted)]" />
                   <span className="text-sm text-[var(--color-text-secondary)]">
                     {finding}
                   </span>

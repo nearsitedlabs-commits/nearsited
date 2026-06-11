@@ -441,7 +441,7 @@ export default function DiscoverPage() {
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cfg.color} ${cfg.bg} border ${cfg.border}`}
+                          className={`inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cfg.color} ${cfg.bg} border ${cfg.border}`}
                         >
                           {cfg.label} · {items.length} lead{items.length > 1 ? "s" : ""}
                         </span>

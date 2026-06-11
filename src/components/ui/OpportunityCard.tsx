@@ -100,8 +100,8 @@ function OpportunityDot({ score }: { score: number }) {
     red:    "bg-[var(--badge-red-text)]",
   };
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${colorMap[variant] ?? ""}`}>
-      <span className={`h-1.5 w-1.5 rounded-full ${dotMap[variant] ?? ""}`} />
+    <span className={`inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-0.5 text-[11px] font-medium ${colorMap[variant] ?? ""}`}>
+      <span className={`h-1.5 w-1.5 rounded-[var(--radius-sm)] ${dotMap[variant] ?? ""}`} />
       {label}
     </span>
   );
@@ -175,7 +175,7 @@ export function OpportunityCard({
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <WebsiteBadge status={lead.website_status} />
             {lead.issues_count !== undefined && lead.issues_count > 0 && (
-              <span className="inline-flex items-center rounded-full bg-[var(--status-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30">
+              <span className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--status-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30">
                 {lead.issues_count} {lead.issues_count === 1 ? "issue" : "issues"}
               </span>
             )}

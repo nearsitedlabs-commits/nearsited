@@ -228,7 +228,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           onShare={handleShare}
           backTo={backTo}
           badge={
-            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-danger)]">
+            <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-danger)]">
               No Digital Presence Found
             </span>
           }

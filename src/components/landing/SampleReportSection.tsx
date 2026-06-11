@@ -18,7 +18,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
 
   const tabs: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
     { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
-    { id: "none",     label: "No Website",     badge: "Website Build",       badgeColor: "red" },
+    { id: "none",     label: "No site",     badge: "Website Build",       badgeColor: "red" },
     { id: "social",   label: "Social Only",    badge: "Website Opportunity", badgeColor: "indigo" },
     { id: "platform", label: "Platform Only",  badge: "Website Build",       badgeColor: "indigo" },
   ];
@@ -116,7 +116,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                 </>
               )}
 
-              {/* ── No Website ─────────────────────────────────────────── */}
+              {/* ── No site ─────────────────────────────────────────── */}
               {activeTab === "none" && (
                 <>
                   <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
@@ -125,7 +125,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</h3>
                         <Badge color="green">Opportunity: 85/100</Badge>
                         <Badge color="green">Verified</Badge>
-                        <Badge color="red">No Website</Badge>
+                        <Badge color="red">No site</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
                     </div>
@@ -342,7 +342,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                         <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</h3>
                         <Badge color="green">Opportunity: 85/100</Badge>
                         <Badge color="green">Verified</Badge>
-                        <Badge color="red">No Website</Badge>
+                        <Badge color="red">No site</Badge>
                       </div>
                       <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
                     </div>

@@ -198,7 +198,7 @@ export function AuditForm({
             <button
               key={ex}
               onClick={() => onUrlChange(ex)}
-              className="cursor-pointer rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               {ex}
             </button>

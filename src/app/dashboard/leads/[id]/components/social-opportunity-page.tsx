@@ -237,11 +237,11 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
             <>
               {socialPlatforms.map((platform) => (
                 <span key={platform}
-                  className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
+                  className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
                   <Hash className="h-3 w-3" /> {platform}
                 </span>
               ))}
-              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
+              <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
                 Social Presence Detected
               </span>
               {biz.website && safeHref(biz.website) && (

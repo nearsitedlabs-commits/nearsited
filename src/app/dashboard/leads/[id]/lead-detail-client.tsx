@@ -357,7 +357,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--color-text-tertiary)]">Opportunity Score</p>
               <ScoreRingWithLabel score={displayOpportunityScore} size={88} />
-              <span className="inline-flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">
+              <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">
                 Estimated
               </span>
               <p className="text-xs text-[var(--color-text-tertiary)]">Run an audit above to get a verified score</p>

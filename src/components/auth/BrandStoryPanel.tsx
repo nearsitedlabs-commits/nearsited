@@ -19,8 +19,8 @@ export default function BrandStoryPanel() {
     <div className="space-y-8">
       <FadeUp>
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+          <span className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
+            <span className="h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
             Find website opportunities
           </span>
         </div>
@@ -45,7 +45,7 @@ export default function BrandStoryPanel() {
         <ul className="space-y-3">
           {FEATURES.map((f) => (
             <li key={f.text} className="flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)]/10">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10">
                 <Check className="h-3 w-3 text-[var(--color-accent)]" />
               </span>
               {f.text}

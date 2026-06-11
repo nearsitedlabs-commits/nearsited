@@ -145,7 +145,7 @@ export function ExampleReportModal({
           {/* Type badge */}
           <div>
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${badgeColor}`}
+              className={`inline-flex items-center rounded-[var(--radius-sm)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${badgeColor}`}
             >
               {badgeLabel}
             </span>
@@ -208,7 +208,7 @@ export function ExampleReportModal({
                   key={i}
                   className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2.5"
                 >
-                  <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-muted)]" />
+                  <div className="h-1.5 w-1.5 shrink-0 rounded-[var(--radius-sm)] bg-[var(--text-muted)]" />
                   <span className="text-sm text-[var(--color-text-secondary)]">{finding}</span>
                 </div>
               ))}

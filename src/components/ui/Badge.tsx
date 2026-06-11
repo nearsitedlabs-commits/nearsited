@@ -24,7 +24,7 @@ const COLOR_STYLES: Record<BadgeColor, string> = {
 
 const BASE =
   "inline-flex items-center gap-1.5 " +
-  "rounded-full border px-2.5 py-0.5 " +
+  "rounded-[var(--radius-sm)] border px-2.5 py-0.5 " +
   "text-xs font-medium whitespace-nowrap";
 
 const DOT: Record<BadgeColor, string> = {
@@ -40,7 +40,7 @@ const DOT: Record<BadgeColor, string> = {
 export function Badge({ className, color = "neutral", dot = false, children, ...props }: BadgeProps) {
   return (
     <span className={cn(BASE, COLOR_STYLES[color], className)} {...props}>
-      {dot && <span className={cn("h-1.5 w-1.5 rounded-full", DOT[color])} />}
+      {dot && <span className={cn("h-1.5 w-1.5 rounded-[var(--radius-sm)]", DOT[color])} />}
       {children}
     </span>
   );

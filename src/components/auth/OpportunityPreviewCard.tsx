@@ -161,7 +161,7 @@ export default function OpportunityPreviewCard() {
               {SELECTED.url}
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-full border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-warning)]">
+          <span className="inline-flex shrink-0 items-center rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-warning)]">
             {SELECTED.badgeLabel}
           </span>
         </div>
@@ -208,7 +208,7 @@ export default function OpportunityPreviewCard() {
                   <span className="text-[var(--color-text-secondary)]">{item.label}</span>
                   <span className="text-[var(--color-text-tertiary)]">{item.value || "—"}</span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-bg-elevated)]">
+                <div className="h-1.5 overflow-hidden rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]">
                   <div
                     className={`h-full rounded-full ${barColor(item.value)}`}
                     style={{
@@ -228,7 +228,7 @@ export default function OpportunityPreviewCard() {
         <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
           <div className="flex items-center justify-between gap-4">
             <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+              <span className="h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
               AI Pitch — Ready
             </span>
             <span className="text-[10px] text-[var(--text-muted)]">generated in 1.4s</span>
