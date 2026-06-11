@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User, CreditCard, Key, Trash2, Loader2, Bell, Shield, Download, AlertTriangle } from "lucide-react";
-import SignOutButton from "../sign-out-button";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/motion";
 import { Toast } from "@/components/ui/Toast";
@@ -24,7 +23,7 @@ type SubData = {
 
 const TIER_LABELS: Record<string, string> = { free: "Free", starter: "Starter", agency: "Agency" };
 const TIER_COLORS: Record<string, string> = {
-  free:    "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  free:    "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   starter: "border-blue-500/30 bg-blue-500/10 text-blue-400",
   agency:  "border-purple-500/30 bg-purple-500/10 text-purple-400",
 };
@@ -51,7 +50,7 @@ const SCOPE_DESCRIPTIONS: Record<ClearScope, string> = {
   saved_searches: "Removes all saved search configurations.",
 };
 
-const SECTION_ICON_BASE = "rounded-lg p-2";
+const SECTION_ICON_BASE = "rounded-[var(--radius-sm)] p-2";
 
 // ── Confirmation Modal ─────────────────────────────────────────────────────
 
@@ -121,24 +120,24 @@ function ConfirmModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        className="mx-4 w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xl"
+        className="mx-4 w-full max-w-md rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 shadow-2xl"
       >
         <div className="mb-4 flex items-center gap-3">
           {destructive && <AlertTriangle className="h-5 w-5 text-red-400" />}
-          <h3 id="confirm-modal-title" className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+          <h3 id="confirm-modal-title" className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</h3>
         </div>
-        <p className="text-sm leading-relaxed text-[var(--text-secondary)]">{description}</p>
+        <p className="text-sm leading-relaxed text-[var(--color-text-secondary)]">{description}</p>
         {requireType && (
           <div className="mt-4">
-            <p className="mb-1.5 text-xs text-[var(--text-tertiary)]">
-              Type <span className="font-mono font-medium text-[var(--text-primary)]">{requireType}</span> to confirm:
+            <p className="mb-1.5 text-xs text-[var(--color-text-tertiary)]">
+              Type <span className="font-mono font-medium text-[var(--color-text-primary)]">{requireType}</span> to confirm:
             </p>
             <input
               type="text"
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               autoFocus
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-red-400"
+              className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-red-400"
               placeholder={requireType}
             />
           </div>
@@ -147,17 +146,17 @@ function ConfirmModal({
           <button
             onClick={onCancel}
             disabled={loading}
-            className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] disabled:opacity-50 cursor-pointer"
+            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:opacity-50 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={!canConfirm || loading}
-            className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-[var(--radius-sm)] px-4 py-2 text-xs font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
               destructive
                 ? "bg-red-500/80 hover:bg-red-500"
-                : "bg-[var(--accent)] hover:bg-[var(--accent-hover)]"
+                : "bg-[var(--color-accent)] hover:opacity-90"
             }`}
           >
             {loading && <Loader2 className="h-3 w-3 animate-spin" />}
@@ -179,12 +178,12 @@ function Toggle({ checked, onChange, label, disabled }: {
 }) {
   return (
     <div className={`flex items-center justify-between ${disabled ? "opacity-50" : ""}`}>
-      <span className="text-sm text-[var(--text-secondary)]">{label}</span>
+      <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <button
         onClick={() => !disabled && onChange(!checked)}
         disabled={disabled}
         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-          checked ? "bg-[var(--accent)]" : "bg-[var(--bg-elevated)]"
+          checked ? "bg-[var(--color-accent)]" : "bg-[var(--color-bg-elevated)]"
         } ${disabled ? "cursor-not-allowed" : ""}`}
         role="switch"
         aria-checked={checked}
@@ -490,8 +489,8 @@ export default function SettingsPage() {
     return (
       <div className="min-h-screen p-6">
         <div className="mx-auto max-w-2xl animate-pulse space-y-4">
-          <div className="h-8 w-40 rounded-lg bg-[var(--bg-elevated)]" />
-          <div className="h-64 rounded-xl bg-[var(--bg-elevated)]" />
+          <div className="h-6 w-32 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
+          <div className="h-48 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
         </div>
       </div>
     );
@@ -500,55 +499,55 @@ export default function SettingsPage() {
   const pageContent = (
     <>
       <div className="mb-8">
-        <h1 className="text-3xl font-normal tracking-tight text-[var(--text-primary)]">Your <em className="italic text-[var(--accent)]">workspace.</em></h1>
+        <h1 className="text-3xl font-normal tracking-tight text-[var(--color-text-primary)]">Your <em className="italic text-[var(--color-accent)]">workspace.</em></h1>
       </div>
 
       <StaggerContainer>
         {/* ── Profile ─────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className={`${SECTION_ICON_BASE} bg-[var(--accent-tint)]`}>
-                <User className="h-5 w-5 text-[var(--accent)]" />
+              <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
+                <User className="h-5 w-5 text-[var(--color-accent)]" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Profile</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Profile</h2>
             </div>
             <div className="space-y-3">
 
               {/* Email (read-only with change option) */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
-                <span className="text-sm text-[var(--text-secondary)]">Email</span>
+              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+                <span className="text-sm text-[var(--color-text-secondary)]">Email</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-[var(--text-primary)]">{user?.email ?? "—"}</span>
+                  <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.email ?? "—"}</span>
                   <button
                     onClick={() => setShowEmailForm(!showEmailForm)}
-                    className="rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] cursor-pointer"
+                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] cursor-pointer"
                   >
                     Change
                   </button>
                 </div>
               </div>
               {showEmailForm && (
-                <div className="rounded-lg bg-[var(--bg-elevated)] p-3">
+                <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
                   <div className="flex items-center gap-2">
                     <input
                       type="email"
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
                       placeholder="New email address"
-                      className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                      className="flex-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
                       disabled={emailLoading}
                     />
                     <button
                       onClick={handleChangeEmail}
                       disabled={emailLoading || !newEmail.trim()}
-                      className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50"
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
                     >
                       {emailLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Send confirmation"}
                     </button>
                   </div>
                   {emailMsg && (
-                    <p className={`mt-2 text-xs ${emailMsg.includes("Error") ? "text-red-400" : "text-[var(--score-good)]"}`}>
+                    <p className={`mt-2 text-xs ${emailMsg.includes("Error") ? "text-red-400" : "text-[var(--color-success)]"}`}>
                       {emailMsg}
                     </p>
                   )}
@@ -556,8 +555,8 @@ export default function SettingsPage() {
               )}
 
               {/* Name (editable) */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
-                <span className="text-sm text-[var(--text-secondary)]">Name</span>
+              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+                <span className="text-sm text-[var(--color-text-secondary)]">Name</span>
                 <div className="flex items-center gap-2">
                   {editingName ? (
                     <>
@@ -565,7 +564,7 @@ export default function SettingsPage() {
                         type="text"
                         value={nameInput}
                         onChange={(e) => setNameInput(e.target.value)}
-                        className="w-full sm:w-40 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                        className="w-full sm:w-40 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
                         placeholder="Your name"
                         autoFocus
                         disabled={savingName}
@@ -590,24 +589,24 @@ export default function SettingsPage() {
                           }
                         }}
                         disabled={savingName || !nameInput.trim()}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {savingName ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
                       </button>
                       <button
                         onClick={() => { setEditingName(false); setNameMsg(null); }}
                         disabled={savingName}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] disabled:opacity-50"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:opacity-50"
                       >
                         Cancel
                       </button>
                     </>
                   ) : (
                     <>
-                      <span className="text-sm font-medium text-[var(--text-primary)]">{user?.full_name ?? "—"}</span>
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.full_name ?? "—"}</span>
                       <button
                         onClick={() => { setNameInput(user?.full_name ?? ""); setEditingName(true); }}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                       >
                         Edit
                       </button>
@@ -616,29 +615,29 @@ export default function SettingsPage() {
                 </div>
               </div>
               {nameMsg && (
-                <p className={`text-xs ${nameMsg === "Name updated." ? "text-[var(--score-good)]" : "text-red-400"}`}>
+                <p className={`text-xs ${nameMsg === "Name updated." ? "text-[var(--color-success)]" : "text-red-400"}`}>
                   {nameMsg}
                 </p>
               )}
 
               {/* Change password */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
-                <span className="text-sm text-[var(--text-secondary)]">Password</span>
+              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+                <span className="text-sm text-[var(--color-text-secondary)]">Password</span>
                 <button
                   onClick={() => setShowPasswordForm(!showPasswordForm)}
-                  className="rounded-lg border border-[var(--border)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] cursor-pointer"
+                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] cursor-pointer"
                 >
                   Change
                 </button>
               </div>
               {showPasswordForm && (
-                <div className="rounded-lg bg-[var(--bg-elevated)] p-3 space-y-2">
+                <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3 space-y-2">
                   <input
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Current password"
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
                     disabled={passwordLoading}
                   />
                   <input
@@ -646,7 +645,7 @@ export default function SettingsPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="New password"
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
                     disabled={passwordLoading}
                   />
                   <input
@@ -654,20 +653,20 @@ export default function SettingsPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent)]"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
                     disabled={passwordLoading}
                   />
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleChangePassword}
                       disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
-                      className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-[var(--accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50"
+                      className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
                     >
                       {passwordLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Update password"}
                     </button>
                   </div>
                   {passwordMsg && (
-                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--score-good)]" : "text-red-400"}`}>
+                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>
                       {passwordMsg}
                     </p>
                   )}
@@ -675,12 +674,12 @@ export default function SettingsPage() {
               )}
 
               {/* Two-factor auth (stub) — dimmed because it's not yet available */}
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 opacity-50" aria-hidden="true">
+              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2 opacity-50" aria-hidden="true">
                 <div>
-                  <span className="text-sm text-[var(--text-secondary)]">Two-factor authentication</span>
-                  <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Add an extra layer of security to your account</p>
+                  <span className="text-sm text-[var(--color-text-secondary)]">Two-factor authentication</span>
+                  <p className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">Add an extra layer of security to your account</p>
                 </div>
-                <span className="rounded-md border border-[var(--border)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+                <span className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider">
                   Coming soon
                 </span>
               </div>
@@ -688,8 +687,8 @@ export default function SettingsPage() {
               {/* Member since */}
               {user?.created_at && (
                 <div className="flex justify-between pb-2">
-                  <span className="text-sm text-[var(--text-secondary)]">Member since</span>
-                  <span className="text-sm font-medium text-[var(--text-primary)]">
+                  <span className="text-sm text-[var(--color-text-secondary)]">Member since</span>
+                  <span className="text-sm font-medium text-[var(--color-text-primary)]">
                     {new Date(user.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                   </span>
                 </div>
@@ -700,46 +699,46 @@ export default function SettingsPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className={`${SECTION_ICON_BASE} bg-[var(--score-good-tint)]`}>
-                <CreditCard className="h-5 w-5 text-[var(--score-good)]" />
+              <div className={`${SECTION_ICON_BASE} bg-[var(--color-success)]/10`}>
+                <CreditCard className="h-5 w-5 text-[var(--color-success)]" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Plan</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Plan</h2>
               {syncing && (
                 <div className="flex items-center gap-1.5 ml-auto">
-                  <Loader2 className="h-3 w-3 animate-spin text-[var(--text-tertiary)]" />
-                  <span className="text-xs text-[var(--text-tertiary)]">Syncing...</span>
+                  <Loader2 className="h-3 w-3 animate-spin text-[var(--color-text-tertiary)]" />
+                  <span className="text-xs text-[var(--color-text-tertiary)]">Syncing...</span>
                 </div>
               )}
             </div>
 
             {syncMsg && (
-              <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
+              <div className="mb-4 rounded-[var(--radius-sm)] border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
                 {syncMsg}
               </div>
             )}
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
-                <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
+                <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
                   {sub?.tier === "free"
                     ? `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 20} free credits used`
                     : `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 0} credits used this month`
                   }
                 </p>
               </div>
-              <span className={`rounded-full border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>
+              <span className={`rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>
                 {TIER_LABELS[sub?.tier ?? "free"]}
               </span>
             </div>
 
             {/* Usage bar */}
             {(sub?.audits_limit ?? 0) > 0 && (
-              <div className="mt-3 h-1.5 w-full rounded-full bg-[var(--bg-elevated)]">
+              <div className="mt-3 h-1.5 w-full rounded-full bg-[var(--color-bg-elevated)]">
                 <div
-                  className="h-1.5 rounded-full bg-[var(--accent)] transition-all"
+                  className="h-1.5 rounded-full bg-[var(--color-accent)] transition-all"
                   style={{ width: `${Math.min(100, ((sub?.audits_used ?? 0) / (sub?.audits_limit ?? 1)) * 100)}%` }}
                 />
               </div>
@@ -751,7 +750,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:opacity-50"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Starter — $19/mo
@@ -759,7 +758,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:opacity-50"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Agency — $49/mo
@@ -767,11 +766,11 @@ export default function SettingsPage() {
                 </div>
                 {/* Benefits list — kept in sync with landing page Pricing.tsx */}
                 <div className="space-y-1.5">
-                  <p className="text-[11px] text-[var(--text-tertiary)] leading-relaxed">
-                    <span className="font-medium text-[var(--text-secondary)]">Starter:</span> {PLAN_BENEFITS.starter}
+                  <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed">
+                    <span className="font-medium text-[var(--color-text-secondary)]">Starter:</span> {PLAN_BENEFITS.starter}
                   </p>
-                  <p className="text-[11px] text-[var(--text-tertiary)] leading-relaxed">
-                    <span className="font-medium text-[var(--text-secondary)]">Agency:</span> {PLAN_BENEFITS.agency}
+                  <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed">
+                    <span className="font-medium text-[var(--color-text-secondary)]">Agency:</span> {PLAN_BENEFITS.agency}
                   </p>
                 </div>
               </div>
@@ -781,12 +780,12 @@ export default function SettingsPage() {
 
         {/* ── Notifications ─────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className={`${SECTION_ICON_BASE} bg-[var(--accent-tint)]`}>
-                <Bell className="h-5 w-5 text-[var(--accent)]" />
+              <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
+                <Bell className="h-5 w-5 text-[var(--color-accent)]" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Notifications</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Notifications</h2>
             </div>
             <div className="space-y-3">
               <Toggle
@@ -815,35 +814,35 @@ export default function SettingsPage() {
 
         {/* ── Integrations ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className={`${SECTION_ICON_BASE} bg-[var(--score-mid-tint)]`}>
-                <Key className="h-5 w-5 text-[var(--score-mid)]" />
+              <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
+                <Key className="h-5 w-5 text-[var(--color-info)]" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Integrations</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Integrations</h2>
             </div>
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
               Nearsited connects to Google APIs (Places & PageSpeed), Gemini AI, ScreenshotCore, and Supabase. These integrations are managed by the platform and require no configuration from you.
             </p>
-            <p className="mt-3 text-xs text-[var(--text-tertiary)]">
+            <p className="mt-3 text-xs text-[var(--color-text-tertiary)]">
               If you experience issues with discovery, audits, or pitch generation, contact{" "}
-              <a href="mailto:nearsitedlabs@gmail.com" className="text-[var(--accent)] hover:underline">nearsitedlabs@gmail.com</a>.
+              <a href="mailto:nearsitedlabs@gmail.com" className="text-[var(--color-accent)] hover:underline">nearsitedlabs@gmail.com</a>.
             </p>
           </div>
         </FadeUp>
 
         {/* ── Danger Zone ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/5 p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-red-500/20 bg-red-500/5 p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className="rounded-lg p-2 bg-red-500/10">
+              <div className="rounded-[var(--radius-sm)] p-2 bg-red-500/10">
                 <Trash2 className="h-5 w-5 text-red-400" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Danger Zone</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Danger Zone</h2>
             </div>
 
             {clearMsg && (
-              <p className={`mb-4 rounded-lg px-3 py-2 text-xs ${clearMsg.startsWith("Error") ? "border border-red-500/30 bg-red-500/10 text-red-400" : "border border-green-500/30 bg-green-500/10 text-green-400"}`}>
+              <p className={`mb-4 rounded-[var(--radius-sm)] px-3 py-2 text-xs ${clearMsg.startsWith("Error") ? "border border-red-500/30 bg-red-500/10 text-red-400" : "border border-green-500/30 bg-green-500/10 text-green-400"}`}>
                 {clearMsg}
               </p>
             )}
@@ -856,17 +855,17 @@ export default function SettingsPage() {
                 return (
                   <div
                     key={scope}
-                    className={`rounded-lg p-3 transition-opacity ${isDimmed ? "opacity-40 pointer-events-none" : ""}`}
+                    className={`rounded-[var(--radius-sm)] p-3 transition-opacity ${isDimmed ? "opacity-40 pointer-events-none" : ""}`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{SCOPE_LABELS[scope]}</p>
-                        <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{SCOPE_DESCRIPTIONS[scope]}</p>
+                        <p className="text-sm font-medium text-[var(--color-text-primary)]">{SCOPE_LABELS[scope]}</p>
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">{SCOPE_DESCRIPTIONS[scope]}</p>
                       </div>
                       {!isConfirming && (
                         <button
                           onClick={() => setConfirming(scope)}
-                          className="shrink-0 rounded-md border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 cursor-pointer"
+                          className="shrink-0 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 cursor-pointer"
                         >
                           {SCOPE_LABELS[scope]}
                         </button>
@@ -912,36 +911,36 @@ export default function SettingsPage() {
 
         {/* ── Data & Privacy ──────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className={`${SECTION_ICON_BASE} bg-[var(--score-mid-tint)]`}>
-                <Shield className="h-5 w-5 text-[var(--score-mid)]" />
+              <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
+                <Shield className="h-5 w-5 text-[var(--color-info)]" />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Data & Privacy</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Data & Privacy</h2>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3">
+              <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-3">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">Download my data</p>
-                  <p className="text-xs text-[var(--text-tertiary)] mt-0.5">Export all your data as JSON (GDPR request)</p>
+                  <p className="text-sm font-medium text-[var(--color-text-primary)]">Download my data</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Export all your data as JSON (GDPR request)</p>
                 </div>
                 <a
                   href="/api/export/user-data"
                   download
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                 >
                   <Download className="h-3.5 w-3.5" />
                   Export
                 </a>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-red-500/20 p-3">
+              <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-red-500/20 p-3">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">Delete my account</p>
-                  <p className="text-xs text-[var(--text-tertiary)] mt-0.5">Permanently removes your account and all associated data</p>
+                  <p className="text-sm font-medium text-[var(--color-text-primary)]">Delete my account</p>
+                  <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Permanently removes your account and all associated data</p>
                 </div>
                 <button
                   onClick={() => setConfirmDelete(true)}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10"
                 >
                   Delete
                 </button>
@@ -954,9 +953,14 @@ export default function SettingsPage() {
         </FadeUp>
       </StaggerContainer>
 
-      {/* ── Sign out link (minimal — sidebar already has sign out) ────── */}
-      <div className="mt-8 text-center">
-        <SignOutButton />
+      {/* Sign out — sidebar already has this; kept as minimal escape hatch */}
+      <div className="mt-6 pb-8 text-center">
+        <button
+          onClick={async () => { await supabase.auth.signOut(); window.location.href = "/login"; }}
+          className="text-xs text-[var(--color-text-tertiary)] underline-offset-2 transition-colors hover:text-[var(--color-text-secondary)] hover:underline"
+        >
+          Sign out
+        </button>
       </div>
 
       {/* ── Account deletion confirm modal ──────────────────────────────── */}

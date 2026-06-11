@@ -2,132 +2,103 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "@/lib/motion";
-import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 
-export type AuthMode = "login" | "signup";
+export type AuthMode = "login" | "signup" | "reset" | "verify";
 
 type AuthCardProps = {
-  mode: AuthMode;
+  title: string;
+  subtitle: string;
   children: ReactNode;
+  /** Below-card text + link, e.g. "Already have an account? Sign in" */
+  footerLink?: ReactNode;
   error?: string | null;
+  onDismissError?: () => void;
 };
 
-const TRUST_INDICATORS = [
-  "10 free opportunity analyses included",
-  "No credit card required",
-];
+const ease = [0.25, 0.1, 0.25, 1] as const;
 
-const easeOut = [0.25, 0.1, 0.25, 1] as const;
-
-const cardEnter = {
-  initial: { opacity: 0, scale: 0.98 },
-  animate: { opacity: 1, scale: 1 },
-  transition: { duration: 0.35, delay: 0.15, ease: easeOut },
-};
-
-const fadeIn = (delay: number) => ({
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  transition: { duration: 0.3, delay, ease: easeOut },
-});
-
-export default function AuthCard({ mode, children, error }: AuthCardProps) {
-  const isLogin = mode === "login";
-
+export default function AuthCard({
+  title,
+  subtitle,
+  children,
+  footerLink,
+  error,
+  onDismissError,
+}: AuthCardProps) {
   return (
-    <motion.div
-      className="relative z-10 flex w-full items-center justify-center px-4 py-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-    >
-      <div className="w-full max-w-[420px] space-y-6">
-        {/* ── Logo + Heading ──────────────────────────────────────────── */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <Link href="/" className="inline-block opacity-90 transition-opacity hover:opacity-100">
-            <Image src="/logo-icon.svg" alt="NearSited" width={48} height={28} className="mx-auto block" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg-page)] px-4 py-12">
+      <motion.div
+        className="w-full max-w-[380px]"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease }}
+      >
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <Link href="/" className="opacity-80 transition-opacity hover:opacity-100">
+            <Image src="/logo-icon.svg" alt="Nearsited" width={40} height={23} />
           </Link>
-          <h1 className="mt-4 text-2xl font-medium tracking-[-0.04em] text-[var(--text-primary)]">
-            {isLogin ? "Sign in" : "Find your first opportunity"}
+        </div>
+
+        {/* Heading — outside the card */}
+        <div className="mb-6 text-center">
+          <h1 className="text-[1.75rem] font-medium leading-tight tracking-[-0.03em] text-[var(--color-text-primary)]">
+            {title}
           </h1>
-          <p className="mt-1.5 text-sm text-[var(--text-tertiary)]">
-            {isLogin ? "Welcome back" : "Discover website opportunities in under 3 minutes"}
+          <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            {subtitle}
           </p>
-        </motion.div>
+        </div>
 
-        {/* ── Card ────────────────────────────────────────────────────── */}
-        <motion.div
-          {...cardEnter}
-          className="rounded-[20px] border p-8 shadow-[var(--brand-shadow-lg)]"
-          style={{
-            borderColor: "rgba(255,255,255,0.08)",
-            background: "rgba(18,23,30,0.85)",
-            backdropFilter: "blur(4px)",
-          }}
+        {/* Card */}
+        <div
+          className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-6"
+          style={{ background: "var(--color-bg-surface)" }}
         >
-          <div className="-mt-8 -mx-8 mb-8 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
-
-          {/* Error with slide-in + horizontal shake */}
+          {/* Dismissable error banner */}
           <AnimatePresence mode="wait">
             {error && (
               <motion.div
                 key={error}
-                className="mb-4 rounded-xl border border-[var(--badge-red-border)] bg-[var(--badge-red-bg)] px-4 py-3 text-sm text-[var(--badge-red-text)]"
-                initial={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                transition={{ duration: 0.2, ease }}
+                className="mb-4 flex items-start gap-2 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-2.5 text-xs text-[var(--color-danger)]"
               >
-                {error}
+                <span className="flex-1 leading-5">{error}</span>
+                {onDismissError && (
+                  <button
+                    type="button"
+                    onClick={onDismissError}
+                    aria-label="Dismiss error"
+                    className="shrink-0 opacity-60 hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
 
           {children}
+        </div>
 
-          {/* ── Trust indicators ──────────────────────────────────────── */}
-          <motion.div
-            {...fadeIn(0.25)}
-            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-[var(--border)] pt-5"
+        {/* Below-card footer link */}
+        {footerLink && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.15, ease }}
+            className="mt-5 text-center text-sm text-[var(--color-text-tertiary)]"
           >
-            {TRUST_INDICATORS.map((item) => (
-              <span
-                key={item}
-                className="inline-flex items-center gap-1.5 text-sm leading-relaxed text-[var(--text-tertiary)]"
-              >
-                <Check className="h-3 w-3 text-[var(--accent)]" />
-                {item}
-              </span>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* ── Footer link ─────────────────────────────────────────────── */}
-        <motion.p {...fadeIn(0.2)} className="text-center text-sm text-[var(--text-tertiary)]">
-          {isLogin ? (
-            <>
-              Don&rsquo;t have an account?{" "}
-              <a href="/signup" className="font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent-hover)]">
-                Find opportunities
-              </a>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <a href="/login" className="font-medium text-[var(--accent)] transition-colors hover:text-[var(--accent-hover)]">
-                Sign in
-              </a>
-            </>
-          )}
-        </motion.p>
-      </div>
-    </motion.div>
+            {footerLink}
+          </motion.p>
+        )}
+      </motion.div>
+    </div>
   );
 }

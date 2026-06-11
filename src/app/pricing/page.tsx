@@ -77,7 +77,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       {/* Header */}
       <motion.header
-        className="border-b border-[var(--border)] bg-[var(--bg-surface)]/80 backdrop-blur-xl"
+        className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/80 backdrop-blur-xl"
         initial={shouldReduce ? false : { opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease }}
@@ -112,7 +112,7 @@ export default function PricingPage() {
 
           {/* How Credits Work */}
           <motion.section
-            className="border-t border-[var(--border)] py-20"
+            className="border-t border-[var(--color-border-subtle)] py-20"
             {...fadeUp(shouldReduce)}
           >
             <div className="mx-auto max-w-3xl px-6 md:px-8">
@@ -140,7 +140,7 @@ export default function PricingPage() {
                   <motion.div
                     key={item.q}
                     variants={faqItem}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 py-5"
+                    className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5"
                   >
                     <p className="text-sm font-medium text-[var(--text-primary)]">{item.q}</p>
                     <p className="mt-1.5 text-sm leading-7 text-[var(--text-secondary)]">{item.a}</p>
@@ -152,7 +152,7 @@ export default function PricingPage() {
 
           {/* Founder Note */}
           <motion.section
-            className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-20"
+            className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-20"
             {...fadeUp(shouldReduce)}
           >
             <div className="mx-auto max-w-2xl px-6 text-center md:px-8">
@@ -160,7 +160,7 @@ export default function PricingPage() {
                 <span className="block h-px w-6 bg-[var(--accent)]" />
                 A note from the founder
               </div>
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 text-left">
+              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-8 text-left">
                 <p className="text-base leading-8 text-[var(--text-secondary)]">
                   I run a web design agency. I built Nearsited because I was spending 10 hours a week prospecting instead of building websites.
                 </p>
@@ -179,7 +179,7 @@ export default function PricingPage() {
 
           {/* Bottom CTA */}
           <motion.section
-            className="border-t border-[var(--border)] py-20"
+            className="border-t border-[var(--color-border-subtle)] py-20"
             {...fadeUp(shouldReduce)}
           >
             <div className="mx-auto max-w-2xl px-6 text-center md:px-8">
@@ -213,7 +213,7 @@ export default function PricingPage() {
           </motion.section>
 
           {/* Footer */}
-          <footer className="border-t border-[var(--border)] px-6 py-10 md:px-8">
+          <footer className="border-t border-[var(--color-border-subtle)] px-6 py-10 md:px-8">
             <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[var(--text-tertiary)] md:flex-row">
               <span>&copy; 2026 Nearsited. Built by Again Labs.</span>
               <div className="flex items-center gap-6">

@@ -22,7 +22,7 @@ export default function LandingPageClient() {
   const navigate = router.push.bind(router);
 
   return (
-    <div className="relative min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
+    <div className="relative min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text-primary)]">
       <LandingNav navigate={navigate} />
       <LandingScrollNav />
       <main className="pt-16 lg:pt-20">

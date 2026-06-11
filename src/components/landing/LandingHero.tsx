@@ -55,12 +55,12 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
         <motion.div {...fadeUp(0)} className="space-y-5">
-          <h1 className="text-[var(--text-hero)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--text-primary)]">
+          <h1 className="text-[var(--text-hero)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]">
             Your next client is out there
             <br />
             <em className="italic not-italic">without a website.</em>
           </h1>
-          <p className="max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
+          <p className="max-w-xl text-lg leading-8 text-[var(--color-text-secondary)]">
             Find and pitch businesses that need a website. In under 2 minutes.
           </p>
         </motion.div>
@@ -84,10 +84,10 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           </Button>
         </motion.div>
 
-        <motion.div {...fadeUp(0.25)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--text-tertiary)]">
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Audit 10 businesses free</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
+        <motion.div {...fadeUp(0.25)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--color-text-tertiary)]">
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free opportunity analyses</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
         </motion.div>
       </div>
 
@@ -102,7 +102,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
         <div className="relative w-full max-w-[440px]">
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
             <div className="mb-4 flex items-center justify-between">
-              <p className="truncate text-[10px] uppercase tracking-[0.18em] md:tracking-[0.28em] text-[var(--text-tertiary)]">Discovered opportunities · Dubai</p>
+              <p className="truncate text-[10px] uppercase tracking-[0.18em] md:tracking-[0.28em] text-[var(--color-text-tertiary)]">Discovered opportunities · Dubai</p>
               <Badge color="green" dot>Sample scan</Badge>
             </div>
 
@@ -117,16 +117,16 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                   key={opp.type}
                   type="button"
                   onClick={() => setActiveOpp(opp.type)}
-                  className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-150 ${
+                  className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 ${
                     activeOpp === opp.type
-                      ? "border-[var(--accent)]/50 bg-[var(--accent-tint)]"
-                      : "border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--accent)]/30"
+                      ? "border-[var(--color-accent)]/50 bg-[var(--color-accent)]/10"
+                      : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent)]/30"
                   }`}
                 >
                   <ScoreRing score={opp.score} size={32} variant="estimate" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">{opp.name}</p>
-                    <p className="text-xs text-[var(--text-tertiary)]">{opp.desc}</p>
+                    <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{opp.name}</p>
+                    <p className="text-xs text-[var(--color-text-tertiary)]">{opp.desc}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end">
                     <span
@@ -141,13 +141,13 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             </div>
 
             {/* Pitch preview — changes based on selected row */}
-            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-              <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
-                <MessageSquare className="h-3 w-3 text-[var(--accent)]" />
+            <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+              <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">
+                <MessageSquare className="h-3 w-3 text-[var(--color-accent)]" />
                 AI pitch · ready to send
               </div>
-              <p className="text-sm leading-7 text-[var(--text-secondary)] italic">{PITCHES[activeOpp]}</p>
-              <div className="mt-3 border-t border-[var(--border)] pt-3">
+              <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">{PITCHES[activeOpp]}</p>
+              <div className="mt-3 border-t border-[var(--color-border-subtle)] pt-3">
                 <Button variant="primary" onClick={handleCopy} className="w-full text-xs">
                   {copied ? "Copied!" : "Copy pitch →"}
                 </Button>

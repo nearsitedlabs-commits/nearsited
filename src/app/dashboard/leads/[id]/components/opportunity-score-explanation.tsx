@@ -176,11 +176,11 @@ function getDrivers(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const TYPE_STYLES: Record<string, string> = {
-  "Website Needed":          "border-[var(--score-good)]/30 bg-[var(--score-good-tint)] text-[var(--score-good)]",
-  "Digital Presence Gap":    "border-[var(--score-good)]/30 bg-[var(--score-good-tint)] text-[var(--score-good)]",
-  "Redesign Candidate":      "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
-  "Website Upgrade":         "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
-  "Performance Opportunity": "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]",
+  "Website Needed":          "border-[var(--color-success)]/30 bg-[var(--color-success)]/10 text-[var(--color-success)]",
+  "Digital Presence Gap":    "border-[var(--color-success)]/30 bg-[var(--color-success)]/10 text-[var(--color-success)]",
+  "Redesign Candidate":      "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+  "Website Upgrade":         "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+  "Performance Opportunity": "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   "SEO Opportunity":         "border-blue-500/30 bg-blue-500/10 text-blue-400",
   "Conversion Optimisation": "border-amber-500/30 bg-amber-500/10 text-amber-400",
 };
@@ -193,16 +193,16 @@ function DriverBar({ label, score, description }: Driver) {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-[var(--text-secondary)]">{label}</span>
+        <span className="text-xs font-medium text-[var(--color-text-secondary)]">{label}</span>
         <span className="text-xs font-bold tabular-nums" style={{ color }}>{score}/100</span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg-base)]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-bg-page)]">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${score}%`, backgroundColor: color }}
         />
       </div>
-      <p className="text-[11px] leading-relaxed text-[var(--text-tertiary)]">{description}</p>
+      <p className="text-[11px] leading-relaxed text-[var(--color-text-tertiary)]">{description}</p>
     </div>
   );
 }
@@ -253,9 +253,9 @@ export function OpportunityScoreExplanation({
   const drivers        = getDrivers(websiteStatus, overallScore, reviewCount, rating, contactAvailable);
 
   const confColor =
-    confidence === "High"   ? "text-[var(--score-good)]" :
-    confidence === "Medium" ? "text-[var(--score-mid)]"  :
-    "text-[var(--text-tertiary)]";
+    confidence === "High"   ? "text-[var(--color-success)]" :
+    confidence === "Medium" ? "text-[var(--color-info)]"  :
+    "text-[var(--color-text-tertiary)]";
 
   const scoreTierColor =
     opportunityScore >= 70 ? "var(--score-good)" :
@@ -263,16 +263,16 @@ export function OpportunityScoreExplanation({
     "var(--score-high)";
 
   const scoreTierTextColor =
-    opportunityScore >= 70 ? "text-[var(--score-good)]" :
-    opportunityScore >= 40 ? "text-[var(--score-mid)]"  :
+    opportunityScore >= 70 ? "text-[var(--color-success)]" :
+    opportunityScore >= 40 ? "text-[var(--color-info)]"  :
     "text-[var(--score-high)]";
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden">
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden">
       <div className="p-5 sm:p-6">
 
         {/* Score hero */}
-        <div className="mb-5 flex flex-col items-center justify-center rounded-xl bg-[var(--bg-elevated)] py-6">
+        <div className="mb-5 flex flex-col items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] py-6">
           <span
             className="text-5xl font-bold leading-none tabular-nums"
             style={{ color: scoreTierColor }}
@@ -286,14 +286,14 @@ export function OpportunityScoreExplanation({
 
         {/* Header row */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)]">Why This Is An Opportunity</h2>
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Type tags */}
             {types.map(t => (
               <span
                 key={t}
-                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)]"}`}
+                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]"}`}
               >
                 {t}
               </span>
@@ -304,13 +304,13 @@ export function OpportunityScoreExplanation({
               <span className={`text-xs font-semibold ${confColor}`}>{confidence} Confidence</span>
               <button
                 onClick={() => setTooltipOpen(v => !v)}
-                className="cursor-pointer text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-secondary)]"
+                className="cursor-pointer text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-secondary)]"
               >
                 <Info className="h-3 w-3" />
               </button>
               {tooltipOpen && (
-                <div className="absolute right-0 top-full z-20 mt-1.5 w-48 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-lg">
-                  <p className="text-[11px] leading-relaxed text-[var(--text-secondary)]">
+                <div className="absolute right-0 top-full z-20 mt-1.5 w-48 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 shadow-lg">
+                  <p className="text-[11px] leading-relaxed text-[var(--color-text-secondary)]">
                     Reflects how much verified data was available when calculating this score.
                   </p>
                 </div>
@@ -320,7 +320,7 @@ export function OpportunityScoreExplanation({
         </div>
 
         {/* Summary */}
-        <p className="mb-4 text-sm leading-relaxed text-[var(--text-secondary)]">{summary}</p>
+        <p className="mb-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">{summary}</p>
 
         {/* Two-column: signals + services */}
         <div className="grid gap-4 sm:grid-cols-2">
@@ -329,27 +329,27 @@ export function OpportunityScoreExplanation({
           <ul className="space-y-2">
             {signals.map((s, i) => (
               <li key={i} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--score-good)]" />
-                <span className="text-xs leading-relaxed text-[var(--text-secondary)]">{s}</span>
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--color-success)]" />
+                <span className="text-xs leading-relaxed text-[var(--color-text-secondary)]">{s}</span>
               </li>
             ))}
           </ul>
 
           {/* Services */}
           <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-tertiary)]">
               Recommended Services
             </p>
             <ul className="space-y-1">
               {services.map((s, i) => (
                 <li
                   key={i}
-                  className="flex items-center gap-2 text-xs text-[var(--text-secondary)]"
+                  className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]"
                   onClick={() => {
                     if (process.env.NODE_ENV === "development") console.log("[ANALYTICS] recommendation_clicked", s);
                   }}
                 >
-                  <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
+                  <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--color-accent)]" />
                   {s}
                 </li>
               ))}
@@ -366,16 +366,16 @@ export function OpportunityScoreExplanation({
             console.log("[ANALYTICS] score_breakdown_expanded");
           }
         }}
-        className="flex w-full cursor-pointer items-center justify-between border-t border-[var(--border)] px-5 sm:px-6 py-3 text-left transition-colors hover:bg-[var(--bg-elevated)]"
+        className="flex w-full cursor-pointer items-center justify-between border-t border-[var(--color-border-subtle)] px-5 sm:px-6 py-3 text-left transition-colors hover:bg-[var(--color-bg-elevated)]"
       >
-        <span className="text-xs font-medium text-[var(--text-tertiary)]">Score Breakdown</span>
+        <span className="text-xs font-medium text-[var(--color-text-tertiary)]">Score Breakdown</span>
         <ChevronDown
-          className={`h-3.5 w-3.5 text-[var(--text-tertiary)] transition-transform duration-200 ${breakdownOpen ? "rotate-180" : ""}`}
+          className={`h-3.5 w-3.5 text-[var(--color-text-tertiary)] transition-transform duration-200 ${breakdownOpen ? "rotate-180" : ""}`}
         />
       </button>
 
       {breakdownOpen && (
-        <div className="space-y-4 border-t border-[var(--border)] px-5 sm:px-6 py-4">
+        <div className="space-y-4 border-t border-[var(--color-border-subtle)] px-5 sm:px-6 py-4">
           {drivers.map(d => <DriverBar key={d.label} {...d} />)}
         </div>
       )}

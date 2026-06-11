@@ -30,9 +30,9 @@ export type MetricCardProps = {
 // ── Style Map ──────────────────────────────────────────────────────────────────
 
 const TREND_COLORS: Record<string, string> = {
-  up: "text-[var(--score-good)]",
+  up: "text-[var(--color-success)]",
   down: "text-[var(--score-high)]",
-  neutral: "text-[var(--text-tertiary)]",
+  neutral: "text-[var(--color-text-tertiary)]",
 };
 
 const TREND_ICONS: Record<string, string> = {
@@ -77,7 +77,7 @@ export function MetricCard({
       <div className="flex items-start justify-between">
         {/* Icon */}
         {icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-tint)] text-[var(--accent)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
             {icon}
           </div>
         )}
@@ -99,12 +99,12 @@ export function MetricCard({
       </div>
 
       {/* Value */}
-      <div className="mt-3 text-2xl font-medium text-[var(--text-primary)]">
+      <div className="mt-3 text-2xl font-medium text-[var(--color-text-primary)]">
         {value}
       </div>
 
       {/* Label */}
-      <div className="mt-0.5 text-xs text-[var(--text-tertiary)]">{label}</div>
+      <div className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">{label}</div>
     </Card>
   );
 

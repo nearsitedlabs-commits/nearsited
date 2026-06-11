@@ -44,15 +44,15 @@ export function StatCard({
     <Card variant={variant} padding="md" className={cn(className)}>
       {/* Label row */}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-[var(--text-tertiary)]">{label}</span>
+        <span className="text-xs text-[var(--color-text-tertiary)]">{label}</span>
         {icon && (
-          <span className="text-[var(--text-tertiary)]">{icon}</span>
+          <span className="text-[var(--color-text-tertiary)]">{icon}</span>
         )}
       </div>
 
       {/* Value + change row */}
       <div className="mt-2 flex items-baseline gap-3">
-        <span className="text-2xl font-medium text-[var(--text-primary)]">
+        <span className="text-2xl font-medium text-[var(--color-text-primary)]">
           {value}
         </span>
 
@@ -60,9 +60,9 @@ export function StatCard({
           <span
             className={cn(
               "inline-flex items-center gap-0.5 text-xs font-medium",
-              isPositive && "text-[var(--score-good)]",
+              isPositive && "text-[var(--color-success)]",
               isNegative && "text-[var(--score-high)]",
-              change === 0 && "text-[var(--text-tertiary)]",
+              change === 0 && "text-[var(--color-text-tertiary)]",
             )}
           >
             <span aria-hidden="true">
@@ -75,7 +75,7 @@ export function StatCard({
 
       {/* Change footnote */}
       {changeLabel && (
-        <div className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+        <div className="mt-0.5 text-[11px] text-[var(--color-text-tertiary)]">
           {changeLabel}
         </div>
       )}

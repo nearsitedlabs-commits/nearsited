@@ -56,7 +56,7 @@ export function StageColumn({
 
   return (
     <div
-      className={`shrink-0 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden transition-all duration-200 ease-in-out ${
+      className={`shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden transition-all duration-200 ease-in-out ${
         isEmpty
           ? "w-[48px] hover:w-[220px] group"
           : "w-[220px]"
@@ -78,7 +78,7 @@ export function StageColumn({
           <span className="text-[10px] font-semibold uppercase tracking-wider hidden group-hover:block text-center">
             {PIPELINE_LABELS[stage] ?? stage}
           </span>
-          <span className="text-xs tabular-nums text-[var(--text-tertiary)]">
+          <span className="text-xs tabular-nums text-[var(--color-text-tertiary)]">
             0
           </span>
         </div>
@@ -86,7 +86,7 @@ export function StageColumn({
         /* ── Full column ── */
         <>
           {/* Column header */}
-          <div className="flex items-center justify-between border-b border-[var(--border)] px-3 py-2">
+          <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] px-3 py-2">
             <div className="flex items-center gap-1.5">
               <span
                 className="h-2 w-2 rounded-full shrink-0"
@@ -97,7 +97,7 @@ export function StageColumn({
               </span>
             </div>
             <motion.span
-              className="text-xs font-semibold tabular-nums text-[var(--text-tertiary)]"
+              className="text-xs font-semibold tabular-nums text-[var(--color-text-tertiary)]"
               key={cards.length}
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}

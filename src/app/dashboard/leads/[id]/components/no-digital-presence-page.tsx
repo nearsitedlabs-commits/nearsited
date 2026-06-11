@@ -209,7 +209,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const callBrief = buildNoDigitalCallBrief(biz.name, biz.business_type, biz.city);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
 
         {/* ── HEADER STRIP ──────────────────────────────────────────────── */}
@@ -228,7 +228,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           onShare={handleShare}
           backTo={backTo}
           badge={
-            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-red-border)] bg-[var(--badge-red-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-red-text)]">
+            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-danger)]">
               No Digital Presence Found
             </span>
           }
@@ -289,15 +289,15 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
             />
 
             {/* Export */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
                 <a href={`/api/export/pdf?businessId=${biz.id}`}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
                   <FileDown className="h-3.5 w-3.5" /> PDF Report
                 </a>
                 <button onClick={handleShare}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
                   <Share2 className="h-3.5 w-3.5" /> Share Link
                 </button>
               </div>

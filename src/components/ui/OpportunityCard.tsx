@@ -50,17 +50,17 @@ type OpportunityCardProps = {
 function ScoreDelta({ current, potential, delta }: { current: number | null; potential: number | null; delta: number | null }) {
   if (current === null || potential === null) return null;
 
-  const color = delta && delta >= 30 ? "text-[var(--score-good)]" : delta && delta >= 15 ? "text-[var(--score-mid)]" : "text-[var(--text-secondary)]";
+  const color = delta && delta >= 30 ? "text-[var(--color-success)]" : delta && delta >= 15 ? "text-[var(--color-info)]" : "text-[var(--color-text-secondary)]";
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-xs text-[var(--text-tertiary)]">Current</span>
-      <span className="text-sm font-semibold text-[var(--text-primary)]">{current}</span>
-      <ArrowUp className="h-3.5 w-3.5 text-[var(--score-good)]" />
-      <span className="text-xs text-[var(--text-tertiary)]">Potential</span>
-      <span className="text-sm font-semibold text-[var(--score-good)]">{potential}</span>
+      <span className="text-xs text-[var(--color-text-tertiary)]">Current</span>
+      <span className="text-sm font-semibold text-[var(--color-text-primary)]">{current}</span>
+      <ArrowUp className="h-3.5 w-3.5 text-[var(--color-success)]" />
+      <span className="text-xs text-[var(--color-text-tertiary)]">Potential</span>
+      <span className="text-sm font-semibold text-[var(--color-success)]">{potential}</span>
       {delta !== null && (
-        <span className={`ml-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${color} bg-[var(--bg-elevated)]`}>
+        <span className={`ml-1 rounded-[var(--radius-sm)] px-1.5 py-0.5 text-[11px] font-medium ${color} bg-[var(--color-bg-elevated)]`}>
           +{delta}
         </span>
       )}
@@ -88,10 +88,10 @@ function OpportunityDot({ score }: { score: number }) {
   const label = opportunityLabel(score);
   const variant = opportunityBadgeVariant(score);
   const colorMap: Record<string, string> = {
-    green:  "border-[var(--badge-green-border)] text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",
-    amber:  "border-[var(--badge-amber-border)] text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]",
+    green:  "border-[var(--color-success)]/30 text-[var(--color-success)] bg-[var(--color-success)]/10",
+    amber:  "border-[var(--color-warning)]/30 text-[var(--color-warning)] bg-[var(--color-warning)]/10",
     indigo: "border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
-    red:    "border-[var(--badge-red-border)] text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",
+    red:    "border-[var(--color-danger)]/30 text-[var(--color-danger)] bg-[var(--color-danger)]/10",
   };
   const dotMap: Record<string, string> = {
     green:  "bg-[var(--badge-green-text)]",
@@ -148,7 +148,7 @@ export function OpportunityCard({
 
   const cardContent = (
     <div
-      className={`group relative w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
+      className={`group relative w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 transition-all duration-200 hover:border-[var(--color-accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
     >
       <div className="flex items-start gap-5">
         {/* ── Left: Score Ring (primary visual) ── */}
@@ -163,10 +163,10 @@ export function OpportunityCard({
         <div className="min-w-0 flex-1">
           {/* Business name + type */}
           <Link href={detailUrl} className="block">
-            <h3 className="text-base font-medium text-[var(--text-primary)] transition-colors duration-150 group-hover:text-[var(--accent)] truncate max-w-full">
+            <h3 className="text-base font-medium text-[var(--color-text-primary)] transition-colors duration-150 group-hover:text-[var(--color-accent)] truncate max-w-full">
               {lead.name}
             </h3>
-            <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
+            <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">
               {lead.business_type}{lead.city ? ` · ${lead.city}` : ""}
             </p>
           </Link>
@@ -196,10 +196,10 @@ export function OpportunityCard({
           {lead.website_status !== "has_website" && effectiveScore === null && (
             <div className="mt-3">
               <div className="flex items-center gap-1.5">
-                <TrendingUp className="h-3.5 w-3.5 text-[var(--score-good)]" />
-                <span className="text-xs text-[var(--text-tertiary)]">Est. redesign potential</span>
-                <span className="text-sm font-semibold text-[var(--score-good)]">{insight.potentialScore}</span>
-                <span className="text-[11px] text-[var(--text-tertiary)]">/ 100</span>
+                <TrendingUp className="h-3.5 w-3.5 text-[var(--color-success)]" />
+                <span className="text-xs text-[var(--color-text-tertiary)]">Est. redesign potential</span>
+                <span className="text-sm font-semibold text-[var(--color-success)]">{insight.potentialScore}</span>
+                <span className="text-[11px] text-[var(--color-text-tertiary)]">/ 100</span>
               </div>
             </div>
           )}
@@ -207,7 +207,7 @@ export function OpportunityCard({
           {/* Insight text */}
           {showInsight && (
             <div className={`mt-3 border-l-2 pl-3 ${INSIGHT_BADGE[insight.type] ?? INSIGHT_BADGE.mixed}`}>
-              <p className="text-xs leading-relaxed text-[var(--text-secondary)]">
+              <p className="text-xs leading-relaxed text-[var(--color-text-secondary)]">
                 {insight.summary}
               </p>
             </div>
@@ -221,7 +221,7 @@ export function OpportunityCard({
           <div className="flex flex-col items-end gap-2">
             <Link
               href={detailUrl}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+              className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3.5 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90"
             >
               <Zap className="h-3.5 w-3.5" />
               View
@@ -232,7 +232,7 @@ export function OpportunityCard({
                   href={`https://www.google.com/maps/search/?api=1&query_place_id=${lead.place_id}&query=${encodeURIComponent(lead.name)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]"
+                  className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-success)]/40 hover:text-[var(--color-success)]"
                   title="View on Google Maps"
                 >
                   <MapPin className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function OpportunityCard({
                   href={lead.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                  className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                   title="Open website"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />

@@ -42,9 +42,9 @@ function ScoreTooltip({ score, variant }: { score: number; variant: "verified" |
     ? "Score ≥ 70 = high opportunity lead"
     : score < 40 ? "Score < 40 indicates significant issues" : score < 70 ? "Score 40–69 indicates room for improvement" : "Score ≥ 70 indicates solid performance";
   return (
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--bg-elevated)] text-[var(--text-primary)] text-xs rounded-xl px-3 py-2 w-56 shadow-xl z-50 leading-relaxed pointer-events-none border border-[var(--border)]">
+    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-xs rounded-[var(--radius-md)] px-3 py-2 w-56 shadow-xl z-50 leading-relaxed pointer-events-none border border-[var(--color-border-subtle)]">
       <p className="font-medium">{label}</p>
-      <p className="mt-1 text-[var(--text-tertiary)]">{detail}</p>
+      <p className="mt-1 text-[var(--color-text-tertiary)]">{detail}</p>
       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--bg-elevated)]" />
     </div>
   );

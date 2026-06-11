@@ -34,8 +34,8 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   const bizErr = bizResult.error;
   if (bizErr || !business) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-sm text-red-400">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg-page)]">
+        <div className="rounded-[var(--radius-md)] border border-red-500/30 bg-red-500/10 px-6 py-4 text-sm text-red-400">
           Lead not found
         </div>
       </div>

@@ -143,7 +143,7 @@ export function LandingScrollNav() {
   const prefersReducedMotion = useReducedMotion();
 
   const inner = (
-    <div className="flex flex-col items-center gap-1 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7)] px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
+    <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7)] px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
       {NAV_SECTIONS.map((section) => (
         <NavDot key={section.id} section={section} isActive={activeId === section.id} />
       ))}

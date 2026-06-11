@@ -51,7 +51,7 @@ const OPPORTUNITIES: OppType[] = [
     pitchText: (
       <>
         I analysed your website and found{" "}
-        <span className="font-medium text-[var(--text-primary)]">
+        <span className="font-medium text-[var(--color-text-primary)]">
           5 critical issues
         </span>{" "}
         that are quietly costing you patients every week&hellip;
@@ -80,7 +80,7 @@ const OPPORTUNITIES: OppType[] = [
       <>
         Your Instagram looks great — but you&rsquo;re renting your audience.
         A website turns followers into{" "}
-        <span className="font-medium text-[var(--text-primary)]">
+        <span className="font-medium text-[var(--color-text-primary)]">
           booked clients you control
         </span>
         .
@@ -108,7 +108,7 @@ const OPPORTUNITIES: OppType[] = [
     pitchText: (
       <>
         Great reviews, but{" "}
-        <span className="font-medium text-[var(--text-primary)]">
+        <span className="font-medium text-[var(--color-text-primary)]">
           zero Google visibility
         </span>{" "}
         beyond Maps. Every day without a website is lost calls and lost jobs.
@@ -142,7 +142,7 @@ function ringOffset(value: number): number {
 
 export default function OpportunityPreviewCard() {
   return (
-    <div className="w-full max-w-sm overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--bg-surface-1)] shadow-[var(--brand-shadow-lg)]">
+    <div className="w-full max-w-sm overflow-hidden rounded-[20px] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
       {/* Top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
 
@@ -151,23 +151,23 @@ export default function OpportunityPreviewCard() {
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-tertiary)]">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">
               {SELECTED.subtitle}
             </p>
-            <h3 className="mt-1.5 text-lg font-medium tracking-tight text-[var(--text-primary)]">
+            <h3 className="mt-1.5 text-lg font-medium tracking-tight text-[var(--color-text-primary)]">
               {SELECTED.name}
             </h3>
-            <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
+            <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
               {SELECTED.url}
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-full border border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--badge-amber-text)]">
+          <span className="inline-flex shrink-0 items-center rounded-full border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-warning)]">
             {SELECTED.badgeLabel}
           </span>
         </div>
 
         {/* Score ring + summary — static on first paint, animated via CSS */}
-        <div className="flex items-center gap-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
+        <div className="flex items-center gap-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
           <div className="relative flex h-[90px] w-[90px] shrink-0 items-center justify-center">
             <svg width="90" height="90" viewBox="0 0 90 90" className="-rotate-90">
               <circle cx="45" cy="45" r="40" fill="none" className="stroke-[var(--border-strong)]" strokeWidth="8" />
@@ -185,15 +185,15 @@ export default function OpportunityPreviewCard() {
                 style={{ strokeDashoffset: 2 * Math.PI * 40 /* start fully hidden */ }}
               />
             </svg>
-            <span className="absolute text-xl font-bold text-[var(--text-primary)]">
+            <span className="absolute text-xl font-bold text-[var(--color-text-primary)]">
               {SAMPLE_QUALITY > 0 ? SAMPLE_QUALITY : "—"}
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--text-tertiary)]">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">
               Opportunity Score
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-secondary)]">
               {SELECTED.description}
             </p>
           </div>
@@ -205,10 +205,10 @@ export default function OpportunityPreviewCard() {
             {BAR_DATA.map((item, i) => (
               <div key={item.label} className="space-y-1.5">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[var(--text-secondary)]">{item.label}</span>
-                  <span className="text-[var(--text-tertiary)]">{item.value || "—"}</span>
+                  <span className="text-[var(--color-text-secondary)]">{item.label}</span>
+                  <span className="text-[var(--color-text-tertiary)]">{item.value || "—"}</span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-surface-2)]">
+                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-bg-elevated)]">
                   <div
                     className={`h-full rounded-full ${barColor(item.value)}`}
                     style={{
@@ -225,15 +225,15 @@ export default function OpportunityPreviewCard() {
         )}
 
         {/* AI pitch preview */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
           <div className="flex items-center justify-between gap-4">
-            <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
               AI Pitch — Ready
             </span>
             <span className="text-[10px] text-[var(--text-muted)]">generated in 1.4s</span>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
             {SELECTED.pitchText}
           </p>
         </div>

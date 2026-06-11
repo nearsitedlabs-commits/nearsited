@@ -10,18 +10,18 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
   const prefersReducedMotion = useReducedMotion() ?? true;
 
   return (
-    <section className="border-t border-[var(--border)] py-14 md:py-24">
+    <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? (
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
-            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/5 blur-[100px]" />
+          <div className="relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--color-bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
 
             <div className="relative z-10">
               <Badge color="indigo" dot>Start finding website opportunities today</Badge>
-              <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--text-primary)]">
+              <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
                 Your next client is out there, without a website.
               </h2>
-              <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
+              <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]">
                 Enter a city and business type. Find businesses with no website, social-only presence, or weak websites, with a ready-to-send pitch for each one. All in under 2 minutes.
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
@@ -32,24 +32,24 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
                   Sign in
                 </Button>
               </div>
-              <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--text-tertiary)]">
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />10 free opportunity analyses</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
+              <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--color-text-tertiary)]">
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free opportunity analyses</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
               </div>
             </div>
           </div>
         ) : (
           <FadeUp>
-            <div className="relative overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/5 blur-[100px]" />
+            <div className="relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--color-bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
 
               <div className="relative z-10">
                 <Badge color="indigo" dot>Start finding website opportunities today</Badge>
-                <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--text-primary)]">
+                <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
                   Your next client is out there, without a website.
                 </h2>
-                <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
+                <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]">
                   Enter a city and business type. Find businesses with no website, social-only presence, or weak websites, with a ready-to-send pitch for each one. All in under 2 minutes.
                 </p>
                 <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
@@ -60,10 +60,10 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
                     Sign in
                   </Button>
                 </div>
-                <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--text-tertiary)]">
-                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />No credit card</span>
-                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />10 free opportunity analyses</span>
-                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />Cancel anytime</span>
+                <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-[var(--color-text-tertiary)]">
+                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
+                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free opportunity analyses</span>
+                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
                 </div>
               </div>
             </div>

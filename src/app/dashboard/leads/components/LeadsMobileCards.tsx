@@ -1,5 +1,6 @@
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
+import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
 import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
 import { effectiveOpportunityScore, deriveOpportunityStatus } from "./helpers";
@@ -36,20 +37,21 @@ export function LeadsMobileCards({
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 pt-0.5">
-            <ScoreRing score={ringScore} size={44} variant={
+            <ScoreRing score={ringScore} size={40} variant={
               lead.website_status === "has_website" && lead.audited_at ? "opportunity"
               : lead.website_status === "has_website" ? "estimate"
               : "opportunity"
             } />
           </div>
           <div className="min-w-0 flex-1">
-            <p dir="auto" className="font-medium text-[var(--text-primary)]">{lead.name}</p>
-            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">
+            <p dir="auto" className="font-medium text-[var(--color-text-primary)]">{lead.name}</p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
               {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
               {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
               {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
             </p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <WebsiteStatusPill status={lead.website_status} size="sm" />
               <PipelineStatusBadge status={status} />
             </div>
             <div className="mt-3">
@@ -74,12 +76,12 @@ export function LeadsMobileCards({
   });
 
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] md:hidden">
+    <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] md:hidden">
       {shouldReduce ? (
-        <div className="divide-y divide-[var(--border)]">{cards}</div>
+        <div className="divide-y divide-[var(--color-border-subtle)]">{cards}</div>
       ) : (
         <StaggerContainer>
-          <div className="divide-y divide-[var(--border)]">{cards}</div>
+          <div className="divide-y divide-[var(--color-border-subtle)]">{cards}</div>
         </StaggerContainer>
       )}
     </div>

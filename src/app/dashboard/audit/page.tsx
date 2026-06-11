@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, ArrowRight, Loader2, Search } from "lucide-react";
+import { AlertTriangle, ArrowRight, Loader2, Search } from "lucide-react";
 import { readNdjsonStream } from "@/lib/ndjson";
 import { FadeUp } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/motion";
@@ -579,19 +578,12 @@ export default function AuditPage() {
   if (step === "idle" && !error && !auditResult && !running) {
     const mainContent = (
       <>
-        <Link
-          href="/dashboard"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-        </Link>
-
         {/* Hero */}
         <div className="mb-6">
-          <h1 className="text-2xl font-medium text-[var(--text-primary)]">
-            Quick Opportunity Review
+          <h1 className="text-2xl font-medium text-[var(--color-text-primary)]">
+            Quick audit
           </h1>
-          <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
             Analyse a business website and uncover opportunities in seconds.
           </p>
         </div>
@@ -616,20 +608,20 @@ export default function AuditPage() {
 
         {/* Example Opportunity Card — hidden once user has run an audit */}
         {!hasCompletedAudit && (
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+          <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">
+                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--color-text-tertiary)]">
                   Example
                 </p>
-                <h2 className="mt-1 text-base font-medium text-[var(--text-primary)]">
+                <h2 className="mt-1 text-base font-medium text-[var(--color-text-primary)]">
                   Example Opportunity
                 </h2>
-                <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
+                <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
                   See how Nearsited evaluates a business.
                 </p>
               </div>
-              <span className="shrink-0 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-2.5 py-1 font-mono text-xs text-[var(--text-tertiary)]">
+              <span className="shrink-0 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 font-mono text-xs text-[var(--color-text-tertiary)]">
                 {
                   {
                     weak_website: "lawfirmdubai.com",
@@ -654,8 +646,8 @@ export default function AuditPage() {
                   onClick={() => setExampleTab(tab.key)}
                   className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
                     exampleTab === tab.key
-                      ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                      : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                      ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
+                      : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                   }`}
                 >
                   {tab.label}
@@ -665,41 +657,41 @@ export default function AuditPage() {
 
             {/* Score display */}
             {exampleTab === "weak_website" ? (
-              <div className="mb-5 flex flex-col gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-4 sm:flex-row sm:items-center">
+              <div className="mb-5 flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-[var(--score-high)]">
                       42
                     </p>
-                    <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
+                    <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">
                       Current
                     </p>
                   </div>
                   <ArrowRight className="h-4 w-4 flex-shrink-0 text-[var(--text-muted)]" />
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-[var(--score-good)]">
+                    <p className="text-2xl font-bold text-[var(--color-success)]">
                       81
                     </p>
-                    <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
+                    <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">
                       Potential
                     </p>
                   </div>
                 </div>
-                <div className="rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-4 py-2 text-center sm:ml-auto">
-                  <p className="text-xl font-bold text-[var(--badge-green-text)]">
+                <div className="rounded-[var(--radius-sm)] border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-4 py-2 text-center sm:ml-auto">
+                  <p className="text-xl font-bold text-[var(--color-success)]">
                     +39
                   </p>
-                  <p className="text-[10px] text-[var(--text-tertiary)]">
+                  <p className="text-[10px] text-[var(--color-text-tertiary)]">
                     Opportunity
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="mb-5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-4">
-                <p className="text-base font-semibold text-[var(--text-primary)]">
+              <div className="mb-5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+                <p className="text-base font-semibold text-[var(--color-text-primary)]">
                   High Opportunity
                 </p>
-                <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
                   {exampleTab === "no_website"
                     ? "This business has no digital presence — missed visibility and lead generation."
                     : exampleTab === "platform_only"
@@ -737,7 +729,7 @@ export default function AuditPage() {
               )[exampleTab].map((finding, i) => (
                 <div key={i} className="flex items-center gap-2.5">
                   <div className="h-1 w-1 shrink-0 rounded-full bg-[var(--text-muted)]" />
-                  <span className="text-sm text-[var(--text-secondary)]">
+                  <span className="text-sm text-[var(--color-text-secondary)]">
                     {finding}
                   </span>
                 </div>
@@ -747,7 +739,7 @@ export default function AuditPage() {
             {/* View Example Report CTA */}
             <button
               onClick={() => setShowExampleModal(true)}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               View Example Report
             </button>
@@ -757,7 +749,7 @@ export default function AuditPage() {
     );
 
     return (
-      <div className="min-h-screen bg-[var(--bg-base)]">
+      <div className="min-h-screen bg-[var(--color-bg-page)]">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {shouldReduce ? mainContent : <FadeUp>{mainContent}</FadeUp>}
           {showExampleModal && (
@@ -775,26 +767,19 @@ export default function AuditPage() {
   if (error && !running && !auditResult) {
     const errorContent = (
       <>
-        <Link
-          href="/dashboard"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-        </Link>
-
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-center">
+        <div className="rounded-[var(--radius-md)] border border-red-500/30 bg-red-500/10 p-6 text-center">
           <AlertTriangle className="mx-auto h-8 w-8 text-[var(--score-high)]" />
-          <h2 className="mt-3 text-lg font-medium text-[var(--text-primary)]">
+          <h2 className="mt-3 text-lg font-medium text-[var(--color-text-primary)]">
             Review Failed
           </h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{error}</p>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{error}</p>
           <button
             onClick={() => {
               setError(null);
               setStep("idle");
               setRunning(false);
             }}
-            className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+            className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90"
           >
             Try Again
           </button>
@@ -803,7 +788,7 @@ export default function AuditPage() {
     );
 
     return (
-      <div className="min-h-screen bg-[var(--bg-base)]">
+      <div className="min-h-screen bg-[var(--color-bg-page)]">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
           {shouldReduce ? errorContent : <FadeUp>{errorContent}</FadeUp>}
         </div>
@@ -819,13 +804,6 @@ export default function AuditPage() {
 
   const activeDoneContent = (
     <>
-      <Link
-        href="/dashboard"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-      </Link>
-
       {/* URL input card (idle/running) OR status pill (done) — AuditForm handles this internally */}
       <AuditForm
         url={url}
@@ -857,16 +835,16 @@ export default function AuditPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+        <div className="mt-4 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
           {error}
         </div>
       )}
 
       {/* Quota error */}
       {quotaError && (
-        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-4">
+        <div className="mt-4 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 px-5 py-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--score-mid)]" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-info)]" />
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-400">{quotaError}</p>
               {quotaRetryTimer > 0 && (
@@ -877,7 +855,7 @@ export default function AuditPage() {
             </div>
             <button
               onClick={clearQuotaTimer}
-              className="cursor-pointer shrink-0 rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25"
+              className="cursor-pointer shrink-0 rounded-[var(--radius-sm)] border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25"
             >
               {quotaRetryTimer > 0 ? `Wait ${quotaRetryTimer}s` : "Dismiss"}
             </button>
@@ -887,19 +865,19 @@ export default function AuditPage() {
 
       {/* Timestamp */}
       {savedTimestamp !== null && auditResult && !running && (
-        <p className="mt-3 text-xs text-[var(--text-tertiary)]">
+        <p className="mt-3 text-xs text-[var(--color-text-tertiary)]">
           Showing results from {timeAgo(savedTimestamp)}
         </p>
       )}
 
       {/* Both timed out */}
       {bothTimedOut && (
-        <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-8 text-center">
-          <AlertTriangle className="mx-auto h-10 w-10 text-[var(--score-mid)]" />
-          <h2 className="mt-4 text-lg font-medium text-[var(--text-primary)]">
+        <div className="mt-6 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+          <AlertTriangle className="mx-auto h-10 w-10 text-[var(--color-info)]" />
+          <h2 className="mt-4 text-lg font-medium text-[var(--color-text-primary)]">
             Couldn&rsquo;t reach the site
           </h2>
-          <p className="mt-2 max-w-md mx-auto text-sm text-[var(--text-secondary)]">
+          <p className="mt-2 max-w-md mx-auto text-sm text-[var(--color-text-secondary)]">
             The site took too long to respond. This usually means it&rsquo;s
             down, very slow, or blocking automated checks. Try again or test a
             different URL.
@@ -907,14 +885,14 @@ export default function AuditPage() {
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => handleRun()}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90"
             >
               <Loader2 className="h-4 w-4" />
               Try again
             </button>
             <button
               onClick={handleReset}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               <Search className="h-4 w-4" />
               Try a different URL
@@ -949,7 +927,7 @@ export default function AuditPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         {shouldReduce ? activeDoneContent : <FadeUp>{activeDoneContent}</FadeUp>}
       </div>

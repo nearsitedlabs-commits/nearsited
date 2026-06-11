@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { motion, LayoutGroup } from "@/lib/motion";
-import { Target, Search } from "lucide-react";
 import { PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import { detectLeadWorkflow } from "@/lib/lead-types";
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
@@ -12,6 +11,7 @@ import type { PipelineBusiness, PipelineStatus, WebsiteStatus } from "@/lib/db-t
 // import { PipelineCard } from "./components/PipelineCard";
 import { MobileCard } from "./components/MobileCard";
 import { StageColumn } from "./components/StageColumn";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 // ── Query ─────────────────────────────────────────────────────────────────────
 
@@ -166,12 +166,12 @@ export default function PipelinePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-base)] px-6 py-8">
+      <div className="min-h-screen bg-[var(--color-bg-page)] px-6 py-8">
         <div className="mx-auto max-w-6xl animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded-lg bg-[var(--bg-elevated)]" />
+          <div className="h-8 w-48 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-96 w-[220px] shrink-0 rounded-xl bg-[var(--bg-elevated)]" />
+              <div key={i} className="h-96 w-[220px] shrink-0 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
             ))}
           </div>
         </div>
@@ -181,30 +181,24 @@ export default function PipelinePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[var(--bg-base)] px-6 py-8">
-        <div className="mx-auto max-w-6xl">
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-sm text-[var(--badge-red-text)]">{error}</div>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg-page)]">
+        <ErrorState description={error} onRetry={() => window.location.reload()} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-[1600px] px-6 py-8">
-        {/* Header */}
+        {/* Header — stands alone, no card wrapper (Rule E) */}
         <div className="mb-6">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-2xl font-normal tracking-tight text-[var(--text-primary)]">
-                  Your pipeline
-                  <span className="ml-2 text-sm font-normal text-[var(--text-tertiary)]">
-                    · {items.length} active
-                  </span>
-                </h1>
-              </div>
-            </div>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <h1 className="text-xl font-medium tracking-tight text-[var(--color-text-primary)]">
+              Your pipeline
+            </h1>
+            <span className="text-sm text-[var(--color-text-tertiary)]">
+              {items.length} active
+            </span>
           </div>
         </div>
 
@@ -214,45 +208,20 @@ export default function PipelinePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center"
+            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-tint)]"
+            <p className="text-sm font-medium text-[var(--color-text-primary)]">
+              Pipeline is empty.
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm text-[var(--color-text-secondary)]">
+              Add leads from Opportunities to start tracking your deals.
+            </p>
+            <Link
+              href="/dashboard/leads"
+              className="mt-5 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
-              <Target className="h-6 w-6 text-[var(--accent)]" />
-            </motion.div>
-            <motion.h3
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.15 }}
-              className="text-lg font-semibold text-[var(--text-primary)]"
-            >
-              No opportunities in pipeline yet
-            </motion.h3>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.25 }}
-              className="mx-auto mt-2 max-w-md text-sm text-[var(--text-secondary)]"
-            >
-              Add opportunities you are actively pursuing to begin tracking conversations and deals.
-              Drag cards between stages to update progress.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.35 }}
-            >
-              <Link
-                href="/dashboard/discover"
-                className="mt-6 inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
-              >
-                <Search className="h-4 w-4" /> View Opportunities
-              </Link>
-            </motion.div>
+              View opportunities →
+            </Link>
           </motion.div>
         ) : (
           <>
@@ -260,7 +229,7 @@ export default function PipelinePage() {
             <div className="space-y-6 lg:hidden">
               {PIPELINE_SALES_STATUSES.filter((s) => (grouped[s] ?? []).length > 0).map((stage) => (
                 <div key={stage}>
-                  <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                  <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
                     {stage} · {(grouped[stage] ?? []).length}
                   </p>
                   <div className="space-y-2">

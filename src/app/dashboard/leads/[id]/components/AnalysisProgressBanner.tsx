@@ -21,18 +21,18 @@ export function AnalysisProgressBanner({ running, completedKeys, activeKeys }: P
     "Starting analysis…";
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-5 py-4">
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-5 py-4">
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-sm font-medium text-[var(--text-primary)]">Analysing opportunity</span>
-        <span className="text-xs tabular-nums text-[var(--text-tertiary)]">
+        <span className="text-sm font-medium text-[var(--color-text-primary)]">Analysing opportunity</span>
+        <span className="text-xs tabular-nums text-[var(--color-text-tertiary)]">
           {advancedSteps} / {ANALYSE_STEPS.length}
         </span>
       </div>
 
       {/* Progress track */}
-      <div className="h-1.5 w-full rounded-full bg-[var(--bg-elevated)] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-[var(--color-bg-elevated)] overflow-hidden">
         <motion.div
-          className="relative h-full rounded-full bg-[var(--accent)]"
+          className="relative h-full rounded-full bg-[var(--color-accent)]"
           initial={{ width: 0 }}
           animate={{ width: `${progressPercent}%` }}
           transition={{ duration: 0.45, ease: "easeOut" }}
@@ -42,7 +42,7 @@ export function AnalysisProgressBanner({ running, completedKeys, activeKeys }: P
         </motion.div>
       </div>
 
-      <p className="mt-2 text-xs text-[var(--text-tertiary)]">{currentLabel}</p>
+      <p className="mt-2 text-xs text-[var(--color-text-tertiary)]">{currentLabel}</p>
     </div>
   );
 }

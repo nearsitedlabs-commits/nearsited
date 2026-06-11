@@ -67,12 +67,12 @@ export function DiscoverForm({
   const savedSearchesRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 sm:p-5 shadow-[var(--brand-shadow-sm)]">
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-5 shadow-[var(--brand-shadow-sm)]">
       <form onSubmit={onSubmit}>
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-2.5 sm:items-end">
           <div className="relative flex-1 min-w-0">
             <label className="sr-only">City</label>
-            <MapPin className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
+            <MapPin className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
             <SearchableSelect
               options={cities}
               value={selectedCity}
@@ -81,12 +81,12 @@ export function DiscoverForm({
               displayKey="label"
               valueKey="value"
               onSearchChange={onCitySearchChange}
-              inputClassName="!pl-10 !h-11 !rounded-xl !border-[var(--border)] !bg-[var(--bg-elevated)] !text-sm !text-[var(--text-primary)] !shadow-none placeholder:!text-[var(--text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
+              inputClassName="!pl-10 !h-11 !rounded-[var(--radius-md)] !border-[var(--color-border-subtle)] !bg-[var(--color-bg-elevated)] !text-sm !text-[var(--color-text-primary)] !shadow-none placeholder:!text-[var(--color-text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
             />
           </div>
           <div className="relative flex-1 min-w-0">
             <label className="sr-only">Business Type</label>
-            <Building2 className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
+            <Building2 className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
             <SearchableSelect
               options={businessTypes}
               value={selectedBusinessType}
@@ -95,11 +95,11 @@ export function DiscoverForm({
               displayKey="label"
               valueKey="value"
               groupKey="category"
-              inputClassName="!pl-10 !h-11 !rounded-xl !border-[var(--border)] !bg-[var(--bg-elevated)] !text-sm !text-[var(--text-primary)] !shadow-none placeholder:!text-[var(--text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
+              inputClassName="!pl-10 !h-11 !rounded-[var(--radius-md)] !border-[var(--color-border-subtle)] !bg-[var(--color-bg-elevated)] !text-sm !text-[var(--color-text-primary)] !shadow-none placeholder:!text-[var(--color-text-tertiary)] !text-ellipsis !overflow-hidden !whitespace-nowrap"
             />
           </div>
           <div className="flex-1 sm:flex-shrink-0 sm:min-w-[140px]">
-            <label className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--text-tertiary)]">
+            <label className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--color-text-tertiary)]">
               <span className="hidden sm:inline">Radius:</span>
               <span className="sm:hidden">R:</span>
               <span>
@@ -118,14 +118,14 @@ export function DiscoverForm({
               step={1000}
               value={radiusMeters}
               onChange={(e) => onRadiusChange(Number(e.target.value))}
-              className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--bg-elevated)] accent-[var(--accent)] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--accent)] [&::-webkit-slider-thumb]:shadow-[var(--brand-shadow-sm)] [&::-webkit-slider-thumb]:cursor-pointer"
+              className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-[var(--color-bg-elevated)] accent-[var(--accent)] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--color-accent)] [&::-webkit-slider-thumb]:shadow-[var(--brand-shadow-sm)] [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
           <div className="flex gap-2.5">
             <button
               type="submit"
               disabled={!!(submitting || loadingAuth)}
-              className="flex-1 sm:flex-shrink-0 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 sm:px-5 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:bg-[var(--accent-hover)] hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 sm:flex-shrink-0 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-accent)] px-4 sm:px-5 text-sm font-semibold text-white shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:opacity-90 hover:shadow-[var(--brand-shadow-md)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <AnimatePresence mode="wait" initial={false}>
                 {submitting ? (
@@ -161,7 +161,7 @@ export function DiscoverForm({
               onClick={onRandomize}
               disabled={!!(submitting || loadingAuth)}
               title="Random city + business type"
-              className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent)]/50 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-tertiary)] transition-all duration-150 hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Shuffle className="h-4 w-4" />
             </button>
@@ -175,7 +175,7 @@ export function DiscoverForm({
             type="button"
             onClick={onSaveSearchClick}
             disabled={!selectedCity || !selectedBusinessType || submitting}
-            className="cursor-pointer text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="cursor-pointer text-xs text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             + Save this search
           </button>
@@ -184,13 +184,13 @@ export function DiscoverForm({
               <button
                 type="button"
                 onClick={onSavedSearchesToggle}
-                className="cursor-pointer text-xs text-[var(--text-tertiary)] transition-colors hover:text-[var(--accent)]"
+                className="cursor-pointer text-xs text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-accent)]"
               >
                 Saved ({savedSearches.length})
               </button>
               {savedSearchesOpen && (
-                <div className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden">
-                  <div className="px-3 py-2 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--text-tertiary)] border-b border-[var(--border)]">
+                <div className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden">
+                  <div className="px-3 py-2 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--color-text-tertiary)] border-b border-[var(--color-border-subtle)]">
                     Saved Searches
                   </div>
                   <div className="max-h-48 overflow-y-auto divide-y divide-[var(--border)]">
@@ -199,12 +199,12 @@ export function DiscoverForm({
                         key={s.id}
                         type="button"
                         onClick={() => onLoadSearch(s)}
-                        className="w-full text-left px-3 py-2.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors cursor-pointer"
+                        className="w-full text-left px-3 py-2.5 text-xs text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] transition-colors cursor-pointer"
                       >
-                        <span className="font-medium text-[var(--text-primary)]">
+                        <span className="font-medium text-[var(--color-text-primary)]">
                           {s.name}
                         </span>
-                        <span className="ml-1.5 text-[var(--text-tertiary)]">
+                        <span className="ml-1.5 text-[var(--color-text-tertiary)]">
                           · {s.city} · {s.business_type}
                           {s.radius
                             ? ` · ${
@@ -223,15 +223,15 @@ export function DiscoverForm({
           )}
         </div>
         {loadingAuth && (
-          <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--accent)] border-t-transparent" />
+          <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)]">
+            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--color-accent)] border-t-transparent" />
             Verifying…
           </div>
         )}
       </div>
 
       {error && (
-        <div className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-[var(--badge-red-text)]">
+        <div className="mt-3 rounded-[var(--radius-md)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-[var(--color-danger)]">
           {error}
         </div>
       )}

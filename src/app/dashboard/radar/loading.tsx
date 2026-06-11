@@ -4,7 +4,7 @@ import { SkeletonLoader } from "@/lib/motion";
 
 export default function RadarLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Header */}
         <div className="mb-2">
@@ -19,7 +19,7 @@ export default function RadarLoading() {
         </div>
 
         {/* Empty state skeleton */}
-        <div className="mx-auto max-w-lg rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
+        <div className="mx-auto max-w-lg rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-12 text-center">
           <SkeletonLoader className="mx-auto" width="48px" height="48px" radius="12px" />
           <SkeletonLoader className="mx-auto mt-6" width="200px" height="24px" radius="6px" />
           <SkeletonLoader className="mx-auto mt-3" width="280px" height="14px" radius="4px" />

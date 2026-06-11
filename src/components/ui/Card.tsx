@@ -23,20 +23,20 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 // ── Style Map ──────────────────────────────────────────────────────────────────
 
 const ELEVATION_BG: Record<Elevation, string> = {
-  1: "bg-[var(--bg-surface-1)]",
-  2: "bg-[var(--bg-surface-2)]",
+  1: "bg-[var(--color-bg-surface)]",
+  2: "bg-[var(--color-bg-elevated)]",
   3: "bg-[var(--bg-surface-3)]",
 };
 
 const VARIANT_STYLES: Record<CardVariant, string> = {
   default:
-    "border border-[var(--border)] shadow-[var(--brand-shadow-sm)]",
+    "border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)]",
   interactive:
-    "border border-[var(--border)] shadow-[var(--brand-shadow-sm)] " +
+    "border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)] " +
     "hover:shadow-[var(--brand-shadow-md)] hover:border-[var(--border-strong)] " +
     "transition-all duration-150 ease-out cursor-pointer",
   dashed:
-    "border border-dashed border-[var(--border)]",
+    "border border-dashed border-[var(--color-border-subtle)]",
 };
 
 const PADDING: Record<string, string> = {
@@ -45,7 +45,7 @@ const PADDING: Record<string, string> = {
   lg: "p-6",
 };
 
-const BASE = "rounded-xl";
+const BASE = "rounded-[var(--radius-md)]";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 

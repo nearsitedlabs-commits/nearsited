@@ -61,42 +61,42 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
 
   // ── Logo ──
   const logo = (
-    <a href="#" className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
+    <a href="#" className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
       <Image src="/logo-icon.svg" alt="" width={36} height={21} className="block shrink-0" />
-      <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--text-primary)]">NearSited</span>
+      <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--color-text-primary)]">NearSited</span>
     </a>
   );
 
   // ── Desktop nav links (reduced-motion branch) ──
   const desktopLinks = (
-    <ul className="hidden items-center gap-8 text-sm text-[var(--text-tertiary)] md:flex">
-      <li><a href="#how" className="relative transition hover:text-[var(--text-primary)]">How it works</a></li>
-      <li><a href="#report" className="relative transition hover:text-[var(--text-primary)]">Sample report</a></li>
-      <li><Link href="/pricing" className="relative transition hover:text-[var(--text-primary)]">Pricing</Link></li>
-      <li><a href="#faq" className="relative transition hover:text-[var(--text-primary)]">FAQ</a></li>
+    <ul className="hidden items-center gap-8 text-sm text-[var(--color-text-tertiary)] md:flex">
+      <li><a href="#how" className="relative transition hover:text-[var(--color-text-primary)]">How it works</a></li>
+      <li><a href="#report" className="relative transition hover:text-[var(--color-text-primary)]">Sample report</a></li>
+      <li><Link href="/pricing" className="relative transition hover:text-[var(--color-text-primary)]">Pricing</Link></li>
+      <li><a href="#faq" className="relative transition hover:text-[var(--color-text-primary)]">FAQ</a></li>
     </ul>
   );
 
   // ── Desktop nav links (animated branch with underline hover) ──
   const desktopLinksAnimated = (
-    <ul className="hidden items-center gap-8 text-sm text-[var(--text-tertiary)] md:flex">
+    <ul className="hidden items-center gap-8 text-sm text-[var(--color-text-tertiary)] md:flex">
       <li>
-        <a href="#how" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#how" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           How it works
         </a>
       </li>
       <li>
-        <a href="#report" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#report" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           Sample report
         </a>
       </li>
       <li>
-        <Link href="/pricing" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <Link href="/pricing" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           Pricing
         </Link>
       </li>
       <li>
-        <a href="#faq" className="relative transition hover:text-[var(--text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#faq" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           FAQ
         </a>
       </li>
@@ -118,7 +118,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const hamburgerButton = (
     <button
       type="button"
-      className="inline-flex items-center justify-center rounded-lg p-2 text-[var(--text-secondary)] transition hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] md:hidden"
+      className="inline-flex items-center justify-center rounded-[var(--radius-sm)] p-2.5 text-[var(--color-text-secondary)] transition hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] md:hidden"
       onClick={() => setMobileMenuOpen((prev) => !prev)}
       aria-expanded={mobileMenuOpen}
       aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -137,7 +137,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
               <button
                 type="button"
                 onClick={() => handleLinkClick(link.href)}
-                className="w-full rounded-lg px-4 py-3 text-left text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+                className="w-full rounded-[var(--radius-sm)] px-4 py-3 text-left text-sm text-[var(--color-text-secondary)] transition hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
               >
                 {link.label}
               </button>
@@ -166,7 +166,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
               {/* Drawer panel */}
               <motion.div
                 key="mobile-drawer"
-                className="fixed inset-x-0 top-[68px] z-50 border-b border-[var(--border)] bg-[var(--bg-base)] md:hidden"
+                className="fixed inset-x-0 top-[68px] z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] md:hidden"
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
@@ -193,7 +193,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
           aria-hidden="true"
         />
         <div
-          className="fixed inset-x-0 top-[68px] z-50 border-b border-[var(--border)] bg-[var(--bg-base)] md:hidden"
+          className="fixed inset-x-0 top-[68px] z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] md:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
@@ -208,7 +208,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   if (shouldReduceMotion) {
     return (
       <>
-        <nav className="fixed inset-x-0 top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-base)]/80 backdrop-blur-xl">
+        <nav className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)]/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-8">
             {logo}
             {desktopLinks}
@@ -227,7 +227,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   return (
     <>
       <motion.nav
-        className="fixed inset-x-0 top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-base)]/80 backdrop-blur-xl"
+        className="fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)]/80 backdrop-blur-xl"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.page, ease: EASE.out }}

@@ -4,7 +4,7 @@ import { SkeletonLoader } from "@/lib/motion";
 
 export default function LeadDetailLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         {/* Back link */}
         <SkeletonLoader width="100px" height="16px" radius="4px" />
@@ -23,7 +23,7 @@ export default function LeadDetailLoading() {
         </div>
 
         {/* Score strip */}
-        <div className="my-8 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+        <div className="my-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
           <div className="flex items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-2">
               <SkeletonLoader width="72px" height="72px" radius="50%" />
@@ -47,7 +47,7 @@ export default function LeadDetailLoading() {
           {/* Left column */}
           <div className="space-y-6">
             {[1, 2, 3, 4].map((s) => (
-              <div key={s} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <div key={s} className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
                 <SkeletonLoader width={`${40 + s * 15}%`} height="16px" radius="4px" />
                 <div className="mt-4 space-y-3">
                   {Array.from({ length: 3 }).map((_, i) => (
@@ -61,7 +61,7 @@ export default function LeadDetailLoading() {
           {/* Right column */}
           <div className="space-y-6">
             {[1, 2, 3].map((s) => (
-              <div key={s} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+              <div key={s} className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
                 <SkeletonLoader width={`${35 + s * 10}%`} height="16px" radius="4px" />
                 <div className="mt-4 space-y-2">
                   {Array.from({ length: 2 }).map((_, i) => (

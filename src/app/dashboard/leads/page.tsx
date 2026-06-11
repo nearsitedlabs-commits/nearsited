@@ -3,18 +3,19 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { useReducedMotion } from "@/lib/motion";
 import { FilterPanel } from "@/components/filters/FilterPanel";
+import { StatTile } from "@/components/ui/StatTile";
 import {
   type FilterState, DEFAULT_FILTERS, countActiveFilters,
   filtersToParams, paramsToFilters, applyFilters,
 } from "@/lib/filters";
 import { useLeadsData } from "./hooks/useLeadsData";
 import { useLeadInlineAnalysis } from "./hooks/useLeadInlineAnalysis";
-import { LeadsKPIStrip } from "./components/LeadsKPIStrip";
 import { LeadsFilterBar } from "./components/LeadsFilterBar";
 import { LeadsEmptyState } from "./components/LeadsEmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { LeadsTable } from "./components/LeadsTable";
 import { LeadsMobileCards } from "./components/LeadsMobileCards";
 import type { PipelineTab, TabFilter, OpportunityTab } from "./components/types";
@@ -46,7 +47,6 @@ export default function LeadsPage() {
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // Persist page to sessionStorage on change
   const handlePageChange = useCallback((next: number) => {
     setPage(next);
     try { sessionStorage.setItem("nearsited_leads_page", next.toString()); } catch { /* ignore */ }
@@ -59,19 +59,27 @@ export default function LeadsPage() {
     router.replace(`${window.location.pathname}${params.toString() ? `?${params}` : ""}`, { scroll: false });
   }, [router]);
 
-  // Opportunity filter tab clicks
+  // Opportunity filter tab clicks — handles new split tabs + in_pipeline chip
   const handleFilterTabClick = useCallback((tab: OpportunityTab) => {
     setPage(1);
-    if (tab === "all")                  setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
-    else if (tab === "flagged")         setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
-    else if (tab === "social_platform") setFilters({ ...filters, websiteStatus: ["social_only", "platform_only"], flaggedOnly: false });
-    else                                setFilters({ ...filters, websiteStatus: [tab], flaggedOnly: false });
-  }, [filters, setFilters]);
-
-  const handlePipelineTabClick = useCallback((tab: PipelineTab) => {
-    setActivePipelineTab(tab);
-    setPage(1);
-  }, []);
+    if (tab === "all") {
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+    } else if (tab === "flagged") {
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
+    } else if (tab === "in_pipeline") {
+      setActivePipelineTab(activePipelineTab === "all_pipeline" ? "pipeline_in" : "all_pipeline");
+      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+    } else if (tab === "social_platform") {
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, websiteStatus: ["social_only", "platform_only"], flaggedOnly: false });
+    } else {
+      // single-status tabs: no_website, has_website, social_only, platform_only
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, websiteStatus: [tab as string], flaggedOnly: false });
+    }
+  }, [filters, setFilters, activePipelineTab]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -81,26 +89,61 @@ export default function LeadsPage() {
     searchDebounceRef.current = setTimeout(() => setDebouncedSearch(val), 300);
   }, []);
 
-  // KPI click — filter the table to that subset
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
+    setDebouncedSearch("");
+  }, []);
+
+  // KPI tile click — filter table to subset
   const handleKpiClick = useCallback((type: string) => {
     setPage(1);
     switch (type) {
       case "unaudited":
         setFilters({ ...filters, auditedOnly: false, websiteStatus: [] });
-        // Filter to unaudited only — we handle this client-side below
         break;
       case "flagged":
-        setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
         setActivePipelineTab("all_pipeline");
+        setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
         break;
       case "pipeline":
-        setActivePipelineTab("all_pipeline");
+        setActivePipelineTab("pipeline_in");
         setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
         break;
       default:
+        setActivePipelineTab("all_pipeline");
         setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
     }
   }, [filters, setFilters]);
+
+  // Row-level pipeline actions
+  const handleRowAddToPipeline = useCallback(async (id: string) => {
+    try {
+      const r = await fetch("/api/pipeline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: id }),
+      });
+      const d = await r.json();
+      if (d.success || d.message === "Already in pipeline") {
+        window.dispatchEvent(new CustomEvent("toast:show", { detail: "Added to pipeline" }));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleRowMoveStatus = useCallback(async (id: string, status: "won" | "lost") => {
+    try {
+      const r = await fetch("/api/pipeline", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: id, status }),
+      });
+      const d = await r.json();
+      if (d.success) {
+        const label = status === "won" ? "Marked as Won" : "Marked as Lost";
+        window.dispatchEvent(new CustomEvent("toast:show", { detail: label }));
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   // Derived data
   const businessTypes = useMemo(
@@ -114,39 +157,19 @@ export default function LeadsPage() {
     [leads, filters, debouncedSearch, pipelineMap, activePipelineTab],
   );
 
-  // Handle "unaudited" KPI filter client-side
-  const kpiFilterUnaudited = useMemo(() => {
-    // Use the URL filter approach — set auditedOnly to true
-    return filters.auditedOnly;
-  }, [filters.auditedOnly]);
+  const kpiFilterUnaudited = useMemo(() => filters.auditedOnly, [filters.auditedOnly]);
 
   const displayLeads = useMemo(() => {
-    if (kpiFilterUnaudited) {
-      return filtered.filter((l) => l.audited_at === null);
-    }
+    if (kpiFilterUnaudited) return filtered.filter((l) => l.audited_at === null);
     return filtered;
   }, [filtered, kpiFilterUnaudited]);
 
   const totalPages = Math.max(1, Math.ceil(displayLeads.length / PAGE_SIZE));
   const paginated = displayLeads.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  // KPI counts with semantic logic
+  // KPI counts
   const unauditedCount = leads.filter((l) => l.audited_at === null).length;
-  const kpis = [
-    {
-      value: unauditedCount,
-      label: "Un-audited",
-      accentClass: "border-l-[var(--score-mid)]",
-      onClick: () => handleKpiClick("unaudited"),
-    },
-    { value: leads.length, label: "Total", onClick: () => handleKpiClick("total") },
-    {
-      value: leads.filter((l) => l.flagged_for_outreach).length,
-      label: "Ready to Pitch",
-      onClick: () => handleKpiClick("flagged"),
-    },
-    { value: pipelineMap.size, label: "In Pipeline", onClick: () => handleKpiClick("pipeline") },
-  ];
+  const readyToPitchCount = leads.filter((l) => l.flagged_for_outreach).length;
 
   // Bulk action helpers
   const handleToggleSelect = useCallback((id: string) => {
@@ -172,11 +195,8 @@ export default function LeadsPage() {
     });
   }, [paginated]);
 
-  const handleClearSelection = useCallback(() => {
-    setSelectedIds(new Set());
-  }, []);
+  const handleClearSelection = useCallback(() => setSelectedIds(new Set()), []);
 
-  // Bulk: add to pipeline
   const [bulkLoading, setBulkLoading] = useState(false);
   const handleBulkPipeline = useCallback(async () => {
     setBulkLoading(true);
@@ -195,7 +215,6 @@ export default function LeadsPage() {
     }
   }, [selectedIds, handleClearSelection]);
 
-  // Bulk: audit all (simplified — sequential calls)
   const handleBulkAudit = useCallback(async () => {
     setBulkLoading(true);
     let count = 0;
@@ -218,20 +237,26 @@ export default function LeadsPage() {
     filters.flaggedOnly ? "flagged" :
     filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "no_website" ? "no_website" :
     filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "has_website" ? "has_website" :
+    filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "social_only" ? "social_only" :
+    filters.websiteStatus.length === 1 && filters.websiteStatus[0] === "platform_only" ? "platform_only" :
     filters.websiteStatus.length > 0 ? "social_platform" :
     "all";
 
   // ── Loading / Error states ────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-base)] p-6">
+      <div className="min-h-screen bg-[var(--color-bg-page)] p-6">
         <div className="mx-auto max-w-7xl animate-pulse space-y-6">
-          <div className="h-10 w-64 rounded-xl bg-[var(--bg-elevated)]" />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-44 rounded-xl bg-[var(--bg-elevated)]" />
+          <div className="h-9 w-52 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-16 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
             ))}
           </div>
+          <div className="h-8 w-full rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-12 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
+          ))}
         </div>
       </div>
     );
@@ -239,41 +264,53 @@ export default function LeadsPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-sm text-red-400">{error}</div>
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg-page)]">
+        <ErrorState description={error} onRetry={() => window.location.reload()} />
       </div>
     );
   }
 
   // ── Page render ───────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-6 py-8">
 
-        {/* Header — removed "← Back to Dashboard" and "OPPORTUNITIES" eyebrow */}
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-normal tracking-tight text-[var(--text-primary)]">Your opportunities</h1>
-          </div>
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-medium text-[var(--color-text-primary)]">Your opportunities</h1>
           <Link
             href="/dashboard/discover"
-            className="self-start inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+            className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
           >
-            <Search className="h-4 w-4" /> + Find more
+            + Find more
           </Link>
         </div>
 
-        <LeadsKPIStrip kpis={kpis} />
+        {/* KPI tiles — StatTile grid */}
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <button onClick={() => handleKpiClick("total")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
+            <StatTile label="Total" value={leads.length} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+          </button>
+          <button onClick={() => handleKpiClick("unaudited")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
+            <StatTile label="Un-audited" value={unauditedCount} accent="warning" className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+          </button>
+          <button onClick={() => handleKpiClick("flagged")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
+            <StatTile label="Ready to Pitch" value={readyToPitchCount} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+          </button>
+          <button onClick={() => handleKpiClick("pipeline")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
+            <StatTile label="In Pipeline" value={pipelineMap.size} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+          </button>
+        </div>
 
         {/* Bulk action bar */}
         {selectedIds.size > 0 && (
-          <div className="mb-4 flex items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-2.5 text-sm">
-            <span className="font-medium text-blue-400">{selectedIds.size} selected</span>
+          <div className="mb-4 flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-info)]/30 bg-[var(--color-info)]/10 px-4 py-2.5 text-sm">
+            <span className="font-medium text-[var(--color-info)]">{selectedIds.size} selected</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleBulkPipeline}
                 disabled={bulkLoading}
-                className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 px-2.5 py-1 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-colors disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 px-3 py-1.5 text-xs font-medium text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors disabled:opacity-50"
               >
                 {bulkLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 + Pipeline
@@ -282,7 +319,7 @@ export default function LeadsPage() {
                 onClick={handleBulkAudit}
                 disabled={bulkLoading}
                 aria-label={`Run website audit on ${selectedIds.size} selected ${selectedIds.size === 1 ? "business" : "businesses"} — uses ${selectedIds.size} ${selectedIds.size === 1 ? "credit" : "credits"}`}
-                className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-colors disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-colors disabled:opacity-50"
               >
                 {bulkLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 Audit ({selectedIds.size} credits)
@@ -290,7 +327,7 @@ export default function LeadsPage() {
             </div>
             <button
               onClick={handleClearSelection}
-              className="ml-auto cursor-pointer text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+              className="ml-auto cursor-pointer text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
             >
               <X className="h-3.5 w-3.5 inline" /> Clear
             </button>
@@ -303,8 +340,8 @@ export default function LeadsPage() {
           activePipelineTab={activePipelineTab}
           searchQuery={searchQuery}
           onFilterTabClick={handleFilterTabClick}
-          onPipelineTabClick={handlePipelineTabClick}
           onSearchChange={handleSearchChange}
+          onClearSearch={handleClearSearch}
           onOpenFilterDrawer={() => setDrawerOpen(true)}
         />
 
@@ -319,7 +356,7 @@ export default function LeadsPage() {
 
         {/* Results */}
         {paginated.length === 0 ? (
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
+          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
             <LeadsEmptyState activeTab={resolvedActiveTab} searchQuery={searchQuery} />
           </div>
         ) : (
@@ -335,6 +372,8 @@ export default function LeadsPage() {
               selectedIds={selectedIds}
               onToggleSelect={handleToggleSelect}
               onToggleSelectAll={handleToggleSelectAll}
+              onAddToPipeline={handleRowAddToPipeline}
+              onMoveStatus={handleRowMoveStatus}
             />
 
             <LeadsMobileCards
@@ -349,17 +388,17 @@ export default function LeadsPage() {
 
             {totalPages > 1 && (
               <div className="mt-6 flex items-center justify-between">
-                <p className="text-sm text-[var(--text-tertiary)]">
+                <p className="text-sm text-[var(--color-text-tertiary)]">
                   Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, displayLeads.length)} of {displayLeads.length}
                 </p>
                 <div className="flex items-center gap-2">
                   <button onClick={() => handlePageChange(Math.max(1, page - 1))} disabled={page === 1} aria-label="Previous page"
-                    className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
+                    className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <span className="px-3 text-sm text-[var(--text-secondary)]">{page} / {totalPages}</span>
+                  <span className="px-3 text-sm text-[var(--color-text-secondary)]">{page} / {totalPages}</span>
                   <button onClick={() => handlePageChange(Math.min(totalPages, page + 1))} disabled={page === totalPages} aria-label="Next page"
-                    className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2 text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
+                    className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>

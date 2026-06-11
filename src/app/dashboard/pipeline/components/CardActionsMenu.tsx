@@ -83,7 +83,7 @@ export function CardActionsMenu({
       {/* Trigger button */}
       <button
         onClick={handleToggle}
-        className="flex h-6 w-6 items-center justify-center rounded text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]"
+        className="flex h-6 w-6 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
         aria-label="Card actions"
         aria-expanded={open}
       >
@@ -92,7 +92,7 @@ export function CardActionsMenu({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 min-w-[200px] rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] py-1 shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-1 min-w-[200px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-1 shadow-lg">
           {!confirmDelete ? (
             <>
               <Link
@@ -101,7 +101,7 @@ export function CardActionsMenu({
                   e.stopPropagation();
                   setOpen(false);
                 }}
-                className="block px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                className="block px-3 py-1.5 text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 View opportunity
               </Link>
@@ -109,7 +109,7 @@ export function CardActionsMenu({
                 onClick={handleAction(() => {
                   /* placeholder: open pitch modal */
                 })}
-                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 View pitch
               </button>
@@ -117,30 +117,30 @@ export function CardActionsMenu({
                 onClick={handleAction(() => {
                   /* placeholder: open compose modal */
                 })}
-                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 Log reply
               </button>
 
-              <hr className="my-1 border-[var(--border)]" />
+              <hr className="my-1 border-[var(--color-border-subtle)]" />
 
               {PIPELINE_SALES_STATUSES.map((s) => (
                 <button
                   key={s}
                   onClick={handleAction(() => onStatusChange(pipelineId, s))}
-                  className="block w-full px-3 py-1.5 text-left text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                  className="block w-full px-3 py-1.5 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
                 >
                   Move to: {PIPELINE_LABELS[s]}
                 </button>
               ))}
 
-              <hr className="my-1 border-[var(--border)]" />
+              <hr className="my-1 border-[var(--color-border-subtle)]" />
 
               <button
                 onClick={handleAction(() => {
                   /* placeholder: archive */
                 })}
-                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 Archive
               </button>
@@ -157,13 +157,13 @@ export function CardActionsMenu({
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleConfirmDelete}
-                  className="rounded bg-red-500 px-2 py-0.5 text-[10px] text-white transition-colors hover:bg-red-600"
+                  className="rounded-[var(--radius-sm)] bg-red-500 px-2 py-0.5 text-[10px] text-white transition-colors hover:bg-red-600"
                 >
                   Yes, delete
                 </button>
                 <button
                   onClick={handleCancelDelete}
-                  className="rounded border border-[var(--border)] px-2 py-0.5 text-[10px] text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-surface-2)]"
+                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-0.5 text-[10px] text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
                 >
                   Cancel
                 </button>

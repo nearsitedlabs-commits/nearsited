@@ -4,7 +4,7 @@ import { SkeletonLoader } from "@/lib/motion";
 
 export default function DiscoverLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--color-bg-page)] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl space-y-5">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -16,7 +16,7 @@ export default function DiscoverLoading() {
         </div>
 
         {/* Search card */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5">
           <div className="flex flex-wrap gap-2.5">
             <SkeletonLoader className="flex-1" height="44px" radius="12px" />
             <SkeletonLoader className="flex-1" height="44px" radius="12px" />
@@ -27,9 +27,9 @@ export default function DiscoverLoading() {
         </div>
 
         {/* Results skeleton */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden">
           {/* Summary bar */}
-          <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3.5">
+          <div className="flex items-center gap-3 border-b border-[var(--color-border-subtle)] px-5 py-3.5">
             <SkeletonLoader width="80px" height="24px" radius="6px" />
             <SkeletonLoader width="140px" height="20px" radius="999px" />
             <div className="ml-auto flex gap-2">
@@ -42,7 +42,7 @@ export default function DiscoverLoading() {
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 border-b border-[var(--border)] px-5 py-3"
+              className="flex items-center gap-4 border-b border-[var(--color-border-subtle)] px-5 py-3"
             >
               {/* Score */}
               <SkeletonLoader width="44px" height="44px" radius="50%" />

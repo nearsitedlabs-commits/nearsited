@@ -36,7 +36,7 @@ export type LeadRow = {
   opportunity_score: number | null;
 };
 
-export type OpportunityTab = "all" | "no_website" | "has_website" | "social_platform" | "flagged";
+export type OpportunityTab = "all" | "no_website" | "has_website" | "social_only" | "platform_only" | "social_platform" | "in_pipeline" | "flagged";
 export type PipelineTab = "all_pipeline" | "pipeline_in" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
 export type TabFilter = OpportunityTab | PipelineTab;
 
@@ -55,11 +55,13 @@ export const ANALYSE_STEPS: { key: string; label: string }[] = [
 ];
 
 export const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string }[] = [
-  { value: "all",             label: "All" },
-  { value: "no_website",      label: "No Website" },
-  { value: "has_website",     label: "Has Website" },
-  { value: "social_platform", label: "Social / Platform" },
-  { value: "flagged",         label: "Flagged" },
+  { value: "all",           label: "All" },
+  { value: "no_website",    label: "No site" },
+  { value: "has_website",   label: "Has site" },
+  { value: "social_only",   label: "Social only" },
+  { value: "platform_only", label: "Platform only" },
+  { value: "in_pipeline",   label: "In pipeline" },
+  { value: "flagged",       label: "Flagged" },
 ];
 
 export const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [
@@ -78,14 +80,14 @@ export const STATUS_BADGE: Record<OpportunityStatus, { label: string; class: str
   in_pipeline: { label: "In pipeline", class: "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" },
   won:         { label: "Won",         class: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold" },
   lost:        { label: "Lost",        class: "border-red-500/30 bg-red-500/10 text-red-400" },
-  archived:    { label: "Archived",    class: "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)]" },
+  archived:    { label: "Archived",    class: "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]" },
 };
 
 /** Site presence labels for the SITE column */
 export const SITE_LABEL: Record<string, { label: string; color: string }> = {
   no_website:    { label: "None",    color: "text-[var(--score-high)]" },
-  social_only:   { label: "Social",  color: "text-[var(--score-mid)]" },
+  social_only:   { label: "Social",  color: "text-[var(--color-info)]" },
   platform_only: { label: "Platform",color: "text-[var(--badge-indigo-text)]" },
-  has_website:   { label: "Has site",color: "text-[var(--text-tertiary)]" },
-  unknown:       { label: "—",       color: "text-[var(--text-tertiary)]" },
+  has_website:   { label: "Has site",color: "text-[var(--color-text-tertiary)]" },
+  unknown:       { label: "—",       color: "text-[var(--color-text-tertiary)]" },
 };

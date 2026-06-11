@@ -17,12 +17,12 @@ function KpiCard({ value, label, accentClass, onClick }: KPI) {
     <motion.div
       variants={fadeUpVariants}
       onClick={onClick}
-      className={`rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 transition-all duration-150 ${
-        onClick ? "cursor-pointer hover:shadow-[var(--brand-shadow-sm)] hover:border-[var(--accent)]/40" : ""
+      className={`rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 transition-all duration-150 ${
+        onClick ? "cursor-pointer hover:shadow-[var(--brand-shadow-sm)] hover:border-[var(--color-accent)]/40" : ""
       } ${accentClass ? `border-l-2 ${accentClass}` : ""}`}
     >
-      <p className="text-2xl font-bold text-[var(--text-primary)]">{display}</p>
-      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{label}</p>
+      <p className="text-2xl font-bold text-[var(--color-text-primary)]">{display}</p>
+      <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">{label}</p>
     </motion.div>
   );
 }

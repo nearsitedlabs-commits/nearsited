@@ -19,27 +19,27 @@ export function RangeSlider({ label, min = 0, max = 100, step = 5, value, onChan
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-[var(--text-secondary)]">{label}</span>
-        <span className="text-xs font-medium text-[var(--text-primary)]">
+        <span className="text-xs font-medium text-[var(--color-text-secondary)]">{label}</span>
+        <span className="text-xs font-medium text-[var(--color-text-primary)]">
           {lo}{unit} — {hi}{unit}
         </span>
       </div>
 
       {/* Track */}
       <div className="relative mx-1 h-5 flex items-center">
-        <div className="absolute left-0 right-0 h-1 rounded-full bg-[var(--bg-elevated)]" />
+        <div className="absolute left-0 right-0 h-1 rounded-full bg-[var(--color-bg-elevated)]" />
         <div
-          className="absolute h-1 rounded-full bg-[var(--accent)]"
+          className="absolute h-1 rounded-full bg-[var(--color-accent)]"
           style={{ left: `${loPercent}%`, right: `${100 - hiPercent}%` }}
         />
         {/* Min thumb (visual) */}
         <div
-          className="pointer-events-none absolute z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-[var(--accent)] bg-[var(--bg-surface)]"
+          className="pointer-events-none absolute z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-bg-surface)]"
           style={{ left: `${loPercent}%` }}
         />
         {/* Max thumb (visual) */}
         <div
-          className="pointer-events-none absolute z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-[var(--accent)] bg-[var(--bg-surface)]"
+          className="pointer-events-none absolute z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-bg-surface)]"
           style={{ left: `${hiPercent}%` }}
         />
         {/* Min range input (invisible, handles interaction) */}
@@ -68,7 +68,7 @@ export function RangeSlider({ label, min = 0, max = 100, step = 5, value, onChan
         />
       </div>
 
-      <div className="mt-0.5 flex justify-between text-[10px] text-[var(--text-tertiary)]">
+      <div className="mt-0.5 flex justify-between text-[10px] text-[var(--color-text-tertiary)]">
         <span>{min}{unit}</span>
         <span>{max}{unit}</span>
       </div>

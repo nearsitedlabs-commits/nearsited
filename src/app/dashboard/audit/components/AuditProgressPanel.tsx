@@ -44,11 +44,11 @@ export function AuditProgressPanel({
 
   return (
     <div className="mt-4">
-      <div className="relative rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3 sm:p-4">
+      <div className="relative rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 sm:p-4">
         {running && onCancel && (
           <button
             onClick={onCancel}
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
           >
             <span className="h-3.5 w-3.5 flex items-center justify-center">
               <span className="sr-only">×</span>
@@ -64,19 +64,19 @@ export function AuditProgressPanel({
             return (
               <div key={stepDef.key} className="flex items-center gap-2.5 py-0.5">
                 {isDone ? (
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--score-good)]" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--color-success)]" />
                 ) : isActive ? (
-                  <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[var(--accent)]" />
+                  <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[var(--color-accent)]" />
                 ) : (
                   <Circle className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
                 )}
                 <span
                   className={`text-sm ${
                     isDone
-                      ? "text-[var(--text-tertiary)] line-through"
+                      ? "text-[var(--color-text-tertiary)] line-through"
                       : isActive
-                        ? "font-medium text-[var(--text-primary)]"
-                        : "text-[var(--text-tertiary)]"
+                        ? "font-medium text-[var(--color-text-primary)]"
+                        : "text-[var(--color-text-tertiary)]"
                   }`}
                 >
                   {stepDef.label}

@@ -72,11 +72,11 @@ export function LeadOutreachSection({
 }: LeadOutreachSectionProps) {
   const shouldReduce = useReducedMotion();
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+      <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Ready-to-Send Outreach</h2>
 
       {/* Channel tabs with contact status dots */}
-      <div className="mb-3 flex gap-1 rounded-lg bg-[var(--bg-elevated)] p-1">
+      <div className="mb-3 flex gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-1">
         {OUTREACH_CHANNELS.map((channel) => {
           const ChannelIcon = channel.icon;
           const contactLabel = channel.id === "email" ? contactInfo.email : contactInfo.phone;
@@ -85,10 +85,10 @@ export function LeadOutreachSection({
             <button
               key={channel.id}
               onClick={() => setOutreachChannel(channel.id)}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-2 text-xs font-medium transition-colors duration-150 ${
                 outreachChannel === channel.id
-                  ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--shadow-xs)]"
-                  : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  ? "bg-[var(--color-bg-surface)] text-[var(--color-accent)] shadow-[var(--shadow-xs)]"
+                  : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
               }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${contactInfo.loading ? `bg-[var(--text-tertiary)]${shouldReduce ? "" : " animate-pulse"}` : hasContact ? "bg-[var(--score-good)]" : "bg-[var(--text-tertiary)]"}`} />
@@ -116,11 +116,11 @@ export function LeadOutreachSection({
         }
         if (contactLabel) {
           return (
-            <div className="mb-3 flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-              <span className="text-xs text-[var(--text-secondary)] truncate max-w-[60%]">{contactLabel}</span>
+            <div className="mb-3 flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+              <span className="text-xs text-[var(--color-text-secondary)] truncate max-w-[60%]">{contactLabel}</span>
               {contactAction?.url && (
                 <a href={contactAction.url} target="_blank" rel="noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-md bg-[var(--accent)] px-2.5 py-1 text-[10px] font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] shrink-0">
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1 text-[10px] font-medium text-white transition-colors duration-150 hover:opacity-90 shrink-0">
                   <ExternalLink className="h-3 w-3" /> {contactAction.label}
                 </a>
               )}
@@ -131,22 +131,22 @@ export function LeadOutreachSection({
         if (outreachChannel === "email") {
           return (
             <div className="mb-3 space-y-2">
-              <p className="text-xs text-[var(--text-tertiary)]">Couldn&rsquo;t find an email address on the website.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Couldn&rsquo;t find an email address on the website.</p>
               <div className="flex gap-2">
                 <input
                   type="email"
                   value={manualEmail}
                   onChange={(e) => setManualEmail(e.target.value)}
                   placeholder="Paste email address manually..."
-                  className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+                  className="flex-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)]"
                 />
               </div>
             </div>
           );
         }
         return (
-          <div className="mb-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-            <p className="text-xs text-[var(--text-tertiary)]">Couldn&rsquo;t find a phone number on the website.</p>
+          <div className="mb-3 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+            <p className="text-xs text-[var(--color-text-tertiary)]">Couldn&rsquo;t find a phone number on the website.</p>
           </div>
         );
       })()}
@@ -212,7 +212,7 @@ export function LeadOutreachSection({
             <button
               onClick={() => handleGeneratePitch()}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generatingPitch && <Loader2 className="h-3 w-3 animate-spin" />}
               <Send className="h-3 w-3" />
@@ -220,39 +220,39 @@ export function LeadOutreachSection({
             </button>
           ) : (
             <div
-              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-tertiary)] opacity-60"
               title="Analyse this lead first to generate a pitch"
             >
               <Mail className="h-3 w-3" />
               Generate (analyse first)
             </div>
           )}
-          {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className={`h-1 w-full bg-[var(--accent)]/60${shouldReduce ? "" : " animate-pulse"}`}/></div>}
+          {generatingPitch && <div className="absolute left-0 right-0 -bottom-1 h-1 overflow-hidden rounded-b-md"><div className={`h-1 w-full bg-[var(--color-accent)]/60${shouldReduce ? "" : " animate-pulse"}`}/></div>}
         </div>
         </div>
       </div>
 
       {pitchError && (
-        <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+        <div className="mb-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
           {pitchError}
         </div>
       )}
 
       {pitchResult ? (
-        <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-          <p className="text-sm font-medium text-[var(--text-primary)]">{pitchResult.subject}</p>
-          <p className="whitespace-pre-wrap break-words text-xs text-[var(--text-secondary)] leading-relaxed">{pitchResult.body}</p>
+        <div className="space-y-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
+          <p className="text-sm font-medium text-[var(--color-text-primary)]">{pitchResult.subject}</p>
+          <p className="whitespace-pre-wrap break-words text-xs text-[var(--color-text-secondary)] leading-relaxed">{pitchResult.body}</p>
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               <Copy className="h-3 w-3" /> Copy
             </button>
             <button
               onClick={() => handleGeneratePitch(true)}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate
@@ -260,7 +260,7 @@ export function LeadOutreachSection({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-[var(--text-tertiary)]">Configure tone and length, then click Generate.</p>
+        <p className="text-xs text-[var(--color-text-tertiary)]">Configure tone and length, then click Generate.</p>
       )}
     </div>
   );

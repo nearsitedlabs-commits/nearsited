@@ -37,9 +37,9 @@ const SORT_OPTIONS = [
   { value: "reviews_asc",  label: "Fewest Reviews" },
 ];
 
-const selectClass = "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)] cursor-pointer [font-family:var(--font-sans)]";
-const inputClass  = "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]";
-const labelClass  = "mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]";
+const selectClass = "w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)] cursor-pointer [font-family:var(--font-sans)]";
+const inputClass  = "w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)]";
+const labelClass  = "mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-tertiary)]";
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -75,7 +75,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
         </select>
       </div>
 
-      <div className="border-t border-[var(--border)]" />
+      <div className="border-t border-[var(--color-border-subtle)]" />
 
       {/* Opportunity Score */}
       <div>
@@ -96,10 +96,10 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
             <button
               key={o.value}
               onClick={() => toggleStatus(o.value)}
-              className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`cursor-pointer rounded-[var(--radius-sm)] border px-3 py-1.5 text-xs font-medium transition-colors ${
                 filters.websiteStatus.includes(o.value)
-                  ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
-                  : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40"
+                  ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
+                  : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40"
               }`}
             >
               {o.label}
@@ -108,7 +108,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
         </div>
       </div>
 
-      <div className="border-t border-[var(--border)]" />
+      <div className="border-t border-[var(--color-border-subtle)]" />
 
       {/* Website Health */}
       <div>
@@ -121,7 +121,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
         />
       </div>
 
-      <div className="border-t border-[var(--border)]" />
+      <div className="border-t border-[var(--color-border-subtle)]" />
 
       {/* Industry */}
       <div>
@@ -142,7 +142,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
         <input type="text" value={filters.city} onChange={e => set("city", e.target.value)} placeholder="Filter by city…" className={inputClass} />
       </div>
 
-      <div className="border-t border-[var(--border)]" />
+      <div className="border-t border-[var(--color-border-subtle)]" />
 
       {/* Business Activity */}
       <div>
@@ -160,7 +160,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
         </select>
       </div>
 
-      <div className="border-t border-[var(--border)]" />
+      <div className="border-t border-[var(--color-border-subtle)]" />
 
       {/* Checkboxes */}
       <div className="space-y-2">
@@ -168,7 +168,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
           { key: "flaggedOnly" as const, label: "Flagged for outreach only" },
           { key: "auditedOnly" as const, label: "Audited businesses only" },
         ].map(({ key, label }) => (
-          <label key={key} className="flex cursor-pointer items-center gap-2 text-xs text-[var(--text-secondary)]">
+          <label key={key} className="flex cursor-pointer items-center gap-2 text-xs text-[var(--color-text-secondary)]">
             <input
               type="checkbox"
               checked={filters[key]}
@@ -184,7 +184,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
       {countActiveFilters(filters) > 0 && (
         <button
           onClick={() => { onReset(); trackFilter("filter_reset"); }}
-          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-red-500/30 hover:text-red-400"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-red-500/30 hover:text-red-400"
         >
           <RotateCcw className="h-3 w-3" /> Reset all filters
         </button>
@@ -225,16 +225,16 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
         {/* Bottom sheet */}
         <div
           ref={drawerRef}
-          className={`fixed bottom-0 left-0 right-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-[var(--border)] bg-[var(--bg-surface)] shadow-2xl transition-transform duration-300 ease-out ${mobileOpen ? "translate-y-0" : "translate-y-full"}`}
+          className={`fixed bottom-0 left-0 right-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-2xl transition-transform duration-300 ease-out ${mobileOpen ? "translate-y-0" : "translate-y-full"}`}
         >
           {/* Handle + header */}
-          <div className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--bg-surface)] px-4 py-3">
+          <div className="sticky top-0 z-20 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3">
             <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-[var(--border)]" />
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[var(--text-primary)]">
-                Filters {countActiveFilters(filters) > 0 && <span className="ml-1 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] text-white">{countActiveFilters(filters)}</span>}
+              <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+                Filters {countActiveFilters(filters) > 0 && <span className="ml-1 rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] text-white">{countActiveFilters(filters)}</span>}
               </span>
-              <button onClick={onClose} className="cursor-pointer rounded-lg p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+              <button onClick={onClose} className="cursor-pointer rounded-[var(--radius-sm)] p-2.5 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -243,10 +243,10 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
           <FilterBody filters={filters} onChange={onChange} onReset={onReset} businessTypes={businessTypes} />
 
           {/* Apply button */}
-          <div className="sticky bottom-0 z-20 border-t border-[var(--border)] bg-[var(--bg-surface)] p-4">
+          <div className="sticky bottom-0 z-20 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
             <button
               onClick={() => { onClose?.(); trackFilter("filter_applied"); }}
-              className="w-full cursor-pointer rounded-lg bg-[var(--accent)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
+              className="w-full cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-accent)] py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
             >
               Apply Filters {countActiveFilters(filters) > 0 && `(${countActiveFilters(filters)} active)`}
             </button>
@@ -260,9 +260,9 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
   return (
     <div className="hidden lg:block">
       <div className="mb-3 flex items-center justify-between px-4 pt-4">
-        <span className="text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Filters</span>
+        <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-tertiary)]">Filters</span>
         {countActiveFilters(filters) > 0 && (
-          <button onClick={() => { onReset(); trackFilter("filter_reset"); }} className="cursor-pointer text-[10px] text-[var(--text-tertiary)] hover:text-red-400 transition-colors">
+          <button onClick={() => { onReset(); trackFilter("filter_reset"); }} className="cursor-pointer text-[10px] text-[var(--color-text-tertiary)] hover:text-red-400 transition-colors">
             Reset
           </button>
         )}

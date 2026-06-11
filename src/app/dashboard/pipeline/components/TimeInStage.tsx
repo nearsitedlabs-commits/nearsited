@@ -33,11 +33,11 @@ export function TimeInStage({ enteredAt, status }: TimeInStageProps) {
   if (days == null) return null;
 
   const colorClass = (() => {
-    if (days <= 3) return "text-gray-400 dark:text-gray-500";
-    if (days <= 7) return "text-gray-600 dark:text-gray-400";
-    if (days >= 11 && status === "in_conversation") return "text-amber-600 dark:text-amber-400";
-    if (days >= 8 && status === "contacted") return "text-amber-600 dark:text-amber-400";
-    return "text-gray-500 dark:text-gray-400";
+    if (days <= 3) return "text-[var(--color-text-tertiary)]";
+    if (days <= 7) return "text-[var(--color-text-secondary)]";
+    if (days >= 11 && status === "in_conversation") return "text-[var(--color-warning)]";
+    if (days >= 8 && status === "contacted") return "text-[var(--color-warning)]";
+    return "text-[var(--color-text-tertiary)]";
   })();
 
   return (

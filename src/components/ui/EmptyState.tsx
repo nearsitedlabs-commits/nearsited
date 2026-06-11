@@ -1,87 +1,30 @@
-import { type ReactNode, type ButtonHTMLAttributes } from "react";
+import { type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 export type EmptyStateProps = {
-  /** Icon component (lucide-react icon, etc.) */
-  icon?: ReactNode;
-  /** Primary title text */
   title: string;
-  /** Description text */
   description?: string;
-  /** Optional action button */
   action?: ReactNode;
-  /** Icon container class override */
-  iconClassName?: string;
-  /** Root class override */
   className?: string;
 };
 
-// ── Action Button ─────────────────────────────────────────────────────────────
-
-export type EmptyStateActionProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type EmptyStateActionProps = {
   children: ReactNode;
+  onClick?: () => void;
+  href?: string;
+  className?: string;
 };
 
-export function EmptyStateAction({ className, children, ...props }: EmptyStateActionProps) {
+export function EmptyState({ title, description, action, className }: EmptyStateProps) {
   return (
-    <button
-      className={cn(
-        "mt-4 inline-flex items-center gap-2",
-        "rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white",
-        "transition-colors duration-150 ease-out hover:bg-[var(--accent-hover)]",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
-EmptyStateAction.displayName = "EmptyStateAction";
-
-// ── Component ─────────────────────────────────────────────────────────────────
-
-export function EmptyState({
-  icon,
-  title,
-  description,
-  action,
-  iconClassName,
-  className,
-}: EmptyStateProps) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center py-20 text-center",
-        className,
-      )}
-    >
-      {icon && (
-        <div
-          className={cn(
-            "mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-elevated)]",
-            iconClassName,
-          )}
-        >
-          {icon}
-        </div>
-      )}
-
-      <h3 className="text-xl font-normal text-[var(--text-primary)]">
-        {title}
-      </h3>
-
+    <div className={cn("flex min-h-[240px] flex-col items-center justify-center py-16 text-center", className)}>
+      <p className="text-sm font-medium text-[var(--color-text-primary)]">{title}</p>
       {description && (
-        <p className="mt-2 max-w-xs text-xs leading-relaxed text-[var(--text-tertiary)]">
+        <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
           {description}
         </p>
       )}
-
-      {action && <div className="mt-2">{action}</div>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }

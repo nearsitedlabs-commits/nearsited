@@ -30,7 +30,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const viewBtn = (
     <Link
       href={`/dashboard/leads/${lead.id}?from=leads`}
-      className="inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-tint)]"
+      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/10"
     >
       <Eye className="h-3 w-3" /> View
     </Link>
@@ -40,7 +40,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const analyseBtn = (
     <button
       onClick={() => onAnalyse(lead.id, lead.website!)}
-      className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
     >
       Audit
     </button>
@@ -50,7 +50,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const retryBtn = (
     <button
       onClick={() => onAnalyse(lead.id, lead.website!)}
-      className="cursor-pointer inline-flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
     >
       Retry
     </button>
@@ -58,7 +58,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
 
   // Spinner during analysis
   const spinner = (
-    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)]">
+    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--color-accent)]">
       <Loader2 className="h-3 w-3 animate-spin" /> Analysing…
     </span>
   );
@@ -76,7 +76,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
     primaryBtn = (
       <Link
         href={`/dashboard/leads/${lead.id}?from=leads&tab=pitch`}
-        className="inline-flex items-center gap-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+        className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
       >
         Send
       </Link>
@@ -97,11 +97,11 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-2"
+            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2"
           >
             <div className="flex items-center gap-1.5">
-              <Loader2 className="h-2.5 w-2.5 animate-spin shrink-0 text-[var(--accent)]" />
-              <span className="text-[11px] text-[var(--text-primary)]">{progress.label}</span>
+              <Loader2 className="h-2.5 w-2.5 animate-spin shrink-0 text-[var(--color-accent)]" />
+              <span className="text-[11px] text-[var(--color-text-primary)]">{progress.label}</span>
             </div>
           </motion.div>
         )}

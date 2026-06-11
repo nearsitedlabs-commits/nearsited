@@ -1,83 +1,31 @@
 "use client";
 
-import { Compass } from "lucide-react";
-import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { useReducedMotion } from "@/lib/motion";
-
 type EmptyStateProps = {
   type: "no-search" | "no-results";
 };
 
 export function EmptyState({ type }: EmptyStateProps) {
-  const shouldReduce = useReducedMotion();
-
-  if (shouldReduce) {
-    if (type === "no-search") {
-      return (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] py-20 shadow-[var(--brand-shadow-sm)]">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
-            <Compass className="h-6 w-6 text-[var(--accent)]" />
-          </div>
-          <h3 className="text-xl font-normal text-[var(--text-primary)] mb-1.5">Hidden revenue is waiting.</h3>
-          <p className="text-xs text-[var(--text-tertiary)] max-w-xs text-center leading-relaxed">
-            Every city has businesses with outdated websites, poor mobile performance, and no online presence. Pick a city and business type above to uncover redesign opportunities ready for outreach.
-          </p>
-        </div>
-      );
-    }
-
+  if (type === "no-search") {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] py-20 shadow-[var(--brand-shadow-sm)]">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--bg-elevated)]">
-          <Compass className="h-6 w-6 text-[var(--text-tertiary)]" />
-        </div>
-        <h3 className="text-xl font-normal text-[var(--text-primary)] mb-1.5">No opportunities in this area.</h3>
-        <p className="text-xs text-[var(--text-tertiary)] max-w-xs text-center leading-relaxed">
-          Try a different city, expand your radius, or choose another business type. Undiscovered revenue is out there.
+      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-16 text-center">
+        <p className="text-sm font-medium text-[var(--color-text-primary)]">
+          Hidden revenue is waiting.
+        </p>
+        <p className="mx-auto mt-1 max-w-xs text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+          Pick a city and business type above to find businesses worth reaching out to.
         </p>
       </div>
     );
   }
 
-  if (type === "no-search") {
-    return (
-      <StaggerContainer>
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] py-20 shadow-[var(--brand-shadow-sm)]">
-          <FadeUp>
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
-              <Compass className="h-6 w-6 text-[var(--accent)]" />
-            </div>
-          </FadeUp>
-          <FadeUp>
-            <h3 className="text-xl font-normal text-[var(--text-primary)] mb-1.5">Hidden revenue is waiting.</h3>
-          </FadeUp>
-          <FadeUp>
-            <p className="text-xs text-[var(--text-tertiary)] max-w-xs text-center leading-relaxed">
-              Every city has businesses with outdated websites, poor mobile performance, and no online presence. Pick a city and business type above to uncover redesign opportunities ready for outreach.
-            </p>
-          </FadeUp>
-        </div>
-      </StaggerContainer>
-    );
-  }
-
   return (
-    <StaggerContainer>
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] py-20 shadow-[var(--brand-shadow-sm)]">
-        <FadeUp>
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--bg-elevated)]">
-            <Compass className="h-6 w-6 text-[var(--text-tertiary)]" />
-          </div>
-        </FadeUp>
-        <FadeUp>
-          <h3 className="text-xl font-normal text-[var(--text-primary)] mb-1.5">No opportunities in this area.</h3>
-        </FadeUp>
-        <FadeUp>
-          <p className="text-xs text-[var(--text-tertiary)] max-w-xs text-center leading-relaxed">
-            Try a different city, expand your radius, or choose another business type. Undiscovered revenue is out there.
-          </p>
-        </FadeUp>
-      </div>
-    </StaggerContainer>
+    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-16 text-center">
+      <p className="text-sm font-medium text-[var(--color-text-primary)]">
+        No businesses found in this area.
+      </p>
+      <p className="mx-auto mt-1 max-w-xs text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+        Try a different city, expand your radius, or choose another business type.
+      </p>
+    </div>
   );
 }

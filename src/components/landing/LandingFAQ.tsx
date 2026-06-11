@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "How accurate is the opportunity score?",
-    a: "The opportunity score combines website weakness and business viability into a single 0–100 number. Higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Agencies report that leads with an opportunity score above 70 convert at 3× the rate of those below 30. Use it to prioritise, not to disqualify.",
+    a: "The opportunity score combines website weakness and business viability into a single 0–100 number. Higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Scores above 70 are where you should start — the gap is real and the business is likely viable. Use it to prioritise, not to disqualify.",
   },
   {
     q: "Do I need technical skills to use it?",
@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: "How is this different from cold email tools?",
-    a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling. You're showing them a problem they already have. That's why reply rates are 3–5× higher.",
+    a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling. You're showing them a problem they can verify themselves. That's a fundamentally different conversation.",
   },
   {
     q: "How current is the business data? Are these businesses still active?",
@@ -47,7 +47,7 @@ export function LandingFAQ() {
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   return (
-    <section id="faq" className="border-t border-[var(--border)] py-14 md:py-24">
+    <section id="faq" className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center">
@@ -62,24 +62,24 @@ export function LandingFAQ() {
             {faqs.map((faq, i) => (
               <div
                 key={faq.q}
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden"
+                className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
               >
                 <button
                   onClick={() => toggle(i)}
                   aria-expanded={openIndex === i}
                   className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                 >
-                  <span className="text-sm font-medium text-[var(--text-primary)]">{faq.q}</span>
+                  <span className="text-sm font-medium text-[var(--color-text-primary)]">{faq.q}</span>
                   <ChevronDown
-                    className={`h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-transform duration-200 ${
+                    className={`h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200 ${
                       openIndex === i ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {prefersReducedMotion ? (
                   openIndex === i && (
-                    <div className="border-t border-[var(--border)] px-6 pb-6 pt-4">
-                      <p className="text-sm leading-7 text-[var(--text-secondary)]">{faq.a}</p>
+                    <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4">
+                      <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
                     </div>
                   )
                 ) : (
@@ -93,8 +93,8 @@ export function LandingFAQ() {
                         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="border-t border-[var(--border)] px-6 pb-6 pt-4">
-                          <p className="text-sm leading-7 text-[var(--text-secondary)]">{faq.a}</p>
+                        <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4">
+                          <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
                         </div>
                       </motion.div>
                     )}

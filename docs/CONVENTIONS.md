@@ -104,7 +104,49 @@ Some code used `category` (dropped orphan column) instead of `business_type`. In
 
 ---
 
-## 3. Naming Conventions
+## 3. Design Conventions
+
+Rules that govern every UI component, page, and layout decision. Violations trigger regressions across the design system.
+
+### Token usage
+All colors, spacing, and radius values come exclusively from `src/app/globals.css` CSS variables. Never hardcode hex colors or use Tailwind color classes (e.g. `text-green-600`) for semantic states — use `var(--color-success)`, `var(--color-danger)`, etc.
+
+**Radius rule:** only `--radius-sm` (6px) and `--radius-md` (10px) are permitted. Never use `rounded-xl`, `rounded-2xl`, `rounded-3xl`, or any Tailwind radius outside this set.
+
+### Rules A–J (non-negotiable)
+
+**A. At most ONE `<Section variant="card">` per page.** Use `"flush"` (default for lists) or `"bordered"` (secondary groups) for everything else.
+
+**B. No decorative icons.** Icons appear only when they perform a function: button affordance, status indicator, or navigation. When in doubt, remove.
+
+**C. Color is semantic. Gray for zero/neutral.** Color only when it carries meaning. "Won = 0" is gray, not green. "Lost = 0" is gray, not red. Never use `--color-success` or `--color-danger` on zero-value metrics.
+
+**D. List row height: 42–48px max.** Row data = name + 1 line of metadata + actions. Strip any metadata duplicated from the page header or search query.
+
+**E. Headers stand alone.** Don't wrap section headers in cards. Use `<Section variant="flush">`.
+
+**F. State vs action visual distinction.** "In pipeline" with checkmark = state (achieved). "→ Pipeline" = action (do this). State uses `<Pill>`. Action uses `<SecondaryButton>` or `<GhostButton>`.
+
+**G. One primary action per page section.** Secondary/tertiary actions go in `<ActionMenu>`.
+
+**H. No "Back to [parent]" links on primary nav pages** (Dashboard, Opportunities, Discovery, Pipeline, Pitches, Settings).
+
+**I. No uppercase eyebrow text that repeats the sidebar nav label.** Don't write "OPPORTUNITIES" as a section header on the Opportunities page.
+
+**J. Score circles never show "~95".** Use `<ScoreCircle variant="estimated">` (dotted ring) for projections — never tilde-prefix the number.
+
+### Four-state website classification
+Website status is always one of: `has_website` · `no_website` · `social_only` · `platform_only` · `unknown`. Classification via `classifyWebsite()` in `src/lib/types.ts`. These map to distinct pitch angles — never collapse them. Display via `<WebsiteStatusPill>`.
+
+### Empty / loading / error copy
+- Loading: plain declarative ("Finding contact info…", "Generating pitch…"). No progress jokes.
+- Empty: state the condition, suggest the action ("No pitches yet — generate one from any opportunity.").
+- Error: plain sentence, no stack traces in UI, no apology ("Failed to load audit results. Retry →").
+- Never use "Oops", "Uh oh", "Hmm", or exclamation marks in error or empty states.
+
+---
+
+## 4. Naming Conventions
 
 ### Database
 - Tables: `snake_case`, plural (`businesses`, `design_analyses`, `ux_analyses`, `places_cache`).
@@ -200,6 +242,16 @@ Append a row whenever a non-obvious decision is made.
 | 43 | **AI Audit results persist in sessionStorage keyed `'ai_audit_last_result'`** | Navigating away and back loses results. sessionStorage survives tab navigation. Cleared on new run, restored on mount. `timeAgo()` helper shows staleness. Timestamp captured in local variable (not state) to avoid async state-read inside the run handler. | May 2026 |
 | 44 | **Audit "complete" step mapped to `"audit_complete"`, design "complete" to `"design_complete"`** | Both `/api/audit` and `/api/analyze-design` stream `{step:"complete"}` at the end of their respective phases. Without remapping, both would write to the same key and the checklist couldn't distinguish them. | May 2026 |
 | 45 | **"Run Audit" / "Run Design Analysis" buttons on Lead Detail Overview when analysis is missing** | Users shouldn't need to return to the Leads list to trigger a missing analysis. Buttons appear conditionally: "Run Audit" if `!biz.audited_at`, "Run Design Analysis" if `!biz.design_analyzed_at` (and website exists). | May 2026 |
+| 46 | **Per-channel pitch body state: `Record<channel, string \| null>` not `useState`** | Switching channels was leaking one channel's edited draft into the other. A `Record<OutreachChannel, string \| null>` keyed state with `editedBody = editedBodies[outreachChannel] ?? null` derives the correct value without `useEffect`. Avoids the setState-in-useEffect linter error entirely. | June 2026 |
+| 47 | **`onCloseRef` pattern for dialog keyboard listeners** | `useEffect` keyboard trap needs `onClose` but a direct closure goes stale. Solution: `const onCloseRef = useRef(onClose)` + `useEffect(() => { onCloseRef.current = onClose; })` (no deps — runs after every render). The trap calls `onCloseRef.current()`. Avoids stale closure without triggering "cannot access refs during render" linter error. | June 2026 |
+| 48 | **`useId()` for SVG filter IDs in `ScoreRing`** | Multiple `<ScoreRing>` instances shared `id="glow-opp"` etc. — SVG filter ID collisions caused rendering artefacts. `const uid = useId().replace(/:/g, "-"); const filterId = \`glow-\${uid}\`` gives each instance a unique DOM ID. React 18 built-in, no library needed. | June 2026 |
+| 49 | **Toast position `bottom-20 right-4 sm:bottom-6 sm:right-6`** | Dashboard has a `lg:hidden` fixed mobile bottom nav (~56px). `bottom-6` (24px) was obscured by it. `bottom-20` (80px) clears the nav on small screens; reverts to `bottom-6` at `sm+` breakpoint. | June 2026 |
+| 50 | **WCAG AA: `--text-tertiary` raised from `#7a7268` to `#8a8278`** | Original `#7a7268` on `#0a0e12` was ~3.8:1 contrast (fails WCAG AA 4.5:1 for normal text). Raised to `#8a8278` → ~4.6:1. Affects labels, metadata, placeholders across every page. | June 2026 |
+| 51 | **`PitchToneConfig` bridge: composite config object + `useCallback` dispatcher** | `usePitchGeneration` returns individual state setters (`setPitchTone`, `setPitchLength`, etc.); `PitchCard` takes a single `PitchToneConfig` object + `setPitchConfig(config)`. Bridge: compute config inline from individual state values; `useCallback` setter dispatches to all five setters. Destructure individual setters before the callback to satisfy eslint dependency array without referencing the hook object. | June 2026 |
+| 52 | **`buildPreCallBriefSections()` replaces `buildClientCallSummary()`** | Em-dash text-wall summaries were unreadable in practice. Structured HOOK/PAIN/SCOPE/OBJECTION blocks from real data (perf scores, rating/review count, top issue titles) give the agency rep a scannable, rehearsable call guide. Hook leads with social proof (rating+reviews) when available; falls back to score-based copy. | June 2026 |
+| 53 | **`AIQuotaBanner` type-differentiates Gemini API 429 from user credit errors** | `QuotaErrorBanner` showed the same message for both. Gemini 429 = API rate limit (wait + retry), user credit exhaustion = different CTA (upgrade). `isGeminiQuota: true` switches to countdown + auto-retry + Flash-Lite fallback. `retryCount` prop tracks attempts to suppress auto-retry on 2nd failure. | June 2026 |
+| 54 | **`LeadHeaderStrip` unifies header across all three lead workflows** | Website / Social-only / No-digital-presence each had their own header implementation with drift between them. A single shared component with `badge?` + `extraActions?` slots covers all three cases. Eliminates the "Opportunity Details" uppercase eyebrow (Rule I) and the standalone star-block; rating merged into one-line meta string. | June 2026 |
+| 55 | **Pitches page filter counts always shown (even when zero)** | Previously hidden with `{count > 0 && <span>({count})</span>}`. Users couldn't distinguish "this filter has 0 matches" from "this filter has no count concept". Counts now always render at 10px/70% opacity; zero is informative, not noisy. | June 2026 |
 
 ---
 

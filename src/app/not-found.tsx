@@ -18,7 +18,7 @@ export default function NotFound() {
       {/* ── Logo ── */}
       <Link
         href="/"
-        className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]"
+        className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]"
         style={{ fontFamily: "var(--font-sans)" }}
       >
         <Image
@@ -29,22 +29,22 @@ export default function NotFound() {
           className="block shrink-0"
           priority
         />
-        <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--text-primary)]">
+        <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--color-text-primary)]">
           NearSited
         </span>
       </Link>
 
       {/* ── Content ── */}
       <div className="mt-12 text-center">
-        <p className="text-[6rem] font-medium leading-none text-[var(--text-tertiary)] md:text-[8rem]">
+        <p className="text-[6rem] font-medium leading-none text-[var(--color-text-tertiary)] md:text-[8rem]">
           404
         </p>
 
-        <h1 className="mt-6 text-2xl font-normal text-[var(--text-primary)]">
+        <h1 className="mt-6 text-2xl font-normal text-[var(--color-text-primary)]">
           Page not found
         </h1>
 
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-[var(--text-secondary)]">
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-[var(--color-text-secondary)]">
           The page you&rsquo;re looking for doesn&rsquo;t exist or has been
           moved. Let&rsquo;s get you back on track.
         </p>
@@ -54,22 +54,22 @@ export default function NotFound() {
       <div className="mt-10 flex items-center gap-3">
         <Link
           href="/"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--brand-shadow-xs)] transition-colors duration-150 ease-out hover:bg-[var(--accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
+          className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--brand-shadow-xs)] transition-colors duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
         >
           Go home
         </Link>
 
         <Link
           href="/login"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-transparent bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-150 ease-out hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
+          className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-transparent bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 ease-out hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
         >
           Sign in
         </Link>
       </div>
 
       {/* ── Footer text ── */}
-      <p className="mt-16 text-xs text-[var(--text-tertiary)]">
-        <Link href="/" className="transition hover:text-[var(--text-primary)]">
+      <p className="mt-16 text-xs text-[var(--color-text-tertiary)]">
+        <Link href="/" className="transition hover:text-[var(--color-text-primary)]">
           NearSited
         </Link>{" "}
         &mdash; Find businesses that need websites.

@@ -215,7 +215,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const callBrief = buildSocialCallBrief(biz.name, biz.business_type, biz.city, socialPlatforms);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
 
         {/* ── HEADER STRIP ──────────────────────────────────────────────── */}
@@ -241,12 +241,12 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
                   <Hash className="h-3 w-3" /> {platform}
                 </span>
               ))}
-              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-amber-text)]">
+              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
                 Social Presence Detected
               </span>
               {biz.website && safeHref(biz.website) && (
                 <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
                   View Profile
                 </a>
               )}
@@ -306,15 +306,15 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
             />
 
             {/* Export */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Export</h2>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Export</h2>
               <div className="flex flex-wrap gap-2">
                 <a href={`/api/export/pdf?businessId=${biz.id}`}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
                   <FileDown className="h-3.5 w-3.5" /> PDF Report
                 </a>
                 <button onClick={handleShare}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]">
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
                   <Share2 className="h-3.5 w-3.5" /> Share Link
                 </button>
               </div>

@@ -20,6 +20,76 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 
 ---
 
+## Design System Rules — Do Not Violate
+
+> **Before generating UI in any session, read this section. Any new component or page must conform to these rules. Treatment variance, semantic color, and dense data rows are non-negotiable.**
+
+### Design Tokens (single source of truth: [`src/app/globals.css`](src/app/globals.css))
+
+| Token | Value | Use |
+|---|---|---|
+| `--color-bg-page` | `#0a0e12` | Page background |
+| `--color-bg-surface` | `#12171e` | Cards, primary surfaces |
+| `--color-bg-elevated` | `#1a2028` | Dropdowns, modals |
+| `--color-border-subtle` | `rgba(255,255,255,0.06)` | Default borders |
+| `--color-border-strong` | `rgba(255,255,255,0.10)` | Emphasis borders only |
+| `--color-text-primary` | `#f0ede8` | Headings, important labels |
+| `--color-text-secondary` | `#b8b0a8` | Body, supporting text |
+| `--color-text-tertiary` | `#8a8278` | Metadata, timestamps |
+| `--color-accent` | sage `#8A9777` | Primary actions + active states ONLY |
+| `--color-info` | blue `#60a5fa` | In-progress / informational |
+| `--color-warning` | amber `#c4984a` | Needs attention / stale |
+| `--color-danger` | red `#c4665a` | Destructive actions + lost/failed ONLY |
+| `--color-success` | deep green `#4a8f5a` | Completed / won terminal states |
+| `--radius-sm` | `6px` | Pills, badges, small buttons |
+| `--radius-md` | `10px` | Cards, modals, larger surfaces |
+
+**Spacing scale:** 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 px. No arbitrary values.
+
+**Border radius:** ONLY `--radius-sm` (6px) and `--radius-md` (10px) allowed. Never use `rounded-xl`, `rounded-2xl`, `rounded-3xl`, or `--radius-lg/xl` anywhere.
+
+### Component Inventory ([`src/components/ui/`](src/components/ui/))
+
+| Component | File | Purpose |
+|---|---|---|
+| `<Section>` | [`Section.tsx`](src/components/ui/Section.tsx) | Page section wrapper. `variant="card"` (at most 1/page), `"flush"` (default for lists), `"bordered"` (secondary groups) |
+| `<ListRow>` | [`ListRow.tsx`](src/components/ui/ListRow.tsx) | Compact data row. 42–48px height. leading / title / subtitle / trailing / actions slots |
+| `<StatTile>` | [`StatTile.tsx`](src/components/ui/StatTile.tsx) | Metric tile with optional 2px accent left-border (`accent="warning"/"info"/"success"`) |
+| `<Pill>` | [`Pill.tsx`](src/components/ui/Pill.tsx) | Status indicator. `display="status"` (sentence-case) or `"column"` (uppercase microcopy). Never decorative. |
+| `<ScoreCircle>` | [`ScoreCircle.tsx`](src/components/ui/ScoreCircle.tsx) | Score ring. Sizes 24/32/48px. `variant="computed"` (solid ring) or `"estimated"` (dotted ring). No tilde prefix. |
+| `<PrimaryButton>` | [`Button.tsx`](src/components/ui/Button.tsx) | Accent bg, white text. At most ONCE per page section. |
+| `<SecondaryButton>` | [`Button.tsx`](src/components/ui/Button.tsx) | Bordered, transparent. For non-primary actions. |
+| `<GhostButton>` | [`Button.tsx`](src/components/ui/Button.tsx) | Text-only. For Cancel / dismiss / low-emphasis. |
+| `<ActionMenu>` | [`ActionMenu.tsx`](src/components/ui/ActionMenu.tsx) | Radix DropdownMenu overflow ⋯ menu. Replaces vertical button stacks with 3+ actions. |
+| `<Button>` | [`Button.tsx`](src/components/ui/Button.tsx) | Base button — prefer named aliases above for new code. |
+| `<Card>` | [`Card.tsx`](src/components/ui/Card.tsx) | Legacy card — prefer `<Section>` for new code. |
+| `<Badge>` | [`Badge.tsx`](src/components/ui/Badge.tsx) | Legacy badge — prefer `<Pill>` for new code. |
+| `<ScoreRing>` | [`ScoreRing.tsx`](src/components/ui/ScoreRing.tsx) | Legacy score ring — prefer `<ScoreCircle>` for new code. |
+
+### Global Design Rules (A–J)
+
+**A. At most ONE `<Section variant="card">` per page.** Use `"flush"` or `"bordered"` for everything else.
+
+**B. No decorative icons.** Icons appear only when they perform a function: button affordance, status indicator, or navigation. When in doubt, remove.
+
+**C. Color is semantic. Gray for zero/neutral.** Color only when it carries meaning. "Won = 0" is gray, not green. "Lost = 0" is gray, not red. Never use `--color-success` or `--color-danger` on zero-value metrics.
+
+**D. List row height: 42–48px max.** Row data = name + 1 line of metadata + actions. Strip any metadata duplicated from the page header or search query.
+
+**E. Headers stand alone.** Don't wrap section headers in cards. Use `<Section variant="flush">`.
+
+**F. State vs action visual distinction.** "In pipeline" with checkmark = state (achieved). "→ Pipeline" = action (do this). Both can coexist; their treatment must differ. State uses `<Pill>`. Action uses `<SecondaryButton>` or `<GhostButton>`.
+
+**G. One primary action per page section.** Secondary/tertiary actions go in `<ActionMenu>`.
+
+**H. No "Back to [parent]" links on primary nav pages** (Dashboard, Opportunities, Discovery, Pipeline, Pitches, Settings).
+
+**I. No uppercase eyebrow text that repeats the sidebar nav label.** Don't write "OPPORTUNITIES" as a section header on the Opportunities page.
+
+**J. Score circles never show "~95".** Use `<ScoreCircle variant="estimated">` (dotted ring) for projections — never tilde-prefix the number.
+
+---
+
 ## THE SEVEN RULES (non-negotiable)
 
 1. **Schema first.** Never write code touching a table until it exists in the DB *and* SCHEMA.md. Order: edit SCHEMA.md → run SQL → write code.
@@ -422,11 +492,47 @@ Defined once in [`src/lib/metric-meta.ts`](src/lib/metric-meta.ts), imported by 
 ```
 Google Core Web Vitals thresholds: FCP <1.8s/<3s, LCP <2.5s/<4s, TBT <200ms/<600ms, CLS <0.1/<0.25.
 
-### Toast system (lead-detail-client.tsx)
+### Toast system
+`<Toast>` in [`src/components/ui/Toast.tsx`](src/components/ui/Toast.tsx). Position: `fixed bottom-20 right-4 sm:bottom-6 sm:right-6` — clears the `lg:hidden` mobile bottom nav bar on small screens.
 ```ts
 const [toast, setToast] = useState<string | null>(null);
 const showToast = useCallback((msg: string) => { setToast(msg); setTimeout(() => setToast(null), 3000); }, []);
-// Render: fixed bottom-6 right-6 z-50, border-green-200 bg-white, CheckCircle2 icon, 3s auto-dismiss
+// Render: use the shared <Toast message={toast} onClose={() => setToast(null)} /> component
+```
+
+### Focus trap (modals & dialogs)
+Every `role="dialog"` needs a keyboard focus trap. Standard pattern:
+```ts
+const containerRef = useRef<HTMLDivElement>(null);
+const onCloseRef = useRef(onClose);
+useEffect(() => { onCloseRef.current = onClose; }); // no deps — always current
+useEffect(() => {
+  const trigger = document.activeElement as HTMLElement | null;
+  const container = containerRef.current;
+  if (!container) return;
+  const focusable = container.querySelectorAll<HTMLElement>(
+    'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  );
+  focusable[0]?.focus();
+  const trap = (e: KeyboardEvent) => {
+    if (e.key === "Escape") { onCloseRef.current(); return; }
+    if (e.key !== "Tab") return;
+    const first = focusable[0]; const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+  };
+  document.addEventListener("keydown", trap);
+  return () => { document.removeEventListener("keydown", trap); trigger?.focus(); };
+}, []);
+// Dialog element: ref={containerRef} role="dialog" aria-modal="true" aria-labelledby="<title-id>"
+```
+
+### Per-channel state (PitchCard)
+When a UI shows different content per-channel/tab, avoid `useEffect` reset of shared state. Use a `Record<Channel, T>` and derive the value:
+```ts
+const [editedBodies, setEditedBodies] = useState<Record<string, string | null>>({});
+const editedBody = editedBodies[activeChannel] ?? null; // no effect needed
+// On change: setEditedBodies(prev => ({ ...prev, [activeChannel]: newVal }))
 ```
 
 ### Pipeline status dropdown (lead-detail-client.tsx)
@@ -548,6 +654,10 @@ These patterns ensure future AI iterations can work with the codebase without br
 18. Creating duplicate CountUp/accordion/toast hooks — import from `src/lib/shared-hooks.ts` instead.
 19. Writing inline NDJSON stream readers — use `readNdjsonStream()` from `src/lib/ndjson.ts`.
 20. Using `as Record<string, unknown>` — define and import proper types from `src/lib/db-types.ts`.
+21. Hardcoded SVG filter `id="glow-opp"` in `<ScoreRing>` — multiple instances collide. Use `const uid = useId().replace(/:/g, "-"); const filterId = \`glow-\${uid}\`` for unique IDs per instance.
+22. `useEffect(() => { setState(null) }, [channel])` for resetting per-tab state — triggers "cascading renders" lint error. Use `Record<channel, T>` state and derive the value instead (see Per-channel state pattern above).
+23. Mutation of a ref during render phase (`onCloseRef.current = value` at top of component) — React errors. Wrap in `useEffect(() => { ref.current = value; })` with no deps.
+24. Placing `<Toast>` at `bottom-6 right-6` in dashboard pages — overlaps the mobile bottom nav. Use the shared `<Toast>` component which already uses `bottom-20 right-4 sm:bottom-6 sm:right-6`.
 
 ---
 *Update this file the moment a schema, enum, model name, runtime, or convention changes.*

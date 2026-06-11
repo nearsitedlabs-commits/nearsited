@@ -19,8 +19,8 @@ export default function BrandStoryPanel() {
     <div className="space-y-8">
       <FadeUp>
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent-tint)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
             Find website opportunities
           </span>
         </div>
@@ -28,11 +28,11 @@ export default function BrandStoryPanel() {
 
       <FadeUp>
         <div className="space-y-4">
-          <h1 className="text-[clamp(2.5rem,4vw,3.8rem)] font-medium leading-[0.92] tracking-[-0.04em] text-[var(--text-primary)]">
+          <h1 className="text-[clamp(2.5rem,4vw,3.8rem)] font-medium leading-[0.92] tracking-[-0.04em] text-[var(--color-text-primary)]">
             Find what others{" "}
-            <em className="italic text-[var(--accent)] not-italic">overlook.</em>
+            <em className="italic text-[var(--color-accent)] not-italic">overlook.</em>
           </h1>
-          <p className="max-w-md text-base leading-7 text-[var(--text-secondary)]">
+          <p className="max-w-md text-base leading-7 text-[var(--color-text-secondary)]">
             Nearsited finds businesses that need a stronger online presence:
             weak websites, social-only, or no website at all. Discover
             opportunities, understand what&rsquo;s missing, and generate
@@ -44,9 +44,9 @@ export default function BrandStoryPanel() {
       <FadeUp>
         <ul className="space-y-3">
           {FEATURES.map((f) => (
-            <li key={f.text} className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)]">
-                <Check className="h-3 w-3 text-[var(--accent)]" />
+            <li key={f.text} className="flex items-center gap-3 text-sm text-[var(--color-text-secondary)]">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)]/10">
+                <Check className="h-3 w-3 text-[var(--color-accent)]" />
               </span>
               {f.text}
             </li>

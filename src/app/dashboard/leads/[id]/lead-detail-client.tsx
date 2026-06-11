@@ -3,13 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import Link from "next/link";
-import { ArrowLeft, ExternalLink, Loader2, MapPin, Pencil, TrendingUp } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
 import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
-import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
-import PipelineSelect from "@/components/ui/PipelineSelect";
 import { Toast } from "@/components/ui/Toast";
 import { useToast } from "@/lib/shared-hooks";
 
@@ -20,14 +17,13 @@ import { usePitchGeneration } from "./hooks/usePitchGeneration";
 import { useLeadAnalysis } from "./hooks/useLeadAnalysis";
 
 // Sub-components
-// import { SubScore } from "./components/SubScore";
 import { ScoreRingWithLabel } from "./components/ScoreRingWithLabel";
-import { buildClientCallSummary } from "./components/OpportunityBullets";
-import { LeadHeroSection } from "./components/LeadHeroSection";
-import { LeadOutreachSection } from "./components/LeadOutreachSection";
+import { buildPreCallBriefSections } from "./components/OpportunityBullets";
+import { LeadHeaderStrip } from "./components/LeadHeaderStrip";
+import { PitchCard, type PitchToneConfig } from "./components/PitchCard";
+import { PreCallBrief } from "./components/PreCallBrief";
 import { LeadExportSection } from "./components/LeadExportSection";
-import { QuotaErrorBanner } from "./components/QuotaErrorBanner";
-// import { AIQuotaBanner } from "./components/AIQuotaBanner";
+import { AIQuotaBanner } from "./components/AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
 import { StatsRow } from "./components/StatsRow";
 import { BusinessEditPanel } from "./components/BusinessEditPanel";
@@ -36,7 +32,6 @@ import { DesignErrorBanner } from "./components/DesignErrorBanner";
 import { IssuesCard } from "./components/IssuesCard";
 import { AuditDetailsCard } from "./components/AuditDetailsCard";
 import { HistoryCard } from "./components/HistoryCard";
-import { ClientCallSummaryCard } from "./components/ClientCallSummaryCard";
 
 // ── Animation constants ───────────────────────────────────────────────────────
 
@@ -98,6 +93,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [showEditPanel, setShowEditPanel] = useState(false);
   const [editOverrides, setEditOverrides] = useState<{ name?: string; city?: string | null; business_type?: string | null; opportunity_score?: number | null; rating?: number | null; review_count?: number | null }>({});
+  const [quotaRetryCount, setQuotaRetryCount] = useState(0);
 
   const biz = { ...(business as {
     id: string; name: string; business_type: string; address: string; city: string;
@@ -109,7 +105,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   // ── Hooks ──────────────────────────────────────────────────────────────────
 
-  const { contactInfo, manualEmail, setManualEmail } = useContactInfo(biz.id);
+  const { contactInfo, manualEmail: _manualEmail, setManualEmail: _setManualEmail } = useContactInfo(biz.id);
   const quota = useQuotaTimer();
 
   const pitch = usePitchGeneration({
@@ -183,12 +179,30 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const hasAuditRows = !!(mobileAudit || desktopAudit);
   const summaryOverall   = hasAuditRows ? overall   : (biz.opportunity_score ?? overall);
   const summaryProjScore = hasAuditRows ? projScore : (biz.opportunity_score ?? projScore);
-  const clientCallSummary         = buildClientCallSummary(
+  const preCallBriefSections = buildPreCallBriefSections(
     urlToDisplayName(biz.name), biz.business_type ?? "business", biz.city,
-    summaryOverall, summaryProjScore, opportunityDelta,
+    summaryOverall, summaryProjScore,
     allIssues as { title: string; detail: string; impact: string }[],
     mobilePerfScore, desktopPerfScore, biz.rating, biz.review_count,
   );
+
+  // Bridge individual pitch state → PitchCard's combined config object
+  const pitchConfig: PitchToneConfig = {
+    tone: pitch.pitchTone as PitchToneConfig["tone"],
+    length: pitch.pitchLength as PitchToneConfig["length"],
+    opening: pitch.pitchOpening as PitchToneConfig["opening"],
+    urgency: pitch.pitchUrgency as PitchToneConfig["urgency"],
+    focus: pitch.pitchFocus,
+  };
+  const { setPitchTone, setPitchLength, setPitchOpening, setPitchUrgency, setPitchFocus } = pitch;
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const setPitchConfig = useCallback((config: PitchToneConfig) => {
+    setPitchTone(config.tone);
+    setPitchLength(config.length);
+    setPitchOpening(config.opening);
+    setPitchUrgency(config.urgency);
+    setPitchFocus(config.focus);
+  }, [setPitchTone, setPitchLength, setPitchOpening, setPitchUrgency, setPitchFocus]);
 
   // ── Auto-start analysis when directed from discover with ?analyze=1 ─────────
 
@@ -251,65 +265,49 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
   if (!hasAudit && !hasDesign) {
     return (
-      <div className="min-h-screen bg-[var(--bg-base)]">
+      <div className="min-h-screen bg-[var(--color-bg-page)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
-          <Link href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"} className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]">
-            <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
-          </Link>
-          <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Opportunity Details</p>
-          <div className="mt-1 flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0 flex-1 flex items-start gap-2">
-              <h1 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold text-[var(--text-primary)] leading-tight break-words max-w-[75vw] sm:max-w-none">{urlToDisplayName(biz.name)}</h1>
-              {!biz.place_id && (
-                <button
-                  type="button"
-                  onClick={() => setShowEditPanel((v) => !v)}
-                  title="Edit business details"
-                  className="mt-1.5 shrink-0 rounded-md p-1 text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)] transition-colors"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-            <div className="flex flex-wrap items-center gap-2 shrink-0">
-              {hasWebsite && (
-                <button
-                  onClick={analysis.handleFullAnalysis}
-                  disabled={analysis.runningFullAnalysis}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {analysis.runningFullAnalysis ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                  {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity"}
-                </button>
-              )}
-              {currentPipelineStatus ? (
-                <PipelineSelect value={currentPipelineStatus} onChange={handlePipelineChange} options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))} />
-              ) : (
-                <button onClick={() => handlePipelineChange("new_lead")} className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent-tint)] px-3 py-1.5 text-sm font-medium text-[var(--accent)] transition-colors duration-150 hover:bg-[var(--accent)] hover:text-white">
-                  <TrendingUp className="h-4 w-4" /> Add to Pipeline
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-[var(--text-secondary)]">
-              {[biz.business_type, biz.city, biz.address].filter(Boolean).join(" · ")}
-            </span>
-            <div className="flex items-center gap-2">
-              {biz.place_id && (
-                <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}&query=${encodeURIComponent(biz.name)}`} target="_blank" rel="noreferrer" className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--score-good)]/40 hover:text-[var(--score-good)]">
-                  <MapPin className="h-3.5 w-3.5" /> Map
-                </a>
-              )}
-              {biz.website && (
-                <a href={biz.website} target="_blank" rel="noreferrer" className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
-                  <ExternalLink className="h-3.5 w-3.5" /> Website
-                </a>
-              )}
-            </div>
-          </div>
+          <LeadHeaderStrip
+            businessId={biz.id}
+            businessName={urlToDisplayName(biz.name)}
+            businessType={biz.business_type}
+            city={biz.city}
+            address={biz.address}
+            placeId={biz.place_id}
+            phone={business.phone}
+            rating={biz.rating}
+            reviewCount={biz.review_count}
+            pipelineStatus={currentPipelineStatus}
+            onPipelineChange={handlePipelineChange}
+            onShare={handleShare}
+            backTo={backTo}
+            extraActions={
+              <>
+                {!biz.place_id && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPanel((v) => !v)}
+                    title="Edit business details"
+                    className="shrink-0 rounded-[var(--radius-sm)] p-1.5 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-secondary)] transition-colors"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                )}
+                {hasWebsite && (
+                  <button
+                    onClick={analysis.handleFullAnalysis}
+                    disabled={analysis.runningFullAnalysis}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity"}
+                  </button>
+                )}
+              </>
+            }
+          />
           {showEditPanel && !biz.place_id && (
-            <div className="mt-4">
+            <div className="mb-6">
               <BusinessEditPanel
                 bizId={biz.id}
                 initialName={biz.name}
@@ -325,14 +323,14 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             </div>
           )}
           <div className="mt-8 space-y-6">
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-10 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
-                <svg className="h-7 w-7 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-10 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent)]/10">
+                <svg className="h-7 w-7 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-medium text-[var(--text-primary)]">This lead hasn&rsquo;t been analysed yet</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-tertiary)]">
+              <h2 className="text-xl font-medium text-[var(--color-text-primary)]">This lead hasn&rsquo;t been analysed yet</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-text-tertiary)]">
                 Run an opportunity analysis to see scores, issues, and a generated pitch.
               </p>
               {analysis.runningFullAnalysis && (
@@ -340,7 +338,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   <button
                     type="button"
                     onClick={analysis.handleCancelAnalysis}
-                    className="cursor-pointer text-xs font-medium text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] underline transition-colors"
+                    className="cursor-pointer text-xs font-medium text-[var(--color-text-tertiary)] underline-offset-2 hover:text-[var(--color-text-secondary)] underline transition-colors"
                   >
                     Cancel analysis
                   </button>
@@ -356,29 +354,37 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               />
             )}
 
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Score</p>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
+              <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--color-text-tertiary)]">Opportunity Score</p>
               <ScoreRingWithLabel score={displayOpportunityScore} size={88} />
-              <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
+              <span className="inline-flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">
                 Estimated
               </span>
-              <p className="text-xs text-[var(--text-tertiary)]">Run an audit above to get a verified score</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">Run an audit above to get a verified score</p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--text-primary)]">Top Issues Impacting Score</h2>
-              <p className="text-sm text-[var(--text-tertiary)]">Run a design analysis to see issues.</p>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-4 text-base font-semibold text-[var(--color-text-primary)]">Top Issues Impacting Score</h2>
+              <p className="text-sm text-[var(--color-text-tertiary)]">Run a design analysis to see issues.</p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h2>
-              <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">AI Opportunity Summary</h2>
+              <p className="text-sm text-[var(--color-text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Ready-to-Send Outreach</h2>
-              <p className="text-sm text-[var(--text-tertiary)]">Analyse this lead to generate outreach copy.</p>
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Ready-to-Send Outreach</h2>
+              <p className="text-sm text-[var(--color-text-tertiary)]">Analyse this lead to generate outreach copy.</p>
             </div>
           </div>
         </div>
-        <QuotaErrorBanner quotaError={quota.quotaError} quotaRetryTimer={quota.quotaRetryTimer} clearQuotaTimer={quota.clearQuotaTimer} />
+        <AIQuotaBanner
+          quotaError={quota.quotaError}
+          isGeminiQuota
+          quotaRetryTimer={quota.quotaRetryTimer}
+          clearQuotaTimer={quota.clearQuotaTimer}
+          onRetry={() => { setQuotaRetryCount((c) => c + 1); void pitch.handleGeneratePitch(true); }}
+          onUseFallback={() => showToast("Lighter model unavailable — please retry in a moment")}
+          retryCount={quotaRetryCount}
+        />
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </div>
     );
@@ -389,20 +395,46 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const initialVariant = shouldReduce ? "visible" : "hidden";
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
         <LayoutWrapper reduce={shouldReduce}>
           <MaybeFadeUp reduce={shouldReduce}>
-            <LeadHeroSection
-              biz={biz}
-              currentPipelineStatus={currentPipelineStatus}
-              hasWebsite={hasWebsite}
-              runningFullAnalysis={analysis.runningFullAnalysis}
-              handlePipelineChange={handlePipelineChange}
-              handleFullAnalysis={analysis.handleFullAnalysis}
-              handleCancelAnalysis={analysis.handleCancelAnalysis}
-              onEditClick={!biz.place_id ? () => setShowEditPanel((v) => !v) : undefined}
+            <LeadHeaderStrip
+              businessId={biz.id}
+              businessName={urlToDisplayName(biz.name)}
+              businessType={biz.business_type}
+              city={biz.city}
+              address={biz.address}
+              placeId={biz.place_id}
+              phone={business.phone}
+              rating={biz.rating}
+              reviewCount={biz.review_count}
+              pipelineStatus={currentPipelineStatus}
+              onPipelineChange={handlePipelineChange}
+              onShare={handleShare}
               backTo={backTo}
+              extraActions={
+                <>
+                  {!biz.place_id && (
+                    <button
+                      type="button"
+                      onClick={() => setShowEditPanel((v) => !v)}
+                      title="Edit business details"
+                      className="shrink-0 rounded-[var(--radius-sm)] p-1.5 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-secondary)] transition-colors"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                  )}
+                  <button
+                    onClick={analysis.handleFullAnalysis}
+                    disabled={analysis.runningFullAnalysis}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    {analysis.runningFullAnalysis ? "Analysing…" : "Re-analyse"}
+                  </button>
+                </>
+              }
             />
             {showEditPanel && !biz.place_id && (
               <div className="mb-4">
@@ -457,22 +489,24 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
           </MaybeFadeUp>
 
           <MaybeFadeUp reduce={shouldReduce}>
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 
-              {/* ── LEFT COLUMN ── */}
-              <motion.div className="space-y-6 order-2 lg:order-1" variants={sectionContainer} initial={initialVariant} animate="visible">
+              {/* ── LEFT COLUMN — pitch + audit data ── */}
+              <motion.div className="space-y-6" variants={sectionContainer} initial={initialVariant} animate="visible">
                 <motion.div variants={sectionCard}>
-                  <OpportunityScoreExplanation
-                    websiteStatus={biz.website_status}
-                    overallScore={overall}
-                    opportunityScore={effectiveOpportunityScore}
-                    reviewCount={biz.review_count}
-                    rating={biz.rating}
-                    hasAudit={hasAudit}
-                    hasDesign={hasDesign}
-                    contactAvailable={!contactInfo.loading && (contactInfo.email !== null || contactInfo.phone !== null)}
-                    businessType={biz.business_type}
-                    issues={allIssues}
+                  <PitchCard
+                    businessId={biz.id}
+                    contactInfo={contactInfo}
+                    outreachChannel={pitch.outreachChannel}
+                    setOutreachChannel={pitch.setOutreachChannel}
+                    pitchConfig={pitchConfig}
+                    setPitchConfig={setPitchConfig}
+                    canGenerate={hasAudit || hasDesign}
+                    generatingPitch={pitch.generatingPitch}
+                    handleGeneratePitch={pitch.handleGeneratePitch}
+                    pitchError={pitch.pitchError}
+                    pitchResult={pitch.pitchResult}
+                    handleCopyPitch={pitch.handleCopyPitch}
                   />
                 </motion.div>
                 <motion.div variants={sectionCard}>
@@ -503,37 +537,32 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 </motion.div>
               </motion.div>
 
-              {/* ── RIGHT COLUMN ── */}
-              <motion.div className="space-y-6 order-1 lg:order-2" variants={sectionContainer} initial={initialVariant} animate="visible">
-                <LeadOutreachSection
-                  outreachChannel={pitch.outreachChannel}
-                  setOutreachChannel={pitch.setOutreachChannel}
-                  contactInfo={contactInfo}
-                  manualEmail={manualEmail}
-                  setManualEmail={setManualEmail}
-                  pitchTone={pitch.pitchTone}
-                  setPitchTone={pitch.setPitchTone}
-                  pitchLength={pitch.pitchLength}
-                  setPitchLength={pitch.setPitchLength}
-                  pitchFocus={pitch.pitchFocus}
-                  setPitchFocus={pitch.setPitchFocus}
-                  pitchOpening={pitch.pitchOpening}
-                  setPitchOpening={pitch.setPitchOpening}
-                  pitchUrgency={pitch.pitchUrgency}
-                  setPitchUrgency={pitch.setPitchUrgency}
-                  hasAudit={hasAudit}
-                  hasDesign={hasDesign}
-                  generatingPitch={pitch.generatingPitch}
-                  handleGeneratePitch={pitch.handleGeneratePitch}
-                  pitchError={pitch.pitchError}
-                  pitchResult={pitch.pitchResult}
-                  handleCopyPitch={pitch.handleCopyPitch}
-                />
-                <ClientCallSummaryCard
-                  summary={clientCallSummary}
-                  onCopy={() => navigator.clipboard.writeText(clientCallSummary).then(() => showToast("Client call summary copied to clipboard"))}
-                />
-                <LeadExportSection businessId={biz.id} handleShare={handleShare} />
+              {/* ── RIGHT COLUMN — brief + score context + export ── */}
+              <motion.div className="space-y-6" variants={sectionContainer} initial={initialVariant} animate="visible">
+                <motion.div variants={sectionCard}>
+                  <PreCallBrief
+                    businessName={urlToDisplayName(biz.name)}
+                    businessType={biz.business_type ?? "business"}
+                    sections={preCallBriefSections}
+                  />
+                </motion.div>
+                <motion.div variants={sectionCard}>
+                  <OpportunityScoreExplanation
+                    websiteStatus={biz.website_status}
+                    overallScore={overall}
+                    opportunityScore={effectiveOpportunityScore}
+                    reviewCount={biz.review_count}
+                    rating={biz.rating}
+                    hasAudit={hasAudit}
+                    hasDesign={hasDesign}
+                    contactAvailable={!contactInfo.loading && (contactInfo.email !== null || contactInfo.phone !== null)}
+                    businessType={biz.business_type}
+                    issues={allIssues}
+                  />
+                </motion.div>
+                <motion.div variants={sectionCard}>
+                  <LeadExportSection businessId={biz.id} handleShare={handleShare} />
+                </motion.div>
               </motion.div>
 
             </div>
@@ -541,10 +570,14 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
         </LayoutWrapper>
       </div>
 
-      <QuotaErrorBanner
+      <AIQuotaBanner
         quotaError={quota.quotaError}
+        isGeminiQuota
         quotaRetryTimer={quota.quotaRetryTimer}
         clearQuotaTimer={quota.clearQuotaTimer}
+        onRetry={() => { setQuotaRetryCount((c) => c + 1); void pitch.handleGeneratePitch(true); }}
+        onUseFallback={() => showToast("Lighter model unavailable — please retry in a moment")}
+        retryCount={quotaRetryCount}
       />
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>

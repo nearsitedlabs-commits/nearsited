@@ -7,7 +7,7 @@ import { readNdjsonStream } from "@/lib/ndjson";
 import { useToast } from "@/lib/shared-hooks";
 import { businessTypes } from "@/lib/data/businessTypes";
 import type { CityOption } from "@/lib/data/cities";
-import { ArrowLeft, ListFilter, Loader2 } from "lucide-react";
+import { ListFilter, Loader2 } from "lucide-react";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { AuditRow } from "@/lib/db-types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -16,7 +16,6 @@ import {
   estimatedOpportunity,
   computeOpportunityScore,
   blendQualityForOpportunity,
-  noWebsiteOpportunityScore, // eslint-disable-line @typescript-eslint/no-unused-vars
 } from "@/lib/scoring";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { motion, AnimatePresence } from "@/lib/motion";
@@ -87,8 +86,8 @@ async function fetchPersistedData(
 type TierKey = "high" | "medium" | "low";
 
 const TIER_CONFIG: Record<TierKey, { label: string; color: string; bg: string; border: string; minScore: number }> = {
-  high:   { label: "HIGH", color: "text-[var(--score-good)]", bg: "bg-[var(--score-good-tint)]", border: "border-[var(--score-good)]/30", minScore: 70 },
-  medium: { label: "MEDIUM", color: "text-[var(--score-mid)]",  bg: "bg-[var(--score-mid-tint)]",  border: "border-[var(--score-mid)]/30",  minScore: 45 },
+  high:   { label: "HIGH", color: "text-[var(--color-success)]", bg: "bg-[var(--color-success)]/10", border: "border-[var(--color-success)]/30", minScore: 70 },
+  medium: { label: "MEDIUM", color: "text-[var(--color-info)]",  bg: "bg-[var(--color-info)]/10",  border: "border-[var(--color-info)]/30",  minScore: 45 },
   low:    { label: "LOW",  color: "text-[var(--score-high)]", bg: "bg-[var(--score-high-tint)]", border: "border-[var(--score-high)]/30", minScore: 0 },
 };
 
@@ -387,16 +386,14 @@ export default function DiscoverPage() {
   const locationLabel = cities.find((c) => c.value === city)?.label ?? city;
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8" style={{ background: "var(--bg-base)" }}>
+    <div className="min-h-screen bg-[var(--color-bg-page)] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl space-y-5">
         <div>
-          <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--text-primary)] mb-4"><ArrowLeft className="h-3.5 w-3.5" />Back</Link>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">Opportunity Discovery</p>
-              <h1 className="mt-1 text-3xl font-normal tracking-tight text-[var(--text-primary)]">Find businesses worth reaching out to<em className="italic text-[var(--accent)]"></em></h1>
+              <h1 className="text-3xl font-normal tracking-tight text-[var(--color-text-primary)]">Find businesses worth reaching out to<em className="italic text-[var(--color-accent)]"></em></h1>
             </div>
-            <Link href="/dashboard/pipeline" className="self-start inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--text-primary)] sm:self-auto"><ListFilter className="h-4 w-4" />View Pipeline →</Link>
+            <Link href="/dashboard/pipeline" className="self-start inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-[var(--brand-shadow-sm)] transition-all duration-150 hover:shadow-[var(--brand-shadow-md)] hover:text-[var(--color-text-primary)] sm:self-auto"><ListFilter className="h-4 w-4" />View Pipeline →</Link>
           </div>
         </div>
 
@@ -423,7 +420,7 @@ export default function DiscoverPage() {
               onFilterChange={setFilter}
             />
 
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-sm)] overflow-hidden">
               {/* Tiered list */}
               {TIER_ORDER.map((tier) => {
                 const items = tiered[tier];
@@ -439,7 +436,7 @@ export default function DiscoverPage() {
                   <div key={tier}>
                     {/* Tier header */}
                     <div
-                      className={`flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 md:px-5 py-2 sm:py-1.5 border-b border-[var(--border)] ${cfg.bg}`}
+                      className={`flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 md:px-5 py-2 sm:py-1.5 border-b border-[var(--color-border-subtle)] ${cfg.bg}`}
                       style={{ minHeight: "36px" }}
                     >
                       <div className="flex items-center gap-2">
@@ -448,7 +445,7 @@ export default function DiscoverPage() {
                         >
                           {cfg.label} · {items.length} lead{items.length > 1 ? "s" : ""}
                         </span>
-                        <span className="text-[11px] text-[var(--text-tertiary)] hidden sm:inline">
+                        <span className="text-[11px] text-[var(--color-text-tertiary)] hidden sm:inline">
                           {getTierDescription(tier)}
                         </span>
                       </div>
@@ -460,7 +457,7 @@ export default function DiscoverPage() {
                             type="button"
                             onClick={() => bulkAuditAll(tier)}
                             disabled={bulkLoading}
-                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--accent)] transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-all duration-150 disabled:opacity-50 cursor-pointer"
                           >
                             {bulkLoading ? (
                               <Loader2 className="h-2.5 w-2.5 animate-spin" />
@@ -472,7 +469,7 @@ export default function DiscoverPage() {
                             type="button"
                             onClick={() => bulkAddToPipeline(tier)}
                             disabled={bulkLoading}
-                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)] transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150 disabled:opacity-50 cursor-pointer"
                           >
                             {bulkLoading ? (
                               <Loader2 className="h-2.5 w-2.5 animate-spin" />
@@ -508,7 +505,7 @@ export default function DiscoverPage() {
                       <button
                         type="button"
                         onClick={() => setTierExpanded((prev) => ({ ...prev, [tier]: !isExpanded }))}
-                        className="w-full flex items-center justify-center gap-1 px-4 py-1.5 text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors duration-150 border-b border-[var(--border)] cursor-pointer"
+                        className="w-full flex items-center justify-center gap-1 px-4 py-1.5 text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)] transition-colors duration-150 border-b border-[var(--color-border-subtle)] cursor-pointer"
                       >
                         {isExpanded ? (
                           <>Show fewer</>
@@ -523,7 +520,7 @@ export default function DiscoverPage() {
             </div>
 
             <div className="flex items-center justify-between px-1">
-              <p className="text-xs text-[var(--text-tertiary)]">No-website scores are estimated from reviews and ratings. Website leads show audit-based scores when available.</p>
+              <p className="text-xs text-[var(--color-text-tertiary)]">No-website scores are estimated from reviews and ratings. Website leads show audit-based scores when available.</p>
               <PoweredByGoogle />
             </div>
           </>

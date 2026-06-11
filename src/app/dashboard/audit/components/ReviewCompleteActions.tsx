@@ -216,13 +216,13 @@ export function ReviewCompleteActions({
   return (
     <div className="space-y-4">
       {/* ── Primary action card ───────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-[var(--accent)]/50 bg-[var(--bg-surface-1)] p-5">
+      <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/50 bg-[var(--color-bg-surface)] p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1">
-            <h3 className="text-base font-medium text-[var(--text-primary)]">
+            <h3 className="text-base font-medium text-[var(--color-text-primary)]">
               Generate pitch & save
             </h3>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               Saves to Opportunities. Pitch uses performance data only
               {designMissing
                 ? " until design analysis completes."
@@ -232,7 +232,7 @@ export function ReviewCompleteActions({
           <button
             onClick={handlePrimaryAction}
             disabled={primaryLoading || timedOut}
-            className="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            className="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {primaryLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -245,7 +245,7 @@ export function ReviewCompleteActions({
 
         {/* Primary action error */}
         {primaryError && (
-          <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <div className="mt-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
             {primaryError}
           </div>
         )}
@@ -253,16 +253,16 @@ export function ReviewCompleteActions({
         {/* Pitch result preview */}
         {showPitchResult && pitchResult && (
           <div className="mt-4 space-y-2">
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-5">
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-medium text-[var(--text-tertiary)]">
+                <span className="text-xs font-medium text-[var(--color-text-tertiary)]">
                   Pitch Preview
                 </span>
                 <div className="flex items-center gap-2">
                   {savedBusinessId && (
                     <Link
                       href={`/dashboard/leads/${savedBusinessId}`}
-                      className="text-xs font-medium text-[var(--accent)] hover:underline"
+                      className="text-xs font-medium text-[var(--color-accent)] hover:underline"
                     >
                       View full report →
                     </Link>
@@ -271,13 +271,13 @@ export function ReviewCompleteActions({
                     onClick={() => {
                       navigator.clipboard.writeText(pitchResult);
                     }}
-                    className="cursor-pointer text-xs font-medium text-[var(--accent)] hover:underline"
+                    className="cursor-pointer text-xs font-medium text-[var(--color-accent)] hover:underline"
                   >
                     Copy to clipboard
                   </button>
                 </div>
               </div>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text-secondary)]">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {pitchResult}
               </p>
             </div>
@@ -289,14 +289,14 @@ export function ReviewCompleteActions({
       <div className="flex flex-wrap items-center gap-3">
         {/* Save without pitch */}
         {showSaveForm ? (
-          <div className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-4 sm:p-5">
+          <div className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-medium text-[var(--text-primary)]">
+              <p className="text-sm font-medium text-[var(--color-text-primary)]">
                 Add a few details (optional)
               </p>
               <button
                 onClick={() => setShowSaveForm(false)}
-                className="cursor-pointer rounded-lg p-1 text-[var(--text-tertiary)] transition-colors hover:text-[var(--text-primary)]"
+                className="cursor-pointer rounded-[var(--radius-sm)] p-1 text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-primary)]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -308,19 +308,19 @@ export function ReviewCompleteActions({
                 value={saveLeadName}
                 onChange={(e) => setSaveLeadName(e.target.value)}
                 placeholder="Business name"
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]/20"
               />
               <input
                 type="text"
                 value={saveLeadCity}
                 onChange={(e) => setSaveLeadCity(e.target.value)}
                 placeholder="City (e.g. Dubai, London)"
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]/20"
               />
               <select
                 value={saveLeadType}
                 onChange={(e) => setSaveLeadType(e.target.value)}
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-1)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+                className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
               >
                 <option value="">Business type (optional)</option>
                 {businessTypes.map((bt) => (
@@ -339,7 +339,7 @@ export function ReviewCompleteActions({
               <button
                 onClick={() => handleSaveOnly(false)}
                 disabled={saveLoading}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saveLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -351,7 +351,7 @@ export function ReviewCompleteActions({
               <button
                 onClick={() => handleSaveOnly(true)}
                 disabled={saveLoading}
-                className="cursor-pointer text-xs text-[var(--text-tertiary)] underline underline-offset-2 transition-colors hover:text-[var(--text-secondary)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="cursor-pointer text-xs text-[var(--color-text-tertiary)] underline underline-offset-2 transition-colors hover:text-[var(--color-text-secondary)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Skip details
               </button>
@@ -361,7 +361,7 @@ export function ReviewCompleteActions({
           <button
             onClick={handleOpenSaveForm}
             disabled={timedOut || savedBusinessId != null}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <FileText className="h-3.5 w-3.5" />
             Save without pitch
@@ -372,7 +372,7 @@ export function ReviewCompleteActions({
         {savedBusinessId && (
           <Link
             href={`/dashboard/leads/${savedBusinessId}`}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Open full report
@@ -381,7 +381,7 @@ export function ReviewCompleteActions({
 
         {/* + Pipeline */}
         {pipelineAdded ? (
-          <div className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--score-good)]/30 bg-[var(--score-good-tint)] px-3 py-1.5 text-xs font-medium text-[var(--badge-green-text)]">
+          <div className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-success)]">
             <CheckCircle2 className="h-3.5 w-3.5" />
             Added to pipeline
             {pipelineBusinessId && (
@@ -398,7 +398,7 @@ export function ReviewCompleteActions({
             type="button"
             onClick={handleAddToPipeline}
             disabled={pipelineLoading || timedOut}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {pipelineLoading ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

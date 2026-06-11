@@ -57,21 +57,21 @@ export function LandingFooter() {
 
   return (
     <FadeIn>
-      <footer className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--bg-surface)] px-6 py-12 md:px-8">
+      <footer className="relative overflow-hidden border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-12 md:px-8">
         <CanvasBackground />
         <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
-            <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
+            <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
               <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
-              <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">NearSited</span>
+              <span className="text-base font-medium tracking-[0.02em] text-[var(--color-text-primary)]">NearSited</span>
               </div>
-              <p className="max-w-sm text-sm leading-7 text-[var(--text-tertiary)]">
+              <p className="max-w-sm text-sm leading-7 text-[var(--color-text-tertiary)]">
                 Discover untapped opportunities: businesses that need websites, redesigns, or a stronger online presence.
               </p>
 
               {/* ── Newsletter signup ── */}
               <div className="mt-6">
-                <p className="mb-2 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
+                <p className="mb-2 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">
                   Stay updated
                 </p>
                 <AnimatePresence mode="wait">
@@ -82,7 +82,7 @@ export function LandingFooter() {
                       initial="hidden"
                       animate="visible"
                       exit="hidden"
-                      className="text-sm text-[var(--accent)]"
+                      className="text-sm text-[var(--color-accent)]"
                     >
                       Thanks for subscribing!
                     </motion.p>
@@ -104,12 +104,12 @@ export function LandingFooter() {
                         placeholder="your@email.com"
                         disabled={status === "loading"}
                         aria-label="Email for newsletter"
-                        className={`min-w-0 flex-1 rounded-lg border bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none transition disabled:opacity-50 ${validationError ? "border-red-500/50 focus:border-red-500/70" : "border-[var(--border)] focus:border-[var(--accent)]/50"}`}
+                        className={`min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition disabled:opacity-50 ${validationError ? "border-red-500/50 focus:border-red-500/70" : "border-[var(--color-border-subtle)] focus:border-[var(--color-accent)]/50"}`}
                       />
                       <button
                         type="submit"
                         disabled={status === "loading"}
-                        className="w-full sm:w-auto shrink-0 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {status === "loading" ? "Subscribing…" : "Subscribe"}
                       </button>
@@ -124,32 +124,32 @@ export function LandingFooter() {
               </div>
           </div>
           <div>
-            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Product</div>
-            <ul className="space-y-3 text-sm text-[var(--text-tertiary)]">
-              <li><a href="#how" className="transition hover:text-[var(--text-primary)]">How it works</a></li>
-              <li><a href="#report" className="transition hover:text-[var(--text-primary)]">Sample report</a></li>
-              <li><a href="#pitch" className="transition hover:text-[var(--text-primary)]">Sample pitch</a></li>
-              <li><Link href="/pricing" className="transition hover:text-[var(--text-primary)]">Pricing</Link></li>
+            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Product</div>
+            <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
+              <li><a href="#how" className="transition hover:text-[var(--color-text-primary)]">How it works</a></li>
+              <li><a href="#report" className="transition hover:text-[var(--color-text-primary)]">Sample report</a></li>
+              <li><a href="#pitch" className="transition hover:text-[var(--color-text-primary)]">Sample pitch</a></li>
+              <li><Link href="/pricing" className="transition hover:text-[var(--color-text-primary)]">Pricing</Link></li>
             </ul>
           </div>
           <div>
-            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Company</div>
-            <ul className="space-y-3 text-sm text-[var(--text-tertiary)]">
-              <li><Link href="/#story" className="transition hover:text-[var(--text-primary)]">About</Link></li>
-              <li><a href="mailto:nearsitedlabs@gmail.com" className="transition hover:text-[var(--text-primary)]">Contact</a></li>
+            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Company</div>
+            <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
+              <li><Link href="/#story" className="transition hover:text-[var(--color-text-primary)]">About</Link></li>
+              <li><a href="mailto:nearsitedlabs@gmail.com" className="transition hover:text-[var(--color-text-primary)]">Contact</a></li>
             </ul>
           </div>
           <div>
-            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-tertiary)]">Legal</div>
-            <ul className="space-y-3 text-sm text-[var(--text-tertiary)]">
-              <li><Link href="/terms" className="transition hover:text-[var(--text-primary)]">Terms</Link></li>
-              <li><Link href="/privacy" className="transition hover:text-[var(--text-primary)]">Privacy</Link></li>
+            <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Legal</div>
+            <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
+              <li><Link href="/terms" className="transition hover:text-[var(--color-text-primary)]">Terms</Link></li>
+              <li><Link href="/privacy" className="transition hover:text-[var(--color-text-primary)]">Privacy</Link></li>
             </ul>
           </div>
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[var(--border)] pt-6 text-sm text-[var(--text-tertiary)] md:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-subtle)] pt-6 text-sm text-[var(--color-text-tertiary)] md:flex-row">
           <span>© 2026 Nearsited. All rights reserved.</span>
-          <span className="text-[var(--text-secondary)]">Built by Again Labs · <a href="https://againlive.com" className="transition hover:text-[var(--text-primary)]" target="_blank" rel="noopener noreferrer">Again Live</a> family of products</span>
+          <span className="text-[var(--color-text-secondary)]">Built by Again Labs · <a href="https://againlive.com" className="transition hover:text-[var(--color-text-primary)]" target="_blank" rel="noopener noreferrer">Again Live</a> family of products</span>
         </div>
       </footer>
     </FadeIn>

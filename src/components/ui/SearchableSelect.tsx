@@ -213,7 +213,7 @@ export default function SearchableSelect({
           }}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 pr-10 text-sm text-[var(--text-primary)] outline-none transition-colors duration-150 placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-tint)]",
+            "w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-3 pr-10 text-sm text-[var(--color-text-primary)] outline-none transition-colors duration-150 placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)]",
             inputClassName,
           )}
           autoComplete="off"
@@ -229,7 +229,7 @@ export default function SearchableSelect({
             type="button"
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--text-secondary)]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)] transition-colors duration-150 hover:text-[var(--color-text-secondary)]"
             tabIndex={-1}
             aria-label="Clear selection"
           >
@@ -242,7 +242,7 @@ export default function SearchableSelect({
             </svg>
           </button>
         ) : (
-          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]">
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]">
             <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
@@ -256,7 +256,7 @@ export default function SearchableSelect({
 
       {/* Dropdown using cmdk */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)]">
+        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
           <Command
             label={placeholder}
             shouldFilter={false}
@@ -267,7 +267,7 @@ export default function SearchableSelect({
                   <Command.Group
                     key={group}
                     heading={
-                      <span className="px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)]">
+                      <span className="px-3 py-1.5 text-xs font-medium text-[var(--color-text-tertiary)]">
                         {group}
                       </span>
                     }
@@ -282,11 +282,11 @@ export default function SearchableSelect({
                           value={optValue}
                           onSelect={handleSelect}
                           className={cn(
-                            "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors duration-100",
-                            "aria-selected:bg-[var(--bg-elevated)]",
+                            "flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm outline-none transition-colors duration-100",
+                            "aria-selected:bg-[var(--color-bg-elevated)]",
                             isSelected
-                              ? "text-[var(--accent)] font-medium"
-                              : "text-[var(--text-secondary)]",
+                              ? "text-[var(--color-accent)] font-medium"
+                              : "text-[var(--color-text-secondary)]",
                           )}
                         >
                           {optDisplay}
@@ -307,11 +307,11 @@ export default function SearchableSelect({
                         value={optValue}
                         onSelect={handleSelect}
                         className={cn(
-                          "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors duration-100",
-                          "aria-selected:bg-[var(--bg-elevated)]",
+                          "flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] px-3 py-2.5 text-sm outline-none transition-colors duration-100",
+                          "aria-selected:bg-[var(--color-bg-elevated)]",
                           isSelected
-                            ? "text-[var(--accent)] font-medium"
-                            : "text-[var(--text-secondary)]",
+                            ? "text-[var(--color-accent)] font-medium"
+                            : "text-[var(--color-text-secondary)]",
                         )}
                       >
                         {optDisplay}
@@ -323,13 +323,13 @@ export default function SearchableSelect({
 
               {/* Hint when there are more results than rendered */}
               {hasMore && (
-                <div className="px-3 py-2 text-center text-[11px] text-[var(--text-tertiary)] border-t border-[var(--border)] mt-1">
+                <div className="px-3 py-2 text-center text-[11px] text-[var(--color-text-tertiary)] border-t border-[var(--color-border-subtle)] mt-1">
                   Type to narrow results…
                 </div>
               )}
 
               {/* Empty state */}
-              <Command.Empty className="px-3 py-4 text-center text-sm text-[var(--text-tertiary)]">
+              <Command.Empty className="px-3 py-4 text-center text-sm text-[var(--color-text-tertiary)]">
                 No results found
               </Command.Empty>
             </Command.List>

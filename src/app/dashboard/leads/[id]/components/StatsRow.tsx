@@ -30,9 +30,9 @@ export function StatsRow({
   const label = opportunityLabel(opportunityScore);
   const scoreColor =
     opportunityScore >= 75
-      ? "text-[var(--score-good)]"
+      ? "text-[var(--color-success)]"
       : opportunityScore >= 50
-        ? "text-[var(--score-mid)]"
+        ? "text-[var(--color-info)]"
         : "text-[var(--score-high)]";
 
   const stats = [
@@ -42,7 +42,7 @@ export function StatsRow({
       value: (
         <span className={scoreColor}>
           {opportunityScore}
-          <span className="ml-1 text-xs font-normal text-[var(--text-tertiary)]">
+          <span className="ml-1 text-xs font-normal text-[var(--color-text-tertiary)]">
             · {label}{isVerified ? "" : " (est.)"}
           </span>
         </span>
@@ -81,19 +81,19 @@ export function StatsRow({
         return (
           <div
             key={stat.label}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-3.5 py-3 sm:px-4 sm:py-3.5"
+            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3.5 py-3 sm:px-4 sm:py-3.5"
           >
             <div className="flex items-center gap-1.5 mb-1">
-              <Icon className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
+              <Icon className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
+              <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-text-tertiary)]">
                 {stat.label}
               </span>
             </div>
-            <p className="text-sm font-semibold text-[var(--text-primary)] leading-tight">
+            <p className="text-sm font-semibold text-[var(--color-text-primary)] leading-tight">
               {stat.value}
             </p>
             {stat.sub && (
-              <p className="mt-0.5 text-[10px] text-[var(--text-tertiary)]">{stat.sub}</p>
+              <p className="mt-0.5 text-[10px] text-[var(--color-text-tertiary)]">{stat.sub}</p>
             )}
           </div>
         );

@@ -81,6 +81,51 @@
   --pipeline-won:         #4ade80;
   --pipeline-lost:        #f87171;
 
+  /* ── Semantic design-system tokens ─────────────────────────────────────────
+   * All new UI code must reference these tokens, not the raw vars above.
+   * The raw vars remain for backward compatibility; semantic tokens are the
+   * single source of truth going forward. */
+
+  /* Surface hierarchy */
+  --color-bg-page:     var(--bg-base);
+  --color-bg-surface:  var(--bg-surface-1);
+  --color-bg-elevated: var(--bg-surface-2);
+
+  /* Borders */
+  --color-border-subtle: rgba(255,255,255,0.06);
+  --color-border-strong: rgba(255,255,255,0.10);
+
+  /* Text */
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary:  var(--text-tertiary);
+
+  /* Semantic action/state colors
+   * --color-accent   sage green  — primary actions + "active" state only
+   * --color-info     blue        — in-progress / informational
+   * --color-warning  amber       — needs attention / stale
+   * --color-danger   red         — destructive actions + lost/failed only
+   * --color-success  deep green  — completed / won terminal positive states */
+  --color-accent:   var(--accent);
+  --color-info:     #60a5fa;
+  --color-warning:  #c4984a;
+  --color-danger:   #c4665a;
+  --color-success:  #4a8f5a;
+
+  /* ── Spacing scale (4px grid) ──────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border radius — ONLY two values allowed app-wide ─── */
+  --radius-sm: 6px;   /* pills, badges, small buttons */
+  --radius-md: 10px;  /* cards, modals, larger surfaces */
+
   /* Pipeline tint overlays (for badge backgrounds on dark surfaces) */
   --pipeline-analysed-tint:    rgba(96,165,250,0.15);
   --pipeline-pitch-tint:       rgba(129,140,248,0.15);

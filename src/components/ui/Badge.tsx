@@ -15,11 +15,11 @@ export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 // ── Style Map ──────────────────────────────────────────────────────────────────
 
 const COLOR_STYLES: Record<BadgeColor, string> = {
-  green:  "bg-[var(--badge-green-bg)] border-[var(--badge-green-border)] text-[var(--badge-green-text)]",
-  red:    "bg-[var(--badge-red-bg)] border-[var(--badge-red-border)] text-[var(--badge-red-text)]",
-  amber:  "bg-[var(--badge-amber-bg)] border-[var(--badge-amber-border)] text-[var(--badge-amber-text)]",
+  green:  "bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)]",
+  red:    "bg-[var(--color-danger)]/10 border-[var(--color-danger)]/30 text-[var(--color-danger)]",
+  amber:  "bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)]",
   indigo: "bg-[var(--badge-indigo-bg)] border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)]",
-  neutral: "bg-[var(--bg-elevated)] border-[var(--border)] text-[var(--text-tertiary)]",
+  neutral: "bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-tertiary)]",
 };
 
 const BASE =

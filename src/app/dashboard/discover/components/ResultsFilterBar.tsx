@@ -54,16 +54,16 @@ export function ResultsFilterBar({
       {/* Header strip — two lines */}
       <div className="flex items-end justify-between">
         <div className="space-y-0.5">
-          <h2 className="text-[13px] font-medium text-[var(--text-primary)]">
+          <h2 className="text-[13px] font-medium text-[var(--color-text-primary)]">
             {businessTypeLabel}s near {locationLabel}
           </h2>
-          <p className="text-[11px] text-[var(--text-tertiary)]">
+          <p className="text-[11px] text-[var(--color-text-tertiary)]">
             {totalCount} result{totalCount === 1 ? "" : "s"}
             {flaggedCount > 0 && (
               <> · {flaggedCount} flagged
                 <Tooltip content="Flagged when a business has no website, uses only social media (Facebook, Instagram, etc.), or is listed only on a third-party platform (Fresha, Booksy, etc.) — meaning they don't own their digital presence.">
                   <span className="inline-flex cursor-help ml-0.5 align-text-bottom">
-                    <Info className="size-3 text-[var(--text-tertiary)]" />
+                    <Info className="size-3 text-[var(--color-text-tertiary)]" />
                   </span>
                 </Tooltip>
               </>
@@ -73,7 +73,7 @@ export function ResultsFilterBar({
             <button
               type="button"
               onClick={onSortToggle}
-              className="inline-flex items-center gap-0.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-150 cursor-pointer"
+              className="inline-flex items-center gap-0.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors duration-150 cursor-pointer"
             >
               {currentSortLabel}
               <ChevronDown className={`h-2.5 w-2.5 transition-transform duration-150 ${sortDropdownOpen ? "rotate-180" : ""}`} />
@@ -86,7 +86,7 @@ export function ResultsFilterBar({
           <AnimatePresence>
             {sortDropdownOpen && (
               <motion.div
-                className="absolute right-0 top-full z-40 mt-1 w-48 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
+                className="absolute right-0 top-full z-40 mt-1 w-48 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
@@ -97,12 +97,12 @@ export function ResultsFilterBar({
                     key={opt.value}
                     type="button"
                     onClick={() => { onSortChange(opt.value); }}
-                    className={`cursor-pointer flex w-full items-center gap-2.5 px-4 py-2 text-left text-xs transition-colors hover:bg-[var(--bg-elevated)] ${
-                      sortOption === opt.value ? "font-semibold text-[var(--accent)]" : "text-[var(--text-secondary)]"
+                    className={`cursor-pointer flex w-full items-center gap-2.5 px-4 py-2 text-left text-xs transition-colors hover:bg-[var(--color-bg-elevated)] ${
+                      sortOption === opt.value ? "font-semibold text-[var(--color-accent)]" : "text-[var(--color-text-secondary)]"
                     }`}
                   >
                     {sortOption === opt.value && (
-                      <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--accent)]" />
+                      <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--color-accent)]" />
                     )}
                     {opt.label}
                   </button>
@@ -115,7 +115,7 @@ export function ResultsFilterBar({
 
       {/* Filter chips */}
       <div className="flex items-center gap-1.5 text-[11px]">
-        <span className="text-[var(--text-tertiary)] mr-1">Filter:</span>
+        <span className="text-[var(--color-text-tertiary)] mr-1">Filter:</span>
         {FILTER_OPTIONS.map((opt) => {
           const isActive = websiteFilter === opt.value;
           return (
@@ -123,10 +123,10 @@ export function ResultsFilterBar({
               key={opt.value}
               type="button"
               onClick={() => onFilterChange(opt.value)}
-              className={`cursor-pointer transition-colors duration-150 px-2 py-0.5 rounded-md ${
+              className={`cursor-pointer transition-colors duration-150 px-2 py-0.5 rounded-[var(--radius-sm)] ${
                 isActive
-                  ? "text-[var(--text-primary)] font-medium"
-                  : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  ? "text-[var(--color-text-primary)] font-medium"
+                  : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
               }`}
             >
               {opt.label}

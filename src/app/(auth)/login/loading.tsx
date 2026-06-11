@@ -4,7 +4,7 @@ import { SkeletonLoader } from "@/lib/motion";
 
 export default function LoginLoading() {
   return (
-    <div className="relative min-h-screen bg-[var(--bg-base)] flex items-center justify-center p-4">
+    <div className="relative min-h-screen bg-[var(--color-bg-page)] flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left: Brand story panel skeleton */}
@@ -30,7 +30,7 @@ export default function LoginLoading() {
 
           {/* Right: Auth card skeleton */}
           <div className="w-full max-w-md mx-auto lg:mx-0 lg:justify-self-end">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-8">
+            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8">
               <div className="text-center mb-8">
                 <SkeletonLoader className="mx-auto" width="120px" height="28px" radius="6px" />
                 <SkeletonLoader className="mx-auto mt-2" width="180px" height="14px" radius="4px" />

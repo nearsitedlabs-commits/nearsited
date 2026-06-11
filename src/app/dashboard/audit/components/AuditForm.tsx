@@ -3,11 +3,7 @@
 import { CheckCircle2, Globe, Loader2, MapPin, RotateCcw, Search, X } from "lucide-react";
 import type { AuditStep } from "./types";
 
-// ── Constants ───────────────────────────────────────────────────────────────────
-
 const EXAMPLE_URLS = ["lawfirmdubai.com", "dentalcaretoronto.ca", "accountingbrisbane.com.au"];
-
-// ── Helpers ─────────────────────────────────────────────────────────────────────
 
 function timeAgo(ts?: number | null): string {
   if (!ts) return "";
@@ -19,36 +15,20 @@ function timeAgo(ts?: number | null): string {
   return `${Math.floor(hours / 24)} days ago`;
 }
 
-// ── Component ───────────────────────────────────────────────────────────────────
-
 type AuditFormProps = {
-  /** The current URL input value */
   url: string;
-  /** Callback when the URL input changes */
   onUrlChange: (url: string) => void;
-  /** Whether an audit is currently running */
   running: boolean;
-  /** Callback to run the audit */
   onRun: () => void;
-  /** Google Maps lookup URL input value */
   mapsLookupUrl: string;
-  /** Callback when the Maps lookup URL changes */
   onMapsLookupUrlChange: (url: string) => void;
-  /** Whether a Maps lookup is loading */
   mapsLookupLoading: boolean;
-  /** Hint text from Maps lookup result */
   mapsLookupHint: string | null;
-  /** Callback to perform the Maps lookup */
   onMapsLookup: () => void;
-  /** The current audit step */
   step: AuditStep;
-  /** Cancel handler for in-progress audits (only shown when running) */
   onCancel?: () => void;
-  /** Reset/new-search handler (only shown when done) */
   onReset?: () => void;
-  /** Timestamp of when the audit completed (for the status pill) */
   savedTimestamp?: number | null;
-  /** Google Maps business name (for the status pill) */
   mapsBusinessName?: string | null;
 };
 
@@ -63,7 +43,6 @@ export function AuditForm({
   mapsLookupHint,
   onMapsLookup,
   step,
-  onCancel,
   onReset,
   savedTimestamp,
   mapsBusinessName,
@@ -79,26 +58,23 @@ export function AuditForm({
       : "No Google Maps link added";
 
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 sm:p-5">
+      <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {/* Left: icon + URL */}
           <div className="flex min-w-0 items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--score-good)]" />
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--color-success)]" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-[var(--text-primary)]" title={url}>
+              <p className="truncate text-sm font-medium text-[var(--color-text-primary)]" title={url}>
                 {truncatedUrl}
               </p>
-              <p className="text-xs text-[var(--text-tertiary)]">
+              <p className="text-xs text-[var(--color-text-tertiary)]">
                 Reviewed {timeAgo(savedTimestamp)} · {googleMapsStatus}
               </p>
             </div>
           </div>
-
-          {/* Right: action buttons */}
           <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => onRun()}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               <RotateCcw className="h-3 w-3" />
               Re-run
@@ -106,10 +82,10 @@ export function AuditForm({
             {onReset && (
               <button
                 onClick={onReset}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
               >
                 <X className="h-3 w-3" />
-                New Search
+                New search
               </button>
             )}
           </div>
@@ -118,65 +94,57 @@ export function AuditForm({
     );
   }
 
-  return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-4 sm:p-6">
-      {/* Header — shown in active state */}
-      {!isIdle && (
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--text-tertiary)]">
-              Opportunity Review
-            </p>
-            <h1 className="mt-1 text-2xl font-medium text-[var(--text-primary)]">
-              Reviewing Opportunity
-            </h1>
-          </div>
+  // ── Running state — collapsed one-liner ──────────────────────────────────────
+  if (running) {
+    const truncatedUrl = url.length > 60 ? url.slice(0, 57) + "…" : url;
+    return (
+      <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[var(--color-accent)]" />
+          <p className="min-w-0 flex-1 truncate text-sm text-[var(--color-text-secondary)]">
+            Analysing{" "}
+            <span className="font-medium text-[var(--color-text-primary)]">{truncatedUrl}</span>
+          </p>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* URL input row */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" />
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => onUrlChange(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && onRun()}
-            placeholder="Paste a business website URL"
-            autoFocus={isIdle}
-            className={`w-full rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] pl-10 pr-4 text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] transition-colors duration-150 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 ${
-              isIdle ? "py-3 text-base" : "py-2.5 text-sm"
-            }`}
-          />
-        </div>
+  // ── Idle state — full input form ─────────────────────────────────────────────
+  return (
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-6">
+      {/* URL input */}
+      <div className="relative">
+        <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+        <input
+          type="url"
+          value={url}
+          onChange={(e) => onUrlChange(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && onRun()}
+          placeholder="Paste a business website URL"
+          autoFocus
+          className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] py-3 pl-10 pr-4 text-base text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] transition-colors duration-150 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20"
+        />
+      </div>
+
+      <div className="mt-3">
         <button
           onClick={() => onRun()}
           disabled={running || !url.trim()}
-          className={`inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 ${
-            isIdle ? "py-3" : "py-2.5 sm:w-auto"
-          }`}
+          className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {running ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Search className="h-4 w-4" />
-          )}
-          {running
-            ? "Reviewing…"
-            : isIdle
-              ? "Analyse Website"
-              : "Review Again"}
+          <Search className="h-4 w-4" />
+          Analyse
         </button>
       </div>
 
-      {/* Google Maps lookup — only in idle / running states */}
-      <div className="mt-4 border-t border-[var(--border)] pt-4">
+      {/* Google Maps lookup */}
+      <div className="mt-5 border-t border-[var(--color-border-subtle)] pt-4">
         <div className="mb-1.5 flex items-center gap-1.5">
-          <MapPin className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-          <span className="text-xs text-[var(--text-secondary)]">
+          <MapPin className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
+          <span className="text-xs text-[var(--color-text-secondary)]">
             Google Maps link{" "}
-            <span className="text-[var(--text-muted)]">
+            <span className="text-[var(--color-text-tertiary)]">
               — optional, improves opportunity score
             </span>
           </span>
@@ -187,7 +155,7 @@ export function AuditForm({
             value={mapsLookupUrl}
             onChange={(e) => onMapsLookupUrlChange(e.target.value)}
             placeholder="Paste Google Maps link…"
-            className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]/20"
+            className="flex-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]/20"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -199,7 +167,7 @@ export function AuditForm({
             type="button"
             onClick={() => void onMapsLookup()}
             disabled={!mapsLookupUrl.trim() || mapsLookupLoading}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {mapsLookupLoading ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -213,8 +181,8 @@ export function AuditForm({
           <p
             className={`mt-1 text-xs ${
               mapsLookupHint.startsWith("Found")
-                ? "text-[var(--score-good)]"
-                : "text-[var(--text-tertiary)]"
+                ? "text-[var(--color-success)]"
+                : "text-[var(--color-text-tertiary)]"
             }`}
           >
             {mapsLookupHint}
@@ -222,31 +190,19 @@ export function AuditForm({
         )}
       </div>
 
-      {/* Example URL chips — only in idle state */}
+      {/* Example URL chips */}
       {isIdle && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
-          <span className="text-xs font-medium text-[var(--text-secondary)]">Try:</span>
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--color-border-subtle)] pt-4">
+          <span className="text-xs font-medium text-[var(--color-text-secondary)]">Try:</span>
           {EXAMPLE_URLS.map((ex) => (
             <button
               key={ex}
               onClick={() => onUrlChange(ex)}
-              className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-1 text-xs text-[var(--text-tertiary)] transition-colors duration-150 hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="cursor-pointer rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               {ex}
             </button>
           ))}
-        </div>
-      )}
-
-      {/* Cancel button — shown when running */}
-      {running && onCancel && (
-        <div className="mt-3 flex justify-end">
-          <button
-            onClick={onCancel}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
-          >
-            <X className="h-3.5 w-3.5" /> Cancel
-          </button>
         </div>
       )}
     </div>

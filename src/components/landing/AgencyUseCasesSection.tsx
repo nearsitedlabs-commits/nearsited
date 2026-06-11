@@ -2,7 +2,6 @@
 
 import { Users, Building2, Palette, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
@@ -14,34 +13,52 @@ const USE_CASES = [
     icon: Users,
     title: "Solo freelancers",
     desc: "Stop spending hours prospecting. Surface qualified leads in seconds: no-website, social-only, and weak websites. Pitch with evidence, and close new projects without cold outreach.",
-    cta: "Start as a solo",
   },
   {
     icon: Building2,
     title: "Small agencies",
     desc: "Replace cold email with warm, evidence-based outreach. Give your team a pipeline of scored opportunities with ready-to-send pitches tailored to each opportunity type.",
-    feature: "White-label shareable reports",
-    cta: "Start as an agency",
+    badge: "White-label shareable reports",
   },
   {
     icon: Palette,
     title: "Design studios",
     desc: "Turn your portfolio into prospecting fuel. Find businesses with dated visual design, check their opportunity score, and walk into discovery calls with real evidence, not guesses.",
-    cta: "Start finding clients",
   },
   {
     icon: TrendingUp,
     title: "SEO agencies",
     desc: "Find businesses with poor PageSpeed, missing local SEO, and no SSL, ranked by opportunity score so you know exactly who to call first. Pitch with real data in under 2 minutes.",
-    cta: "Start finding leads",
   },
 ];
 
 export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) => void }) {
   const prefersReducedMotion = useReducedMotion();
 
+  const rows = USE_CASES.map((uc) => {
+    const Icon = uc.icon;
+    return (
+      <div key={uc.title} className="flex gap-5 py-6 border-b border-[var(--color-border-subtle)] last:border-0">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+          <Icon className="h-4.5 w-4.5" />
+        </div>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <h3 className="text-[15px] font-medium text-[var(--color-text-primary)]">{uc.title}</h3>
+            {"badge" in uc && uc.badge && (
+              <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
+                {uc.badge}
+              </span>
+            )}
+          </div>
+          <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{uc.desc}</p>
+        </div>
+      </div>
+    );
+  });
+
   return (
-    <section id="usecases" className="scroll-mt-20 border-t border-[var(--border)] py-14 md:py-24">
+    <section id="usecases" className="scroll-mt-20 border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Who it&rsquo;s for</SectionLabel>
@@ -51,59 +68,27 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
           </SectionSub>
         </div>
 
-        {prefersReducedMotion ? (
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {USE_CASES.map((uc) => {
-              const Icon = uc.icon;
-              return (
-                <Card key={uc.title} variant="interactive" padding="lg" className="flex flex-col">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-tint)] text-[var(--accent)]">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-lg font-medium text-[var(--text-primary)]">{uc.title}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-7 text-[var(--text-secondary)]">{uc.desc}</p>
-                  <div className="mt-6 border-t border-[var(--border)] pt-4">
-                    {"feature" in uc && uc.feature && (
-                      <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
-                        {uc.feature}
-                      </p>
-                    )}
-                    <Button variant="primary" className="w-full" onClick={() => navigate("/signup")}>
-                      {uc.cta} →
-                    </Button>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <StaggerContainer className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {USE_CASES.map((uc) => {
-              const Icon = uc.icon;
-              return (
-                <FadeUp key={uc.title} className="h-full">
-                  <Card variant="interactive" padding="lg" className="h-full flex flex-col">
-                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-tint)] text-[var(--accent)]">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-lg font-medium text-[var(--text-primary)]">{uc.title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-7 text-[var(--text-secondary)]">{uc.desc}</p>
-                    <div className="mt-6 border-t border-[var(--border)] pt-4">
-                      {"feature" in uc && uc.feature && (
-                        <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
-                          {uc.feature}
-                        </p>
-                      )}
-                      <Button variant="primary" className="w-full" onClick={() => navigate("/signup")}>
-                        {uc.cta} →
-                      </Button>
-                    </div>
-                  </Card>
-                </FadeUp>
-              );
-            })}
-          </StaggerContainer>
-        )}
+        <div className="mt-10 mx-auto max-w-2xl">
+          {prefersReducedMotion ? (
+            <div>{rows}</div>
+          ) : (
+            <StaggerContainer>{rows}</StaggerContainer>
+          )}
+
+          {prefersReducedMotion ? (
+            <div className="mt-8 text-center">
+              <Button variant="primary" className="px-8 py-3 text-base" onClick={() => navigate("/signup")}>
+                Start finding clients →
+              </Button>
+            </div>
+          ) : (
+            <FadeUp className="mt-8 text-center">
+              <Button variant="primary" className="px-8 py-3 text-base" onClick={() => navigate("/signup")}>
+                Start finding clients →
+              </Button>
+            </FadeUp>
+          )}
+        </div>
       </div>
     </section>
   );

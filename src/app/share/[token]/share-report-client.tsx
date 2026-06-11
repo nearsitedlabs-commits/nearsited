@@ -49,8 +49,8 @@ function ScoreRing({ score, size = "md", label: labelOverride }: { score: number
   if (score === null) {
     return (
       <div className="flex flex-col items-center gap-1">
-        <div className="flex items-center justify-center rounded-full border-2 border-[var(--border)] bg-[var(--bg-surface-2)]" style={{ width: dim, height: dim }}>
-          <span className="text-sm font-bold text-[var(--text-tertiary)]">—</span>
+        <div className="flex items-center justify-center rounded-full border-2 border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]" style={{ width: dim, height: dim }}>
+          <span className="text-sm font-bold text-[var(--color-text-tertiary)]">—</span>
         </div>
       </div>
     );
@@ -59,7 +59,7 @@ function ScoreRing({ score, size = "md", label: labelOverride }: { score: number
   const clamped = Math.max(0, Math.min(100, score));
   const offset = circumference - (clamped / 100) * circumference;
   const color = clamped >= 70 ? "stroke-[var(--score-good)]" : clamped >= 40 ? "stroke-[var(--score-mid)]" : "stroke-[var(--score-high)]";
-  const textColor = clamped >= 70 ? "text-[var(--score-good)]" : clamped >= 40 ? "text-[var(--score-mid)]" : "text-[var(--score-high)]";
+  const textColor = clamped >= 70 ? "text-[var(--color-success)]" : clamped >= 40 ? "text-[var(--color-info)]" : "text-[var(--score-high)]";
   const lbl = labelOverride ?? (clamped >= 85 ? "Strong" : clamped >= 70 ? "Good" : clamped >= 40 ? "Needs Improvement" : "Poor");
 
   return (
@@ -87,13 +87,13 @@ function ScoreRing({ score, size = "md", label: labelOverride }: { score: number
 
 function SubScore({ label, score }: { label: string; score: number | null }) {
   const color = score === null
-    ? "text-[var(--text-tertiary)]"
-    : score >= 70 ? "text-[var(--score-good)]"
-    : score >= 40 ? "text-[var(--score-mid)]"
+    ? "text-[var(--color-text-tertiary)]"
+    : score >= 70 ? "text-[var(--color-success)]"
+    : score >= 40 ? "text-[var(--color-info)]"
     : "text-[var(--score-high)]";
   return (
-    <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-      <span className="text-sm text-[var(--text-secondary)]">{label}</span>
+    <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+      <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color} tabular-nums`}>
         {score !== null ? <CountUp value={score} /> : "—"}
       </span>
@@ -161,14 +161,14 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
   ].slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] py-8">
+    <div className="min-h-screen bg-[var(--color-bg-page)] py-8">
       <div className="mx-auto max-w-4xl px-4">
 
         {/* Header */}
         <Section>
           <div className="mb-6 text-center">
             <motion.p
-              className="text-xs uppercase tracking-[0.2em] text-[var(--text-tertiary)]"
+              className="text-xs uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -176,7 +176,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               Shared Report — Nearsited
             </motion.p>
             <motion.h1
-              className="mt-2 text-3xl font-bold text-[var(--text-primary)]"
+              className="mt-2 text-3xl font-bold text-[var(--color-text-primary)]"
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.05 }}
@@ -184,7 +184,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               {business.name}
             </motion.h1>
             <motion.p
-              className="mt-1 text-sm text-[var(--text-secondary)]"
+              className="mt-1 text-sm text-[var(--color-text-secondary)]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -196,7 +196,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                 href={safeHref(business.website)!}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:underline"
+                className="mt-2 inline-flex items-center gap-1 text-sm text-[var(--color-accent)] hover:underline"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.15 }}
@@ -212,7 +212,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
           <div className="mb-6 flex flex-col items-center gap-1">
             <ScoreRing score={overallScore} size="lg" label={overallLabel} />
             {!hasWebsite && (
-              <p className="mt-1 text-xs text-[var(--text-tertiary)]">Opportunity Score</p>
+              <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">Opportunity Score</p>
             )}
           </div>
         </Section>
@@ -222,70 +222,70 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
           {hasAuditData ? (
             <div className="mb-6 grid gap-6 md:grid-cols-2">
               {/* Mobile Audit */}
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">📱 Mobile</p>
+              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]">📱 Mobile</p>
                 {mobileAudit ? (
                   <div className="space-y-2">
                     <SubScore label="Performance" score={(mobileAudit.performance_score as number | null) ?? null} />
                     <SubScore label="SEO" score={(mobileAudit.seo_score as number | null) ?? null} />
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">FCP</span>
-                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.fcp as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">FCP</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{mobileAudit.fcp as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">LCP</span>
-                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.lcp as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">LCP</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{mobileAudit.lcp as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">TBT</span>
-                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.tbt as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">TBT</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{mobileAudit.tbt as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">CLS</span>
-                        <p className="font-medium text-[var(--text-primary)]">{mobileAudit.cls as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">CLS</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{mobileAudit.cls as string ?? "—"}</p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
+                  <p className="text-sm text-[var(--color-text-tertiary)]">No audit data available</p>
                 )}
               </div>
 
               {/* Desktop Audit */}
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">🖥️ Desktop</p>
+              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]">🖥️ Desktop</p>
                 {desktopAudit ? (
                   <div className="space-y-2">
                     <SubScore label="Performance" score={(desktopAudit.performance_score as number | null) ?? null} />
                     <SubScore label="SEO" score={(desktopAudit.seo_score as number | null) ?? null} />
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">FCP</span>
-                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.fcp as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">FCP</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{desktopAudit.fcp as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">LCP</span>
-                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.lcp as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">LCP</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{desktopAudit.lcp as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">TBT</span>
-                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.tbt as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">TBT</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{desktopAudit.tbt as string ?? "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[var(--bg-elevated)] p-2">
-                        <span className="text-[var(--text-tertiary)]">CLS</span>
-                        <p className="font-medium text-[var(--text-primary)]">{desktopAudit.cls as string ?? "—"}</p>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2">
+                        <span className="text-[var(--color-text-tertiary)]">CLS</span>
+                        <p className="font-medium text-[var(--color-text-primary)]">{desktopAudit.cls as string ?? "—"}</p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-[var(--text-tertiary)]">No audit data available</p>
+                  <p className="text-sm text-[var(--color-text-tertiary)]">No audit data available</p>
                 )}
               </div>
             </div>
           ) : (
-            <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Why This Is An Opportunity</h2>
+            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">Why This Is An Opportunity</h2>
               <ul className="space-y-3">
                 {[
                   business.website_status === "social_only"
@@ -297,13 +297,13 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                 ].map((reason, i) => (
                   <motion.li
                     key={i}
-                    className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
+                    className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]"
                     initial={{ opacity: 0, x: -8 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: i * 0.07 }}
                   >
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
                     {reason}
                   </motion.li>
                 ))}
@@ -315,9 +315,9 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
         {/* AI Opportunity Summary */}
         {issues.length > 0 && (
           <Section delay={0.2}>
-            <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">AI Opportunity Summary</h2>
-              <p className="mb-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">AI Opportunity Summary</h2>
+              <p className="mb-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {getDesignSummary(
                   mobileDesign?.issues as unknown as { title: string; detail: string }[] | undefined,
                   desktopDesign?.issues as unknown as { title: string; detail: string }[] | undefined,
@@ -327,13 +327,13 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                 {issues.slice(0, 4).map((issue, i) => (
                   <motion.li
                     key={i}
-                    className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
+                    className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]"
                     initial={{ opacity: 0, x: -8 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: i * 0.06 }}
                   >
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
                     {sanitizeHtml(issue.detail)}
                   </motion.li>
                 ))}
@@ -345,13 +345,13 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
         {/* Design Issues */}
         {issues.length > 0 && (
           <Section delay={0.25}>
-            <div className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">Design Issues</h2>
+            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">Design Issues</h2>
               <div className="space-y-3">
                 {issues.map((issue, i) => (
                   <motion.div
                     key={i}
-                    className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3"
+                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3"
                     initial={{ opacity: 0, y: 8 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -359,8 +359,8 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-[var(--text-primary)]">{sanitizeHtml(issue.title)}</p>
-                        <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{sanitizeHtml(issue.detail)}</p>
+                        <p className="text-sm font-medium text-[var(--color-text-primary)]">{sanitizeHtml(issue.title)}</p>
+                        <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">{sanitizeHtml(issue.detail)}</p>
                       </div>
                       <div className="ml-3 flex flex-col items-end gap-1">
                         <ImpactPill impact={issue.impact ?? "Medium"} />
@@ -378,8 +378,8 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
 
         {/* Footer */}
         <Section delay={0.3}>
-          <div className="text-center text-xs text-[var(--text-tertiary)]">
-            <p>Generated by <span className="font-semibold text-[var(--accent)]">Nearsited</span> &mdash; AI-powered opportunity intelligence</p>
+          <div className="text-center text-xs text-[var(--color-text-tertiary)]">
+            <p>Generated by <span className="font-semibold text-[var(--color-accent)]">Nearsited</span> &mdash; AI-powered opportunity intelligence</p>
             {business.design_analyzed_at && (
               <p className="mt-1">Analysed {new Date(business.design_analyzed_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
             )}

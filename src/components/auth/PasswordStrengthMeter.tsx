@@ -105,7 +105,7 @@ export default function PasswordStrengthMeter({ password }: Props) {
           {strength.label}
         </span>
 
-        <span className="text-[10px] text-[var(--text-tertiary)]">
+        <span className="text-[10px] text-[var(--color-text-tertiary)]">
           {describeCriteria(password)}
         </span>
       </div>

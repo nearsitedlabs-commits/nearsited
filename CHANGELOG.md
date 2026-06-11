@@ -1,5 +1,24 @@
 # Nearsited — Change Log
-*Session: Lead Detail Page Refactor · June 2026*
+
+---
+
+## [Unreleased] — 2026-06-11 (Website Workflow & Pitches Page Refactor)
+
+### Website Lead Detail (`lead-detail-client.tsx`) — Prompt 9
+- Replaced `LeadHeroSection` with shared `LeadHeaderStrip` — unifies header across all three lead workflows
+- `LeadHeaderStrip` cleanup: removed "Opportunity Details" uppercase eyebrow text (Rule I), removed standalone star block, merged rating into one-line meta (`type · city · 4.2★ (128)`)
+- Replaced `LeadOutreachSection` (5 separate dropdowns) with `PitchCard` (single "Tone ▾" trigger + expandable advanced options)
+- Replaced `ClientCallSummaryCard` + `buildClientCallSummary()` with `PreCallBrief` + `buildPreCallBriefSections()` — structured HOOK/PAIN/SCOPE/OBJECTION blocks built from real perf scores, rating/reviews, and top audit issues
+- Replaced both `QuotaErrorBanner` usages with `AIQuotaBanner` — differentiates Gemini API 429 from user credit errors, shows countdown + auto-retry + Flash-Lite fallback option
+- Layout: `lg:grid-cols-2` → `lg:grid-cols-[3fr_2fr]`; left column = PitchCard → IssuesCard → AuditDetailsCard → HistoryCard; right = PreCallBrief → OpportunityScoreExplanation → LeadExportSection
+- `buildPreCallBriefSections()` added to `OpportunityBullets.tsx`; `PreCallBriefSections` type exported
+- `PitchToneConfig` exported from `PitchCard.tsx`; `setPitchConfig` bridge in `lead-detail-client.tsx` dispatches to individual `usePitchGeneration` setters via `useCallback`
+- Removed imports: `Link`, `ArrowLeft`, `ExternalLink`, `MapPin`, `TrendingUp`, `PIPELINE_LABELS`, `PIPELINE_SALES_STATUSES`, `PipelineSelect`, `buildClientCallSummary`, `LeadHeroSection`, `LeadOutreachSection`, `QuotaErrorBanner`, `ClientCallSummaryCard`
+
+### Pitches Page (`pitches/page.tsx`) — Prompt 11
+- `OPPORTUNITY_TAGS` constant removed; custom styled spans replaced with `<WebsiteStatusPill status={pitch.lead_type} size="sm" />`
+- Filter chip counts now always rendered for all opportunity-type and channel chips (previously hidden at zero — see Decision #55)
+- Regenerate overflow menu icon: `<Loader2>` → `<RefreshCw>`
 
 ---
 

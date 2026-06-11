@@ -36,17 +36,17 @@ const PITCH_EXAMPLES: Record<PitchTab, {
     badgeColor: "amber",
     metaFor: "Bright Smile Dental · 1.4s",
     body: (
-      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+      <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi Dr. Sameer,</p>
         <p>
-          I ran a quick audit of <span className="font-medium text-[var(--text-primary)]">brightsmile.ae</span> and found several issues quietly costing you new patients.
+          I ran a quick audit of <span className="font-medium text-[var(--color-text-primary)]">brightsmile.ae</span> and found several issues quietly costing you new patients.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
           <li><span className="text-[var(--score-high)]">4.2s mobile load time</span>: 53% of visitors leave before seeing your content</li>
           <li><span className="text-[var(--score-high)]">No local SEO</span>: you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
           <li><span className="text-[var(--score-high)]">Missing trust signals</span>: no SSL badge or social proof above the fold</li>
         </ul>
-        <p>Fixing these could recover <span className="font-medium text-[var(--score-good)]">an estimated $1,000–$3,000/month</span> in missed revenue. Happy to walk you through the full audit?</p>
+        <p>Fixing these could recover <span className="font-medium text-[var(--color-success)]">an estimated $1,000–$3,000/month</span> in missed revenue. Happy to walk you through the full audit?</p>
       </div>
     ),
   },
@@ -55,10 +55,10 @@ const PITCH_EXAMPLES: Record<PitchTab, {
     badgeColor: "red",
     metaFor: "Marina Legal Consultants · 1.2s",
     body: (
-      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+      <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi,</p>
         <p>
-          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--text-primary)]">Marina Legal Consultants</span>, great Google reviews but no website.
+          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</span>, great Google reviews but no website.
         </p>
         <p>Every day without a website, potential clients searching &ldquo;legal consultant Dubai Marina&rdquo; are going to competitors who have one. Your 4.7★ reputation deserves more than a Google listing.</p>
         <ul className="list-disc space-y-1.5 pl-4">
@@ -75,10 +75,10 @@ const PITCH_EXAMPLES: Record<PitchTab, {
     badgeColor: "indigo",
     metaFor: "Blue Wave Restaurant · 1.1s",
     body: (
-      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+      <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi Blue Wave team,</p>
         <p>
-          Your <span className="font-medium text-[var(--text-primary)]">Instagram</span> looks incredible. 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
+          Your <span className="font-medium text-[var(--color-text-primary)]">Instagram</span> looks incredible. 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
           <li>No website = no way to take online reservations</li>
@@ -94,10 +94,10 @@ const PITCH_EXAMPLES: Record<PitchTab, {
     badgeColor: "indigo",
     metaFor: "Bloom Spa & Wellness · 1.3s",
     body: (
-      <div className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+      <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi,</p>
         <p>
-          I found <span className="font-medium text-[var(--text-primary)]">Bloom Spa & Wellness</span> on Fresha, great reviews, but no website of your own.
+          I found <span className="font-medium text-[var(--color-text-primary)]">Bloom Spa & Wellness</span> on Fresha, great reviews, but no website of your own.
         </p>
         <p>Right now every booking goes through Fresha&rsquo;s platform. That means you&rsquo;re paying a commission on every appointment, you don&rsquo;t own your client list, and if Fresha changes its terms you lose everything overnight.</p>
         <ul className="list-disc space-y-1.5 pl-4">
@@ -124,7 +124,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
   const metaDisplay = `Tone: ${TONE_LABELS[tone]} · For: ${example.metaFor}`;
 
   return (
-    <section id="pitch" className="border-t border-[var(--border)] bg-[var(--bg-surface)] py-14 md:py-24">
+    <section id="pitch" className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Left */}
@@ -143,8 +143,8 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
               ].map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.text} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
-                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                  <div key={item.text} className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
                     <span>{item.text}</span>
                   </div>
                 );
@@ -159,10 +159,10 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                    className={`rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors ${
                       activeTab === id
-                        ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
-                        : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
+                        : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]"
                     }`}
                   >
                     {tab.label}
@@ -177,8 +177,8 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
             <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-[var(--accent)]" />
-                  <span className="text-sm font-medium text-[var(--text-primary)]">Sample pitch</span>
+                  <MessageSquare className="h-4 w-4 text-[var(--color-accent)]" />
+                  <span className="text-sm font-medium text-[var(--color-text-primary)]">Sample pitch</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge color={example.badgeColor}>{example.label}</Badge>
@@ -186,10 +186,10 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
+              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5">
                 {prefersReducedMotion ? (
                   <>
-                    <p className="mb-4 text-xs text-[var(--text-tertiary)]">{metaDisplay}</p>
+                    <p className="mb-4 text-xs text-[var(--color-text-tertiary)]">{metaDisplay}</p>
                     {example.body}
                   </>
                 ) : (
@@ -201,13 +201,13 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
                     >
-                      <p className="mb-4 text-xs text-[var(--text-tertiary)]">{metaDisplay}</p>
+                      <p className="mb-4 text-xs text-[var(--color-text-tertiary)]">{metaDisplay}</p>
                       {example.body}
                     </motion.div>
                   </AnimatePresence>
                 )}
 
-                <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-5 flex flex-col gap-3 border-t border-[var(--color-border-subtle)] pt-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-wrap gap-2">
                     <Button
                       variant="secondary"
@@ -232,7 +232,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 </div>
               </div>
 
-              <p className="mt-4 text-center text-xs text-[var(--text-tertiary)]">
+              <p className="mt-4 text-center text-xs text-[var(--color-text-tertiary)]">
                 Every pitch is unique. No templates. Pitch angle, evidence, and tone are all generated from the opportunity.
               </p>
             </Card>

@@ -18,18 +18,18 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
 
   const content = (
     <>
-      {/* Founder quote */}
-      <blockquote className="mt-8 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 text-left">
-        <p className="text-base italic leading-7 text-[var(--text-secondary)]">
+      {/* Founder quote — left-border accent so it stands out from the stat grid */}
+      <blockquote className="mt-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-2 border-l-[var(--color-accent)] bg-[var(--color-bg-elevated)] p-6 text-left">
+        <p className="text-base italic leading-7 text-[var(--color-text-secondary)]">
           &ldquo;I was spending 3 hours every week just finding businesses to pitch. I built Nearsited so I could spend that time closing instead.&rdquo;
         </p>
         <footer className="mt-4 flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]/10 text-xs font-semibold text-[var(--accent)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent)]/10 text-xs font-semibold text-[var(--color-accent)]">
             AS
           </div>
           <div>
-            <p className="text-sm font-medium text-[var(--text-primary)]">Adin Sheik</p>
-            <p className="text-xs text-[var(--text-tertiary)]">Founder, Again Labs. Built this to solve his own problem.</p>
+            <p className="text-sm font-medium text-[var(--color-text-primary)]">Adin Sheik</p>
+            <p className="text-xs text-[var(--color-text-tertiary)]">Founder, Again Labs. Built this to solve his own problem.</p>
           </div>
         </footer>
       </blockquote>
@@ -39,12 +39,12 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
         {PROOF_POINTS.map((point) => (
           <div
             key={point.stat}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6 text-center"
+            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
           >
-            <p className="text-3xl font-semibold tracking-tight text-[var(--accent)]">
+            <p className="text-3xl font-semibold tracking-tight text-[var(--color-accent)]">
               {point.stat}
             </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
               {point.label}
             </p>
           </div>
@@ -64,7 +64,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
   );
 
   return (
-    <section className="border-t border-[var(--border)] py-14 md:py-24">
+    <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <SectionLabel>What it does</SectionLabel>

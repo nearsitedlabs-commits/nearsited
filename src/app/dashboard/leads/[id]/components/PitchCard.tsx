@@ -5,7 +5,7 @@ import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucid
 
 type OutreachChannel = "email" | "whatsapp";
 
-type PitchToneConfig = {
+export type PitchToneConfig = {
   tone: "professional" | "friendly" | "luxury";
   length: "short" | "medium" | "detailed";
   opening: "direct" | "question" | "empathy" | "data";
@@ -98,11 +98,11 @@ export function PitchCard({
   const summaryLabel = `${TONE_LABELS[pitchConfig.tone] ?? pitchConfig.tone} + ${LENGTH_LABELS[pitchConfig.length] ?? pitchConfig.length} + Direct`;
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6">
-      <h2 className="mb-3 text-base font-semibold text-[var(--text-primary)]">Pitch</h2>
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+      <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Pitch</h2>
 
       {/* Channel toggle */}
-      <div className="mb-3 flex gap-1 rounded-lg bg-[var(--bg-elevated)] p-1">
+      <div className="mb-3 flex gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-1">
         {CHANNELS.map((ch) => {
           const ChIcon = ch.icon;
           return (
@@ -110,10 +110,10 @@ export function PitchCard({
               key={ch.id}
               type="button"
               onClick={() => setOutreachChannel(ch.id)}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
                 outreachChannel === ch.id
-                  ? "bg-[var(--bg-surface)] text-[var(--accent)] shadow-[var(--shadow-xs)]"
-                  : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  ? "bg-[var(--color-bg-surface)] text-[var(--color-accent)] shadow-[var(--shadow-xs)]"
+                  : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
               }`}
             >
               <ChIcon className="h-3.5 w-3.5" />
@@ -125,29 +125,29 @@ export function PitchCard({
 
       {/* Contact hint */}
       {contactInfo.loading ? (
-        <div className="mb-3 flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--text-tertiary)]" />
-          <span className="text-xs text-[var(--text-tertiary)]">Finding contact info...</span>
+        <div className="mb-3 flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--color-text-tertiary)]" />
+          <span className="text-xs text-[var(--color-text-tertiary)]">Finding contact info...</span>
         </div>
       ) : (
         <div className="mb-3">
           {outreachChannel === "email" && contactInfo.email && (
-            <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-              <Mail className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-              <span className="text-xs text-[var(--text-secondary)]">{contactInfo.email}</span>
+            <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+              <Mail className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
+              <span className="text-xs text-[var(--color-text-secondary)]">{contactInfo.email}</span>
             </div>
           )}
           {outreachChannel === "whatsapp" && contactInfo.phone && (
-            <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-              <Phone className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-              <span className="text-xs text-[var(--text-secondary)]">{contactInfo.phone}</span>
+            <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+              <Phone className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
+              <span className="text-xs text-[var(--color-text-secondary)]">{contactInfo.phone}</span>
             </div>
           )}
           {outreachChannel === "email" && !contactInfo.email && (
-            <p className="text-[11px] text-[var(--text-tertiary)]">No email found — pitch will be formatted for email outreach.</p>
+            <p className="text-[11px] text-[var(--color-text-tertiary)]">No email found — pitch will be formatted for email outreach.</p>
           )}
           {outreachChannel === "whatsapp" && !contactInfo.phone && (
-            <p className="text-[11px] text-[var(--text-tertiary)]">No phone number found — pitch will be formatted for WhatsApp.</p>
+            <p className="text-[11px] text-[var(--color-text-tertiary)]">No phone number found — pitch will be formatted for WhatsApp.</p>
           )}
         </div>
       )}
@@ -158,9 +158,9 @@ export function PitchCard({
           <button
             type="button"
             onClick={() => setShowAdvanced((v) => !v)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
-            Tone ▾ <span className="text-[var(--text-tertiary)] ml-0.5">({summaryLabel})</span>
+            Tone ▾ <span className="text-[var(--color-text-tertiary)] ml-0.5">({summaryLabel})</span>
           </button>
         </div>
 
@@ -168,13 +168,13 @@ export function PitchCard({
           <button
             onClick={() => handleGeneratePitch()}
             disabled={generatingPitch}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
             {generatingPitch ? "Generating…" : "Generate"}
           </button>
         ) : (
-          <div className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-lg bg-[var(--bg-surface-2)] px-3 py-1.5 text-xs font-medium text-[var(--text-tertiary)] opacity-60"
+          <div className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-tertiary)] opacity-60"
             title="Analyse this lead first to generate a pitch">
             <Mail className="h-3 w-3" />
             Generate (analyse first)
@@ -184,14 +184,14 @@ export function PitchCard({
 
       {/* Advanced options — only revealed on Tone ▾ click */}
       {showAdvanced && (
-        <div className="mb-3 space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Tone & Style</p>
+        <div className="mb-3 space-y-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">Tone & Style</p>
           <div className="flex flex-wrap gap-2">
             {/* Tone */}
             <select
               value={pitchConfig.tone}
               onChange={(e) => setPitchConfig({ ...pitchConfig, tone: e.target.value as PitchToneConfig["tone"] })}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
             >
               <option value="professional">Professional</option>
               <option value="friendly">Friendly</option>
@@ -201,7 +201,7 @@ export function PitchCard({
             <select
               value={pitchConfig.length}
               onChange={(e) => setPitchConfig({ ...pitchConfig, length: e.target.value as PitchToneConfig["length"] })}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
             >
               <option value="short">Short</option>
               <option value="medium">Medium</option>
@@ -211,7 +211,7 @@ export function PitchCard({
             <select
               value={pitchConfig.focus}
               onChange={(e) => setPitchConfig({ ...pitchConfig, focus: e.target.value })}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
             >
               <option value="all">All angles</option>
               <option value="seo">Visibility & SEO</option>
@@ -224,7 +224,7 @@ export function PitchCard({
             <select
               value={pitchConfig.opening}
               onChange={(e) => setPitchConfig({ ...pitchConfig, opening: e.target.value as PitchToneConfig["opening"] })}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
             >
               <option value="direct">Direct</option>
               <option value="question">Question-led</option>
@@ -235,7 +235,7 @@ export function PitchCard({
             <select
               value={pitchConfig.urgency}
               onChange={(e) => setPitchConfig({ ...pitchConfig, urgency: e.target.value as PitchToneConfig["urgency"] })}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]"
+              className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-xs text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]"
             >
               <option value="low">Low-key</option>
               <option value="medium">Medium</option>
@@ -247,26 +247,26 @@ export function PitchCard({
 
       {/* Error */}
       {pitchError && (
-        <div className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+        <div className="mb-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
           {pitchError}
         </div>
       )}
 
       {/* Generated pitch */}
       {pitchResult ? (
-        <div className="space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+        <div className="space-y-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
           {outreachChannel === "email" && effectiveSubject && (
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Subject</p>
-              <p className="text-sm font-medium text-[var(--text-primary)]">{effectiveSubject}</p>
+              <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">Subject</p>
+              <p className="text-sm font-medium text-[var(--color-text-primary)]">{effectiveSubject}</p>
             </div>
           )}
           <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Message</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">Message</p>
             <textarea
               value={effectiveBody}
               onChange={(e) => setEditedBodies(prev => ({ ...prev, [outreachChannel]: e.target.value }))}
-              className="mt-1 w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-secondary)] leading-relaxed outline-none focus:border-[var(--accent)]"
+              className="mt-1 w-full resize-y rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-2.5 text-xs text-[var(--color-text-secondary)] leading-relaxed outline-none focus:border-[var(--color-accent)]"
               rows={8}
             />
           </div>
@@ -274,21 +274,21 @@ export function PitchCard({
             {outreachChannel === "whatsapp" && contactInfo.phone && (
               <button
                 onClick={handleOpenInWhatsApp}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90"
               >
                 <ExternalLink className="h-3 w-3" /> Open in WhatsApp ↗
               </button>
             )}
             <button
               onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
             >
               <Copy className="h-3 w-3" /> Copy
             </button>
             <button
               onClick={handleRegenerate}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate
@@ -296,7 +296,7 @@ export function PitchCard({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-[var(--text-tertiary)]">Configure tone and generate a pitch to start outreach.</p>
+        <p className="text-xs text-[var(--color-text-tertiary)]">Configure tone and generate a pitch to start outreach.</p>
       )}
     </div>
   );

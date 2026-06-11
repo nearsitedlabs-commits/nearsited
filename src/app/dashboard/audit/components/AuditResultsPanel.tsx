@@ -95,15 +95,15 @@ function SubScore({
 }) {
   const color =
     !score
-      ? "text-[var(--text-tertiary)]"
+      ? "text-[var(--color-text-tertiary)]"
       : score >= 90
-        ? "text-[var(--score-good)]"
+        ? "text-[var(--color-success)]"
         : score >= 50
-          ? "text-[var(--score-mid)]"
+          ? "text-[var(--color-info)]"
           : "text-[var(--score-high)]";
   return (
-    <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
-      <span className="text-sm text-[var(--text-secondary)]">{label}</span>
+    <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+      <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{score ?? "—"}</span>
     </div>
   );
@@ -111,19 +111,19 @@ function SubScore({
 
 // ── Metric Row with Tooltip ────────────────────────────────────────────────────
 
-function MetricRow({ key: metricKey, value }: { key: MetricKey; value: string | null }) {
+function MetricRow({ metricKey, value }: { metricKey: MetricKey; value: string | null }) {
   const meta = METRIC_META[metricKey];
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] px-3 py-2.5">
+    <div className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2.5">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-1.5">
-          <p className="text-xs font-medium text-[var(--text-primary)]">
+          <p className="text-xs font-medium text-[var(--color-text-primary)]">
             {meta.label}
           </p>
           <Tooltip content={meta.subtitle} side="top" maxWidth={220}>
             <button
               type="button"
-              className="inline-flex cursor-help items-center rounded-full text-[var(--text-muted)] transition-colors hover:text-[var(--text-tertiary)]"
+              className="inline-flex cursor-help items-center rounded-full text-[var(--text-muted)] transition-colors hover:text-[var(--color-text-tertiary)]"
               tabIndex={-1}
               aria-label={`Info about ${meta.label}`}
             >
@@ -177,12 +177,12 @@ export function AuditResultsPanel({
     auditResult.desktop.status === "timeout"
   ) {
     return (
-      <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-8 text-center">
-        <AlertTriangle className="mx-auto h-10 w-10 text-[var(--score-mid)]" />
-        <h2 className="mt-4 text-lg font-medium text-[var(--text-primary)]">
+      <div className="mt-6 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+        <AlertTriangle className="mx-auto h-10 w-10 text-[var(--color-info)]" />
+        <h2 className="mt-4 text-lg font-medium text-[var(--color-text-primary)]">
           Couldn&rsquo;t reach the site
         </h2>
-        <p className="mt-2 max-w-md mx-auto text-sm text-[var(--text-secondary)]">
+        <p className="mt-2 max-w-md mx-auto text-sm text-[var(--color-text-secondary)]">
           The site took too long to respond. This usually means it&rsquo;s down, very slow, or
           blocking automated checks. Try again or test a different URL.
         </p>
@@ -211,13 +211,13 @@ export function AuditResultsPanel({
         );
         const isVerified = mapsRating != null;
         return (
-          <div className="flex items-center justify-between rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-5 py-4">
+          <div className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-5 py-4">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--accent)]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-accent)]">
                 {isVerified ? "Opportunity Score" : "Estimated Opportunity Score"}
               </p>
               {isVerified && mapsRating != null && (
-                <p className="mt-0.5 text-[11px] text-[var(--text-secondary)]">
+                <p className="mt-0.5 text-[11px] text-[var(--color-text-secondary)]">
                   Based on performance + design +{" "}
                   {mapsRating.toFixed(1)}★
                   {mapsReviewCount != null && mapsReviewCount > 0
@@ -227,15 +227,15 @@ export function AuditResultsPanel({
               )}
             </div>
             <div className="text-right">
-              <span className="text-4xl font-bold text-[var(--accent)]">{oppScore}</span>
-              <span className="text-sm text-[var(--text-tertiary)]"> / 100</span>
+              <span className="text-4xl font-bold text-[var(--color-accent)]">{oppScore}</span>
+              <span className="text-sm text-[var(--color-text-tertiary)]"> / 100</span>
             </div>
           </div>
         );
       })()
     ) : (
       // ── Partial data — honest display ──────────────────────────────────────
-      <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-surface-2)] px-5 py-4">
+      <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Dashed ring with "—" */}
@@ -262,11 +262,11 @@ export function AuditResultsPanel({
               </text>
             </svg>
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">
+              <p className="text-sm font-medium text-[var(--color-text-primary)]">
                 Pending — {getMissingComponents(auditResult, designResult)}
               </p>
               {/* Component breakdown */}
-              <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
+              <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">
                 Performance {mP != null ? mP : "—"}/{dP != null ? dP : "—"}
                 {" · "}SEO{" "}
                 {auditResult.mobile.seo_score != null
@@ -284,7 +284,7 @@ export function AuditResultsPanel({
             <button
               onClick={() => onRetryDesign("mobile")}
               disabled={designRetrying.mobile}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {designRetrying.mobile ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -301,8 +301,8 @@ export function AuditResultsPanel({
 
   // ── Performance Scores ────────────────────────────────────────────────────────
   const performanceEl = (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-      <h2 className="mb-4 text-lg font-medium text-[var(--text-primary)]">
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+      <h2 className="mb-4 text-lg font-medium text-[var(--color-text-primary)]">
         Performance Scores
       </h2>
       <div className="grid gap-6 md:grid-cols-2">
@@ -312,8 +312,8 @@ export function AuditResultsPanel({
           return (
             <div key={s} className="space-y-3">
               <div className="flex items-center gap-2">
-                <StratIcon className="h-4 w-4 text-[var(--text-tertiary)]" />
-                <p className="text-sm font-medium text-[var(--text-primary)]">
+                <StratIcon className="h-4 w-4 text-[var(--color-text-tertiary)]" />
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">
                   {s === "mobile" ? "Mobile" : "Desktop"}
                 </p>
               </div>
@@ -327,7 +327,7 @@ export function AuditResultsPanel({
                     {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((key) => {
                       const rawVal = d[key];
                       return (
-                        <MetricRow key={key} value={rawVal} />
+                        <MetricRow key={key} metricKey={key} value={rawVal} />
                       );
                     })}
                   </div>
@@ -351,9 +351,9 @@ export function AuditResultsPanel({
         if (!summary.text) return null;
         return (
           <div
-            className={`mt-4 rounded-lg border p-3 text-sm ${
+            className={`mt-4 rounded-[var(--radius-sm)] border p-3 text-sm ${
               summary.isPositive
-                ? "border-[var(--accent)]/30 bg-[var(--accent-tint)] text-[var(--accent)]"
+                ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
                 : "border-amber-500/30 bg-amber-500/10 text-amber-400"
             }`}
           >
@@ -366,8 +366,8 @@ export function AuditResultsPanel({
 
   // ── Design Analysis ───────────────────────────────────────────────────────────
   const designEl = designResult ? (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
-      <h2 className="mb-4 text-lg font-medium text-[var(--text-primary)]">
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+      <h2 className="mb-4 text-lg font-medium text-[var(--color-text-primary)]">
         Design Analysis
       </h2>
       <div className="grid gap-6 md:grid-cols-2">
@@ -379,33 +379,33 @@ export function AuditResultsPanel({
           return (
             <div key={s}>
               <div className="mb-3 flex items-center gap-2">
-                <StratIcon className="h-4 w-4 text-[var(--text-tertiary)]" />
-                <p className="text-sm font-medium text-[var(--text-primary)]">
+                <StratIcon className="h-4 w-4 text-[var(--color-text-tertiary)]" />
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">
                   {s === "mobile" ? "Mobile" : "Desktop"}
                 </p>
               </div>
               {d.status === "ok" ? (
                 <>
                   <div className="mb-3 flex items-baseline gap-1.5">
-                    <span className="text-2xl font-bold text-[var(--text-primary)]">
+                    <span className="text-2xl font-bold text-[var(--color-text-primary)]">
                       {d.design_score}
                     </span>
-                    <span className="text-sm text-[var(--text-tertiary)]">/ 100</span>
+                    <span className="text-sm text-[var(--color-text-tertiary)]">/ 100</span>
                   </div>
                   {d.issues && d.issues.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs font-medium text-[var(--text-tertiary)]">
+                      <p className="text-xs font-medium text-[var(--color-text-tertiary)]">
                         Issues found
                       </p>
                       {d.issues.slice(0, 3).map((issue, i) => (
                         <div
                           key={i}
-                          className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface-2)] p-2"
+                          className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2"
                         >
-                          <p className="text-xs font-medium text-[var(--text-primary)]">
+                          <p className="text-xs font-medium text-[var(--color-text-primary)]">
                             {issue.title}
                           </p>
-                          <p className="mt-0.5 text-[11px] text-[var(--text-tertiary)]">
+                          <p className="mt-0.5 text-[11px] text-[var(--color-text-tertiary)]">
                             {issue.detail}
                           </p>
                           {issue.point_deduction && (
@@ -419,7 +419,7 @@ export function AuditResultsPanel({
                   )}
                 </>
               ) : (
-                <div className="rounded-lg border border-dashed border-red-500/30 bg-red-500/10 p-4">
+                <div className="rounded-[var(--radius-sm)] border border-dashed border-red-500/30 bg-red-500/10 p-4">
                   <div className="text-center">
                     <p className="text-sm font-medium text-[var(--score-high)]">
                       {errDisplay?.title ?? "Analysis failed"}
@@ -432,7 +432,7 @@ export function AuditResultsPanel({
                     <button
                       onClick={() => onRetryDesign(s)}
                       disabled={designRetrying[s]}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/40 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-red-500/40 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {designRetrying[s] ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -455,8 +455,8 @@ export function AuditResultsPanel({
           designResult.desktop.issues,
         );
         return summary ? (
-          <div className="mt-4 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-tint)] p-3 text-sm text-[var(--accent)]">
-            <span className="font-medium">What the AI found: </span>
+          <div className="mt-4 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-sm text-[var(--color-text-secondary)]">
+            <span className="font-medium text-[var(--color-text-primary)]">What the AI found: </span>
             {summary}
           </div>
         ) : null;

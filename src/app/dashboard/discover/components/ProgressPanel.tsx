@@ -39,9 +39,9 @@ export function ProgressPanel({ ap, onCancel }: ProgressPanelProps) {
   return (
     <div className="w-full mt-1.5 space-y-1.5">
       {/* Progress track */}
-      <div className="h-1.5 w-full rounded-full bg-[var(--bg-elevated)] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-[var(--color-bg-elevated)] overflow-hidden">
         <motion.div
-          className="relative h-full rounded-full bg-[var(--accent)]"
+          className="relative h-full rounded-full bg-[var(--color-accent)]"
           initial={{ width: 0 }}
           animate={{ width: `${progressPercent}%` }}
           transition={{ duration: 0.45, ease: "easeOut" }}
@@ -53,15 +53,15 @@ export function ProgressPanel({ ap, onCancel }: ProgressPanelProps) {
 
       {/* Step label + cancel */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] text-[var(--text-tertiary)] truncate">{currentLabel}</span>
+        <span className="text-[11px] text-[var(--color-text-tertiary)] truncate">{currentLabel}</span>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[11px] tabular-nums text-[var(--text-tertiary)]">
+          <span className="text-[11px] tabular-nums text-[var(--color-text-tertiary)]">
             {stepNum}/{ANALYSE_STEPS.length}
           </span>
           <button
             type="button"
             onClick={onCancel}
-            className="cursor-pointer text-[11px] font-medium text-[var(--text-tertiary)] underline underline-offset-2 hover:text-[var(--text-secondary)] transition-colors"
+            className="cursor-pointer text-[11px] font-medium text-[var(--color-text-tertiary)] underline underline-offset-2 hover:text-[var(--color-text-secondary)] transition-colors"
           >
             Cancel
           </button>

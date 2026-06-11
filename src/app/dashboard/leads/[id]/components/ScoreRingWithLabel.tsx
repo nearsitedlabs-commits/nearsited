@@ -33,11 +33,11 @@ export function ScoreRingWithLabel({ score, size = 56, label }: { score: number;
             strokeLinecap="round"
             strokeDasharray={circumference} strokeDashoffset={offset} />
         </svg>
-        <span className={`absolute font-bold ${size >= 70 ? "text-xl" : "text-sm"} text-[var(--text-primary)]`}>
+        <span className={`absolute font-bold ${size >= 70 ? "text-xl" : "text-sm"} text-[var(--color-text-primary)]`}>
           {display}
         </span>
       </div>
-      <span className="text-center text-xs font-medium text-[var(--text-secondary)]">{lbl}</span>
+      <span className="text-center text-xs font-medium text-[var(--color-text-secondary)]">{lbl}</span>
     </div>
   );
 }

@@ -32,7 +32,7 @@ const TYPE_STYLES: Record<ToastType, { bg: string; icon: ReactNode }> = {
     ),
   },
   info: {
-    bg: "bg-[var(--accent)]",
+    bg: "bg-[var(--color-accent)]",
     icon: (
       <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
         <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.5" />
@@ -65,7 +65,7 @@ export function Toast({ message, onClose, duration = 3000, type = "success" }: T
   // Reduced-motion render: no animation wrappers
   if (prefersReduced) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-[var(--bg-surface)] px-5 py-3.5 text-sm font-medium text-[var(--text-primary)] border border-[var(--border)] shadow-[var(--brand-shadow-lg)]">
+      <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-3 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-5 py-3.5 text-sm font-medium text-[var(--color-text-primary)] border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-lg)]">
         <span className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${typeStyle.bg}`}>
           {typeStyle.icon}
         </span>
@@ -75,7 +75,7 @@ export function Toast({ message, onClose, duration = 3000, type = "success" }: T
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50">
       <AnimatePresence>
         {visible && (
           <motion.div
@@ -84,7 +84,7 @@ export function Toast({ message, onClose, duration = 3000, type = "success" }: T
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 80 }}
             transition={{ duration: 0.25, ease: MOTION_EASE }}
-            className="flex items-center gap-3 rounded-2xl bg-[var(--bg-surface)] px-5 py-3.5 text-sm font-medium text-[var(--text-primary)] border border-[var(--border)] shadow-[var(--brand-shadow-lg)]"
+            className="flex items-center gap-3 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-5 py-3.5 text-sm font-medium text-[var(--color-text-primary)] border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-lg)]"
           >
             <span className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${typeStyle.bg}`}>
               {typeStyle.icon}

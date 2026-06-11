@@ -31,7 +31,7 @@ export function PoweredByGoogle({ className = "" }: Props) {
         />
       </svg>
       <span
-        className="text-[var(--text-tertiary)] text-[7px] sm:text-[9px]"
+        className="text-[var(--color-text-tertiary)] text-[7px] sm:text-[9px]"
         style={{ letterSpacing: "0.01em" }}
       >
         Powered by Google

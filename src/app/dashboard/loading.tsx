@@ -4,7 +4,7 @@ import { SkeletonLoader } from "@/lib/motion";
 
 export default function DashboardLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Header skeleton */}
         <div className="mb-8">
@@ -15,7 +15,7 @@ export default function DashboardLoading() {
         {/* KPI cards skeleton */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+            <div key={i} className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
               <SkeletonLoader width="32px" height="32px" radius="8px" />
               <SkeletonLoader className="mt-3" width="48px" height="28px" radius="4px" />
               <SkeletonLoader className="mt-2" width="80px" height="12px" radius="4px" />
@@ -24,14 +24,14 @@ export default function DashboardLoading() {
         </div>
 
         {/* Recent opportunities skeleton */}
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface-1)] p-6">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
           <div className="mb-4 flex items-center justify-between">
             <SkeletonLoader width="140px" height="16px" radius="4px" />
             <SkeletonLoader width="60px" height="14px" radius="4px" />
           </div>
           <div className="space-y-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-3 rounded-lg bg-[var(--bg-elevated)] p-3">
+              <div key={i} className="flex items-center gap-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
                 <SkeletonLoader width="36px" height="36px" radius="50%" />
                 <div className="flex-1">
                   <SkeletonLoader width={`${50 + i * 10}%`} height="14px" radius="4px" />
@@ -44,7 +44,7 @@ export default function DashboardLoading() {
         </div>
 
         {/* Pipeline skeleton */}
-        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-6">
+        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
           <div className="mb-4 flex items-center justify-between">
             <SkeletonLoader width="120px" height="16px" radius="4px" />
             <SkeletonLoader width="60px" height="14px" radius="4px" />

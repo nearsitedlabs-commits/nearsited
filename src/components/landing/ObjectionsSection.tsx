@@ -31,7 +31,7 @@ const OBJECTIONS: Objection[] = [
     response: (
       <div className="space-y-3">
         <p>Google Maps is a directory. It shows you businesses, but can&rsquo;t tell you which ones have no website, which have a 4-second load time, or which are running entirely off Instagram.</p>
-        <p className="font-medium text-[var(--text-primary)]">What Maps can&rsquo;t do:</p>
+        <p className="font-medium text-[var(--color-text-primary)]">What Maps can&rsquo;t do:</p>
         <ul className="list-disc space-y-1 pl-4">
           <li>Filter for businesses with no website, social-only, or platform-only presence</li>
           <li>Rank 50+ businesses by opportunity score in seconds</li>
@@ -65,7 +65,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
   const prefersReducedMotion = useReducedMotion() ?? true;
 
   return (
-    <section className="border-t border-[var(--border)] py-14 md:py-24">
+    <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="text-center max-w-3xl mx-auto">
           <SectionLabel>Objections</SectionLabel>
@@ -79,27 +79,27 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
           {OBJECTIONS.map((item, i) => (
             <div
               key={item.objection}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] overflow-hidden"
+              className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}
                 aria-expanded={openIndex === i}
                 className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
               >
-                <span className="text-sm font-medium text-[var(--text-primary)]">{item.objection}</span>
+                <span className="text-sm font-medium text-[var(--color-text-primary)]">{item.objection}</span>
                 <ChevronDown
-                  className={`h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-transform duration-200 ${
+                  className={`h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200 ${
                     openIndex === i ? "rotate-180" : ""
                   }`}
                 />
               </button>
               {prefersReducedMotion ? (
                 openIndex === i && (
-                  <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
-                    <p className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</p>
-                    <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
-                      <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
-                      <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>
+                  <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4 space-y-3">
+                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{item.response}</p>
+                    <div className="flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-3">
+                      <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
+                      <p className="text-sm text-[var(--color-text-primary)] font-medium">{item.answer}</p>
                     </div>
                   </div>
                 )
@@ -114,11 +114,11 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
                       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="border-t border-[var(--border)] px-6 pb-6 pt-4 space-y-3">
-                        <div className="text-sm leading-7 text-[var(--text-secondary)]">{item.response}</div>
-                        <div className="flex items-start gap-2 rounded-lg bg-[var(--accent-tint)] p-3">
-                          <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--accent)] shrink-0" />
-                          <p className="text-sm text-[var(--text-primary)] font-medium">{item.answer}</p>
+                      <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4 space-y-3">
+                        <div className="text-sm leading-7 text-[var(--color-text-secondary)]">{item.response}</div>
+                        <div className="flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-3">
+                          <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
+                          <p className="text-sm text-[var(--color-text-primary)] font-medium">{item.answer}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -130,7 +130,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
         </div>
 
         <div className="mt-10 text-center">
-          <p className="text-sm text-[var(--text-secondary)] mb-4">Still have objections? The best way to answer them is to try it.</p>
+          <p className="text-sm text-[var(--color-text-secondary)] mb-4">Still have objections? The best way to answer them is to try it.</p>
           <Button variant="primary" onClick={() => navigate("/signup")} className="px-8 py-3 text-base">
             Try Nearsited free →
           </Button>

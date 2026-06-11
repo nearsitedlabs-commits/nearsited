@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, ArrowRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
@@ -44,9 +44,9 @@ function timeAgo(dateStr: string, now: number | null): string {
   if (!now) return "just now";
   const diff = Math.floor((now - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  return `${Math.floor(diff / 86400)}d`;
 }
 
 function formatDate(): string {
@@ -65,23 +65,49 @@ const PIPELINE_STAGES = [
   { key: "in_conversation", label: "In conv." },
   { key: "won",             label: "Won" },
   { key: "lost",            label: "Lost" },
-];
+] as const;
 
+// Bar segment bg colors — semantic per spec:
+// Prospect=secondary, Contacted=neutral, In conv=info, Won=success, Lost=danger
 const PIPELINE_BAR_COLORS: Record<string, string> = {
-  new_lead:        "bg-[var(--pipeline-new)]",
-  contacted:       "bg-[var(--pipeline-contacted)]",
-  in_conversation: "bg-[var(--pipeline-conversation)]",
-  won:             "bg-[var(--pipeline-won)]",
-  lost:            "bg-[var(--pipeline-lost)]",
+  new_lead:        "bg-[var(--color-text-tertiary)]",
+  contacted:       "bg-[var(--color-border-strong)]",
+  in_conversation: "bg-[var(--color-info)]",
+  won:             "bg-[var(--color-success)]",
+  lost:            "bg-[var(--color-danger)]",
 };
 
+// Count-line text colors — semantic, applied only when count > 0
 const PIPELINE_TEXT_COLORS: Record<string, string> = {
-  new_lead:        "text-[var(--pipeline-new)]",
-  contacted:       "text-[var(--pipeline-contacted)]",
-  in_conversation: "text-[var(--pipeline-conversation)]",
-  won:             "text-[var(--pipeline-won)]",
-  lost:            "text-[var(--pipeline-lost)]",
+  new_lead:        "text-[var(--color-text-secondary)]",
+  contacted:       "text-[var(--color-text-secondary)]",
+  in_conversation: "text-[var(--color-info)]",
+  won:             "text-[var(--color-success)]",
+  lost:            "text-[var(--color-danger)]",
 };
+
+// ── Shared header sub-component ───────────────────────────────────────────────
+
+function PageHeader({ firstName }: { firstName: string }) {
+  return (
+    <div className="mb-6 flex items-center justify-between" style={{ minHeight: 40 }}>
+      <div>
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
+          {formatDate()}
+        </p>
+        <p className="mt-0.5 text-[14px] font-medium text-[var(--color-text-primary)]">
+          {firstName ? `${firstName}'s workspace` : "Your workspace"}
+        </p>
+      </div>
+      <Link
+        href="/dashboard/discover"
+        className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+      >
+        <Search className="h-3 w-3" /> Discover
+      </Link>
+    </div>
+  );
+}
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
@@ -95,22 +121,16 @@ export default function DashboardClient({
   useEffect(() => {
     const timeout = setTimeout(() => setNow(Date.now()), 0);
     const interval = setInterval(() => setNow(Date.now()), 60_000);
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
+    return () => { clearTimeout(timeout); clearInterval(interval); };
   }, []);
 
   const leads = recentLeads as RecentLead[];
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
 
-  // Compute high-opportunity count from recent leads (for the inline stat)
-  const highOpportunityFromRecent = useMemo(() =>
+  const highOpportunityCount = useMemo(() =>
     leads.filter((l) => {
-      if (l.opportunity_score != null) return l.opportunity_score >= 70;
-      const hasAudit = l.performance_score != null || l.design_score != null;
       const score = l.opportunity_score
-        ?? (hasAudit
+        ?? (l.performance_score != null || l.design_score != null
           ? computeOpportunityScore(
               blendQualityForOpportunity(null, l.performance_score, l.design_score),
               l.review_count ?? 0, l.rating ?? 0, l.business_type ?? undefined)
@@ -124,51 +144,30 @@ export default function DashboardClient({
     }).length,
   [leads]);
 
-  // ── Next action card data ──────────────────────────────────────────────
-  const highOppCount = highOpportunityFromRecent;
   const userCity = useMemo(() => {
-    const cities = leads.map((l) => l.city).filter(Boolean);
     const counts = new Map<string, number>();
-    for (const c of cities) counts.set(c, (counts.get(c) ?? 0) + 1);
-    let best = "";
-    let most = 0;
-    for (const [c, n] of counts) {
-      if (n > most) { most = n; best = c; }
-    }
+    for (const l of leads) if (l.city) counts.set(l.city, (counts.get(l.city) ?? 0) + 1);
+    let best = ""; let most = 0;
+    for (const [c, n] of counts) if (n > most) { most = n; best = c; }
     return best;
   }, [leads]);
 
-  // ── Empty state ────────────────────────────────────────────────────────────
+  // ── Empty state (no leads at all) ─────────────────────────────────────────
   if (totalLeads === 0) {
     return (
       <div className="min-h-screen">
         <div className="mx-auto max-w-7xl px-6 py-8">
-          {/* Header */}
-          <div className="mb-8 flex items-center justify-between" style={{ minHeight: 40 }}>
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">{formatDate()}</p>
-              <p className="mt-0.5 text-sm font-medium text-[var(--text-primary)]" style={{ fontSize: 14 }}>
-                {firstName ? `${firstName}'s workspace` : "Your workspace"}
-              </p>
-            </div>
-            <Link
-              href="/dashboard/discover"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]"
-            >
-              <Search className="h-3 w-3" /> Discover
-            </Link>
-          </div>
-
-          <div className="mx-auto max-w-lg rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
-            <h2 className="text-2xl font-medium text-[var(--text-primary)]">Find your first opportunity</h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
+          <PageHeader firstName={firstName} />
+          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-12 text-center">
+            <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Find your first opportunity</h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               Search any city and business type to discover local businesses with weak websites. Nearsited will score, audit, and write the pitch.
             </p>
             <Link
               href="/dashboard/discover"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-6 py-3 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+              className="mt-8 inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
             >
-              <Search className="h-4 w-4" /> Start Discovering →
+              <Search className="h-4 w-4" /> Find leads →
             </Link>
           </div>
         </div>
@@ -180,68 +179,80 @@ export default function DashboardClient({
     <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-6 py-8">
 
-        {/* ── Header: date + workspace label (left), Discover (right) ───── */}
-        <div className="mb-6 flex items-center justify-between" style={{ minHeight: 40 }}>
-          <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--text-tertiary)]">{formatDate()}</p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--text-primary)]" style={{ fontSize: 14, fontWeight: 500 }}>
-              {firstName ? `${firstName}'s workspace` : "Your workspace"}
-            </p>
-          </div>
-          <Link
-            href="/dashboard/discover"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-150 hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]"
-          >
-            <Search className="h-3 w-3" /> Discover
-          </Link>
-        </div>
+        <PageHeader firstName={firstName} />
 
-        {/* ── Next Action Card (the ONLY card on the page) ──────────────── */}
-        {flaggedLeads > 0 && (
-          <div className="mb-6 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-tint)] p-5">
+        {/* ── Next Action Card — the ONLY card on the page ──────────────── */}
+        <div className="mb-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[4px] border-l-[var(--color-accent)] bg-[var(--color-bg-surface)] p-5">
+          {flaggedLeads > 0 ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--accent)]">Today</p>
-                <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
-                  {flaggedLeads} {flaggedLeads === 1 ? "lead is" : "leads are"} ready to pitch
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
+                  Today
                 </p>
-                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                  {highOppCount > 0 && `${highOppCount} high-opportunity`}
-                  {highOppCount > 0 && userCity ? ` · ` : ""}
-                  {userCity ? `${leads.filter((l) => l.city === userCity).length} in ${userCity}` : ""}
-                  {highOppCount > 0 || userCity ? " · " : ""}
-                  pitches not yet generated
+                <p className="mt-1 text-[18px] font-medium leading-snug text-[var(--color-text-primary)]">
+                  {flaggedLeads} {flaggedLeads === 1 ? "lead" : "leads"} ready to pitch
+                </p>
+                <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
+                  {[
+                    highOpportunityCount > 0 ? `${highOpportunityCount} high-opportunity` : null,
+                    userCity ? `${leads.filter((l) => l.city === userCity).length} in ${userCity}` : null,
+                    "pitches not yet generated",
+                  ].filter(Boolean).join(" · ")}
                 </p>
               </div>
               <Link
                 href="/dashboard/leads"
-                className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
               >
-                Pitch them <ArrowRight className="h-4 w-4 shrink-0" />
+                Pitch them →
               </Link>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
+                  Today
+                </p>
+                <p className="mt-1 text-[18px] font-medium leading-snug text-[var(--color-text-primary)]">
+                  All caught up.
+                </p>
+                <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
+                  Run a new search to find more leads.
+                </p>
+              </div>
+              <Link
+                href="/dashboard/discover"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              >
+                + Find leads
+              </Link>
+            </div>
+          )}
+        </div>
 
-        {/* ── Opportunities ────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-[var(--text-primary)]">Opportunities</h2>
-            <Link href="/dashboard/leads" className="text-xs font-medium text-[var(--accent)] hover:underline">
+        {/* ── Opportunities (flush, no card) ────────────────────────────── */}
+        <div className="mb-8">
+          <div className="mb-2 flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+            <h2 className="text-sm font-medium text-[var(--color-text-primary)]">Opportunities</h2>
+            <Link
+              href="/dashboard/leads"
+              className="text-xs font-medium text-[var(--color-accent)] hover:underline"
+            >
               View all →
             </Link>
           </div>
 
-          <p className="mb-3 text-xs text-[var(--text-tertiary)]">
-            {totalLeads} total · {unanalysedLeads} unanalysed · {highOppCount} high opportunity · {totalPipeline} in pipeline · {activeConversations} in conversation
+          <p className="mb-3 text-xs text-[var(--color-text-tertiary)]">
+            {totalLeads} total
+            {unanalysedLeads > 0 && ` · ${unanalysedLeads} unanalysed`}
+            {highOpportunityCount > 0 && ` · ${highOpportunityCount} high-opportunity`}
+            {totalPipeline > 0 && ` · ${totalPipeline} in pipeline`}
+            {activeConversations > 0 && ` · ${activeConversations} in conversation`}
           </p>
 
           {leads.length === 0 ? (
             <div className="py-6 text-center">
-              <p className="text-sm text-[var(--text-tertiary)]">No opportunities yet.</p>
-              <Link href="/dashboard/discover" className="mt-2 inline-block text-sm font-medium text-[var(--accent)] hover:underline">
-                Discover businesses to get started
-              </Link>
+              <p className="text-sm text-[var(--color-text-tertiary)]">No recent opportunities.</p>
             </div>
           ) : (
             <div>
@@ -249,7 +260,9 @@ export default function DashboardClient({
                 const hasAudit = lead.performance_score !== null || lead.design_score !== null;
                 const oppScore = lead.opportunity_score
                   ?? (hasAudit
-                    ? computeOpportunityScore(blendQualityForOpportunity(null, lead.performance_score, lead.design_score), lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
+                    ? computeOpportunityScore(
+                        blendQualityForOpportunity(null, lead.performance_score, lead.design_score),
+                        lead.review_count ?? 0, lead.rating ?? 0, lead.business_type ?? undefined)
                     : estimatedOpportunity({
                         website_status: lead.website_status,
                         website: lead.website,
@@ -260,85 +273,89 @@ export default function DashboardClient({
                   <div
                     key={lead.id}
                     onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
-                    className="flex cursor-pointer items-center gap-3 px-1 transition-colors duration-150 hover:bg-[var(--bg-surface-2)]"
-                    style={{ minHeight: 50, borderBottom: idx < leads.length - 1 ? "0.5px solid var(--border)" : undefined }}
+                    className="flex cursor-pointer items-center gap-3 px-1 py-0.5 transition-colors hover:bg-[var(--color-bg-elevated)]"
+                    style={{
+                      minHeight: 46,
+                      borderBottom: idx < leads.length - 1 ? "1px solid var(--color-border-subtle)" : undefined,
+                    }}
                   >
-                    {/* Score circle */}
                     <ScoreRing score={oppScore} size={32} variant="opportunity" noAnimate />
 
-                    {/* Name + subtitle */}
                     <div className="min-w-0 flex-1">
-                      <p dir="auto" className="truncate text-[13px] font-medium text-[var(--text-primary)] leading-snug">
+                      <p dir="auto" className="truncate text-[13px] font-medium leading-snug text-[var(--color-text-primary)]">
                         {lead.name}
                       </p>
-                      <p className="truncate text-[11px] text-[var(--text-tertiary)] leading-snug">
-                        <WebsiteBadge status={lead.website_status} /> · {lead.city ?? "Unknown city"}
+                      <p className="truncate text-[11px] leading-snug text-[var(--color-text-tertiary)]">
+                        <WebsiteBadge status={lead.website_status} /> · {lead.city ?? "Unknown"}
                       </p>
                     </div>
 
-                    {/* Timestamp */}
-                    <p className="shrink-0 text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">
+                    <p className="shrink-0 whitespace-nowrap text-[11px] text-[var(--color-text-tertiary)]">
                       {timeAgo(lead.discovered_at, now)}
                     </p>
                   </div>
                 );
               })}
-              <p className="mt-2 text-[11px] text-[var(--text-tertiary)]">Scores are estimates.</p>
             </div>
           )}
         </div>
 
-        {/* ── Pipeline ──────────────────────────────────────────────────── */}
+        {/* ── Pipeline (flush, different visual treatment) ───────────────── */}
         <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-[var(--text-primary)]">Pipeline</h2>
-            <Link href="/dashboard/pipeline" className="text-xs font-medium text-[var(--accent)] hover:underline">
+          <div className="mb-3 flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+            <h2 className="text-sm font-medium text-[var(--color-text-primary)]">Pipeline</h2>
+            <Link
+              href="/dashboard/pipeline"
+              className="text-xs font-medium text-[var(--color-accent)] hover:underline"
+            >
               Manage →
             </Link>
           </div>
 
+          {/* Horizontal segmented bar */}
           {totalPipeline === 0 ? (
-            <div className="py-4 text-center">
-              <p className="text-xs text-[var(--text-tertiary)]">No active pipeline yet.</p>
-            </div>
+            <div className="mb-2 h-2 w-full rounded-full bg-[var(--color-bg-elevated)]" />
           ) : (
-            <>
-              {/* Horizontal segmented bar */}
-              <div className="mb-2 flex h-2 w-full overflow-hidden rounded-full bg-[var(--bg-elevated)]">
-                {PIPELINE_STAGES.map((stage) => {
-                  const count = pipelineCounts[stage.key] ?? 0;
-                  const pct = totalPipeline > 0 ? (count / totalPipeline) * 100 : 0;
-                  if (count === 0) return null;
-                  const barColor = PIPELINE_BAR_COLORS[stage.key] ?? "bg-[var(--border)]";
+            <div className="mb-2 flex h-2 w-full overflow-hidden rounded-full bg-[var(--color-bg-elevated)]">
+              {PIPELINE_STAGES.map((stage) => {
+                const count = pipelineCounts[stage.key] ?? 0;
+                if (count === 0) {
                   return (
                     <div
                       key={stage.key}
-                      className={`h-full ${barColor} first:rounded-l-full last:rounded-r-full`}
-                      style={{ width: `${pct}%` }}
+                      className="h-full shrink-0 bg-[var(--color-bg-elevated)]"
+                      style={{ width: 8 }}
                     />
                   );
-                })}
-              </div>
-
-              {/* Count line */}
-              <div className="flex items-center gap-3 text-[11px]">
-                {PIPELINE_STAGES.map((stage, idx) => {
-                  const count = pipelineCounts[stage.key] ?? 0;
-                  const textColor = count > 0
-                    ? (PIPELINE_TEXT_COLORS[stage.key] ?? "text-[var(--text-tertiary)]")
-                    : "text-[var(--text-tertiary)]";
-                  return (
-                    <span key={stage.key} className={textColor}>
-                      {count} {stage.label}
-                      {idx < PIPELINE_STAGES.length - 1 && (
-                        <span className="ml-3 text-[var(--border)]">·</span>
-                      )}
-                    </span>
-                  );
-                })}
-              </div>
-            </>
+                }
+                return (
+                  <div
+                    key={stage.key}
+                    className={`h-full shrink-0 first:rounded-l-full last:rounded-r-full ${PIPELINE_BAR_COLORS[stage.key] ?? ""}`}
+                    style={{ flexGrow: count }}
+                  />
+                );
+              })}
+            </div>
           )}
+
+          {/* Count line */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
+            {PIPELINE_STAGES.map((stage, idx) => {
+              const count = pipelineCounts[stage.key] ?? 0;
+              const textColor = count > 0
+                ? (PIPELINE_TEXT_COLORS[stage.key] ?? "text-[var(--color-text-tertiary)]")
+                : "text-[var(--color-text-tertiary)]";
+              return (
+                <span key={stage.key} className={textColor}>
+                  {count} {stage.label}
+                  {idx < PIPELINE_STAGES.length - 1 && (
+                    <span className="ml-3 text-[var(--color-border-strong)]">·</span>
+                  )}
+                </span>
+              );
+            })}
+          </div>
         </div>
 
       </div>

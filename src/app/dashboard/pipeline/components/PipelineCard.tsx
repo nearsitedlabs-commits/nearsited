@@ -68,7 +68,7 @@ export function PipelineCard({
         }
       }}
       onClick={() => onCardClick(item.id)}
-      className={`cursor-grab active:cursor-grabbing rounded-lg border border-[var(--border)] border-t-[3px] bg-[var(--bg-elevated)] p-2.5 transition-shadow ${
+      className={`cursor-grab active:cursor-grabbing rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] border-t-[3px] bg-[var(--color-bg-elevated)] p-2.5 transition-shadow ${
         draggingId === item.pipeline_id
           ? "shadow-[var(--brand-shadow-lg)] z-10"
           : "shadow-[var(--brand-shadow-xs)] hover:shadow-[var(--brand-shadow-sm)]"
@@ -77,7 +77,7 @@ export function PipelineCard({
     >
       {/* Header row: name + overflow menu */}
       <div className="flex items-center justify-between gap-2">
-        <p className="min-w-0 truncate text-sm font-medium text-[var(--text-primary)]" dir="auto">
+        <p className="min-w-0 truncate text-sm font-medium text-[var(--color-text-primary)]" dir="auto">
           {item.name}
         </p>
         <CardActionsMenu
@@ -90,7 +90,7 @@ export function PipelineCard({
 
       {/* Sub row: type · city */}
       {item.business_type && item.city && (
-        <p className="mt-0.5 truncate text-[11px] text-[var(--text-tertiary)]">
+        <p className="mt-0.5 truncate text-[11px] text-[var(--color-text-tertiary)]">
           {item.business_type} · {item.city}
         </p>
       )}

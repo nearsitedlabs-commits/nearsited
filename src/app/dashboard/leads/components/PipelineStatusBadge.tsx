@@ -1,18 +1,22 @@
+import { Pill, type PillVariant } from "@/components/ui/Pill";
 import type { OpportunityStatus } from "./types";
-import { STATUS_BADGE } from "./types";
+
+const STATUS_CONFIG: Record<OpportunityStatus, { label: string; variant: PillVariant }> = {
+  new:         { label: "New",         variant: "info" },
+  audited:     { label: "Audited",     variant: "neutral" },
+  pitched:     { label: "Pitched",     variant: "info" },
+  in_pipeline: { label: "In pipeline", variant: "info" },
+  won:         { label: "Won",         variant: "success" },
+  lost:        { label: "Lost",        variant: "danger" },
+  archived:    { label: "Archived",    variant: "neutral" },
+};
 
 export function PipelineStatusBadge({ status }: { status: OpportunityStatus | undefined }) {
-  if (!status) {
-    return (
-      <span className="inline-block whitespace-nowrap rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[10px] font-medium text-blue-400 transition-all duration-300">
-        New
-      </span>
-    );
-  }
-  const cfg = STATUS_BADGE[status];
+  const cfg = status ? STATUS_CONFIG[status] : STATUS_CONFIG.new;
   return (
-    <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-1 text-[10px] font-medium transition-all duration-300 ${cfg.class}`}>
+    <Pill variant={cfg.variant} size="sm" dot display="status">
       {cfg.label}
-    </span>
+    </Pill>
   );
 }
+PipelineStatusBadge.displayName = "PipelineStatusBadge";

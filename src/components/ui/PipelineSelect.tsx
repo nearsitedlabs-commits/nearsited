@@ -19,17 +19,17 @@ export default function PipelineSelect({ value, onChange, options, className = "
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger
-        className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-center text-[var(--text-secondary)] outline-none transition-colors duration-150 focus:border-[var(--accent)] ${className}`}
+        className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-center text-[var(--color-text-secondary)] outline-none transition-colors duration-150 focus:border-[var(--color-accent)] ${className}`}
       >
         <Select.Value />
         <Select.Icon>
-          <ChevronDown className="h-3 w-3 text-[var(--text-tertiary)]" />
+          <ChevronDown className="h-3 w-3 text-[var(--color-text-tertiary)]" />
         </Select.Icon>
       </Select.Trigger>
 
       <Select.Portal>
         <Select.Content
-          className="z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-surface-3)] shadow-[var(--brand-shadow-lg)]"
+          className="z-50 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--bg-surface-3)] shadow-[var(--brand-shadow-lg)]"
           position="popper"
           sideOffset={4}
         >
@@ -38,7 +38,7 @@ export default function PipelineSelect({ value, onChange, options, className = "
               <Select.Item
                 key={opt.value}
                 value={opt.value}
-                className="relative flex cursor-pointer select-none items-center justify-center rounded-md px-2.5 py-2 text-xs font-medium text-center text-[var(--text-secondary)] outline-none transition-colors duration-100 data-[highlighted]:bg-[var(--bg-elevated)] data-[highlighted]:text-[var(--text-primary)] data-[state=checked]:text-[var(--accent)]"
+                className="relative flex cursor-pointer select-none items-center justify-center rounded-[var(--radius-sm)] px-2.5 py-2 text-xs font-medium text-center text-[var(--color-text-secondary)] outline-none transition-colors duration-100 data-[highlighted]:bg-[var(--color-bg-elevated)] data-[highlighted]:text-[var(--color-text-primary)] data-[state=checked]:text-[var(--color-accent)]"
               >
                 <Select.ItemText>{opt.label}</Select.ItemText>
               </Select.Item>

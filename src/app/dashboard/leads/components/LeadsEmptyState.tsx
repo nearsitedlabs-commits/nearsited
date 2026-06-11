@@ -1,101 +1,101 @@
 import Link from "next/link";
-import { Search, Compass, Target, Lightbulb } from "lucide-react";
-import { FadeUp } from "@/lib/motion";
 import type { TabFilter } from "./types";
 
-const EMPTY_MESSAGES: Record<TabFilter, { icon: typeof Compass; title: string; description: string }> = {
+const EMPTY_COPY: Partial<Record<TabFilter, { title: string; description: string }>> = {
   all: {
-    icon: Compass,
-    title: "No opportunities yet",
-    description: "Hidden revenue is waiting to be uncovered. Start your first discovery search to find local businesses with redesign potential.",
-  },
-  all_pipeline: {
-    icon: Compass,
-    title: "No leads in pipeline",
-    description: "Add discovered opportunities to your pipeline to start tracking them from prospect to won deal.",
+    title: "No opportunities yet.",
+    description: "Find businesses worth reaching out to.",
   },
   no_website: {
-    icon: Lightbulb,
-    title: "No leads without a website",
-    description: "Discover businesses in your area to find opportunities with no web presence.",
+    title: "No leads without a website.",
+    description: "Discover local businesses with no web presence.",
   },
   has_website: {
-    icon: Target,
-    title: "No leads with a website",
-    description: "Discover businesses that have a website you could audit and improve.",
+    title: "No leads with a website.",
+    description: "Discover businesses whose site could be improved.",
   },
   social_platform: {
-    icon: Target,
-    title: "No social or platform-only leads",
+    title: "No social or platform-only leads.",
     description: "Discover businesses whose only presence is a social profile or third-party platform.",
   },
+  social_only: {
+    title: "No social-only leads.",
+    description: "Discover businesses whose only online presence is a social profile.",
+  },
+  platform_only: {
+    title: "No platform-only leads.",
+    description: "Discover businesses whose only online presence is a third-party platform.",
+  },
+  in_pipeline: {
+    title: "No leads in pipeline.",
+    description: "Add discovered opportunities to your pipeline to track them here.",
+  },
+  all_pipeline: {
+    title: "No leads in pipeline.",
+    description: "Add discovered opportunities to your pipeline to start tracking conversations.",
+  },
   flagged: {
-    icon: Lightbulb,
-    title: "No flagged leads",
+    title: "No flagged leads.",
     description: "Leads flagged for outreach will appear here.",
   },
   pipeline_in: {
-    icon: Target,
-    title: "No pipeline leads",
-    description: "Add discovered opportunities to your pipeline to track them here.",
+    title: "No pipeline leads.",
+    description: "Add discovered opportunities to track them here.",
   },
   pipeline_prospect: {
-    icon: Target,
-    title: "No prospects yet",
+    title: "No prospects yet.",
     description: "Add opportunities to your pipeline to start tracking progress.",
   },
   pipeline_contacted: {
-    icon: Target,
-    title: "No contacted leads",
+    title: "No contacted leads.",
     description: "Move leads through your pipeline to start tracking conversations.",
   },
   pipeline_in_conversation: {
-    icon: Target,
-    title: "No active conversations",
+    title: "No active conversations.",
     description: "Leads marked In Conversation will appear here.",
   },
   pipeline_won: {
-    icon: Lightbulb,
-    title: "No won deals yet",
-    description: "Keep working your pipeline — won deals will appear here.",
+    title: "No won deals yet.",
+    description: "Keep working your pipeline.",
   },
 };
 
-export function LeadsEmptyState({ activeTab, searchQuery }: { activeTab: TabFilter; searchQuery: string }) {
+export function LeadsEmptyState({
+  activeTab,
+  searchQuery,
+}: {
+  activeTab: TabFilter;
+  searchQuery: string;
+}) {
   if (searchQuery.trim()) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-elevated)]">
-          <Search className="h-6 w-6 text-[var(--text-tertiary)]" />
-        </div>
-        <h3 className="text-xl font-normal text-[var(--text-primary)]">No results for &ldquo;{searchQuery}&rdquo;</h3>
-        <p className="mt-2 max-w-xs text-xs leading-relaxed text-[var(--text-tertiary)]">
+      <div className="flex min-h-[240px] flex-col items-center justify-center py-16 text-center">
+        <p className="text-sm font-medium text-[var(--color-text-primary)]">
+          Nothing matches &ldquo;{searchQuery}&rdquo;.
+        </p>
+        <p className="mx-auto mt-1 max-w-sm text-[13px] text-[var(--color-text-secondary)]">
           Try a different search term or adjust your filters.
         </p>
       </div>
     );
   }
 
-  const msg = EMPTY_MESSAGES[activeTab] ?? EMPTY_MESSAGES.all;
-  const Icon = msg.icon;
+  const copy = EMPTY_COPY[activeTab] ?? EMPTY_COPY.all!;
 
   return (
-    <FadeUp>
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent-tint)]">
-        <Icon className="h-6 w-6 text-[var(--accent)]" />
-      </div>
-      <h3 className="text-xl font-normal text-[var(--text-primary)]">{msg.title}</h3>
-      <p className="mt-2 max-w-sm text-xs leading-relaxed text-[var(--text-tertiary)]">{msg.description}</p>
+    <div className="flex min-h-[240px] flex-col items-center justify-center py-16 text-center">
+      <p className="text-sm font-medium text-[var(--color-text-primary)]">{copy.title}</p>
+      <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-[var(--color-text-secondary)]">
+        {copy.description}
+      </p>
       {activeTab === "all" && (
         <Link
           href="/dashboard/discover"
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-[var(--accent-hover)]"
+          className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
         >
-          <Compass className="h-4 w-4" /> Discover Businesses
+          + Find leads
         </Link>
       )}
     </div>
-    </FadeUp>
   );
 }

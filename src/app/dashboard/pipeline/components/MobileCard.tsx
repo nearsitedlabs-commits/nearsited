@@ -30,15 +30,15 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
   const borderClass = STAGE_BORDER_COLORS[item.pipeline_status] ?? "border-l-[var(--border)]";
 
   return (
-    <div className={`rounded-xl border border-[var(--border)] border-l-[3px] bg-[var(--bg-surface)] p-3 ${borderClass}`}>
+    <div className={`rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[3px] bg-[var(--color-bg-surface)] p-3 ${borderClass}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {/* Name */}
-          <p className="truncate text-sm font-medium text-[var(--text-primary)]">{item.name}</p>
+          <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{item.name}</p>
 
           {/* Type · City */}
           {item.business_type && item.city && (
-            <p className="mt-0.5 truncate text-xs text-[var(--text-tertiary)]">
+            <p className="mt-0.5 truncate text-xs text-[var(--color-text-tertiary)]">
               {item.business_type} · {item.city}
             </p>
           )}
@@ -56,7 +56,7 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
           <select
             value={item.pipeline_status}
             onChange={(e) => onStatusChange(item.pipeline_id, e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-[11px] text-[var(--text-secondary)] focus:outline-none"
+            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2 py-1.5 text-[11px] text-[var(--color-text-secondary)] focus:outline-none"
           >
             {PIPELINE_SALES_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -68,7 +68,7 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
           {/* View link */}
           <Link
             href={`/dashboard/leads/${item.id}`}
-            className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+            className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
             <ExternalLink className="h-3 w-3" /> View
           </Link>

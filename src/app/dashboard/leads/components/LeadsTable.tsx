@@ -2,11 +2,13 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { motion, fadeUpVariants, staggerVariants } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
+import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
+import { ActionMenu, type ActionMenuItem } from "@/components/ui/ActionMenu";
 import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
 import { effectiveOpportunityScore, deriveOpportunityStatus, scoreTier, formatRelativeTime } from "./helpers";
-import { SITE_LABEL } from "./types";
 import type { LeadRow, OpportunityStatus } from "./types";
+import Link from "next/link";
 
 type AnalyseProgress = { step: number; phase: string; label: string; error?: string };
 
@@ -18,15 +20,13 @@ type Props = {
   analyseProgress: Map<string, AnalyseProgress>;
   onAnalyse: (leadId: string, website: string) => void;
   shouldReduce: boolean;
-  // Bulk selection
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
+  onAddToPipeline: (id: string) => Promise<void>;
+  onMoveStatus: (id: string, status: "won" | "lost") => Promise<void>;
 };
 
-/**
- * Cluster header for collapsing groups of same-industry + same-city + same-tier leads.
- */
 type ClusterInfo = {
   type: "cluster";
   count: number;
@@ -40,11 +40,11 @@ type ClusterInfo = {
 function buildClusters(
   rows: LeadRow[],
   expandedClusters: Set<number>,
-  setExpandedClusters: React.Dispatch<React.SetStateAction<Set<number>>> // eslint-disable-line @typescript-eslint/no-unused-vars
+  _setExpandedClusters: React.Dispatch<React.SetStateAction<Set<number>>>
 ): (LeadRow | { cluster: ClusterInfo; rows: LeadRow[] })[] {
   const result: (LeadRow | { cluster: ClusterInfo; rows: LeadRow[] })[] = [];
   let i = 0;
-  const minClusterSize = 5; // Collapse if >5 consecutive
+  const minClusterSize = 5;
 
   while (i < rows.length) {
     const lead = rows[i];
@@ -53,7 +53,6 @@ function buildClusters(
     const industry = lead.business_type?.toLowerCase() ?? "";
     const city = lead.city?.toLowerCase() ?? "";
 
-    // Find consecutive matching rows
     let j = i + 1;
     while (j < rows.length) {
       const next = rows[j];
@@ -88,7 +87,6 @@ function buildClusters(
         rows: rows.slice(i, j),
       });
     } else {
-      // Add individual rows
       for (let k = i; k < j; k++) result.push(rows[k]);
     }
 
@@ -109,19 +107,72 @@ export function LeadsTable({
   selectedIds,
   onToggleSelect,
   onToggleSelectAll,
+  onAddToPipeline,
+  onMoveStatus,
 }: Props) {
   const [expandedClusters, setExpandedClusters] = useState<Set<number>>(new Set());
   const allSelected = paginated.length > 0 && paginated.every((l) => selectedIds.has(l.id));
 
-  // Build clustered rows
   const clustered = buildClusters(paginated, expandedClusters, setExpandedClusters);
+
+  const buildRowMenu = (lead: LeadRow, pipelineStatus: string | undefined, hasPitch: boolean, status: OpportunityStatus): ActionMenuItem[] => {
+    const canAnalyse = !!lead.website && (lead.website_status === "has_website" || lead.website_status === "platform_only");
+    const isInPipeline = !!pipelineStatus;
+
+    const items: ActionMenuItem[] = [
+      {
+        label: "View opportunity",
+        onClick: () => { window.location.href = `/dashboard/leads/${lead.id}`; },
+      },
+    ];
+
+    if (hasPitch) {
+      items.push({
+        label: "View pitch",
+        onClick: () => { window.location.href = `/dashboard/leads/${lead.id}?tab=pitch`; },
+      });
+    }
+
+    if (canAnalyse) {
+      items.push({
+        label: status === "audited" ? "Re-audit" : "Audit",
+        onClick: () => onAnalyse(lead.id, lead.website!),
+      });
+    }
+
+    items.push({
+      label: "Generate pitch",
+      onClick: () => { window.location.href = `/dashboard/leads/${lead.id}`; },
+    });
+
+    if (!isInPipeline) {
+      items.push({
+        label: "Move to pipeline",
+        onClick: () => { void onAddToPipeline(lead.id); },
+      });
+    }
+
+    items.push(
+      {
+        label: "Mark as Won",
+        onClick: () => { void onMoveStatus(lead.id, "won"); },
+      },
+      {
+        label: "Mark as Lost",
+        danger: true,
+        onClick: () => { void onMoveStatus(lead.id, "lost"); },
+      },
+    );
+
+    return items;
+  };
 
   const renderRow = (lead: LeadRow, animated: boolean) => {
     const pipelineStatus = pipelineMap.get(lead.id);
     const hasPitch = pitchMap.get(lead.id) ?? false;
     const status: OpportunityStatus = deriveOpportunityStatus(lead, pipelineStatus, hasPitch);
     const ringScore = effectiveOpportunityScore(lead);
-    const siteLabel = SITE_LABEL[lead.website_status] ?? SITE_LABEL.unknown;
+    const menuItems = buildRowMenu(lead, pipelineStatus, hasPitch, status);
 
     const cells = (
       <>
@@ -131,12 +182,12 @@ export function LeadsTable({
             type="checkbox"
             checked={selectedIds.has(lead.id)}
             onChange={() => onToggleSelect(lead.id)}
-            className="h-4 w-4 cursor-pointer rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]/30"
+            className="h-4 w-4 cursor-pointer rounded border-[var(--color-border-subtle)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]/30"
           />
         </td>
         {/* Score */}
-        <td className="w-14 px-2 py-3 align-middle">
-          <ScoreRing score={ringScore} size={40} variant={
+        <td className="w-12 px-2 py-3 align-middle">
+          <ScoreRing score={ringScore} size={36} variant={
             lead.website_status === "has_website" && lead.audited_at ? "opportunity"
             : lead.website_status === "has_website" ? "estimate"
             : "opportunity"
@@ -144,51 +195,56 @@ export function LeadsTable({
         </td>
         {/* Business */}
         <td className="px-3 py-3 align-middle">
-          <p dir="auto" className="text-sm font-medium text-[var(--text-primary)] truncate max-w-[240px]">
-            {lead.name}
-          </p>
-          <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5 truncate max-w-[240px]">
-            {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
-            {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
-            {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
-          </p>
+          <Link href={`/dashboard/leads/${lead.id}`} className="block hover:opacity-80 transition-opacity">
+            <p dir="auto" className="text-sm font-medium text-[var(--color-text-primary)] truncate max-w-[240px]">
+              {lead.name}
+            </p>
+            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5 truncate max-w-[240px]">
+              {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
+              {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
+              {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
+            </p>
+          </Link>
         </td>
         {/* Site */}
-        <td className="w-20 px-3 py-3 align-middle">
-          <span className={`text-xs ${siteLabel.color}`}>{siteLabel.label}</span>
+        <td className="w-[90px] px-3 py-3 align-middle">
+          <WebsiteStatusPill status={lead.website_status} size="sm" />
         </td>
         {/* Last audit */}
-        <td className="w-24 px-3 py-3 align-middle">
-          <span className="text-xs text-[var(--text-secondary)]" title={lead.audited_at ?? undefined}>
+        <td className="w-[90px] px-3 py-3 align-middle">
+          <span className="text-xs text-[var(--color-text-secondary)]" title={lead.audited_at ?? undefined}>
             {formatRelativeTime(lead.audited_at ?? lead.design_analyzed_at)}
           </span>
         </td>
         {/* Status */}
-        <td className="w-28 px-3 py-3 align-middle">
+        <td className="w-[100px] px-3 py-3 align-middle">
           <PipelineStatusBadge status={status} />
         </td>
         {/* Action */}
-        <td className="w-36 px-3 py-3 align-middle">
-          <LeadActionCell
-            lead={lead}
-            status={status}
-            isAnalysing={analysingIds.has(lead.id)}
-            progress={analyseProgress.get(lead.id)}
-            onAnalyse={onAnalyse}
-          />
+        <td className="w-[90px] px-3 py-3 align-middle">
+          <div className="flex items-center gap-1">
+            <LeadActionCell
+              lead={lead}
+              status={status}
+              isAnalysing={analysingIds.has(lead.id)}
+              progress={analyseProgress.get(lead.id)}
+              onAnalyse={onAnalyse}
+            />
+            <ActionMenu items={menuItems} align="end" />
+          </div>
         </td>
       </>
     );
 
     if (animated) {
       return (
-        <motion.tr key={lead.id} variants={fadeUpVariants} className="transition-colors duration-150 hover:bg-[var(--bg-elevated)]">
+        <motion.tr key={lead.id} variants={fadeUpVariants} className="transition-colors duration-150 hover:bg-[var(--color-bg-elevated)]">
           {cells}
         </motion.tr>
       );
     }
     return (
-      <tr key={lead.id} className="transition-colors duration-150 hover:bg-[var(--bg-elevated)]">
+      <tr key={lead.id} className="transition-colors duration-150 hover:bg-[var(--color-bg-elevated)]">
         {cells}
       </tr>
     );
@@ -197,7 +253,7 @@ export function LeadsTable({
   const renderClusterHeader = (cluster: ClusterInfo, idx: number) => {
     const expanded = expandedClusters.has(idx);
     return (
-      <tr key={`cluster-${idx}`} className="bg-[var(--bg-elevated)]/50">
+      <tr key={`cluster-${idx}`} className="bg-[var(--color-bg-elevated)]/50">
         <td colSpan={7} className="px-5 py-2">
           <button
             onClick={() => setExpandedClusters((prev) => {
@@ -209,14 +265,14 @@ export function LeadsTable({
             className="flex w-full items-center gap-2 text-left cursor-pointer"
           >
             {expanded ? (
-              <ChevronDown className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+              <ChevronDown className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
             ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+              <ChevronRight className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />
             )}
-            <span className="text-xs font-medium text-[var(--text-secondary)]">
+            <span className="text-xs font-medium text-[var(--color-text-secondary)]">
               {cluster.count} in cluster · {cluster.industry} · {cluster.city} · scored ~{cluster.scoreRange}
             </span>
-            <span className="ml-auto text-[10px] text-[var(--text-tertiary)]">
+            <span className="ml-auto text-[10px] text-[var(--color-text-tertiary)]">
               {expanded ? "Collapse ▴" : "Expand ▾"}
             </span>
           </button>
@@ -226,29 +282,29 @@ export function LeadsTable({
   };
 
   return (
-    <div className="hidden overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] md:block">
+    <div className="hidden overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] md:block">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-[var(--border)] bg-[var(--bg-elevated)]">
+            <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]">
               <th className="w-10 px-3 py-3">
                 <input
                   type="checkbox"
                   checked={allSelected}
                   onChange={onToggleSelectAll}
-                  className="h-4 w-4 cursor-pointer rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]/30"
+                  className="h-4 w-4 cursor-pointer rounded border-[var(--color-border-subtle)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]/30"
                 />
               </th>
-              <th className="w-14 px-2 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Score</th>
-              <th className="px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Business</th>
-              <th className="w-20 px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Site</th>
-              <th className="w-24 px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Last audit</th>
-              <th className="w-28 px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Status</th>
-              <th className="w-36 px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Action</th>
+              <th className="w-12 px-2 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Score</th>
+              <th className="px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Business</th>
+              <th className="w-[90px] px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Site</th>
+              <th className="w-[90px] px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Last audit</th>
+              <th className="w-[100px] px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Status</th>
+              <th className="w-[90px] px-3 py-3 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">Action</th>
             </tr>
           </thead>
           {shouldReduce ? (
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y divide-[var(--color-border-subtle)]">
               {clustered.map((item, idx) => {
                 if ("cluster" in item) {
                   return (
@@ -267,7 +323,7 @@ export function LeadsTable({
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="divide-y divide-[var(--border)]"
+              className="divide-y divide-[var(--color-border-subtle)]"
             >
               {clustered.map((item, idx) => {
                 if ("cluster" in item) {

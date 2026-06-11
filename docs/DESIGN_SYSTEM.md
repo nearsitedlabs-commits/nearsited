@@ -299,7 +299,7 @@ Nearsited uses a restrained, muted palette inspired by Linear and Vercel. No neo
   /* Text — soft white family */
   --text-primary:  #f0ede8;  /* Primary copy — headings, body */
   --text-secondary:#b8b0a8;  /* Secondary copy — subdued body */
-  --text-tertiary: #7a7268;  /* Muted — labels, metadata */
+  --text-tertiary: #8a8278;  /* Muted — labels, metadata (raised from #7a7268 for WCAG AA) */
   --text-muted:    #3f3a35;  /* Very muted — placeholders */
 
   /* Brand — Sage */
@@ -496,7 +496,7 @@ DashboardLayout (sidebar w-60 fixed | main flex-1)
 
 ### 10.5 Toast Notifications
 
-- Position: `fixed bottom-6 right-6`
+- Position: `fixed bottom-20 right-4 sm:bottom-6 sm:right-6` — `bottom-20` on mobile clears the fixed bottom nav bar; reverts to `bottom-6 right-6` on `sm+`
 - Background: `bg-[var(--bg-surface)]`
 - Border: `border border-[var(--border)]`
 - Shadow: `shadow-[var(--shadow-lg)]`
@@ -617,7 +617,7 @@ Use `@tanstack/react-table` for:
 
 ### 13.4 Icon Buttons
 
-- Padding: `p-2`
+- Padding: `p-2.5 min-h-[44px] min-w-[44px]` — 44px minimum for WCAG touch target compliance
 - Radius: `rounded-lg`
 - Same hover patterns as ghost
 - Fixed icon size: `h-4 w-4`
@@ -720,6 +720,86 @@ pipeline     → track progress
 dashboard    → overview
 settings     → workspace
 ```
+
+---
+
+## 17. Accessibility Standards
+
+### 17.1 Touch Targets
+
+WCAG 2.5.5 minimum: **44×44px**. Enforced via:
+- Mobile nav links: `py-3` (≥44px tap area)
+- Filter bar buttons: `px-4 py-2` with `text-sm` (≥44px)
+- Action buttons in header strips: `px-3.5 py-2` with `text-xs`
+- Icon-only buttons: `p-2.5 min-h-[44px] min-w-[44px]` (see §13.4)
+- `Button` component `sm` size: `min-h-[44px]`
+
+### 17.2 Focus Management
+
+All modals and dialogs use a **focus trap**:
+```ts
+// Pattern: save trigger, focus first focusable, trap Tab, close on Escape, restore on close
+const triggerEl = document.activeElement as HTMLElement | null;
+const focusable = container.querySelectorAll<HTMLElement>(
+  'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+);
+focusable[0]?.focus();
+const trap = (e: KeyboardEvent) => {
+  if (e.key === "Escape") { onCloseRef.current(); return; }
+  if (e.key !== "Tab") return;
+  const first = focusable[0]; const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+};
+document.addEventListener("keydown", trap);
+return () => { document.removeEventListener("keydown", trap); triggerEl?.focus(); };
+```
+Use `onCloseRef` pattern (not stale closure) — see §17.4.
+
+### 17.3 Skip Navigation
+
+Dashboard layout includes a skip-to-main-content link as the first focusable element:
+```tsx
+<a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] ...">
+  Skip to main content
+</a>
+```
+`<main>` has `id="main-content"`.
+
+### 17.4 Stale Closure Pattern for Dialog Callbacks
+
+When registering keyboard event listeners in `useEffect`, callbacks (like `onClose`) become stale. Use a ref:
+```ts
+const onCloseRef = useRef(onClose);
+useEffect(() => { onCloseRef.current = onClose; }); // no deps — updates after every render
+// Inside the effect: use onCloseRef.current() not onClose()
+```
+
+### 17.5 Color Contrast
+
+WCAG AA requires ≥4.5:1 for normal text. Verified tokens:
+- `--text-tertiary: #8a8278` on `#0a0e12` → ~4.6:1 ✅ (was `#7a7268` → ~3.8:1 ❌)
+- `--text-secondary: #b8b0a8` → passes AA at all sizes ✅
+- `--text-primary: #f0ede8` → passes AAA ✅
+
+### 17.6 Focus Visible Ring
+
+Global rule in `globals.css`:
+```css
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+```
+
+### 17.7 ARIA Roles
+
+- Dialogs/modals: `role="dialog" aria-modal="true" aria-labelledby="<title-id>"`
+- Score rings: `role="img" aria-label="<metric>: <value> out of 100"`
+- Toggle/switch buttons: `aria-label="<description>"` + `role="switch"` where appropriate
+- Decorative elements (disabled rows, placeholders): `aria-hidden="true"`
+- SVG filter IDs: Use `useId()` from React to generate unique IDs per component instance — prevents collisions when multiple `<ScoreRing>` instances render on the same page
 
 ---
 
