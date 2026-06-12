@@ -9,6 +9,7 @@ import {
   blendQualityForOpportunity,
   scoreColor,
 } from "@/lib/scoring";
+import { ActionMenu } from "@/components/ui/ActionMenu";
 import type { BusinessResult } from "./types";
 
 // ── Progress info type ──
@@ -123,7 +124,7 @@ export function ResultCard({
           transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] },
         },
       }}
-      className="flex items-center gap-3 px-4 md:px-5 py-2 min-h-[42px] transition-colors duration-150 hover:bg-[var(--color-bg-elevated)] cursor-default border-b border-[var(--color-border-subtle)] last:border-b-0"
+      className="flex items-center gap-3 px-4 md:px-5 py-2 min-h-[56px] sm:min-h-[42px] transition-colors duration-150 hover:bg-[var(--color-bg-elevated)] cursor-default border-b border-[var(--color-border-subtle)] last:border-b-0"
     >
       {/* Score circle — 28x28, border-only */}
       {isAnalyseLoading ? (
@@ -217,18 +218,16 @@ export function ResultCard({
           </Link>
         )}
 
-        {/* Pipeline toggle */}
+        {/* Pipeline toggle — visible on sm+; on mobile replaced by ActionMenu overflow */}
         {isInPipeline ? (
           <button
             type="button"
             onClick={() => onRemoveFromPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-red-500 text-red-500 hover:bg-red-500/10 transition-all duration-150 disabled:opacity-50"
+            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-red-500 text-red-500 hover:bg-red-500/10 transition-all duration-150 disabled:opacity-50"
           >
             {pipelineLoadingId === business.id ? (
-              <span className="inline-flex items-center gap-1">
-                <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-red-500 border-t-transparent" />
-              </span>
+              <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-red-500 border-t-transparent" />
             ) : (
               "Remove"
             )}
@@ -238,17 +237,26 @@ export function ResultCard({
             type="button"
             onClick={() => onAddToPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150 disabled:opacity-50"
+            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150 disabled:opacity-50"
           >
             {pipelineLoadingId === business.id ? (
-              <span className="inline-flex items-center gap-1">
-                <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-[var(--color-accent)] border-t-transparent" />
-              </span>
+              <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-[var(--color-accent)] border-t-transparent" />
             ) : (
               "+ Pipeline"
             )}
           </button>
         )}
+
+        {/* Mobile overflow ⋯ — contains pipeline action; hidden on sm+ */}
+        <div className="sm:hidden">
+          <ActionMenu
+            items={[
+              isInPipeline
+                ? { label: "Remove from pipeline", onClick: () => onRemoveFromPipeline(business.id), danger: true }
+                : { label: "+ Add to pipeline", onClick: () => onAddToPipeline(business.id) },
+            ]}
+          />
+        </div>
       </div>
     </motion.div>
   );

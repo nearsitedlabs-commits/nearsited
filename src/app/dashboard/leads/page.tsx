@@ -46,6 +46,10 @@ export default function LeadsPage() {
 
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkMode, setBulkMode] = useState(false);
+
+  // Mobile "load more" — accumulates results; reset via filter handlers (not useEffect)
+  const [mobileLoadCount, setMobileLoadCount] = useState(PAGE_SIZE);
 
   const handlePageChange = useCallback((next: number) => {
     setPage(next);
@@ -55,9 +59,10 @@ export default function LeadsPage() {
   const setFilters = useCallback((f: FilterState) => {
     setFiltersState(f);
     setPage(1);
+    setMobileLoadCount(PAGE_SIZE);
     const params = filtersToParams(f);
     router.replace(`${window.location.pathname}${params.toString() ? `?${params}` : ""}`, { scroll: false });
-  }, [router]);
+  }, [router, setMobileLoadCount]);
 
   // Opportunity filter tab clicks — handles new split tabs + in_pipeline chip
   const handleFilterTabClick = useCallback((tab: OpportunityTab) => {
@@ -92,7 +97,8 @@ export default function LeadsPage() {
   const handleClearSearch = useCallback(() => {
     setSearchQuery("");
     setDebouncedSearch("");
-  }, []);
+    setMobileLoadCount(PAGE_SIZE);
+  }, [setMobileLoadCount]);
 
   // KPI tile click — filter table to subset
   const handleKpiClick = useCallback((type: string) => {
@@ -166,6 +172,10 @@ export default function LeadsPage() {
 
   const totalPages = Math.max(1, Math.ceil(displayLeads.length / PAGE_SIZE));
   const paginated = displayLeads.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Mobile accumulates results via "load more" (not page flipping)
+  const mobilePaginated = displayLeads.slice(0, mobileLoadCount);
+  const hasMoreOnMobile = mobileLoadCount < displayLeads.length;
 
   // KPI counts
   const unauditedCount = leads.filter((l) => l.audited_at === null).length;
@@ -377,17 +387,27 @@ export default function LeadsPage() {
             />
 
             <LeadsMobileCards
-              paginated={paginated}
+              paginated={mobilePaginated}
               pipelineMap={pipelineMap}
               pitchMap={pitchMap}
               analysingIds={analysingIds}
               analyseProgress={analyseProgress}
               onAnalyse={handleAnalyse}
               shouldReduce={shouldReduce}
+              bulkMode={bulkMode}
+              onEnterBulkMode={() => setBulkMode(true)}
+              onExitBulkMode={() => { setBulkMode(false); handleClearSelection(); }}
+              selectedIds={selectedIds}
+              onToggleSelect={handleToggleSelect}
+              onBulkPipeline={handleBulkPipeline}
+              onBulkAudit={handleBulkAudit}
+              bulkLoading={bulkLoading}
+              hasMoreOnMobile={hasMoreOnMobile}
+              onLoadMore={() => setMobileLoadCount((c) => c + PAGE_SIZE)}
             />
 
             {totalPages > 1 && (
-              <div className="mt-6 flex items-center justify-between">
+              <div className="mt-6 hidden items-center justify-between md:flex">
                 <p className="text-sm text-[var(--color-text-tertiary)]">
                   Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, displayLeads.length)} of {displayLeads.length}
                 </p>

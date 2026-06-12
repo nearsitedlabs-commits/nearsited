@@ -28,17 +28,28 @@
 import { motion, AnimatePresence, LayoutGroup, animate, useReducedMotion as _useReducedMotion, type Variants, type Easing } from "framer-motion";
 
 // ── Duration & Easing Tokens ──────────────────────────────────────────────────
+// Mirrors the CSS custom properties in globals.css (--duration-*, --easing-*).
+// Always use these constants — never hardcode ms values.
 
 export const DURATION = {
-  micro: 0.15,
-  card: 0.25,
+  instant:    0.08,  // --duration-instant: button press feedback
+  micro:      0.15,  // --duration-quick:   hover, focus, most UI feedback
+  card:       0.25,  // --duration-standard: modal entrance, layout changes
+  deliberate: 0.4,   // --duration-deliberate: page entrances, large reveals
+  // legacy alias
   page: 0.35,
 } as const;
 
 type CubicBezier = [number, number, number, number];
 
 export const EASE: Record<string, CubicBezier> = {
+  // --easing-standard: most UI feedback (accelerate fast, decelerate to rest)
   out: [0.25, 0.1, 0.25, 1] as Easing as CubicBezier,
+  // --easing-emphasized: entrances and reveals (smooth deceleration)
+  emphasized: [0.16, 1, 0.3, 1] as Easing as CubicBezier,
+  // --easing-bounce: celebratory moments only — never routine UI
+  bounce: [0.34, 1.56, 0.64, 1] as Easing as CubicBezier,
+  // legacy aliases
   inOut: [0.4, 0, 0.2, 1] as Easing as CubicBezier,
   smooth: [0.22, 1, 0.36, 1] as Easing as CubicBezier,
 };

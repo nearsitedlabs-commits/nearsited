@@ -143,7 +143,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
             Start finding clients this week.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--color-text-secondary)]">
-            Start with 10 free opportunity analyses. No credit card needed.
+            Start with 10 free analyses. No credit card needed.
           </p>
         </motion.div>
 

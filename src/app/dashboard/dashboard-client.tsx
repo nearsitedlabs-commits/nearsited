@@ -99,11 +99,14 @@ function PageHeader({ firstName }: { firstName: string }) {
           {firstName ? `${firstName}'s workspace` : "Your workspace"}
         </p>
       </div>
+      {/* Icon-only on mobile; labelled on sm+ */}
       <Link
         href="/dashboard/discover"
-        className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+        aria-label="Discover leads"
+        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] sm:min-w-0"
       >
-        <Search className="h-3 w-3" /> Discover
+        <Search className="h-3.5 w-3.5" aria-hidden="true" />
+        <span className="hidden sm:inline">Discover</span>
       </Link>
     </div>
   );
@@ -156,9 +159,9 @@ export default function DashboardClient({
   if (totalLeads === 0) {
     return (
       <div className="min-h-screen">
-        <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <PageHeader firstName={firstName} />
-          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-12 text-center">
+          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8 sm:p-12 text-center">
             <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Find your first opportunity</h2>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               Search any city and business type to discover local businesses with weak websites. Nearsited will score, audit, and write the pitch.
@@ -177,7 +180,7 @@ export default function DashboardClient({
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 
         <PageHeader firstName={firstName} />
 
@@ -200,9 +203,10 @@ export default function DashboardClient({
                   ].filter(Boolean).join(" · ")}
                 </p>
               </div>
+              {/* Full-width on mobile (primary CTA inside a card), auto-width on sm+ */}
               <Link
                 href="/dashboard/leads"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
+                className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90 sm:w-auto sm:shrink-0"
               >
                 Pitch them →
               </Link>
@@ -220,9 +224,10 @@ export default function DashboardClient({
                   Run a new search to find more leads.
                 </p>
               </div>
+              {/* Full-width on mobile, auto on sm+ */}
               <Link
                 href="/dashboard/discover"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] sm:w-auto sm:shrink-0"
               >
                 + Find leads
               </Link>
@@ -236,7 +241,7 @@ export default function DashboardClient({
             <h2 className="text-sm font-medium text-[var(--color-text-primary)]">Opportunities</h2>
             <Link
               href="/dashboard/leads"
-              className="text-xs font-medium text-[var(--color-accent)] hover:underline"
+              className="min-h-[44px] flex items-center px-1 text-xs font-medium text-[var(--color-accent)] hover:underline"
             >
               View all →
             </Link>
@@ -273,9 +278,8 @@ export default function DashboardClient({
                   <div
                     key={lead.id}
                     onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
-                    className="flex cursor-pointer items-center gap-3 px-1 py-0.5 transition-colors hover:bg-[var(--color-bg-elevated)]"
+                    className={`flex cursor-pointer items-center gap-3 px-1 py-0.5 transition-colors hover:bg-[var(--color-bg-elevated)] min-h-[56px] sm:min-h-[46px]${idx === 4 ? " hidden sm:flex" : ""}`}
                     style={{
-                      minHeight: 46,
                       borderBottom: idx < leads.length - 1 ? "1px solid var(--color-border-subtle)" : undefined,
                     }}
                   >

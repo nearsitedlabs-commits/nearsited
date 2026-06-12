@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
 import { ScorePill } from "./ScorePill";
@@ -22,41 +21,46 @@ interface MobileCardProps {
   onStatusChange: (pipelineId: string, status: string) => void;
 }
 
-/**
- * Mobile card for pipeline items.
- * Compact layout with stage dropdown and view link.
- */
 export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
+  const router = useRouter();
   const borderClass = STAGE_BORDER_COLORS[item.pipeline_status] ?? "border-l-[var(--border)]";
 
   return (
-    <div className={`rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[3px] bg-[var(--color-bg-surface)] p-3 ${borderClass}`}>
+    <div
+      className={`min-h-[72px] cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[3px] bg-[var(--color-bg-surface)] p-3 transition-colors hover:bg-[var(--color-bg-elevated)] active:bg-[var(--color-bg-elevated)] ${borderClass}`}
+      onClick={() => router.push(`/dashboard/leads/${item.id}`)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          router.push(`/dashboard/leads/${item.id}`);
+        }
+      }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          {/* Name */}
           <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{item.name}</p>
 
-          {/* Type · City */}
           {item.business_type && item.city && (
             <p className="mt-0.5 truncate text-xs text-[var(--color-text-tertiary)]">
               {item.business_type} · {item.city}
             </p>
           )}
 
-          {/* Footer badges */}
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
             <WebsiteBadge status={item.website_status ?? "unknown"} />
             {score != null && <ScorePill score={score} />}
             <TimeInStage enteredAt={item.stage_entered_at} status={item.pipeline_status} />
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          {/* Stage dropdown */}
+        {/* Stage dropdown — stopPropagation so it doesn't trigger card nav */}
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           <select
             value={item.pipeline_status}
             onChange={(e) => onStatusChange(item.pipeline_id, e.target.value)}
-            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2 py-1.5 text-[11px] text-[var(--color-text-secondary)] focus:outline-none"
+            className="min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2 py-1.5 text-[11px] text-[var(--color-text-secondary)] focus:outline-none"
           >
             {PIPELINE_SALES_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -64,14 +68,6 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
               </option>
             ))}
           </select>
-
-          {/* View link */}
-          <Link
-            href={`/dashboard/leads/${item.id}`}
-            className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-          >
-            <ExternalLink className="h-3 w-3" /> View
-          </Link>
         </div>
       </div>
     </div>

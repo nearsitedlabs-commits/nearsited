@@ -17,66 +17,86 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 // ── Style Map ──────────────────────────────────────────────────────────────────
+// Hover styles gated with [@media(hover:hover)] so touch devices never see them.
+// Active/press feedback is handled by Framer whileTap (works on touch too).
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--color-accent)] text-white " +
-    "hover:opacity-90 " +
-    "shadow-[var(--brand-shadow-xs)] ",
+    "bg-[var(--color-accent)] text-white shadow-[var(--brand-shadow-xs)] " +
+    "[@media(hover:hover)]:hover:opacity-90 " +
+    "active:opacity-90 ",
   secondary:
     "border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] " +
-    "hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)] ",
+    "[@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
+    "active:bg-[var(--color-bg-surface)] ",
   ghost:
     "border border-transparent bg-transparent text-[var(--color-text-secondary)] " +
-    "hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] " +
+    "[@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
+    "active:bg-[var(--color-bg-elevated)] " +
     "focus-visible:border-[var(--color-accent)]/50 ",
   icon:
-    "border border-transparent bg-transparent text-[var(--color-text-tertiary)] p-2.5 min-h-[44px] min-w-[44px] " +
-    "hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] " +
+    "border border-transparent bg-transparent text-[var(--color-text-tertiary)] " +
+    "p-2.5 min-h-[44px] min-w-[44px] " +
+    "[@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
+    "active:bg-[var(--color-bg-elevated)] " +
     "focus-visible:border-[var(--color-accent)]/50 ",
 };
 
 const SIZE_STYLES: Record<ButtonSize, string> = {
   sm:   "px-3 py-1.5 text-xs min-h-[44px]",
-  base: "",
-  lg:   "px-6 py-3 text-base",
+  base: "min-h-[44px] lg:min-h-[36px]",
+  lg:   "px-6 py-3 text-base min-h-[44px]",
 };
 
 const BASE =
   "inline-flex items-center justify-center gap-2 " +
   "rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium " +
   "transition-colors duration-150 ease-out " +
-  "disabled:opacity-50 disabled:cursor-not-allowed " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]";
+  "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)]";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size, icon, loading, disabled, children, ...props }, ref) => {
     const prefersReduced = useReducedMotion();
+    const isDisabled = disabled || loading;
 
-    const MotionTag = prefersReduced ? "button" : (motion.button as React.ComponentType<ButtonHTMLAttributes<HTMLButtonElement> & { whileHover?: object; whileTap?: object; transition?: object }>);
+    const MotionTag = prefersReduced
+      ? "button"
+      : (motion.button as React.ComponentType<
+          ButtonHTMLAttributes<HTMLButtonElement> & {
+            whileTap?: object;
+            transition?: object;
+          }
+        >);
 
     const motionProps = prefersReduced
       ? {}
       : {
-          whileHover: { scale: 1.02 },
-          whileTap: { scale: 0.98 },
-          transition: { duration: 0.15, ease: "easeOut" as const },
+          whileTap: isDisabled ? {} : { scale: 0.98 },
+          transition: { duration: 0.08, ease: "easeOut" as const },
         };
 
     return (
       <MotionTag
         ref={ref}
-        disabled={disabled || loading}
-        className={cn(BASE, VARIANT_STYLES[variant], size ? SIZE_STYLES[size] : undefined, className)}
+        disabled={isDisabled}
+        aria-disabled={isDisabled || undefined}
+        aria-busy={loading || undefined}
+        className={cn(BASE, VARIANT_STYLES[variant], size ? SIZE_STYLES[size] : SIZE_STYLES.base, className)}
         {...motionProps}
         {...props}
       >
         {loading ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <span
+            aria-hidden="true"
+            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          />
         ) : icon ? (
-          <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
+          <span aria-hidden="true" className="flex h-4 w-4 shrink-0 items-center justify-center">
+            {icon}
+          </span>
         ) : null}
         {children && <span className={cn(variant === "icon" && "sr-only")}>{children}</span>}
       </MotionTag>

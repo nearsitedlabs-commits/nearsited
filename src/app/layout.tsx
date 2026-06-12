@@ -21,12 +21,18 @@ const geistMono = Geist_Mono({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#0a0e12",
 };
 
 export const metadata: Metadata = {
   title: "NearSited — Find businesses that need websites",
   description: "Find local businesses with weak websites, discover website opportunities, and win redesign projects with personalised outreach.",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "NearSited",
+  },
   robots: { index: true, follow: true },
   alternates: { canonical: "https://nearsited.io" },
   icons: {

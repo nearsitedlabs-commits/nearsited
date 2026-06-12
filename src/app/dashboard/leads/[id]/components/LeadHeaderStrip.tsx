@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, FileDown, MapPin, Phone, Share2, TrendingUp } from "lucide-react";
 import PipelineSelect from "@/components/ui/PipelineSelect";
+import { ActionMenu } from "@/components/ui/ActionMenu";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 
 type Props = {
@@ -87,16 +88,19 @@ export function LeadHeaderStrip({
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {badge}
             {phone && (
-              <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)]">
+              <a
+                href={`tel:${phone}`}
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+              >
                 <Phone className="h-3.5 w-3.5" /> {phone}
-              </span>
+              </a>
             )}
             {placeId && (
               <a
                 href={`https://www.google.com/maps/search/?api=1&query_place_id=${placeId}&query=${encodeURIComponent(businessName)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-success)]/40 hover:text-[var(--color-success)]"
+                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]"
               >
                 <MapPin className="h-3.5 w-3.5" /> Map
               </a>
@@ -104,7 +108,7 @@ export function LeadHeaderStrip({
           </div>
         </div>
 
-        {/* Right: Actions */}
+        {/* Right: Actions — full cluster on desktop, extraActions+Pipeline+⋯ on mobile */}
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           {extraActions}
           {pipelineStatus ? (
@@ -121,18 +125,37 @@ export function LeadHeaderStrip({
               <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
             </button>
           )}
+          {/* PDF + Share inline on desktop */}
           <a
             href={`/api/export/pdf?businessId=${placeId ?? ""}`}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
             <FileDown className="h-3.5 w-3.5" /> PDF
           </a>
           <button
             onClick={onShare}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
             <Share2 className="h-3.5 w-3.5" /> Share
           </button>
+          {/* ⋯ overflow on mobile — PDF + Share collapsed here */}
+          <div className="sm:hidden">
+            <ActionMenu
+              align="end"
+              items={[
+                {
+                  label: "Download PDF",
+                  icon: <FileDown className="h-3.5 w-3.5" />,
+                  onClick: () => { window.location.href = `/api/export/pdf?businessId=${placeId ?? ""}`; },
+                },
+                {
+                  label: "Share link",
+                  icon: <Share2 className="h-3.5 w-3.5" />,
+                  onClick: onShare,
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
     </div>

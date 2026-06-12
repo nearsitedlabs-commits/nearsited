@@ -31,7 +31,7 @@ export default function AuthCard({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg-page)] px-4 py-12">
       <motion.div
-        className="w-full max-w-[380px]"
+        className="w-full sm:max-w-[380px]"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease }}

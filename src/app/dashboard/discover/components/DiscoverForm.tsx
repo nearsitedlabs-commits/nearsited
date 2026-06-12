@@ -113,6 +113,7 @@ export function DiscoverForm({
             </label>
             <input
               type="range"
+              inputMode="numeric"
               min={1000}
               max={100000}
               step={1000}

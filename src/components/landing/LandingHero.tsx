@@ -58,10 +58,10 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           <h1 className="text-[var(--text-hero)] font-medium tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]">
             Your next client is out there
             <br />
-            <em className="italic not-italic">without a website.</em>
+            <em className="italic not-italic">without a website</em>
           </h1>
-          <p className="max-w-xl text-lg leading-8 text-[var(--color-text-secondary)]">
-            Find and pitch businesses that need a website. In under 2 minutes.
+          <p className="max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
+            Nearsited finds local businesses with no website, social-only presence, platform-only listings, or weak websites. Ranks them by opportunity, writes the pitch.
           </p>
         </motion.div>
 
@@ -84,9 +84,9 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
           </Button>
         </motion.div>
 
-        <motion.div {...fadeUp(0.25)} className="flex flex-wrap items-center gap-6 text-sm text-[var(--color-text-tertiary)]">
+        <motion.div {...fadeUp(0.25)} className="flex flex-col gap-2 text-sm text-[var(--color-text-tertiary)] sm:flex-row sm:flex-wrap sm:gap-6">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free opportunity analyses</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free analyses</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
         </motion.div>
       </div>

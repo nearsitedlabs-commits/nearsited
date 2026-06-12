@@ -90,6 +90,65 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 
 ---
 
+## Mobile Design Rules
+
+> **Every page must be tested at 380px width before merging. If a desktop pattern (table, kanban, sidebar) doesn't work at 380px, use the mobile component variant — don't just hide the desktop version.**
+
+### Breakpoints (mobile-first)
+- **mobile:** 0–639px — default; write styles here, override up
+- **tablet:** 640–1023px (`sm:` prefix) — intermediate layouts
+- **desktop:** 1024px+ (`lg:` prefix) — full desktop layouts
+
+Use mobile-first CSS: default styles target mobile, `sm:` / `lg:` layer on top. Never write desktop-first with mobile overrides.
+
+### Touch Targets
+- Minimum **44×44px** for all interactive elements (iOS HIG / WCAG 2.1 AAA).
+- Buttons: `min-h-[44px]` on mobile (36–40px on desktop is fine).
+- List rows: `min-h-[56px]` on mobile (42–48px on desktop).
+- Icon buttons: always 44×44px tap area even if icon is smaller — use padding to fill.
+
+### Mobile Typography Overrides
+- Page h1: 22–24px on mobile (28–32px desktop)
+- Body: 14px on mobile (13–14px desktop)
+- Microcopy (10px): floor — keep at 10px
+- Line-height: 1.6 on mobile body (1.55 desktop)
+
+### Mobile Spacing Overrides
+- Page padding: 16px horizontal (`var(--mobile-page-padding)`)
+- Section gap: 16px (24px on desktop)
+- Card padding: 14px (16px on desktop)
+- Use the spacing scale (4/8/12/16/24/32/48/64px); use smaller multiples on mobile
+
+### Mobile Component Inventory ([`src/components/ui/mobile/`](src/components/ui/mobile/))
+
+| Component | File | Purpose |
+|---|---|---|
+| `<BottomNav>` | [`mobile/BottomNav.tsx`](src/components/ui/mobile/BottomNav.tsx) | Fixed bottom tab bar. 5 tabs max. Hidden on `lg:`. |
+| `<MobileHeader>` | [`mobile/MobileHeader.tsx`](src/components/ui/mobile/MobileHeader.tsx) | Fixed top bar. Left: title or back+title. Right: 1–2 icon buttons. Hidden on `lg:`. |
+| `<BottomSheet>` | [`mobile/BottomSheet.tsx`](src/components/ui/mobile/BottomSheet.tsx) | Slides up from bottom. Drag handle + swipe-down dismiss + backdrop. Replaces center modals on mobile. |
+| `<SwipeAction>` | [`mobile/SwipeAction.tsx`](src/components/ui/mobile/SwipeAction.tsx) | Swipe-left on a row to reveal Archive/Delete actions. Use only where gesture adds value. |
+| `<MobileTable>` | [`mobile/MobileTable.tsx`](src/components/ui/mobile/MobileTable.tsx) | Auto-transforms desktop tables into card lists below `sm:`. |
+| `<Toast>` | [`ui/Toast.tsx`](src/components/ui/Toast.tsx) | Already correct — `bottom-20 right-4 sm:bottom-6 sm:right-6` clears mobile bottom nav. |
+
+### Mobile Layout Tokens ([`globals.css`](src/app/globals.css))
+```css
+--mobile-nav-height:    56px
+--mobile-header-height: 52px
+--mobile-safe-bottom:   env(safe-area-inset-bottom, 0px)
+--mobile-safe-top:      env(safe-area-inset-top, 0px)
+--mobile-page-padding:  16px
+```
+
+### Mobile-Specific Rules
+- **No hover states on touch.** Gate hover CSS with `@media (hover: hover)`. Touch devices don't hover; sticky hover is a real bug.
+- **Settings NOT in bottom nav.** Settings accessed via profile icon → bottom sheet. Bottom nav max 5 tabs.
+- **Bottom sheets, not center modals on mobile.** `<BottomSheet>` for filters, action menus, confirmations. Desktop keeps `dialog` / center modal.
+- **Momentum scroll on overflow:** `-webkit-overflow-scrolling: touch` on all overflow areas.
+- **iOS safe areas:** use `var(--mobile-safe-bottom)` / `var(--mobile-safe-top)` for padding near fixed chrome.
+- **Remove tap highlight:** `* { -webkit-tap-highlight-color: transparent; }` — use explicit press states instead.
+
+---
+
 ## THE SEVEN RULES (non-negotiable)
 
 1. **Schema first.** Never write code touching a table until it exists in the DB *and* SCHEMA.md. Order: edit SCHEMA.md → run SQL → write code.

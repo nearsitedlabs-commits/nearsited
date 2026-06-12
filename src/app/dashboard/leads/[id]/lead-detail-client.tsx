@@ -488,6 +488,35 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             />
           </MaybeFadeUp>
 
+          {/* Mobile-only contact row: tap-to-call + open in Maps */}
+          {(business.phone || biz.address || biz.place_id) && (
+            <MaybeFadeUp reduce={shouldReduce}>
+              <div className="flex items-center gap-2 lg:hidden">
+                {business.phone && (
+                  <a
+                    href={`tel:${business.phone}`}
+                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                  >
+                    {business.phone}
+                  </a>
+                )}
+                {(biz.address || biz.place_id) && (
+                  <a
+                    href={biz.place_id
+                      ? `https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}`
+                      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address ?? biz.name)}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                  >
+                    Maps ↗
+                  </a>
+                )}
+              </div>
+            </MaybeFadeUp>
+          )}
+
           <MaybeFadeUp reduce={shouldReduce}>
             <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 
@@ -507,6 +536,14 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     pitchError={pitch.pitchError}
                     pitchResult={pitch.pitchResult}
                     handleCopyPitch={pitch.handleCopyPitch}
+                  />
+                </motion.div>
+                {/* Mobile-only: PreCallBrief surfaces right after Pitch (desktop: in right col) */}
+                <motion.div variants={sectionCard} className="lg:hidden">
+                  <PreCallBrief
+                    businessName={urlToDisplayName(biz.name)}
+                    businessType={biz.business_type ?? "business"}
+                    sections={preCallBriefSections}
                   />
                 </motion.div>
                 <motion.div variants={sectionCard}>
@@ -539,7 +576,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
 
               {/* ── RIGHT COLUMN — brief + score context + export ── */}
               <motion.div className="space-y-6" variants={sectionContainer} initial={initialVariant} animate="visible">
-                <motion.div variants={sectionCard}>
+                {/* Desktop-only: PreCallBrief (mobile version is above IssuesCard in left col) */}
+                <motion.div variants={sectionCard} className="hidden lg:block">
                   <PreCallBrief
                     businessName={urlToDisplayName(biz.name)}
                     businessType={biz.business_type ?? "business"}

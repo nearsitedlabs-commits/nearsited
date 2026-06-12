@@ -59,7 +59,7 @@ export function LandingFooter() {
     <FadeIn>
       <footer className="relative overflow-hidden border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-12 md:px-8">
         <CanvasBackground />
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
+        <div className="mx-auto grid max-w-7xl gap-10 md:gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
               <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
@@ -97,8 +97,8 @@ export function LandingFooter() {
                       className="flex flex-col sm:flex-row gap-2"
                     >
                       <input
-                        type="text"
-                        inputMode="email"
+                        type="email"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); setValidationError(null); }}
                         placeholder="your@email.com"

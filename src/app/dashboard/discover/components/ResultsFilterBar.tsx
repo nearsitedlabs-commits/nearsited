@@ -113,9 +113,9 @@ export function ResultsFilterBar({
         </div>
       </div>
 
-      {/* Filter chips */}
-      <div className="flex items-center gap-1.5 text-[11px]">
-        <span className="text-[var(--color-text-tertiary)] mr-1">Filter:</span>
+      {/* Filter chips — horizontal scroll on mobile so chips never wrap */}
+      <div className="flex items-center gap-1.5 overflow-x-auto text-[11px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <span className="shrink-0 mr-1 text-[var(--color-text-tertiary)]">Filter:</span>
         {FILTER_OPTIONS.map((opt) => {
           const isActive = websiteFilter === opt.value;
           return (
@@ -123,7 +123,7 @@ export function ResultsFilterBar({
               key={opt.value}
               type="button"
               onClick={() => onFilterChange(opt.value)}
-              className={`cursor-pointer transition-colors duration-150 px-2 py-0.5 rounded-[var(--radius-sm)] ${
+              className={`shrink-0 cursor-pointer transition-colors duration-150 px-2.5 py-1 min-h-[44px] flex items-center rounded-[var(--radius-sm)] ${
                 isActive
                   ? "text-[var(--color-text-primary)] font-medium"
                   : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"

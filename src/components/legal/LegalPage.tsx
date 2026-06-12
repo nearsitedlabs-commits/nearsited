@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { BottomSheet } from "@/components/ui/mobile/BottomSheet";
 
 export type TOCSection = {
   id: string;
@@ -17,6 +19,7 @@ type Props = {
 
 export function LegalPage({ title, lastUpdated, toc, children }: Props) {
   const [activeId, setActiveId] = useState<string>(toc[0]?.id ?? "");
+  const [tocSheetOpen, setTocSheetOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
       </div>
 
       {/* Body */}
-      <div className="mx-auto max-w-[1000px] px-6 py-12 md:py-16">
+      <div className="mx-auto max-w-[1000px] px-4 py-8 sm:px-6 sm:py-12 md:py-16">
         <div className="lg:grid lg:grid-cols-[200px_1fr] lg:gap-16">
           {/* Sticky TOC — lg+ only */}
           <aside className="hidden lg:block">
@@ -118,6 +121,40 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
           </main>
         </div>
       </div>
+
+      {/* Mobile sticky TOC chip — desktop has sidebar, so hide on lg+ */}
+      <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setTocSheetOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/90 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-lg backdrop-blur-sm transition-colors hover:text-[var(--color-text-primary)]"
+        >
+          Jump to section
+          <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      <BottomSheet isOpen={tocSheetOpen} onClose={() => setTocSheetOpen(false)} title="Contents">
+        <nav className="px-2 pb-4">
+          {toc.map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => {
+                document.getElementById(section.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                setTocSheetOpen(false);
+              }}
+              className={`w-full rounded-[var(--radius-sm)] px-4 py-3 text-left text-sm transition-colors ${
+                activeId === section.id
+                  ? "font-medium text-[var(--color-accent)]"
+                  : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elevated)]"
+              }`}
+            >
+              {section.label}
+            </button>
+          ))}
+        </nav>
+      </BottomSheet>
     </div>
   );
 }

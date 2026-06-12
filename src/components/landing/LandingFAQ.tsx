@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     q: "What kind of businesses does Nearsited find?",
-    a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels. 249 business types across 16 industries in any city.",
+    a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels. 249 business types across 18 industry categories in any city.",
   },
   {
     q: "How accurate is the opportunity score?",
@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     q: "Which cities and countries does Nearsited cover?",
-    a: "Nearsited works in any city where Google Places has data, which covers most major and mid-size cities globally. You can search 29,000+ cities worldwide. Results quality is highest in English-speaking markets and India, where our beta users are concentrated. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
+    a: "Nearsited works in any location where Google Places has data, which covers most major and mid-size cities globally. You can search 29,000+ locations worldwide. Results quality is highest in English-speaking markets and India. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
   },
 ];
 

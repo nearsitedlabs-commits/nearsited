@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { motion, LayoutGroup } from "@/lib/motion";
-import { PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
+import { PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { detectLeadWorkflow } from "@/lib/lead-types";
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import type { PipelineBusiness, PipelineStatus, WebsiteStatus } from "@/lib/db-types";
@@ -139,6 +140,27 @@ export default function PipelinePage() {
     window.location.href = `/dashboard/leads/${id}`;
   }, []);
 
+  // Default: Contacted + In Conversation expanded; Prospect, Won, Lost collapsed.
+  // Persist to localStorage so the user's preference survives navigation.
+  const STORAGE_KEY = "nearsited_pipeline_collapsed";
+  const [collapsedStages, setCollapsedStages] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? new Set(JSON.parse(saved) as string[]) : new Set(["new_lead", "won", "lost"]);
+    } catch {
+      return new Set(["new_lead", "won", "lost"]);
+    }
+  });
+  const toggleStage = useCallback((stage: string) => {
+    setCollapsedStages((prev) => {
+      const next = new Set(prev);
+      if (next.has(stage)) next.delete(stage);
+      else next.add(stage);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...next])); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
+
   // Pre-compute opportunity scores for all items
   const scores = useMemo(() => {
     const map: Record<string, number | null> = {};
@@ -225,25 +247,56 @@ export default function PipelinePage() {
           </motion.div>
         ) : (
           <>
-            {/* Mobile list */}
-            <div className="space-y-6 lg:hidden">
-              {PIPELINE_SALES_STATUSES.filter((s) => (grouped[s] ?? []).length > 0).map((stage) => (
-                <div key={stage}>
-                  <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-tertiary)]">
-                    {stage} · {(grouped[stage] ?? []).length}
-                  </p>
-                  <div className="space-y-2">
-                    {(grouped[stage] ?? []).map((item) => (
-                      <MobileCard
-                        key={item.pipeline_id}
-                        item={item}
-                        score={scores[item.pipeline_id] ?? null}
-                        onStatusChange={handleStatusChange}
-                      />
-                    ))}
+            {/* Mobile accordion — one collapsible section per stage */}
+            <div className="space-y-1 lg:hidden">
+              {PIPELINE_SALES_STATUSES.map((stage) => {
+                const stageItems = grouped[stage] ?? [];
+                const isOpen = !collapsedStages.has(stage);
+                return (
+                  <div key={stage} className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+                    {/* Stage header — tappable to toggle */}
+                    <button
+                      type="button"
+                      onClick={() => toggleStage(stage)}
+                      className="flex w-full min-h-[48px] items-center justify-between px-4 py-3 text-left transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] active:bg-[var(--color-bg-elevated)]"
+                    >
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">
+                        {PIPELINE_LABELS[stage as keyof typeof PIPELINE_LABELS] ?? stage}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-medium tabular-nums ${stageItems.length > 0 ? "text-[var(--color-text-secondary)]" : "text-[var(--color-text-tertiary)]"}`}>
+                          {stageItems.length}
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 text-[var(--color-text-tertiary)] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      </div>
+                    </button>
+
+                    {/* Stage cards — collapse/expand */}
+                    {isOpen && (
+                      <div className="border-t border-[var(--color-border-subtle)]">
+                        {stageItems.length === 0 ? (
+                          <p className="px-4 py-5 text-sm text-[var(--color-text-tertiary)]">
+                            No cards in this stage.
+                          </p>
+                        ) : (
+                          <div className="space-y-2 px-3 pb-3 pt-2">
+                            {stageItems.map((item) => (
+                              <MobileCard
+                                key={item.pipeline_id}
+                                item={item}
+                                score={scores[item.pipeline_id] ?? null}
+                                onStatusChange={handleStatusChange}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Desktop Kanban board */}

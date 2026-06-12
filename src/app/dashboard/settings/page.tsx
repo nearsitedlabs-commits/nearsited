@@ -6,6 +6,8 @@ import { User, CreditCard, Key, Trash2, Loader2, Bell, Shield, Download, AlertTr
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { useReducedMotion } from "@/lib/motion";
 import { Toast } from "@/components/ui/Toast";
+import { BottomSheet } from "@/components/ui/mobile/BottomSheet";
+import { MobileHeader } from "@/components/ui/mobile/MobileHeader";
 
 type UserData = {
   email: string | null;
@@ -114,14 +116,18 @@ function ConfirmModal({
   const canConfirm = requireType ? typed === requireType : true;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
         ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        className="mx-4 w-full max-w-md rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 shadow-2xl"
+        className="w-full rounded-t-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1.5rem))] shadow-2xl sm:mx-4 sm:max-w-md sm:rounded-[var(--radius-md)] sm:pb-6"
       >
+        {/* Drag handle — mobile only */}
+        <div className="sm:hidden -mt-2 mb-4 flex justify-center" aria-hidden="true">
+          <div className="h-1 w-10 rounded-full bg-[var(--color-border-strong)]" />
+        </div>
         <div className="mb-4 flex items-center gap-3">
           {destructive && <AlertTriangle className="h-5 w-5 text-red-400" />}
           <h3 id="confirm-modal-title" className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</h3>
@@ -177,7 +183,7 @@ function Toggle({ checked, onChange, label, disabled }: {
   disabled?: boolean;
 }) {
   return (
-    <div className={`flex items-center justify-between ${disabled ? "opacity-50" : ""}`}>
+    <div className={`flex min-h-[56px] items-center justify-between lg:min-h-0 ${disabled ? "opacity-50" : ""}`}>
       <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <button
         onClick={() => !disabled && onChange(!checked)}
@@ -248,6 +254,15 @@ export default function SettingsPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState<string | null>(null);
+
+  // ── Mobile detection (SSR-safe) ─────────────────────────────────────────
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // ── Settings toast ──────────────────────────────────────────────────────
   const [settingsToast, setSettingsToast] = useState<string | null>(null);
@@ -498,14 +513,14 @@ export default function SettingsPage() {
 
   const pageContent = (
     <>
-      <div className="mb-8">
+      <div className="mb-8 hidden lg:block">
         <h1 className="text-3xl font-normal tracking-tight text-[var(--color-text-primary)]">Your <em className="italic text-[var(--color-accent)]">workspace.</em></h1>
       </div>
 
       <StaggerContainer>
         {/* ── Profile ─────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
                 <User className="h-5 w-5 text-[var(--color-accent)]" />
@@ -515,19 +530,20 @@ export default function SettingsPage() {
             <div className="space-y-3">
 
               {/* Email (read-only with change option) */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+              <div className="flex min-h-[56px] items-center justify-between border-b border-[var(--color-border-subtle)] pb-2 lg:min-h-0">
                 <span className="text-sm text-[var(--color-text-secondary)]">Email</span>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.email ?? "—"}</span>
                   <button
                     onClick={() => setShowEmailForm(!showEmailForm)}
-                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] cursor-pointer"
+                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                   >
                     Change
                   </button>
                 </div>
               </div>
-              {showEmailForm && (
+              {/* Email form — inline on desktop */}
+              {showEmailForm && !isMobile && (
                 <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
                   <div className="flex items-center gap-2">
                     <input
@@ -553,9 +569,39 @@ export default function SettingsPage() {
                   )}
                 </div>
               )}
+              {/* Email form — BottomSheet on mobile */}
+              <BottomSheet
+                isOpen={isMobile && showEmailForm}
+                onClose={() => { setShowEmailForm(false); setEmailMsg(null); }}
+                title="Change email"
+              >
+                <div className="space-y-3 pb-2">
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="New email address"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
+                    disabled={emailLoading}
+                    autoFocus={false}
+                  />
+                  {emailMsg && (
+                    <p className={`text-xs ${emailMsg.includes("Error") ? "text-red-400" : "text-[var(--color-success)]"}`}>
+                      {emailMsg}
+                    </p>
+                  )}
+                  <button
+                    onClick={handleChangeEmail}
+                    disabled={emailLoading || !newEmail.trim()}
+                    className="w-full inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] py-3 text-sm font-medium text-white transition-colors active:opacity-90 disabled:opacity-50"
+                  >
+                    {emailLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send confirmation link"}
+                  </button>
+                </div>
+              </BottomSheet>
 
-              {/* Name (editable) */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+              {/* Name (editable inline — full-width input on mobile) */}
+              <div className="flex min-h-[56px] items-center justify-between border-b border-[var(--color-border-subtle)] pb-2 lg:min-h-0">
                 <span className="text-sm text-[var(--color-text-secondary)]">Name</span>
                 <div className="flex items-center gap-2">
                   {editingName ? (
@@ -621,57 +667,55 @@ export default function SettingsPage() {
               )}
 
               {/* Change password */}
-              <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2">
+              <div className="flex min-h-[56px] items-center justify-between border-b border-[var(--color-border-subtle)] pb-2 lg:min-h-0">
                 <span className="text-sm text-[var(--color-text-secondary)]">Password</span>
                 <button
                   onClick={() => setShowPasswordForm(!showPasswordForm)}
-                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] cursor-pointer"
+                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                 >
                   Change
                 </button>
               </div>
-              {showPasswordForm && (
+              {/* Password form — inline on desktop */}
+              {showPasswordForm && !isMobile && (
                 <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3 space-y-2">
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Current password"
-                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
-                    disabled={passwordLoading}
-                  />
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New password"
-                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
-                    disabled={passwordLoading}
-                  />
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]"
-                    disabled={passwordLoading}
-                  />
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleChangePassword}
-                      disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
-                      className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
-                    >
-                      {passwordLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Update password"}
-                    </button>
-                  </div>
+                  <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Current password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  <button onClick={handleChangePassword} disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50">
+                    {passwordLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Update password"}
+                  </button>
                   {passwordMsg && (
-                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>
-                      {passwordMsg}
-                    </p>
+                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>{passwordMsg}</p>
                   )}
                 </div>
               )}
+              {/* Password form — BottomSheet on mobile */}
+              <BottomSheet
+                isOpen={isMobile && showPasswordForm}
+                onClose={() => { setShowPasswordForm(false); setPasswordMsg(null); setCurrentPassword(""); setNewPassword(""); setConfirmPassword(""); }}
+                title="Change password"
+              >
+                <div className="space-y-3 pb-2">
+                  <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Current password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password"
+                    className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
+                  {passwordMsg && (
+                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>{passwordMsg}</p>
+                  )}
+                  <button onClick={handleChangePassword} disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
+                    className="w-full inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] py-3 text-sm font-medium text-white transition-colors active:opacity-90 disabled:opacity-50">
+                    {passwordLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update password"}
+                  </button>
+                </div>
+              </BottomSheet>
 
               {/* Two-factor auth (stub) — dimmed because it's not yet available */}
               <div className="flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-2 opacity-50" aria-hidden="true">
@@ -699,7 +743,7 @@ export default function SettingsPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-success)]/10`}>
                 <CreditCard className="h-5 w-5 text-[var(--color-success)]" />
@@ -746,11 +790,11 @@ export default function SettingsPage() {
 
             {(!sub || sub.tier === "free") && (
               <div className="mt-4 space-y-3">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                   <button
                     onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:opacity-50"
+                    className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2.5 min-h-[44px] text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Starter — $19/mo
@@ -758,7 +802,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50"
+                    className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2.5 min-h-[44px] text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Agency — $49/mo
@@ -780,7 +824,7 @@ export default function SettingsPage() {
 
         {/* ── Notifications ─────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
                 <Bell className="h-5 w-5 text-[var(--color-accent)]" />
@@ -814,7 +858,7 @@ export default function SettingsPage() {
 
         {/* ── Integrations ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
                 <Key className="h-5 w-5 text-[var(--color-info)]" />
@@ -833,7 +877,7 @@ export default function SettingsPage() {
 
         {/* ── Danger Zone ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-red-500/20 bg-red-500/5 p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-red-500/20 lg:border lg:bg-red-500/5 px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-[var(--radius-sm)] p-2 bg-red-500/10">
                 <Trash2 className="h-5 w-5 text-red-400" />
@@ -865,7 +909,7 @@ export default function SettingsPage() {
                       {!isConfirming && (
                         <button
                           onClick={() => setConfirming(scope)}
-                          className="shrink-0 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 cursor-pointer"
+                          className="shrink-0 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 min-h-[44px] text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 cursor-pointer"
                         >
                           {SCOPE_LABELS[scope]}
                         </button>
@@ -911,7 +955,7 @@ export default function SettingsPage() {
 
         {/* ── Data & Privacy ──────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
                 <Shield className="h-5 w-5 text-[var(--color-info)]" />
@@ -980,7 +1024,8 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto max-w-2xl px-6 py-8">
+      <MobileHeader title="Settings" />
+      <div className="mx-auto max-w-2xl px-4 pt-[calc(var(--mobile-header-height,52px)+var(--mobile-safe-top,0px)+1.5rem)] pb-6 lg:pt-6 lg:pb-8 sm:px-6">
         {shouldReduce ? pageContent : <FadeUp>{pageContent}</FadeUp>}
       </div>
       {settingsToast && <Toast message={settingsToast} onClose={() => setSettingsToast(null)} />}

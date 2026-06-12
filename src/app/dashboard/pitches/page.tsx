@@ -9,6 +9,7 @@ import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
 import { Toast } from "@/components/ui/Toast";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { BottomSheet } from "@/components/ui/mobile/BottomSheet";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -102,6 +103,7 @@ export default function PitchesPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [openPitchId, setOpenPitchId] = useState<string | null>(null);
 
   // Close overflow menu on click outside
   useEffect(() => {
@@ -262,7 +264,7 @@ export default function PitchesPage() {
     return counts;
   }, [pitches]);
 
-  const channelCounts = useMemo(() => {
+  const _channelCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const ch of CHANNEL_FILTERS) {
       const key = ch.toLowerCase().replace(" ", "_");
@@ -310,6 +312,14 @@ export default function PitchesPage() {
       <FadeUp key={pitch.id}>
         <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
 
+          {/* ── Tappable body — opens full pitch sheet on mobile ──────── */}
+          <div
+            className="cursor-pointer"
+            onClick={() => setOpenPitchId(pitch.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenPitchId(pitch.id); } }}
+          >
           {/* ── Top row: business name + type tag + pipeline state ────── */}
           <div className="mb-2 flex items-center gap-2">
             <span className="truncate text-sm font-medium text-[var(--color-text-primary)]" style={{ fontSize: 14, fontWeight: 500 }} dir="auto">
@@ -360,9 +370,10 @@ export default function PitchesPage() {
           <p className="mt-1.5 text-xs text-[var(--color-text-tertiary)] leading-relaxed line-clamp-2">
             {bodyPreview(pitch.body)}
           </p>
+          </div>{/* end tappable wrapper */}
 
           {/* ── Bottom row: actions ──────────────────────────────────── */}
-          <div className="mt-3 flex items-center gap-2 border-t border-[var(--color-border-subtle)] pt-2.5" style={{ borderTopWidth: "0.5px" }}>
+          <div className="mt-3 flex items-center gap-2 border-t border-[var(--color-border-subtle)] pt-2.5" onClick={(e) => e.stopPropagation()} style={{ borderTopWidth: "0.5px" }}>
             {/* Copy — primary action */}
             <button
               onClick={() => handleCopy(pitch)}
@@ -504,10 +515,10 @@ export default function PitchesPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-page)]">
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
 
-        {/* ── Header: "Pitches" + stats + search/filter trigger ──────── */}
-        <div className="mb-5 flex items-start justify-between">
+        {/* ── Header ──────────────────────────────────────────────────── */}
+        <div className="mb-4 flex items-start justify-between">
           <div>
             <h1 className="text-base font-medium text-[var(--color-text-primary)]">Pitches</h1>
             {stats.total > 0 && (
@@ -519,11 +530,10 @@ export default function PitchesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+              title="Search"
             >
-              <Search className="h-3.5 w-3.5" />
-              Filter{searchQuery || activeFilter !== "all" ? " active" : ""}
-              <span className="text-[10px] text-[var(--color-text-tertiary)]">{showFilters ? "▲" : "▼"}</span>
+              <Search className="h-4 w-4" />
             </button>
             <button
               onClick={() => fetchPitches(true)}
@@ -531,15 +541,36 @@ export default function PitchesPage() {
               className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)] disabled:cursor-not-allowed disabled:opacity-40"
               title="Refresh"
             >
-              <Loader2 className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              <Loader2 className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
             </button>
           </div>
         </div>
 
-        {/* ── Collapsible search + filters ───────────────────────────── */}
+        {/* ── Always-visible scrollable filter chips ──────────────────── */}
+        <div className="mb-4 flex items-center gap-1.5 overflow-x-auto text-[11px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {FILTERS.map((f) => {
+            const count = filterCounts[f.key] ?? 0;
+            const isZero = count === 0 && f.key !== "all";
+            return (
+              <button
+                key={f.key}
+                onClick={() => setActiveFilter(f.key)}
+                className={`shrink-0 cursor-pointer rounded-[var(--radius-sm)] border px-3 py-2 min-h-[44px] flex items-center text-xs font-medium transition-colors duration-150 ${
+                  activeFilter === f.key
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
+                    : `border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] ${isZero ? "opacity-50" : ""}`
+                }`}
+              >
+                {f.label}
+                <span className="ml-1 text-[10px] opacity-70">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Collapsible search (advanced) ───────────────────────────── */}
         {showFilters && (
-          <div className="mb-5 space-y-3 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
-            {/* Search */}
+          <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
               <input
@@ -556,63 +587,10 @@ export default function PitchesPage() {
                 </button>
               )}
             </div>
-
-            {/* Opportunity type chips */}
-            <div>
-              <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--color-text-tertiary)]">Opportunity type</p>
-              <div className="flex flex-wrap items-center gap-1.5">
-                {FILTERS.map((f) => {
-                  const count = filterCounts[f.key] ?? 0;
-                  const isZero = count === 0 && f.key !== "all";
-                  return (
-                    <button
-                      key={f.key}
-                      onClick={() => setActiveFilter(f.key)}
-                      className={`cursor-pointer rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
-                        activeFilter === f.key
-                          ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                          : `border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] ${
-                              isZero ? "opacity-50" : ""
-                            }`
-                      }`}
-                    >
-                      {f.label}
-                      <span className="ml-1 text-[10px] opacity-70">({count})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Channel chips */}
-            {pitches.length > 0 && (
-              <div>
-                <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--color-text-tertiary)]">Channel</p>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {CHANNEL_FILTERS.map((channel) => {
-                    const key = channel.toLowerCase().replace(" ", "_");
-                    const count = channelCounts[key] ?? 0;
-                    return (
-                      <span
-                        key={channel}
-                        className={`inline-flex cursor-default items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]/50 px-2.5 py-1 text-xs font-medium text-[var(--color-text-tertiary)] ${
-                          count === 0 ? "opacity-50" : ""
-                        }`}
-                      >
-                        {channel}
-                        <span className="text-[10px] opacity-70">({count})</span>
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Clear all */}
             {(searchQuery || activeFilter !== "all") && (
               <button
                 onClick={() => { setSearchQuery(""); setActiveFilter("all"); }}
-                className="text-xs font-medium text-[var(--color-accent)] hover:underline cursor-pointer"
+                className="mt-2 text-xs font-medium text-[var(--color-accent)] hover:underline cursor-pointer"
               >
                 Clear all filters
               </button>
@@ -674,6 +652,44 @@ export default function PitchesPage() {
       </div>
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+
+      {/* Full pitch bottom sheet — mobile tap-to-read */}
+      {(() => {
+        const p = pitches.find((x) => x.id === openPitchId);
+        const biz = p ? getBusiness(p) : null;
+        return (
+          <BottomSheet
+            isOpen={openPitchId !== null}
+            onClose={() => setOpenPitchId(null)}
+            title={biz?.name ?? "Pitch"}
+          >
+            {p && (
+              <div className="space-y-4 px-1 pb-4">
+                {p.subject && (
+                  <p className="text-sm font-medium text-[var(--color-text-primary)]">{p.subject}</p>
+                )}
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  {p.body}
+                </p>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => { handleCopy(p); setOpenPitchId(null); }}
+                    className="flex-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)] py-3 text-sm font-medium text-white transition-colors active:opacity-90"
+                  >
+                    {copiedId === p.id ? "Copied!" : "Copy pitch"}
+                  </button>
+                  <button
+                    onClick={() => { if (p.channel === "whatsapp") handleOpenInWhatsApp(p); else handleOpenInEmail(p); }}
+                    className="flex-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] py-3 text-sm font-medium text-[var(--color-text-secondary)] transition-colors active:bg-[var(--color-bg-surface)]"
+                  >
+                    {p.channel === "whatsapp" ? "Open in WhatsApp" : "Open in email"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </BottomSheet>
+        );
+      })()}
     </div>
   );
 }

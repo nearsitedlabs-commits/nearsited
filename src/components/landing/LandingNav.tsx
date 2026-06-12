@@ -118,7 +118,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const hamburgerButton = (
     <button
       type="button"
-      className="inline-flex items-center justify-center rounded-[var(--radius-sm)] p-2.5 text-[var(--color-text-secondary)] transition hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] md:hidden"
+      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[var(--radius-sm)] p-3 text-[var(--color-text-secondary)] transition [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] md:hidden"
       onClick={() => setMobileMenuOpen((prev) => !prev)}
       aria-expanded={mobileMenuOpen}
       aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -131,18 +131,36 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const mobileDrawer = (animate: boolean) => {
     const content = (
       <nav className="px-6 py-6" aria-label="Mobile navigation">
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-1">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <button
                 type="button"
                 onClick={() => handleLinkClick(link.href)}
-                className="w-full rounded-[var(--radius-sm)] px-4 py-3 text-left text-sm text-[var(--color-text-secondary)] transition hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]"
+                className="flex min-h-[44px] w-full items-center rounded-[var(--radius-sm)] px-4 py-3 text-left text-sm text-[var(--color-text-secondary)] transition active:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
               >
                 {link.label}
               </button>
             </li>
           ))}
+          <li className="mt-3 border-t border-[var(--color-border-subtle)] pt-3">
+            <button
+              type="button"
+              onClick={() => { navigate("/login"); closeMobileMenu(); }}
+              className="flex min-h-[44px] w-full items-center rounded-[var(--radius-sm)] px-4 py-3 text-left text-sm text-[var(--color-text-secondary)] transition active:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
+            >
+              Sign in
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => { navigate("/signup"); closeMobileMenu(); }}
+              className="flex min-h-[44px] w-full items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-3 text-left text-sm font-medium text-white transition active:opacity-90 [@media(hover:hover)]:hover:opacity-90"
+            >
+              Get started free →
+            </button>
+          </li>
         </ul>
       </nav>
     );

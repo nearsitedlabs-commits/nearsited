@@ -32,15 +32,18 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
           <SectionSub>
             Nearsited discovers all four kinds of website opportunity. Here&rsquo;s what each report looks like.
           </SectionSub>
+          <p className="mt-3 text-xs text-[var(--color-text-tertiary)]">
+            Sample data — actual output uses real audit data from Google Places and PageSpeed Insights.
+          </p>
         </div>
 
-        {/* Tab strip */}
-        <div className="mt-8 flex flex-wrap gap-2">
+        {/* Tab strip — scrollable on mobile */}
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors ${
+              className={`shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
                   : "border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]"

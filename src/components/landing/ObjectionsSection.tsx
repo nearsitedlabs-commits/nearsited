@@ -44,7 +44,7 @@ const OBJECTIONS: Objection[] = [
     answer: "How this helps you close more deals: Maps gives you a list. Nearsited gives you a prioritised pipeline with evidence-based pitches. That's the difference between prospecting taking 3 hours vs. 10 minutes.",
   },
   {
-    objection: "My clients aren't on page 1 of Google anyway.",
+    objection: "The local businesses I'd pitch don't rank on Google anyway.",
     response: "Some of your best prospects aren't on Google at all. They have no website, or they're running everything from an Instagram page. Nearsited finds those businesses too. For the ones that do have a website, you're pitching revenue recovery from real, measurable problems, not vague SEO promises.",
     answer: "How this helps you close more deals: You're pitching a clear gap they already have. Much easier to say yes to than ranking promises.",
   },

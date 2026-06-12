@@ -49,9 +49,9 @@ export function WhyNearsitedSection() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 md:items-stretch">
-          {/* Traditional — borderless, flush */}
+          {/* Traditional — subtle border, no fill (the pain) */}
           <motion.div {...anim(0)} className="h-full">
-            <div className="h-full px-0 py-2">
+            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] px-6 py-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--score-high)]/10">
                   <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
@@ -69,9 +69,9 @@ export function WhyNearsitedSection() {
             </div>
           </motion.div>
 
-          {/* Nearsited — bordered, accent */}
+          {/* Nearsited — accent bg tint, no border (the resolution) */}
           <motion.div {...anim(0.1)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-bg-elevated)] px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] bg-[var(--color-accent)]/[0.04] px-6 py-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10">
                   <Zap className="h-4 w-4 text-[var(--color-accent)]" />
@@ -104,17 +104,17 @@ export function WhyNearsitedSection() {
             ].map((item) => (
               <motion.div key={item.label} {...anim(0)}>
                 <div
-                  className="flex flex-col justify-center gap-1 rounded-[var(--radius-sm)] border px-3 py-3 sm:flex-row sm:items-center sm:gap-2.5 sm:px-4 sm:py-2.5"
+                  className="flex min-h-[68px] flex-col justify-center gap-1.5 rounded-[var(--radius-sm)] border px-4 py-4"
                   style={{
                     borderColor: `${item.borderColor ?? item.color}30`,
-                    backgroundColor: `${item.bg ?? item.color}10`,
+                    backgroundColor: `${item.bg ?? item.color}12`,
                   }}
                 >
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: item.color }} />
-                    <span className="text-sm font-medium" style={{ color: item.color }}>{item.label}</span>
+                    <span className="text-[15px] font-medium leading-tight" style={{ color: item.color }}>{item.label}</span>
                   </div>
-                  <span className="text-xs text-[var(--color-text-tertiary)]">{item.sub}</span>
+                  <span className="text-[11px] leading-snug text-[var(--color-text-tertiary)]">{item.sub}</span>
                 </div>
               </motion.div>
             ))}
