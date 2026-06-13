@@ -502,8 +502,8 @@ export default function SettingsPage() {
   // ── Loading state ───────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen p-6">
-        <div className="mx-auto max-w-2xl animate-pulse space-y-4">
+      <div className="min-h-screen bg-[var(--color-bg-page)]">
+        <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8 animate-pulse space-y-4">
           <div className="h-6 w-32 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
           <div className="h-48 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
         </div>

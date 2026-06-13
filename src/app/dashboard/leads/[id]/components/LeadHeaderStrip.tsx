@@ -46,7 +46,7 @@ type Props = {
  * - Right-aligned action cluster: [+ Pipeline] [PDF] [Share]
  */
 export function LeadHeaderStrip({
-  businessId, // eslint-disable-line @typescript-eslint/no-unused-vars
+  businessId,
   businessName,
   businessType,
   city,
@@ -127,7 +127,7 @@ export function LeadHeaderStrip({
           )}
           {/* PDF + Share inline on desktop */}
           <a
-            href={`/api/export/pdf?businessId=${placeId ?? ""}`}
+            href={`/api/export/pdf?businessId=${businessId}`}
             className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
           >
             <FileDown className="h-3.5 w-3.5" /> PDF
@@ -146,7 +146,7 @@ export function LeadHeaderStrip({
                 {
                   label: "Download PDF",
                   icon: <FileDown className="h-3.5 w-3.5" />,
-                  onClick: () => { window.location.href = `/api/export/pdf?businessId=${placeId ?? ""}`; },
+                  onClick: () => { window.location.href = `/api/export/pdf?businessId=${businessId}`; },
                 },
                 {
                   label: "Share link",
