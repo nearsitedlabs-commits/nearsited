@@ -48,7 +48,7 @@ export function WhyNearsitedSection() {
           </SectionSub>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 md:items-stretch">
+        <div className="mt-8 grid gap-4 md:mt-12 md:gap-6 md:grid-cols-2 md:items-stretch">
           {/* Traditional — subtle border, no fill (the pain) */}
           <motion.div {...anim(0)} className="h-full">
             <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] px-6 py-6">
@@ -91,30 +91,30 @@ export function WhyNearsitedSection() {
         </div>
 
         {/* Lead type badges */}
-        <div className="mt-10 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-6">
-          <p className="mb-4 text-center text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">
-            Four types of website opportunity, all found in one search
+        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6">
+          <p className="mb-3 text-center text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-text-tertiary)] md:mb-4 md:tracking-[0.18em]">
+            Four opportunity types · all in one search
           </p>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
             {[
               { color: "var(--score-high)", label: "No Website", sub: "Biggest opportunity" },
-              { color: "var(--score-mid)", label: "Social Only", sub: "Renting on social" },
-              { color: "var(--badge-indigo-text)", borderColor: "var(--badge-indigo-border)", bg: "var(--badge-indigo-bg)", label: "Platform Only", sub: "Dependent on third-party" },
+              { color: "var(--score-mid)", label: "Social Only", sub: "Social-only presence" },
+              { color: "var(--badge-indigo-text)", borderColor: "var(--badge-indigo-border)", bg: "var(--badge-indigo-bg)", label: "Platform Only", sub: "Third-party platform" },
               { color: "var(--accent)", label: "Weak Website", sub: "Redesign opportunity" },
             ].map((item) => (
               <motion.div key={item.label} {...anim(0)}>
                 <div
-                  className="flex min-h-[68px] flex-col justify-center gap-1.5 rounded-[var(--radius-sm)] border px-4 py-4"
+                  className="flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4"
                   style={{
                     borderColor: `${item.borderColor ?? item.color}30`,
                     backgroundColor: `${item.bg ?? item.color}12`,
                   }}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: item.color }} />
-                    <span className="text-[15px] font-medium leading-tight" style={{ color: item.color }}>{item.label}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: item.color }} />
+                    <span className="text-[13px] font-medium leading-tight md:text-[15px]" style={{ color: item.color }}>{item.label}</span>
                   </div>
-                  <span className="text-[11px] leading-snug text-[var(--color-text-tertiary)]">{item.sub}</span>
+                  <span className="text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]">{item.sub}</span>
                 </div>
               </motion.div>
             ))}

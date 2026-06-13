@@ -392,7 +392,7 @@ export default function SettingsPage() {
     const res = await fetch("/api/data/clear", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ scope }),
+      body: JSON.stringify({ scope, confirm: true }),
     });
     const json = await res.json();
     setClearing(false);

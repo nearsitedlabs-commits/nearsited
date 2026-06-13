@@ -46,11 +46,11 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
   });
 
   return (
-    <section id="hero" className="relative overflow-hidden" style={{ contentVisibility: "auto" }}>
+    <section id="hero" className="relative overflow-hidden [overflow-x:clip]">
       <OpportunityAtlas />
       <CanvasBackground />
 
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-6 pt-6 pb-16 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10">
+      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pt-6 pb-16 sm:px-6 md:gap-12 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10">
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
@@ -93,17 +93,17 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
       {/* Right: Mixed opportunity feed */}
       <motion.div
-        className="relative z-10 flex items-center justify-center"
-        initial={{ opacity: 0, x: 60 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        className="relative z-10 flex min-w-0 w-full items-center justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       >
-        <div className="relative w-full max-w-[440px]">
+        <div className="relative w-full min-w-0 md:max-w-[440px]">
           <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="truncate text-[10px] uppercase tracking-[0.18em] md:tracking-[0.28em] text-[var(--color-text-tertiary)]">Discovered opportunities · Dubai</p>
-              <Badge color="green" dot>Sample scan</Badge>
+            <div className="mb-4 flex min-w-0 items-center gap-2">
+              <p className="min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Opportunities · Dubai</p>
+              <Badge color="green" dot className="shrink-0">Sample</Badge>
             </div>
 
             {/* Opportunity rows */}
@@ -128,9 +128,9 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                     <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{opp.name}</p>
                     <p className="text-xs text-[var(--color-text-tertiary)]">{opp.desc}</p>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end">
+                  <div className="shrink-0">
                     <span
-                      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold"
+                      className="inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap"
                       style={{ borderColor: `${opp.badgeColor}30`, backgroundColor: `${opp.badgeColor}10`, color: opp.badgeColor }}
                     >
                       {opp.badge}
