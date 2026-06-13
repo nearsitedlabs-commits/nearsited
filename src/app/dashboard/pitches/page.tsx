@@ -494,7 +494,7 @@ export default function PitchesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg-page)] p-6">
+      <div className="min-h-screen bg-[var(--color-bg-page)] px-4 py-6 sm:px-6 sm:py-8">
         <div className="mx-auto max-w-5xl animate-pulse space-y-4">
           <div className="h-6 w-24 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]" />
           {Array.from({ length: 3 }).map((_, i) => (
@@ -530,7 +530,7 @@ export default function PitchesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+              className="inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               title="Search"
             >
               <Search className="h-4 w-4" />
@@ -538,7 +538,7 @@ export default function PitchesPage() {
             <button
               onClick={() => fetchPitches(true)}
               disabled={refreshing}
-              className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)] disabled:cursor-not-allowed disabled:opacity-40"
               title="Refresh"
             >
               <Loader2 className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />

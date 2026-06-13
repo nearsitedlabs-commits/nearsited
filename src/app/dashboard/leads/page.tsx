@@ -255,7 +255,7 @@ export default function LeadsPage() {
   // ── Loading / Error states ────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg-page)] p-6">
+      <div className="min-h-screen bg-[var(--color-bg-page)] px-4 py-6 sm:px-6 sm:py-8">
         <div className="mx-auto max-w-7xl animate-pulse space-y-6">
           <div className="h-9 w-52 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

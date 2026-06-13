@@ -104,12 +104,12 @@ export function LandingFooter() {
                         placeholder="your@email.com"
                         disabled={status === "loading"}
                         aria-label="Email for newsletter"
-                        className={`min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition disabled:opacity-50 ${validationError ? "border-red-500/50 focus:border-red-500/70" : "border-[var(--color-border-subtle)] focus:border-[var(--color-accent)]/50"}`}
+                        className={`min-h-[44px] min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition disabled:opacity-50 ${validationError ? "border-red-500/50 focus:border-red-500/70" : "border-[var(--color-border-subtle)] focus:border-[var(--color-accent)]/50"}`}
                       />
                       <button
                         type="submit"
                         disabled={status === "loading"}
-                        className="w-full sm:w-auto shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="min-h-[44px] w-full sm:w-auto shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {status === "loading" ? "Subscribing…" : "Subscribe"}
                       </button>
