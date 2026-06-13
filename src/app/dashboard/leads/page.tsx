@@ -283,14 +283,14 @@ export default function LeadsPage() {
   // ── Page render ───────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[var(--color-bg-page)]">
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-medium text-[var(--color-text-primary)]">Your opportunities</h1>
+          <h1 className="text-xl font-medium sm:text-2xl text-[var(--color-text-primary)]">Your opportunities</h1>
           <Link
             href="/dashboard/discover"
-            className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
           >
             + Find more
           </Link>

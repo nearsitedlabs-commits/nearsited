@@ -176,7 +176,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               Shared Report — Nearsited
             </motion.p>
             <motion.h1
-              className="mt-2 text-3xl font-bold text-[var(--color-text-primary)]"
+              className="mt-2 text-2xl font-bold sm:text-3xl text-[var(--color-text-primary)]"
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.05 }}

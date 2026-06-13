@@ -1025,7 +1025,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen">
       <MobileHeader title="Settings" />
-      <div className="mx-auto max-w-2xl px-4 pt-[calc(var(--mobile-header-height,52px)+var(--mobile-safe-top,0px)+1.5rem)] pb-6 lg:pt-6 lg:pb-8 sm:px-6">
+      <div className="mx-auto max-w-2xl px-4 pt-6 pb-6 sm:px-6 sm:pt-8 lg:pb-8">
         {shouldReduce ? pageContent : <FadeUp>{pageContent}</FadeUp>}
       </div>
       {settingsToast && <Toast message={settingsToast} onClose={() => setSettingsToast(null)} />}
