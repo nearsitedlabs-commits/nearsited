@@ -5,7 +5,7 @@ import { SkeletonLoader } from "@/lib/motion";
 export default function AuditLoading() {
   return (
     <div className="min-h-screen bg-[var(--color-bg-page)]">
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Back link */}
         <SkeletonLoader width="120px" height="16px" radius="4px" />
 

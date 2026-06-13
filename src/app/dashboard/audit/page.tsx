@@ -580,7 +580,7 @@ export default function AuditPage() {
       <>
         {/* Hero */}
         <div className="mb-6">
-          <h1 className="text-2xl font-medium text-[var(--color-text-primary)]">
+          <h1 className="text-xl font-medium sm:text-2xl text-[var(--color-text-primary)]">
             Quick audit
           </h1>
           <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
