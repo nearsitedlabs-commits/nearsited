@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
     const credit = await checkCredit(user.id);
     if (!credit.allowed) {
       return NextResponse.json(
-        { error: "Audit limit reached. Upgrade your plan to run more audits.", code: "CREDIT_LIMIT", retryAfter: 0 },
+        { error: credit.audits_limit <= 20 ? "Free plan credit limit reached. Upgrade your plan to run more audits." : `Monthly credit limit reached (${credit.audits_used}/${credit.audits_limit}). Credits reset at the start of next month.`, code: "CREDIT_LIMIT", retryAfter: 0 },
         { status: 429 },
       );
     }

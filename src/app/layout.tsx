@@ -79,24 +79,42 @@ export default function RootLayout({
           type="application/ld+json"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "NearSited",
-              applicationCategory: "BusinessApplication",
-              operatingSystem: "Web",
-              description: "Find local businesses with weak websites, discover website opportunities, and win redesign projects with personalised outreach.",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "USD",
-              },
-              author: {
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
                 "@type": "Organization",
-                name: "Again Labs",
-                url: "https://againlive.com",
+                "@id": "https://nearsited.io/#organization",
+                name: "NearSited",
+                url: "https://nearsited.io",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://nearsited.io/logo-icon.png",
+                  width: 192,
+                  height: 192,
+                },
+                sameAs: [],
               },
-            }),
+              {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                name: "NearSited",
+                applicationCategory: "BusinessApplication",
+                operatingSystem: "Web",
+                description: "Find local businesses with weak websites, discover website opportunities, and win redesign projects with personalised outreach.",
+                url: "https://nearsited.io",
+                publisher: { "@id": "https://nearsited.io/#organization" },
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "USD",
+                },
+                author: {
+                  "@type": "Organization",
+                  name: "Again Labs",
+                  url: "https://againlive.com",
+                },
+              },
+            ]),
           }}
         />
         <Script

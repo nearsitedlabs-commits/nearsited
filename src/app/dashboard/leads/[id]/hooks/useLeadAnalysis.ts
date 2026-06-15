@@ -58,7 +58,20 @@ export function useLeadAnalysis({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ businessId, website }),
       });
-      if (res.ok && res.body) {
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => null) as { error?: string; code?: string } | null;
+        const code = errBody?.code;
+        const message = errBody?.error;
+        if (code === "CREDIT_LIMIT") {
+          showToast(message ?? "Analysis credit limit reached — upgrade your plan for more");
+        } else if (res.status === 429) {
+          showToast("Too many requests — please wait a moment and try again");
+        } else {
+          showToast(message ?? "Design analysis failed — please try again");
+        }
+        return;
+      }
+      if (res.body) {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";

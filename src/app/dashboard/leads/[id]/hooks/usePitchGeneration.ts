@@ -50,9 +50,13 @@ export function usePitchGeneration({
         }),
       });
       if (res.status === 429) {
-        const data = await res.json().catch(() => ({}));
-        setQuotaError("AI quota exceeded — please wait a moment and try again");
-        startQuotaTimer((data as { retryAfter?: number }).retryAfter ?? 60);
+        const data = await res.json().catch(() => ({})) as { retryAfter?: number; code?: string; error?: string };
+        if (data.code === "RATE_LIMIT") {
+          setPitchError("Too many requests — please wait a moment and try again");
+          return;
+        }
+        setQuotaError(data.error ?? "AI quota exceeded — please wait a moment and try again");
+        startQuotaTimer(data.retryAfter ?? 60);
         return;
       }
       const data = await res.json();
