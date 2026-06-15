@@ -227,6 +227,8 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
           address={biz.address}
           placeId={biz.place_id}
           phone={biz.phone}
+          website={biz.website}
+          websiteStatus={biz.website_status}
           rating={biz.rating}
           reviewCount={biz.review_count}
           pipelineStatus={currentPipelineStatus}

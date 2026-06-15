@@ -73,6 +73,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const biz = business as {
     id: string; name: string; business_type: string; address: string; city: string;
     place_id: string | null; phone: string | null; rating: number | null; review_count: number | null;
+    website: string | null; website_status: string | null;
   };
 
   const oppScore = estimatedOpportunity({
@@ -221,6 +222,8 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           address={biz.address}
           placeId={biz.place_id}
           phone={biz.phone}
+          website={biz.website}
+          websiteStatus={biz.website_status}
           rating={biz.rating}
           reviewCount={biz.review_count}
           pipelineStatus={currentPipelineStatus}

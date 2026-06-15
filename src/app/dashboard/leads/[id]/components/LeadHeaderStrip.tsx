@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, FileDown, MapPin, Phone, Share2, TrendingUp } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileDown, MapPin, Phone, Share2, TrendingUp } from "lucide-react";
+import { getLeadWebUrl } from "@/components/ui/LeadAffordances";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { ActionMenu } from "@/components/ui/ActionMenu";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
@@ -21,6 +22,10 @@ type Props = {
   placeId: string | null;
   /** Phone number */
   phone: string | null;
+  /** Business website URL */
+  website?: string | null;
+  /** Website status (used to decide whether to show link) */
+  websiteStatus?: string | null;
   /** Google rating */
   rating: number | null;
   /** Review count */
@@ -53,6 +58,8 @@ export function LeadHeaderStrip({
   address: _address,
   placeId,
   phone,
+  website,
+  websiteStatus,
   rating,
   reviewCount,
   pipelineStatus,
@@ -87,6 +94,16 @@ export function LeadHeaderStrip({
           {/* Badges + Phone + Map */}
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {badge}
+            {getLeadWebUrl(websiteStatus ?? "unknown", website ?? null) && (
+              <a
+                href={getLeadWebUrl(websiteStatus ?? "unknown", website ?? null)!}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+              >
+                <ExternalLink className="h-3.5 w-3.5" /> Website
+              </a>
+            )}
             {phone && (
               <a
                 href={`tel:${phone}`}

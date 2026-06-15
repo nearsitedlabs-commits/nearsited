@@ -276,6 +276,8 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               address={biz.address}
               placeId={biz.place_id}
               phone={business.phone}
+              website={biz.website}
+              websiteStatus={biz.website_status}
               rating={biz.rating}
               reviewCount={biz.review_count}
               pipelineStatus={currentPipelineStatus}
