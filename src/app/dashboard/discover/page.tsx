@@ -496,6 +496,7 @@ export default function DiscoverPage() {
                           onCancelAnalysis={cancelAnalysis}
                           onAddToPipeline={addPipe}
                           onRemoveFromPipeline={removePipe}
+                          onPhoneCopied={showToast}
                         />
                       ))}
                     </motion.div>

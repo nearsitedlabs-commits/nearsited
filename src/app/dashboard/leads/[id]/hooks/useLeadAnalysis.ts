@@ -190,6 +190,34 @@ export function useLeadAnalysis({
         const reader = designRes.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        const processDesignChunk = (parsed: Record<string, unknown>) => {
+          if (parsed.type === "progress" && parsed.step) {
+            const key = parsed.step === "complete" ? "design_complete" : parsed.step as string;
+            setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
+          } else if (parsed.type === "result") {
+            setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
+            setActiveKeys([]);
+            setDesignError(null);
+            designSucceeded = true;
+          } else if (parsed.type === "cached" || (parsed as { success?: boolean; cached?: boolean }).cached === true) {
+            // Cache-hit: server returns plain JSON 200 (no trailing \n) — detect via cached:true
+            setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
+            setActiveKeys([]);
+            setDesignError(null);
+            designSucceeded = true;
+          } else if (parsed.type === "error") {
+            if ((parsed.error as string | undefined) === "AI_QUOTA_EXCEEDED") {
+              setQuotaError("AI quota exceeded — please wait a moment and try again");
+              startQuotaTimer(60);
+              showToast("Performance audit saved — design analysis blocked by AI quota");
+              router.refresh();
+              return "early-return";
+            }
+            throw new Error((parsed.message as string) ?? "Design analysis failed");
+          }
+          return null;
+        };
+
         while (true) {
           if (signal.aborted) return;
           const { done, value } = await reader.read();
@@ -202,58 +230,42 @@ export function useLeadAnalysis({
             let parsed: Record<string, unknown> | null = null;
             try { parsed = JSON.parse(line); } catch { continue; }
             if (!parsed) continue;
-            if (parsed.type === "progress" && parsed.step) {
-              const key = parsed.step === "complete" ? "design_complete" : parsed.step as string;
-              setActiveKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
-            } else if (parsed.type === "result") {
-              setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
-              setActiveKeys([]);
-              setDesignError(null);
-              designSucceeded = true;
-            } else if (parsed.type === "cached") {
-              setCompletedKeys(ANALYSE_STEPS.map((s) => s.key));
-              setActiveKeys([]);
-              setDesignError(null);
-              designSucceeded = true;
-            } else if (parsed.type === "error") {
-              if ((parsed.error as string | undefined) === "AI_QUOTA_EXCEEDED") {
-                setQuotaError("AI quota exceeded — please wait a moment and try again");
-                startQuotaTimer(60);
-                showToast("Performance audit saved — design analysis blocked by AI quota");
-                router.refresh();
-                return;
-              }
-              throw new Error((parsed.message as string) ?? "Design analysis failed");
-            }
+            if (processDesignChunk(parsed) === "early-return") return;
           }
+        }
+        // Flush any remaining buffer content (cache-hit plain JSON has no trailing \n)
+        if (buffer.trim()) {
+          try {
+            const parsed = JSON.parse(buffer.trim()) as Record<string, unknown>;
+            if (processDesignChunk(parsed) === "early-return") return;
+          } catch { /* ignore malformed trailing content */ }
         }
       }
 
       if (designSucceeded) {
         showToast("Analysis complete — scores updated");
+
+        // Auto-generate pitch with fresh design data (fire-and-forget)
+        fetch("/api/pitch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ businessId, tone: pitchTone, length: pitchLength, lead_type: websiteStatus }),
+        }).then(async (pitchRes) => {
+          if (pitchRes.ok) {
+            const pitchData = await pitchRes.json();
+            if (pitchData.success && pitchData.pitch && typeof pitchData.pitch.subject === "string" && typeof pitchData.pitch.body === "string") {
+              onPitchResult({ subject: pitchData.pitch.subject, body: pitchData.pitch.body });
+              showToast("Fresh pitch generated with new data");
+            }
+          }
+        }).catch((pitchErr) => {
+          console.warn("[LEAD] Pitch auto-generation failed:", pitchErr);
+        });
       } else {
-        // Design phase returned no result (e.g. cache hit returned plain JSON, not NDJSON)
-        // Audit still succeeded so show partial success
-        showToast("Performance audit complete — run design analysis to get full scores");
+        // Design phase did not complete — show partial success and let user retry
+        showToast("Performance audit complete — design analysis did not finish. Use the button above to retry.");
         setDesignError("Design analysis did not complete. Use the button above to retry.");
       }
-
-      // Auto-generate pitch fire-and-forget
-      fetch("/api/pitch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId, tone: pitchTone, length: pitchLength, lead_type: websiteStatus }),
-      }).then(async (pitchRes) => {
-        if (pitchRes.ok) {
-          const pitchData = await pitchRes.json();
-          if (pitchData.success && pitchData.pitch && typeof pitchData.pitch.subject === "string" && typeof pitchData.pitch.body === "string") {
-            onPitchResult({ subject: pitchData.pitch.subject, body: pitchData.pitch.body });
-            showToast("Fresh pitch generated with new data");
-          }
-        }
-      }).catch((pitchErr) => {
-        console.warn("[LEAD] Pitch auto-generation failed:", pitchErr);
-      });
 
       window.dispatchEvent(new CustomEvent("credits:updated"));
       window.dispatchEvent(new CustomEvent("nearsited:analysis:completed", { detail: { businessId } }));

@@ -13,6 +13,8 @@ import type { PipelineBusiness, PipelineStatus, WebsiteStatus } from "@/lib/db-t
 import { MobileCard } from "./components/MobileCard";
 import { StageColumn } from "./components/StageColumn";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { useToast } from "@/lib/shared-hooks";
+import { Toast } from "@/components/ui/Toast";
 
 // ── Query ─────────────────────────────────────────────────────────────────────
 
@@ -78,6 +80,11 @@ export default function PipelinePage() {
   const [error, setError] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const supabase = createClient();
+  const { toast: toastMsg, showToast, setToast } = useToast();
+
+  const handlePhoneCopied = useCallback((msg: string) => {
+    showToast(msg);
+  }, [showToast]);
 
   useEffect(() => {
     async function fetchPipeline() {
@@ -210,6 +217,7 @@ export default function PipelinePage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8">
         {/* Header — stands alone, no card wrapper (Rule E) */}
@@ -288,6 +296,7 @@ export default function PipelinePage() {
                                 item={item}
                                 score={scores[item.pipeline_id] ?? null}
                                 onStatusChange={handleStatusChange}
+                                onPhoneCopied={handlePhoneCopied}
                               />
                             ))}
                           </div>
@@ -315,6 +324,7 @@ export default function PipelinePage() {
                       onCardClick={handleCardClick}
                       onStatusChange={handleStatusChange}
                       onDelete={handleDelete}
+                      onPhoneCopied={handlePhoneCopied}
                     />
                   ))}
                 </div>
@@ -324,5 +334,7 @@ export default function PipelinePage() {
         )}
       </div>
     </div>
+    {toastMsg && <Toast message={toastMsg} onClose={() => setToast(null)} />}
+    </>
   );
 }

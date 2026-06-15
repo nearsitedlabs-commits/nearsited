@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { useReducedMotion } from "@/lib/motion";
+import { useToast } from "@/lib/shared-hooks";
+import { Toast } from "@/components/ui/Toast";
 import { FilterPanel } from "@/components/filters/FilterPanel";
 import { StatTile } from "@/components/ui/StatTile";
 import {
@@ -29,6 +31,7 @@ export default function LeadsPage() {
 
   const router = useRouter();
   const shouldReduce = useReducedMotion() ?? false;
+  const { toast: toastMsg, showToast, setToast } = useToast();
 
   const [filters, setFiltersState] = useState<FilterState>(() =>
     typeof window !== "undefined"
@@ -105,7 +108,7 @@ export default function LeadsPage() {
     setPage(1);
     switch (type) {
       case "unaudited":
-        setFilters({ ...filters, auditedOnly: false, websiteStatus: [] });
+        setFilters({ ...filters, auditedOnly: true, websiteStatus: [] });
         break;
       case "flagged":
         setActivePipelineTab("all_pipeline");
@@ -117,7 +120,7 @@ export default function LeadsPage() {
         break;
       default:
         setActivePipelineTab("all_pipeline");
-        setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+        setFilters({ ...filters, websiteStatus: [], flaggedOnly: false, auditedOnly: false });
     }
   }, [filters, setFilters]);
 
@@ -131,10 +134,14 @@ export default function LeadsPage() {
       });
       const d = await r.json();
       if (d.success || d.message === "Already in pipeline") {
-        window.dispatchEvent(new CustomEvent("toast:show", { detail: "Added to pipeline" }));
+        showToast("Added to pipeline");
       }
     } catch { /* ignore */ }
-  }, []);
+  }, [showToast]);
+
+  const handlePhoneCopied = useCallback((msg: string) => {
+    showToast(msg);
+  }, [showToast]);
 
   const handleRowMoveStatus = useCallback(async (id: string, status: "won" | "lost") => {
     try {
@@ -146,10 +153,10 @@ export default function LeadsPage() {
       const d = await r.json();
       if (d.success) {
         const label = status === "won" ? "Marked as Won" : "Marked as Lost";
-        window.dispatchEvent(new CustomEvent("toast:show", { detail: label }));
+        showToast(label);
       }
     } catch { /* ignore */ }
-  }, []);
+  }, [showToast]);
 
   // Derived data
   const businessTypes = useMemo(
@@ -220,10 +227,10 @@ export default function LeadsPage() {
     }
     setBulkLoading(false);
     if (count > 0) {
-      window.dispatchEvent(new CustomEvent("toast:show", { detail: `Added ${count} to pipeline` }));
+      showToast(`Added ${count} to pipeline`);
       handleClearSelection();
     }
-  }, [selectedIds, handleClearSelection]);
+  }, [selectedIds, handleClearSelection, showToast]);
 
   const handleBulkAudit = useCallback(async () => {
     setBulkLoading(true);
@@ -237,9 +244,9 @@ export default function LeadsPage() {
     }
     setBulkLoading(false);
     if (count > 0) {
-      window.dispatchEvent(new CustomEvent("toast:show", { detail: `Started audit for ${count} businesses` }));
+      showToast(`Started audit for ${count} businesses`);
     }
-  }, [selectedIds, leads, handleAnalyse]);
+  }, [selectedIds, leads, handleAnalyse, showToast]);
 
   // Active tab resolver (for empty state)
   const resolvedActiveTab: TabFilter =
@@ -282,6 +289,7 @@ export default function LeadsPage() {
 
   // ── Page render ───────────────────────────────────────────────────────────────
   return (
+    <>
     <div className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 
@@ -384,6 +392,7 @@ export default function LeadsPage() {
               onToggleSelectAll={handleToggleSelectAll}
               onAddToPipeline={handleRowAddToPipeline}
               onMoveStatus={handleRowMoveStatus}
+              onPhoneCopied={handlePhoneCopied}
             />
 
             <LeadsMobileCards
@@ -404,6 +413,7 @@ export default function LeadsPage() {
               bulkLoading={bulkLoading}
               hasMoreOnMobile={hasMoreOnMobile}
               onLoadMore={() => setMobileLoadCount((c) => c + PAGE_SIZE)}
+              onPhoneCopied={handlePhoneCopied}
             />
 
             {totalPages > 1 && (
@@ -429,5 +439,7 @@ export default function LeadsPage() {
 
       </div>
     </div>
+    {toastMsg && <Toast message={toastMsg} onClose={() => setToast(null)} />}
+    </>
   );
 }

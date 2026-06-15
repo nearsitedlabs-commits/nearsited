@@ -7,6 +7,7 @@ import { ScorePill } from "./ScorePill";
 import { TimeInStage } from "./TimeInStage";
 import { CardActionsMenu } from "./CardActionsMenu";
 import type { PipelineBusiness } from "@/lib/db-types";
+import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
 
 interface PipelineCardProps {
   item: PipelineBusiness;
@@ -17,6 +18,7 @@ interface PipelineCardProps {
   onCardClick: (id: string) => void;
   onStatusChange: (pipelineId: string, status: string) => void;
   onDelete?: (pipelineId: string) => void;
+  onPhoneCopied?: (msg: string) => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export function PipelineCard({
   onCardClick,
   onStatusChange,
   onDelete,
+  onPhoneCopied,
 }: PipelineCardProps) {
   return (
     <motion.div
@@ -77,9 +80,12 @@ export function PipelineCard({
     >
       {/* Header row: name + overflow menu */}
       <div className="flex items-center justify-between gap-2">
-        <p className="min-w-0 truncate text-sm font-medium text-[var(--color-text-primary)]" dir="auto">
-          {item.name}
-        </p>
+        <LeadNameLink
+          name={item.name ?? "Unknown"}
+          websiteStatus={item.website_status ?? "unknown"}
+          website={item.website}
+          className="min-w-0 truncate text-sm font-medium"
+        />
         <CardActionsMenu
           pipelineId={item.pipeline_id}
           businessId={item.id}
@@ -95,11 +101,23 @@ export function PipelineCard({
         </p>
       )}
 
-      {/* Footer row: badges */}
-      <div className="mt-1.5 flex items-center gap-1.5">
-        <WebsiteBadge status={item.website_status ?? "unknown"} />
-        {score != null && <ScorePill score={score} />}
-        <TimeInStage enteredAt={item.stage_entered_at} status={item.pipeline_status} />
+      {/* Footer row: badges + affordances */}
+      <div className="mt-1 flex items-center justify-between gap-1">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <WebsiteBadge status={item.website_status ?? "unknown"} />
+          {score != null && <ScorePill score={score} />}
+          <TimeInStage enteredAt={item.stage_entered_at} status={item.pipeline_status} />
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <LeadAffordanceIcons
+            name={item.name ?? ""}
+            address={item.address}
+            city={item.city}
+            phone={item.phone}
+            onPhoneCopied={onPhoneCopied}
+            compact
+          />
+        </div>
       </div>
     </motion.div>
   );

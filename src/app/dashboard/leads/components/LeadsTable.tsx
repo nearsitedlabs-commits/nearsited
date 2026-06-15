@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { motion, fadeUpVariants, staggerVariants } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
@@ -8,7 +8,7 @@ import { PipelineStatusBadge } from "./PipelineStatusBadge";
 import { LeadActionCell } from "./LeadActionCell";
 import { effectiveOpportunityScore, deriveOpportunityStatus, scoreTier, formatRelativeTime } from "./helpers";
 import type { LeadRow, OpportunityStatus } from "./types";
-import Link from "next/link";
+import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
 
 type AnalyseProgress = { step: number; phase: string; label: string; error?: string };
 
@@ -25,6 +25,7 @@ type Props = {
   onToggleSelectAll: () => void;
   onAddToPipeline: (id: string) => Promise<void>;
   onMoveStatus: (id: string, status: "won" | "lost") => Promise<void>;
+  onPhoneCopied?: (msg: string) => void;
 };
 
 type ClusterInfo = {
@@ -109,6 +110,7 @@ export function LeadsTable({
   onToggleSelectAll,
   onAddToPipeline,
   onMoveStatus,
+  onPhoneCopied,
 }: Props) {
   const [expandedClusters, setExpandedClusters] = useState<Set<number>>(new Set());
   const allSelected = paginated.length > 0 && paginated.every((l) => selectedIds.has(l.id));
@@ -195,16 +197,29 @@ export function LeadsTable({
         </td>
         {/* Business */}
         <td className="px-3 py-3 align-middle">
-          <Link href={`/dashboard/leads/${lead.id}`} className="block hover:opacity-80 transition-opacity">
-            <p dir="auto" className="text-sm font-medium text-[var(--color-text-primary)] truncate max-w-[240px]">
-              {lead.name}
-            </p>
-            <p className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5 truncate max-w-[240px]">
-              {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
-              {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
-              {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
-            </p>
-          </Link>
+          <div className="max-w-[260px]">
+            <LeadNameLink
+              name={lead.name}
+              websiteStatus={lead.website_status}
+              website={lead.website}
+              className="text-sm font-medium block truncate"
+            />
+            <div className="flex items-center -ml-1">
+              <LeadAffordanceIcons
+                name={lead.name}
+                address={lead.address}
+                city={lead.city}
+                phone={lead.phone}
+                onPhoneCopied={onPhoneCopied}
+                compact
+              />
+              <p className="text-[10px] text-[var(--color-text-tertiary)] truncate">
+                {lead.city}{lead.city && lead.business_type ? " · " : ""}{lead.business_type}
+                {lead.rating != null ? ` · ${lead.rating.toFixed(1)}★` : ""}
+                {lead.review_count != null && lead.review_count > 0 ? ` · ${lead.review_count}` : ""}
+              </p>
+            </div>
+          </div>
         </td>
         {/* Site */}
         <td className="w-[90px] px-3 py-3 align-middle">
@@ -272,8 +287,8 @@ export function LeadsTable({
             <span className="text-xs font-medium text-[var(--color-text-secondary)]">
               {cluster.count} in cluster · {cluster.industry} · {cluster.city} · scored ~{cluster.scoreRange}
             </span>
-            <span className="ml-auto text-[10px] text-[var(--color-text-tertiary)]">
-              {expanded ? "Collapse ▴" : "Expand ▾"}
+            <span className="ml-auto text-[10px] text-[var(--color-text-tertiary)] opacity-50">
+              {expanded ? "▴" : "▾"}
             </span>
           </button>
         </td>
@@ -308,10 +323,10 @@ export function LeadsTable({
               {clustered.map((item, idx) => {
                 if ("cluster" in item) {
                   return (
-                    <>
+                    <React.Fragment key={`cluster-${idx}`}>
                       {renderClusterHeader(item.cluster, idx)}
                       {item.cluster.expanded && item.rows.map((lead) => renderRow(lead, false))}
-                    </>
+                    </React.Fragment>
                   );
                 }
                 return renderRow(item, false);
@@ -328,10 +343,10 @@ export function LeadsTable({
               {clustered.map((item, idx) => {
                 if ("cluster" in item) {
                   return (
-                    <motion.tbody key={`cluster-group-${idx}`} variants={fadeUpVariants}>
+                    <React.Fragment key={`cluster-group-${idx}`}>
                       {renderClusterHeader(item.cluster, idx)}
                       {item.cluster.expanded && item.rows.map((lead) => renderRow(lead, true))}
-                    </motion.tbody>
+                    </React.Fragment>
                   );
                 }
                 return renderRow(item, true);

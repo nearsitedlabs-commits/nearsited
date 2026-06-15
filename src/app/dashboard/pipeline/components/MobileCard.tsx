@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { PIPELINE_SALES_STATUSES, PIPELINE_LABELS } from "@/lib/ui-constants";
 import { WebsiteBadge } from "@/components/ui/WebsiteBadge";
+import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
 import { ScorePill } from "./ScorePill";
 import { TimeInStage } from "./TimeInStage";
 import type { PipelineBusiness } from "@/lib/db-types";
@@ -19,9 +20,10 @@ interface MobileCardProps {
   item: PipelineBusiness;
   score: number | null;
   onStatusChange: (pipelineId: string, status: string) => void;
+  onPhoneCopied?: (msg: string) => void;
 }
 
-export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
+export function MobileCard({ item, score, onStatusChange, onPhoneCopied }: MobileCardProps) {
   const router = useRouter();
   const borderClass = STAGE_BORDER_COLORS[item.pipeline_status] ?? "border-l-[var(--border)]";
 
@@ -40,7 +42,12 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{item.name}</p>
+          <LeadNameLink
+            name={item.name ?? "Unknown"}
+            websiteStatus={item.website_status ?? "unknown"}
+            website={item.website}
+            className="truncate text-sm font-medium"
+          />
 
           {item.business_type && item.city && (
             <p className="mt-0.5 truncate text-xs text-[var(--color-text-tertiary)]">
@@ -48,10 +55,21 @@ export function MobileCard({ item, score, onStatusChange }: MobileCardProps) {
             </p>
           )}
 
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <WebsiteBadge status={item.website_status ?? "unknown"} />
-            {score != null && <ScorePill score={score} />}
-            <TimeInStage enteredAt={item.stage_entered_at} status={item.pipeline_status} />
+          <div className="mt-1.5 flex flex-wrap items-center justify-between gap-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <WebsiteBadge status={item.website_status ?? "unknown"} />
+              {score != null && <ScorePill score={score} />}
+              <TimeInStage enteredAt={item.stage_entered_at} status={item.pipeline_status} />
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
+              <LeadAffordanceIcons
+                name={item.name ?? ""}
+                address={item.address}
+                city={item.city}
+                phone={item.phone}
+                onPhoneCopied={onPhoneCopied}
+              />
+            </div>
           </div>
         </div>
 

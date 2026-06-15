@@ -17,7 +17,6 @@ import { usePitchGeneration } from "./hooks/usePitchGeneration";
 import { useLeadAnalysis } from "./hooks/useLeadAnalysis";
 
 // Sub-components
-import { ScoreRingWithLabel } from "./components/ScoreRingWithLabel";
 import { buildPreCallBriefSections } from "./components/OpportunityBullets";
 import { LeadHeaderStrip } from "./components/LeadHeaderStrip";
 import { PitchCard, type PitchToneConfig } from "./components/PitchCard";
@@ -195,7 +194,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     focus: pitch.pitchFocus,
   };
   const { setPitchTone, setPitchLength, setPitchOpening, setPitchUrgency, setPitchFocus } = pitch;
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const setPitchConfig = useCallback((config: PitchToneConfig) => {
     setPitchTone(config.tone);
     setPitchLength(config.length);
@@ -261,136 +259,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
     }
   }, [biz.id, showToast]);
 
-  // ── Render: Unanalysed state ───────────────────────────────────────────────
-
-  if (!hasAudit && !hasDesign) {
-    return (
-      <div className="min-h-screen bg-[var(--color-bg-page)]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
-          <LeadHeaderStrip
-            businessId={biz.id}
-            businessName={urlToDisplayName(biz.name)}
-            businessType={biz.business_type}
-            city={biz.city}
-            address={biz.address}
-            placeId={biz.place_id}
-            phone={business.phone}
-            rating={biz.rating}
-            reviewCount={biz.review_count}
-            pipelineStatus={currentPipelineStatus}
-            onPipelineChange={handlePipelineChange}
-            onShare={handleShare}
-            backTo={backTo}
-            extraActions={
-              <>
-                {!biz.place_id && (
-                  <button
-                    type="button"
-                    onClick={() => setShowEditPanel((v) => !v)}
-                    title="Edit business details"
-                    className="shrink-0 rounded-[var(--radius-sm)] p-1.5 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-secondary)] transition-colors"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                )}
-                {hasWebsite && (
-                  <button
-                    onClick={analysis.handleFullAnalysis}
-                    disabled={analysis.runningFullAnalysis}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                    {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Opportunity"}
-                  </button>
-                )}
-              </>
-            }
-          />
-          {showEditPanel && !biz.place_id && (
-            <div className="mb-6">
-              <BusinessEditPanel
-                bizId={biz.id}
-                initialName={biz.name}
-                initialCity={biz.city}
-                initialBusinessType={biz.business_type}
-                onSaved={(updated) => {
-                  setEditOverrides((prev) => ({ ...prev, ...updated }));
-                  setShowEditPanel(false);
-                  showToast("Business details updated");
-                }}
-                onClose={() => setShowEditPanel(false)}
-              />
-            </div>
-          )}
-          <div className="mt-8 space-y-6">
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-10 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-accent)]/10">
-                <svg className="h-7 w-7 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-medium text-[var(--color-text-primary)]">This lead hasn&rsquo;t been analysed yet</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-text-tertiary)]">
-                Run an opportunity analysis to see scores, issues, and a generated pitch.
-              </p>
-              {analysis.runningFullAnalysis && (
-                <div className="mt-4 flex items-center justify-center gap-3">
-                  <button
-                    type="button"
-                    onClick={analysis.handleCancelAnalysis}
-                    className="cursor-pointer text-xs font-medium text-[var(--color-text-tertiary)] underline-offset-2 hover:text-[var(--color-text-secondary)] underline transition-colors"
-                  >
-                    Cancel analysis
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {analysis.runningFullAnalysis && (
-              <AnalysisProgressBanner
-                running={analysis.runningFullAnalysis}
-                completedKeys={analysis.completedKeys}
-                activeKeys={analysis.activeKeys}
-              />
-            )}
-
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-8 py-6 flex flex-col items-center gap-2">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--color-text-tertiary)]">Opportunity Score</p>
-              <ScoreRingWithLabel score={displayOpportunityScore} size={88} />
-              <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">
-                Estimated
-              </span>
-              <p className="text-xs text-[var(--color-text-tertiary)]">Run an audit above to get a verified score</p>
-            </div>
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
-              <h2 className="mb-4 text-base font-semibold text-[var(--color-text-primary)]">Top Issues Impacting Score</h2>
-              <p className="text-sm text-[var(--color-text-tertiary)]">Run a design analysis to see issues.</p>
-            </div>
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">AI Opportunity Summary</h2>
-              <p className="text-sm text-[var(--color-text-tertiary)]">Analyse this lead to generate an opportunity summary.</p>
-            </div>
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Ready-to-Send Outreach</h2>
-              <p className="text-sm text-[var(--color-text-tertiary)]">Analyse this lead to generate outreach copy.</p>
-            </div>
-          </div>
-        </div>
-        <AIQuotaBanner
-          quotaError={quota.quotaError}
-          isGeminiQuota
-          quotaRetryTimer={quota.quotaRetryTimer}
-          clearQuotaTimer={quota.clearQuotaTimer}
-          onRetry={() => { setQuotaRetryCount((c) => c + 1); void pitch.handleGeneratePitch(true); }}
-          onUseFallback={() => showToast("Lighter model unavailable — please retry in a moment")}
-          retryCount={quotaRetryCount}
-        />
-        {toast && <Toast message={toast} onClose={() => setToast(null)} />}
-      </div>
-    );
-  }
-
-  // ── Render: Analysed lead ──────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
 
   const initialVariant = shouldReduce ? "visible" : "hidden";
 
@@ -425,14 +294,19 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                       <Pencil className="h-4 w-4" />
                     </button>
                   )}
-                  <button
-                    onClick={analysis.handleFullAnalysis}
-                    disabled={analysis.runningFullAnalysis}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                    {analysis.runningFullAnalysis ? "Analysing…" : "Re-analyse"}
-                  </button>
+                  {hasWebsite && (
+                    <button
+                      onClick={analysis.handleFullAnalysis}
+                      disabled={analysis.runningFullAnalysis}
+                      className={hasAudit
+                        ? "inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+                        : "inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                      }
+                    >
+                      {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      {analysis.runningFullAnalysis ? "Analysing…" : hasAudit ? "Re-analyse" : "Analyse Opportunity"}
+                    </button>
+                  )}
                 </>
               }
             />
@@ -470,6 +344,25 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               />
             </motion.div>
           </MaybeFadeUp>
+
+          {!hasAudit && !hasDesign && hasWebsite && (
+            <MaybeFadeUp reduce={shouldReduce}>
+              <div className="flex items-center justify-between gap-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 px-5 py-4">
+                <div>
+                  <p className="text-sm font-medium text-[var(--color-text-primary)]">Scores not yet verified</p>
+                  <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">Run an analysis to get real performance, design, and SEO scores.</p>
+                </div>
+                <button
+                  onClick={analysis.handleFullAnalysis}
+                  disabled={analysis.runningFullAnalysis}
+                  className="shrink-0 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Now"}
+                </button>
+              </div>
+            </MaybeFadeUp>
+          )}
 
           <MaybeFadeUp reduce={shouldReduce}>
             <AnalysisProgressBanner
@@ -530,7 +423,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     setOutreachChannel={pitch.setOutreachChannel}
                     pitchConfig={pitchConfig}
                     setPitchConfig={setPitchConfig}
-                    canGenerate={hasAudit || hasDesign}
+                    canGenerate={true}
                     generatingPitch={pitch.generatingPitch}
                     handleGeneratePitch={pitch.handleGeneratePitch}
                     pitchError={pitch.pitchError}

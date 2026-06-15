@@ -3,6 +3,7 @@
 import { useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus, Zap, X } from "lucide-react";
+import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
 import { StaggerContainer, FadeUp } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
@@ -31,6 +32,7 @@ type Props = {
   bulkLoading: boolean;
   hasMoreOnMobile: boolean;
   onLoadMore: () => void;
+  onPhoneCopied?: (msg: string) => void;
 };
 
 function MobileLeadCard({
@@ -44,6 +46,7 @@ function MobileLeadCard({
   onEnterBulkMode,
   selected,
   onToggleSelect,
+  onPhoneCopied,
 }: {
   lead: LeadRow;
   pipelineStatus?: string;
@@ -55,6 +58,7 @@ function MobileLeadCard({
   onEnterBulkMode: () => void;
   selected: boolean;
   onToggleSelect: (id: string) => void;
+  onPhoneCopied?: (msg: string) => void;
 }) {
   const router = useRouter();
   const status: OpportunityStatus = deriveOpportunityStatus(lead, pipelineStatus, hasPitch);
@@ -144,12 +148,12 @@ function MobileLeadCard({
             <ScoreRing score={ringScore} size={32} variant={ringVariant} />
           </div>
         )}
-        <p
-          dir="auto"
-          className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-text-primary)]"
-        >
-          {lead.name}
-        </p>
+        <LeadNameLink
+          name={lead.name}
+          websiteStatus={lead.website_status}
+          website={lead.website}
+          className="min-w-0 flex-1 text-sm font-medium truncate"
+        />
         {!bulkMode && (
           <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
             <LeadActionCell
@@ -163,12 +167,19 @@ function MobileLeadCard({
         )}
       </div>
 
-      {/* Middle row: metadata */}
-      {meta && (
-        <p className="ml-[44px] mt-0.5 truncate text-[11px] text-[var(--color-text-tertiary)]">
-          {meta}
-        </p>
-      )}
+      {/* Middle row: affordance icons + metadata */}
+      <div className="ml-[44px] mt-0.5 flex items-center">
+        <LeadAffordanceIcons
+          name={lead.name}
+          address={lead.address}
+          city={lead.city}
+          phone={lead.phone}
+          onPhoneCopied={onPhoneCopied}
+        />
+        {meta && (
+          <p className="truncate text-[11px] text-[var(--color-text-tertiary)]">{meta}</p>
+        )}
+      </div>
 
       {/* Bottom row: pills | last audit */}
       <div className="ml-[44px] mt-2 flex items-center gap-1.5">
@@ -200,6 +211,7 @@ export function LeadsMobileCards({
   bulkLoading,
   hasMoreOnMobile,
   onLoadMore,
+  onPhoneCopied,
 }: Props) {
   const cards = paginated.map((lead) => {
     const card = (
@@ -215,6 +227,7 @@ export function LeadsMobileCards({
         onEnterBulkMode={onEnterBulkMode}
         selected={selectedIds.has(lead.id)}
         onToggleSelect={onToggleSelect}
+        onPhoneCopied={onPhoneCopied}
       />
     );
 

@@ -31,6 +31,7 @@ interface StageColumnProps {
   onCardClick: (id: string) => void;
   onStatusChange: (pipelineId: string, status: string) => void;
   onDelete?: (pipelineId: string) => void;
+  onPhoneCopied?: (msg: string) => void;
 }
 
 /**
@@ -50,6 +51,7 @@ export function StageColumn({
   onCardClick,
   onStatusChange,
   onDelete,
+  onPhoneCopied,
 }: StageColumnProps) {
   const isEmpty = cards.length === 0;
   const dotColor = STAGE_DOT_COLORS[stage] ?? "var(--text-tertiary)";
@@ -121,6 +123,7 @@ export function StageColumn({
                   onCardClick={onCardClick}
                   onStatusChange={onStatusChange}
                   onDelete={onDelete}
+                  onPhoneCopied={onPhoneCopied}
                 />
               ))}
             </AnimatePresence>

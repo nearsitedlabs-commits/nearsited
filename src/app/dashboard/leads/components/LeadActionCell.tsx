@@ -36,16 +36,6 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
     </Link>
   );
 
-  // Analyse button
-  const analyseBtn = (
-    <button
-      onClick={() => onAnalyse(lead.id, lead.website!)}
-      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
-    >
-      Audit
-    </button>
-  );
-
   // Retry button (after error)
   const retryBtn = (
     <button
@@ -71,7 +61,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   } else if (hasError) {
     primaryBtn = retryBtn;
   } else if (status === "new" && canAnalyse) {
-    primaryBtn = analyseBtn;
+    primaryBtn = viewBtn;
   } else if (status === "pitched") {
     primaryBtn = (
       <Link

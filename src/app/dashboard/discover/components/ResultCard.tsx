@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "@/lib/motion";
 import { Loader2 } from "lucide-react";
+import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
 import {
   estimatedOpportunity,
   computeOpportunityScore,
@@ -32,6 +33,7 @@ type ResultCardProps = {
   onCancelAnalysis: (businessId: string) => void;
   onAddToPipeline: (businessId: string) => void;
   onRemoveFromPipeline: (businessId: string) => void;
+  onPhoneCopied?: (msg: string) => void;
 };
 
 // ── Tier color mapping ──
@@ -94,6 +96,7 @@ export function ResultCard({
   onCancelAnalysis,
   onAddToPipeline,
   onRemoveFromPipeline,
+  onPhoneCopied,
 }: ResultCardProps) {
   const ap = analyseProgress.get(business.id);
   const isAnalyseDone =
@@ -141,11 +144,24 @@ export function ResultCard({
         </div>
       )}
 
-      {/* Business name — single line, ellipsis */}
+      {/* Business name + affordances */}
       <div className="flex-1 min-w-0">
-        <span className="text-[13px] font-medium tracking-[-0.01em] text-[var(--color-text-primary)] truncate block leading-snug">
-          {business.name}
-        </span>
+        <LeadNameLink
+          name={business.name}
+          websiteStatus={business.website_status}
+          website={business.website}
+          className="text-[13px] font-medium tracking-[-0.01em] leading-snug truncate"
+        />
+        <div className="-ml-1">
+          <LeadAffordanceIcons
+            name={business.name}
+            address={business.address}
+            city={business.city}
+            phone={business.phone}
+            onPhoneCopied={onPhoneCopied}
+            compact
+          />
+        </div>
       </div>
 
       {/* Rating + review count — 11px tertiary */}
