@@ -136,6 +136,37 @@ export async function deductCredit(
 }
 
 /**
+ * Atomically refunds one audit credit via the `refund_audit_credit`
+ * PostgreSQL function. Used when a credit was reserved with `deductCredit()`
+ * before expensive external API work, but that work ultimately failed to
+ * produce a persisted result — the reservation should not be charged.
+ */
+export async function refundCredit(
+  userId: string,
+): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
+  const { data, error } = await admin.rpc("refund_audit_credit", {
+    p_user_id: userId,
+  });
+
+  if (error) {
+    console.error(`[CREDITS] refundCredit RPC failed for user=...${userId.slice(-4)}`, {
+      code: error.code,
+      message: error.message,
+    });
+    return { success: false, audits_used: 0, audits_limit: 0 };
+  }
+
+  const result = data as DeductResult;
+  console.log(`[CREDITS] refunded audit credit user=...${userId.slice(-4)} now=${result.audits_used}/${result.audits_limit}`);
+
+  return {
+    success: result.success,
+    audits_used: result.audits_used ?? 0,
+    audits_limit: result.audits_limit ?? 0,
+  };
+}
+
+/**
  * Checks if the user may run a city search.
  * Auto-resets monthly counter when credits_reset_at is in the past (paid plans).
  * Free users: no reset (lifetime allowance of FREE_SEARCH_LIMIT).
@@ -196,6 +227,37 @@ export async function deductSearch(
         `now=${result.searches_used}/${result.searches_limit}`,
     );
   }
+
+  return {
+    success: result.success,
+    searches_used: result.searches_used ?? 0,
+    searches_limit: result.searches_limit ?? 0,
+  };
+}
+
+/**
+ * Atomically refunds one search credit via the `refund_search_credit`
+ * PostgreSQL function. Used when a credit was reserved with `deductSearch()`
+ * before expensive external API work, but that work ultimately failed to
+ * produce a result — the reservation should not be charged.
+ */
+export async function refundSearch(
+  userId: string,
+): Promise<{ success: boolean; searches_used: number; searches_limit: number }> {
+  const { data, error } = await admin.rpc("refund_search_credit", {
+    p_user_id: userId,
+  });
+
+  if (error) {
+    console.error(`[CREDITS] refundSearch RPC failed for user=...${userId.slice(-4)}`, {
+      code: error.code,
+      message: error.message,
+    });
+    return { success: false, searches_used: 0, searches_limit: 0 };
+  }
+
+  const result = data as DeductResult;
+  console.log(`[CREDITS] refunded search credit user=...${userId.slice(-4)} now=${result.searches_used}/${result.searches_limit}`);
 
   return {
     success: result.success,

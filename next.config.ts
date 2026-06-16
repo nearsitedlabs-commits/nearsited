@@ -60,11 +60,9 @@ const nextConfig: NextConfig = {
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-              // Report violations (no report-uri endpoint configured yet;
-              // set CSP_REPORT_URI env var to enable monitoring)
-              ...(process.env.CSP_REPORT_URI
-                ? [`report-uri ${process.env.CSP_REPORT_URI}`]
-                : []),
+              // Report violations to our own endpoint by default; override
+              // with CSP_REPORT_URI to point at an external collector instead.
+              `report-uri ${process.env.CSP_REPORT_URI ?? "/api/csp-report"}`,
             ].join("; "),
           },
         ],

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
-import { checkCredit, deductCredit } from "@/lib/credits";
+import { checkCredit, deductCredit, refundCredit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { businessWebsiteSchema } from "@/lib/validation";
 import { writeJson, writeStep } from "@/lib/api/stream-utils";
@@ -130,7 +130,34 @@ export async function POST(request: NextRequest) {
 
     const stream = new ReadableStream({
       async start(controller) {
+        let creditReserved = false;
         try {
+          // Reserve the credit BEFORE running ScreenshotCore + Gemini (real,
+          // paid calls). The atomic RPC closes the race where concurrent
+          // requests all pass the non-atomic checkCredit() gate above and
+          // each trigger the expensive calls before any of them reaches a
+          // deduction. If reservation fails, no external call is made.
+          if (shouldPersist) {
+            const reserved = await deductCredit(currentUser.id);
+            if (!reserved.success) {
+              console.warn(
+                `[DESIGN] Credit reservation rejected for user=...${currentUser.id.slice(-4)} ` +
+                  `used=${reserved.audits_used}/${reserved.audits_limit} — limit reached`,
+              );
+              writeJson(controller, encoder, {
+                type: "error",
+                code: "CREDIT_LIMIT",
+                message:
+                  reserved.audits_limit <= 20
+                    ? "Free plan credit limit reached. Upgrade your plan to run more design analyses."
+                    : `Monthly credit limit reached (${reserved.audits_used}/${reserved.audits_limit}). Credits reset at the start of next month.`,
+              });
+              controller.close();
+              return;
+            }
+            creditReserved = true;
+          }
+
           // Step 1: Run both viewport strategies in parallel for speed
           writeStep(controller, encoder, "screenshot", "Taking screenshots (mobile + desktop)…");
           const [mobile, desktop]: [StrategyResult, StrategyResult] = await Promise.all([
@@ -149,6 +176,7 @@ export async function POST(request: NextRequest) {
             (desktop.status === "error" && desktop.error === "AI_QUOTA_EXCEEDED");
 
           if (isQuotaExceeded) {
+            if (creditReserved) await refundCredit(currentUser.id);
             writeJson(controller, encoder, {
               type: "error",
               error: "AI_QUOTA_EXCEEDED",
@@ -165,6 +193,7 @@ export async function POST(request: NextRequest) {
             (desktop.status === "error" && desktop.error === "AI_SERVICE_BUSY");
 
           if (isServiceBusy) {
+            if (creditReserved) await refundCredit(currentUser.id);
             writeJson(controller, encoder, {
               type: "error",
               error: "AI_SERVICE_BUSY",
@@ -177,6 +206,7 @@ export async function POST(request: NextRequest) {
 
           // ── Both strategies failed — emit error instead of "done" ──
           if (mobile.status === "error" && desktop.status === "error") {
+            if (creditReserved) await refundCredit(currentUser.id);
             const msg = "Design analysis failed — screenshots could not be captured. Try again later.";
             console.error("[DESIGN] Both strategies failed — emitting error:", msg);
             writeJson(controller, encoder, { type: "error", message: msg });
@@ -288,6 +318,7 @@ export async function POST(request: NextRequest) {
 
           // 9. If persistence failed, emit error instead of "done"
           if (shouldPersist && persistenceErrors.length > 0) {
+            if (creditReserved) await refundCredit(currentUser.id);
             console.error("[DESIGN] Persistence failed — emitting error instead of done");
             writeJson(controller, encoder, {
               type: "error",
@@ -297,21 +328,7 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // 10. Deduct credit — only for persisted analyses (ephemeral quick-audit is credit-free).
-          //     Uses atomic PostgreSQL RPC that checks the limit INSIDE a locked transaction,
-          //     eliminating the race condition between checkCredit() and deductCredit().
-          if (shouldPersist) {
-            const deducted = await deductCredit(user.id);
-            if (!deducted.success) {
-              console.warn(
-                `[DESIGN] Credit deduction rejected for user=...${user.id.slice(-4)} ` +
-                  `used=${deducted.audits_used}/${deducted.audits_limit} — ` +
-                  "analysis was persisted but credit was not deducted (user at limit)",
-              );
-            }
-          }
-
-          // 11. Stream result + done
+          // 10. Stream result + done
           writeStep(controller, encoder, "complete", "Design analysis complete");
 
           writeJson(controller, encoder, {
@@ -330,6 +347,12 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (error) {
           console.error("[DESIGN] Stream error:", error);
+          if (creditReserved) {
+            const refunded = await refundCredit(currentUser.id);
+            if (!refunded.success) {
+              console.error(`[DESIGN] Credit refund failed for user=...${currentUser.id.slice(-4)} after stream error`);
+            }
+          }
           writeJson(controller, encoder, {
             type: "error",
             message: "An unexpected error occurred during analysis",

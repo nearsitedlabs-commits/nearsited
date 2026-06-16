@@ -91,27 +91,9 @@ function isTrustedOrigin(request: NextRequest): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Security headers for all responses ──────────────────────────────
-  // Apply Content-Security-Policy with report-uri so CSP violations are
-  // reported to the server-side endpoint without blocking legitimate traffic.
-  // The policy uses `unsafe-inline` and `unsafe-eval` currently (see M-01),
-  // but the reporting endpoint allows monitoring of violations for future tightening.
-  const securityHeaders = new Headers();
-  securityHeaders.set(
-    "Content-Security-Policy",
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https:",
-      "frame-src 'none'",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "report-uri /api/csp-report",
-    ].join("; "),
-  );
+  // Content-Security-Policy is set in next.config.ts's headers() — it applies
+  // to every response (including ones middleware never touches, like static
+  // assets), so it must not be duplicated here with a different policy.
 
   // ── CSRF protection for API routes ────────────────────────────────────
   // State-changing methods (POST, PATCH, PUT, DELETE) on /api/* must come
@@ -129,11 +111,7 @@ export async function middleware(request: NextRequest) {
       // authenticated via their own signature verification (e.g., Dodo's
       // webhook secret), not by CSRF origin checking.
       if (pathname.startsWith("/api/webhooks/")) {
-        const response = NextResponse.next();
-        for (const [key, value] of securityHeaders) {
-          response.headers.set(key, value);
-        }
-        return response;
+        return NextResponse.next();
       }
 
       // Validate origin
@@ -151,19 +129,11 @@ export async function middleware(request: NextRequest) {
     }
 
     // API routes handle their own auth — don't run updateSession
-    const response = NextResponse.next();
-    for (const [key, value] of securityHeaders) {
-      response.headers.set(key, value);
-    }
-    return response;
+    return NextResponse.next();
   }
 
-  // Non-API routes: Supabase session management + security headers
-  const response = await updateSession(request);
-  for (const [key, value] of securityHeaders) {
-    response.headers.set(key, value);
-  }
-  return response;
+  // Non-API routes: Supabase session management
+  return await updateSession(request);
 }
 
 export const config = {

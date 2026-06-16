@@ -1,5 +1,5 @@
 # CLAUDE.md — Nearsited
-*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail.*
+*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-16.*
 
 ---
 
@@ -691,6 +691,18 @@ These patterns ensure future AI iterations can work with the codebase without br
 
 ---
 
+## Tailwind `text-[var(--x)]` ambiguity — always use type prefix
+`text-[var(--x)]` is **ambiguous** in Tailwind v3 JIT — it can compile to either `font-size` or `color`. When the variable name doesn't contain `color`, Tailwind may guess wrong. Always use an explicit type prefix:
+
+| Intended property | Correct class | Wrong class |
+|---|---|---|
+| font-size | `text-[length:var(--text-hero)]` | `text-[var(--text-hero)]` ❌ |
+| color | `text-[var(--color-x)]` | — (works because "color" in name) |
+
+**Debug check:** inspect compiled CSS — if `.text-\[...\]` shows `color:` instead of `font-size:`, add the `length:` prefix.
+
+---
+
 ## Don't Repeat These (each a real past bug)
 1. Writing `website_url`/`gmb_*`/`category` (DROPPED → `website`/`place_id`/`rating`/`review_count`/`business_type`).
 2. `gemini-1.5-flash` / `gemini-2.0-flash` (SHUT DOWN → `gemini-2.5-flash`). Always use the canonical model constant from [`src/lib/gemini.ts`](src/lib/gemini.ts).
@@ -719,4 +731,8 @@ These patterns ensure future AI iterations can work with the codebase without br
 24. Placing `<Toast>` at `bottom-6 right-6` in dashboard pages — overlaps the mobile bottom nav. Use the shared `<Toast>` component which already uses `bottom-20 right-4 sm:bottom-6 sm:right-6`.
 
 ---
-*Update this file the moment a schema, enum, model name, runtime, or convention changes.*
+25. `text-[var(--text-hero)]` → Tailwind compiles to `color` instead of `font-size`. Use `text-[length:var(--text-hero)]` to force `font-size` generation. See "Tailwind `text-[var(--x)]` ambiguity" section above.
+
+---
+
+*Update this file the moment a schema, enum, model name, runtime, or convention changes. Last updated: 2026-06-16.*

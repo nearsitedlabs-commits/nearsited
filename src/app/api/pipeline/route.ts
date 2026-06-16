@@ -182,6 +182,11 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Rate limit: standard limit for pipeline operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
+
     const now = new Date().toISOString();
     const matchField = businessId ? "business_id" : "id";
     const matchValue = businessId ?? pipelineId;
@@ -297,6 +302,11 @@ export async function DELETE(request: NextRequest) {
         { status: 401 },
       );
     }
+
+    // Rate limit: standard limit for pipeline operations
+    const identifier = getRateLimitIdentifier(request, user.id);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
 
     const { error: deleteError } = await supabase
       .from("pipeline")

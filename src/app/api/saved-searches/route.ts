@@ -3,10 +3,15 @@ import { createClient } from "@/lib/supabase/server";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { savedSearchSchema } from "@/lib/validation";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: standard limit for saved searches
+  const identifier = getRateLimitIdentifier(request, user.id);
+  const blocked = await checkRateLimit(request, rateLimiter, identifier);
+  if (blocked) return blocked;
 
   const { data, error } = await supabase
     .from("territories")
@@ -69,6 +74,11 @@ export async function DELETE(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: standard limit for saved searches
+  const identifier = getRateLimitIdentifier(request, user.id);
+  const blocked = await checkRateLimit(request, rateLimiter, identifier);
+  if (blocked) return blocked;
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");

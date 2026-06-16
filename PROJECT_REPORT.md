@@ -1,7 +1,7 @@
 # Nearsited — Complete Project Report
 
-> **Generated:** June 5, 2026 · **Last updated:** June 8, 2026
-> **Project:** Nearsited by Again Labs  
+> **Generated:** June 5, 2026 · **Last updated:** June 16, 2026
+> **Project:** Nearsited by Again Labs
 > **Repository:** `c:/Projects/nearsited`
 
 ---
@@ -233,6 +233,7 @@ All documented in [Section 13 — API Routes Reference](#13-api-routes-reference
 | [`.roomodes`](.roomodes) | Custom mode definitions for AI-assisted development |
 | [`install.cmd`](install.cmd) | Windows installation script |
 | [`fix-apos.mjs`](fix-apos.mjs) | Apostrophe fix utility script |
+| [`scripts/check-hero-css.ps1`](scripts/check-hero-css.ps1) | Diagnostic script — fetches dev/prod CSS and checks `--text-hero` compilation |
 
 ### 5.2 Documentation Files
 
@@ -1313,6 +1314,15 @@ Additional fixes applied in the June 6 session:
 
 All critical and high items have been resolved.
 
+### June 16, 2026 — Hero font-size fix & infra cleanup
+
+- **Hero font-size fix (double issue)**:
+  1. [`globals.css`](src/app/globals.css:310): `clamp(2rem, 8vw + 0.5rem, 8rem)` was invalid CSS — bare arithmetic inside `clamp()` without `calc()` wrapper caused the entire `--text-hero` custom property to be dropped at parse time, falling back to `medium` (~16px).
+  2. [`LandingHero.tsx`](src/components/landing/LandingHero.tsx:58): `text-[var(--text-hero)]` — Tailwind v3 JIT misinterprets this as a `color` utility (not `font-size`) when the CSS variable name doesn't explicitly read as a dimension. Compiled to `color: var(--text-hero)` instead of `font-size: var(--text-hero)`.
+  - **Fixes**: wrapped `calc()` around the arithmetic + used `text-[length:var(--text-hero)]` to force `font-size` generation.
+- **`.gitignore` cleanup**: Added `.claude/`, `audit-*.png`, `mobile-*.png`, `section-*.png`, `audit-output.json`, `scripts/mobile-audit.mjs`, `scripts/verify-*.mjs`, `scripts/mobile-audit-shots/`, `scripts/verify-screenshots/`.
+- **`scripts/check-hero-css.ps1`**: Diagnostic script to verify `--text-hero` compilation in dev/prod CSS output.
+
 ### Low (23 → 22 resolved, 1 remaining)
 
 Resolved low items:
@@ -1369,7 +1379,7 @@ Required variables (checked by [`validateEnv()`](src/lib/env.ts)):
 
 ---
 
-> **End of Report** — This document covers Nearsited as of June 5, 2026.
+> **End of Report** — This document covers Nearsited as of June 16, 2026.
 >
 > For the most up-to-date information, refer to the source files in the repository, particularly:
 > - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Architecture decisions
