@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 /**
  * Newsletter subscription endpoint.
@@ -16,6 +17,10 @@ const RESEND_CONTACTS_URL_BASE = "https://api.resend.com/audiences";
 
 export async function POST(request: NextRequest) {
   try {
+    const identifier = getRateLimitIdentifier(request);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
+
     const { email } = await request.json();
     if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json(

@@ -5,7 +5,7 @@ import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 import { FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 
 const PROOF_POINTS = [
   { stat: "249", label: "business types across 13 industry categories" },
@@ -14,7 +14,7 @@ const PROOF_POINTS = [
 ];
 
 export function ProofBlocksSection({ navigate }: { navigate: (href: string) => void }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSafeReducedMotion();
 
   const content = (
     <>

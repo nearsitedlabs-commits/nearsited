@@ -101,16 +101,17 @@ describe("validateEnv", () => {
     expect(result.missing).toContain("NEXT_PUBLIC_SUPABASE_URL");
   });
 
-  it("accepts NEXT_PUBLIC_GOOGLE_PLACES_API_KEY as alternative", async () => {
-    // Set all except GOOGLE_PLACES_API_KEY — use NEXT_PUBLIC_ variant instead
+  it("treats GOOGLE_PLACES_API_KEY as required even if NEXT_PUBLIC_ variant is set", async () => {
+    // The NEXT_PUBLIC_ variant must never substitute for the server-only key —
+    // accepting it as a fallback would ship the key to the browser bundle.
     setAll();
     delete ENV.GOOGLE_PLACES_API_KEY;
     ENV.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY = "public-google-key";
 
     const { validateEnv } = await freshEnv();
     const result: EnvValidationResult = validateEnv();
-    expect(result.valid).toBe(true);
-    expect(result.missing).toEqual([]);
+    expect(result.valid).toBe(false);
+    expect(result.missing).toContain("GOOGLE_PLACES_API_KEY");
   });
 
   it("caches the result so repeated calls return the same value", async () => {

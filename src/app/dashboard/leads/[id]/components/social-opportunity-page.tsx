@@ -52,9 +52,12 @@ function buildSocialCallBrief(
 export default function SocialOpportunityPage({ business, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [generatingPitch, setGeneratingPitch] = useState(false);
-  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(
-    savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
-  );
+  const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
+  const [pitchResults, setPitchResults] = useState<Record<string, { subject: string; body: string } | null>>({
+    email: savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
+    whatsapp: null,
+  });
+  const pitchResult = pitchResults[activeChannel] ?? null;
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
@@ -62,7 +65,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
   const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
   const [toast, setToast] = useState<string | null>(null);
-  const [activeChannel, setActiveChannel] = useState<string>("email");
   const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
     email: null, phone: null, loading: true,
   });
@@ -126,7 +128,9 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
   }, [biz.id, currentPipelineStatus, showToast]);
 
-  const handleGeneratePitch = useCallback(async (force = true) => {
+  const handleGeneratePitch = useCallback(async (force = true, overrideTone?: string, overrideLength?: string) => {
+    const tone = overrideTone ?? pitchTone;
+    const length = overrideLength ?? pitchLength;
     setGeneratingPitch(true);
     setPitchError(null);
     setAiQuotaError(null);
@@ -134,7 +138,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessId: biz.id, tone: pitchTone, length: pitchLength,
+          businessId: biz.id, tone, length,
           channel: activeChannel,
           workflow: "social_only",
           socialPlatforms,
@@ -157,7 +161,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
       }
       const data = await res.json();
       if (data.success && data.pitch?.subject && data.pitch?.body) {
-        setPitchResult({ subject: data.pitch.subject, body: data.pitch.body });
+        setPitchResults((prev) => ({ ...prev, [activeChannel]: { subject: data.pitch.subject, body: data.pitch.body } }));
         setAiRetryCount(0);
         setAiQuotaError(null);
       } else {
@@ -192,7 +196,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const handleUseFallback = useCallback(() => {
     setPitchTone("friendly");
     setPitchLength("short");
-    handleGeneratePitch(true);
+    handleGeneratePitch(true, "friendly", "short");
   }, [handleGeneratePitch]);
 
   const clearQuotaTimer = useCallback(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucide-react";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ export function LeadOutreachSection({
   pitchResult,
   handleCopyPitch,
 }: LeadOutreachSectionProps) {
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
   return (
     <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
       <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Ready-to-Send Outreach</h2>

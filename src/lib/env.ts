@@ -89,24 +89,6 @@ export function validateEnv(): EnvValidationResult {
     }
   }
 
-  // Also check the NEXT_PUBLIC_ variant of GOOGLE_PLACES_API_KEY as an
-  // alternative name (some projects expose it publicly).
-  const googleApiKey =
-    process.env.GOOGLE_PLACES_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
-  if (!googleApiKey || googleApiKey.trim() === "") {
-    // Avoid double-counting if already in missing list
-    if (!missing.includes("GOOGLE_PLACES_API_KEY")) {
-      missing.push("GOOGLE_PLACES_API_KEY (or NEXT_PUBLIC_GOOGLE_PLACES_API_KEY)");
-    }
-  } else {
-    // If GOOGLE_PLACES_API_KEY was flagged as missing but the NEXT_PUBLIC_
-    // variant exists, remove it from the missing list.
-    const idx = missing.indexOf("GOOGLE_PLACES_API_KEY");
-    if (idx !== -1) {
-      missing.splice(idx, 1);
-    }
-  }
-
   const valid = missing.length === 0;
   const isDev = process.env.NODE_ENV === "development";
   const logFn = isDev ? console.warn : console.error;

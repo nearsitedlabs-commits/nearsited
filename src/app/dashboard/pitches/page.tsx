@@ -43,8 +43,8 @@ type FilterKey = "all" | "has_website" | "no_website" | "social_only" | "platfor
 
 const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "all",          label: "All" },
-  { key: "has_website",  label: "Weak site" },
-  { key: "no_website",   label: "No website" },
+  { key: "has_website",  label: "Has site" },
+  { key: "no_website",   label: "No site" },
   { key: "social_only",  label: "Social only" },
   { key: "platform_only", label: "Platform only" },
 ];
@@ -57,13 +57,6 @@ const CHANNEL_FILTERS = ["Email", "WhatsApp", "Contact Form"] as const;
 function getBusiness(pitch: Pitch): { name: string; website_status?: string; website?: string; performance_score?: number | null; design_score?: number | null } | null {
   const biz = Array.isArray(pitch.businesses) ? pitch.businesses[0] : pitch.businesses;
   return biz ?? null;
-}
-
-function getScore(biz: { performance_score?: number | null; design_score?: number | null } | null): number | null {
-  if (!biz) return null;
-  if (biz.performance_score != null) return biz.performance_score;
-  if (biz.design_score != null) return biz.design_score;
-  return null;
 }
 
 /** Truncate body to ~2 lines, ending at a sentence boundary */
@@ -296,7 +289,6 @@ export default function PitchesPage() {
     const pitchRow = pitch as Pitch & { business_id?: string };
     const bizId = pitchRow.business_id;
     const pipelineStatus = bizId ? pipelineStatuses[bizId] : undefined;
-    const score = getScore(biz);
 
     const channelLabel = pitch.channel
       ? pitch.channel.charAt(0).toUpperCase() + pitch.channel.slice(1).replace("_", " ")
@@ -333,9 +325,9 @@ export default function PitchesPage() {
                 <span className="text-[11px] text-[var(--color-text-tertiary)]">✓ In pipeline</span>
               ) : bizId ? (
                 <button
-                  onClick={() => handleAddToPipeline(bizId)}
+                  onClick={(e) => { e.stopPropagation(); handleAddToPipeline(bizId); }}
                   disabled={addingToPipeline === bizId}
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-2 py-0.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-2 py-1 min-h-[44px] sm:min-h-0 sm:py-0.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {addingToPipeline === bizId ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -352,7 +344,7 @@ export default function PitchesPage() {
 
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
             <span className="text-[11px] text-[var(--color-text-tertiary)]">
-              {[channelLabel, toneLabel, score != null ? `Score ${score}` : null, dateStr]
+              {[channelLabel, toneLabel, dateStr]
                 .filter(Boolean)
                 .join(" · ")}
             </span>
@@ -377,7 +369,7 @@ export default function PitchesPage() {
             {/* Copy — primary action */}
             <button
               onClick={() => handleCopy(pitch)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-3 py-1.5 text-[11px] font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
             >
               {copiedId === pitch.id ? (
                 <Check className="h-3.5 w-3.5" />
@@ -392,7 +384,7 @@ export default function PitchesPage() {
               <button
                 onClick={() => handleOpenInWhatsApp(pitch)}
                 aria-label="Open pitch in WhatsApp"
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Open in WhatsApp
@@ -401,7 +393,7 @@ export default function PitchesPage() {
               <button
                 onClick={() => handleOpenInEmail(pitch)}
                 aria-label="Open pitch in email client"
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Open in email
@@ -413,7 +405,7 @@ export default function PitchesPage() {
               {bizId && (
                 <Link
                   href={`/dashboard/leads/${bizId}`}
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
                 >
                   View <ExternalLink className="h-3 w-3" />
                 </Link>
@@ -423,7 +415,7 @@ export default function PitchesPage() {
               <div className="relative" ref={isOpenMenu ? menuRef : undefined}>
                 <button
                   onClick={() => setOpenMenuId(isOpenMenu ? null : pitch.id)}
-                  className="inline-flex cursor-pointer items-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-1.5 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                  className="inline-flex cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:p-1.5 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
                 >
                   <EllipsisVertical className="h-4 w-4" />
                 </button>

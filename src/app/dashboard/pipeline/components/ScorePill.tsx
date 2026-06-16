@@ -12,9 +12,11 @@ export function ScorePill({ score }: ScorePillProps) {
   const colorClass =
     score >= 70
       ? "text-[var(--color-success)] bg-[var(--color-success)]/10"
-      : score >= 40
+      : score >= 45
         ? "text-[var(--color-warning)] bg-[var(--color-warning)]/10"
-        : "text-[var(--color-danger)] bg-[var(--color-danger)]/10";
+        : score >= 25
+          ? "text-[var(--color-info)] bg-[var(--color-info)]/10"
+          : "text-[var(--color-danger)] bg-[var(--color-danger)]/10";
 
   return (
     <span

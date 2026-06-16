@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { animate as motionAnimate, useReducedMotion } from "@/lib/motion";
+import { animate as motionAnimate, useSafeReducedMotion } from "@/lib/motion";
 import { scoreLabel } from "@/lib/scoring";
 
 export function ScoreRingWithLabel({ score, size = 56, label }: { score: number; size?: number; label?: string }) {
   const [display, setDisplay] = useState(0);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   useEffect(() => {
     const controls = motionAnimate(0, score, {

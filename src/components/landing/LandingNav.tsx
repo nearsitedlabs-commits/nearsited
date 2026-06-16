@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { motion, useReducedMotion, AnimatePresence } from "@/lib/motion";
+import { motion, useSafeReducedMotion, AnimatePresence } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
 import { DURATION, EASE } from "@/lib/motion";
 
@@ -25,9 +25,7 @@ function handleNavClick(href: string, navigate: (href: string) => void) {
 }
 
 export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
-  // Default to true during SSR to avoid hydration mismatch.
-  // After hydration, useReducedMotion() returns the actual preference.
-  const shouldReduceMotion = useReducedMotion() ?? true;
+  const shouldReduceMotion = useSafeReducedMotion();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);

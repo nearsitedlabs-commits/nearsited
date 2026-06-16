@@ -29,11 +29,13 @@ export function StatsRow({
 }: StatsRowProps) {
   const label = opportunityLabel(opportunityScore);
   const scoreColor =
-    opportunityScore >= 75
+    opportunityScore >= 70
       ? "text-[var(--color-success)]"
-      : opportunityScore >= 50
-        ? "text-[var(--color-info)]"
-        : "text-[var(--score-high)]";
+      : opportunityScore >= 45
+        ? "text-[var(--color-warning)]"
+        : opportunityScore >= 25
+          ? "text-[var(--color-info)]"
+          : "text-[var(--color-danger)]";
 
   const stats = [
     {

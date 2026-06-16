@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, useReducedMotion } from "@/lib/motion";
+import { motion, useSafeReducedMotion } from "@/lib/motion";
 import { Home, BookOpen, Sparkles, FileText, Briefcase, CreditCard } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
 
@@ -140,7 +140,7 @@ function NavDot({ section, isActive }: { section: Section; isActive: boolean }) 
 export function LandingScrollNav() {
   const activeId = useScrollSpy();
   const progress = useScrollProgress();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSafeReducedMotion();
 
   const inner = (
     <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7)] px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">

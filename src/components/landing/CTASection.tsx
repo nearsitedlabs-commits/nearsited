@@ -1,13 +1,13 @@
 "use client";
 
 import { Search, Check } from "lucide-react";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { FadeUp } from "@/lib/motion";
 
 export function CTASection({ navigate }: { navigate: (href: string) => void }) {
-  const prefersReducedMotion = useReducedMotion() ?? true;
+  const prefersReducedMotion = useSafeReducedMotion();
 
   return (
     <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">

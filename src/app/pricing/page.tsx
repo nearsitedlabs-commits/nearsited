@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Pricing } from "@/components/landing/Pricing";
 import { Button } from "@/components/ui/Button";
-import { motion, useReducedMotion, type Variants } from "@/lib/motion";
+import { motion, useSafeReducedMotion, type Variants } from "@/lib/motion";
 import { Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -50,7 +50,7 @@ const FAQ_ITEMS = [
 export default function PricingPage() {
   const router = useRouter();
   const navigate = router.push.bind(router);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const supabase = createClient();
 

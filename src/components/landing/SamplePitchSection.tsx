@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "@/lib/motion";
+import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { Zap, FileText, TrendingUp, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -114,7 +114,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
 export function SamplePitchSection({ navigate }: { navigate: (href: string) => void }) {
   const [activeTab, setActiveTab] = useState<PitchTab>("weak");
   const [tone, setTone] = useState<ToneOption>("professional");
-  const prefersReducedMotion = useReducedMotion() ?? false;
+  const prefersReducedMotion = useSafeReducedMotion();
   const example = PITCH_EXAMPLES[activeTab];
 
   function cycleTone() {
@@ -127,8 +127,8 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
     <section id="pitch" className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Left */}
-          <div>
+          {/* Left — description column (shown below card on mobile) */}
+          <div className="order-2 lg:order-1">
             <SectionLabel>Sample pitches</SectionLabel>
             <SectionTitle>Every opportunity type gets a tailored pitch.</SectionTitle>
             <SectionSub>
@@ -150,9 +150,12 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 );
               })}
             </div>
+          </div>
 
-            {/* Tab strip — left side */}
-            <div className="mt-8 flex flex-wrap gap-2">
+          {/* Right: Pitch card — shown first on mobile */}
+          <div className="order-1 lg:order-2">
+            {/* Tab strip — above card on both layouts */}
+            <div className="mb-4 flex flex-wrap gap-2">
               {(["weak", "none", "social", "platform"] as PitchTab[]).map((id) => {
                 const tab = PITCH_EXAMPLES[id];
                 return (
@@ -170,10 +173,6 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 );
               })}
             </div>
-          </div>
-
-          {/* Right: Pitch card */}
-          <div>
             <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useReducedMotion } from "@/lib/motion";
+import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { ChevronDown } from "lucide-react";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
@@ -44,7 +44,7 @@ const faqs = [
 
 export function LandingFAQ() {
   const { openIndex, toggle } = useAccordion();
-  const prefersReducedMotion = useReducedMotion() ?? false;
+  const prefersReducedMotion = useSafeReducedMotion();
 
   return (
     <section id="faq" className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">

@@ -45,7 +45,7 @@ export function PreCallBrief({ businessName, businessType, sections }: Props) {
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90"
+          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 min-h-[44px] sm:min-h-0"
         >
           <Copy className="h-3.5 w-3.5" /> Copy
         </button>

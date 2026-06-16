@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence, useReducedMotion } from "@/lib/motion";
+import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/landing/SectionLabel";
@@ -62,7 +62,7 @@ const OBJECTIONS: Objection[] = [
 
 export function ObjectionsSection({ navigate }: { navigate: (href: string) => void }) {
   const { openIndex, toggle } = useAccordion();
-  const prefersReducedMotion = useReducedMotion() ?? true;
+  const prefersReducedMotion = useSafeReducedMotion();
 
   return (
     <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">

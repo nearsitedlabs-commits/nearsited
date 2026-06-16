@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { motion, AnimatePresence, useReducedMotion, type Variants } from "@/lib/motion";
+import { motion, AnimatePresence, useSafeReducedMotion, type Variants } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ const cardItem: Variants = {
 
 export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   return (
     <section
@@ -176,7 +176,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
               <button
                 key={b}
                 onClick={() => setBilling(b)}
-                className={`relative rounded-full px-5 py-2 font-medium transition-colors duration-150 ${
+                className={`relative rounded-full px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] ${
                   billing === b
                     ? "text-[var(--color-text-primary)]"
                     : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"

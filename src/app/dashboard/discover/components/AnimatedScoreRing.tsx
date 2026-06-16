@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReducedMotion, animate as motionAnimate } from "@/lib/motion";
+import { useSafeReducedMotion, animate as motionAnimate } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 
 type AnimScoreProps = {
@@ -16,7 +16,7 @@ export function AnimatedScoreRing({
   size = 44,
 }: AnimScoreProps) {
   const [display, setDisplay] = useState(0);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   useEffect(() => {
     if (score == null) return;

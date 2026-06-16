@@ -4,7 +4,7 @@ import { AlertTriangle, Zap, Check } from "lucide-react";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
-import { motion, useReducedMotion } from "@/lib/motion";
+import { motion, useSafeReducedMotion } from "@/lib/motion";
 
 const TRADITIONAL_CONS = [
   "No way to find businesses that have no website at all",
@@ -34,7 +34,7 @@ const fadeUp = (delay: number) => ({
 });
 
 export function WhyNearsitedSection() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSafeReducedMotion();
   const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
 
   return (

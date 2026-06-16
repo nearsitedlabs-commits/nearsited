@@ -21,7 +21,11 @@ export function usePitchGeneration({
   savedPitch: PitchResult | null;
 }) {
   const [generatingPitch, setGeneratingPitch] = useState(false);
-  const [pitchResult, setPitchResult] = useState<PitchResult | null>(savedPitch);
+  // Per-channel pitch results — switching channel shows/hides the right pitch
+  const [pitchResults, setPitchResults] = useState<Record<string, PitchResult | null>>({
+    email: savedPitch,
+    whatsapp: null,
+  });
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState("professional");
   const [pitchLength, setPitchLength] = useState("medium");
@@ -29,6 +33,12 @@ export function usePitchGeneration({
   const [pitchOpening, setPitchOpening] = useState("direct");
   const [pitchUrgency, setPitchUrgency] = useState("medium");
   const [outreachChannel, setOutreachChannel] = useState<"email" | "whatsapp">("email");
+
+  const pitchResult = pitchResults[outreachChannel] ?? null;
+
+  const setPitchResult = useCallback((result: PitchResult | null) => {
+    setPitchResults((prev) => ({ ...prev, [outreachChannel]: result }));
+  }, [outreachChannel]);
 
   const handleGeneratePitch = useCallback(async (force = true) => {
     setGeneratingPitch(true);
@@ -61,7 +71,7 @@ export function usePitchGeneration({
       }
       const data = await res.json();
       if (data.success && data.pitch && typeof data.pitch.subject === "string" && typeof data.pitch.body === "string") {
-        setPitchResult({ subject: data.pitch.subject, body: data.pitch.body });
+        setPitchResults((prev) => ({ ...prev, [outreachChannel]: { subject: data.pitch.subject, body: data.pitch.body } }));
       } else if (data.success && data.pitch) {
         console.warn("[LEAD] Pitch API returned unexpected format:", data.pitch);
         setPitchError("Pitch data format error — please try again.");

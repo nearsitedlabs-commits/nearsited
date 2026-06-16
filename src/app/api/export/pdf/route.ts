@@ -19,12 +19,12 @@ function section(doc: jsPDF, title: string, y: number): number {
   return y + 10;
 }
 
-function scoreRow(doc: jsPDF, label: string, value: number | null, y: number): number {
+function scoreRow(doc: jsPDF, label: string, value: number | null, y: number, amberThreshold = 40): number {
   doc.setFontSize(9);
   doc.setTextColor(...GRAY);
   doc.text(label, 25, y);
   if (value !== null) {
-    const color: [number, number, number] = value >= 70 ? [34, 120, 60] : value >= 40 ? [180, 100, 20] : RED;
+    const color: [number, number, number] = value >= 70 ? [34, 120, 60] : value >= amberThreshold ? [180, 100, 20] : RED;
     doc.setTextColor(...color);
     doc.text(`${value}/100`, 130, y);
   } else {
@@ -145,7 +145,8 @@ export async function GET(request: NextRequest) {
       y = section(doc, "Opportunity Overview", y);
       const oppScore = (biz.opportunity_score as number | null);
       if (oppScore != null) {
-        y = scoreRow(doc, "Opportunity Score", oppScore, y);
+        // Opportunity score uses opportunityLabel()'s tiers (45), not scoreLabel()'s (40)
+        y = scoreRow(doc, "Opportunity Score", oppScore, y, 45);
       }
       doc.setFontSize(9);
       doc.setTextColor(...GRAY);

@@ -190,9 +190,9 @@ export function LeadsTable({
         {/* Score */}
         <td className="w-12 px-2 py-3 align-middle">
           <ScoreRing score={ringScore} size={36} variant={
-            lead.website_status === "has_website" && lead.audited_at ? "opportunity"
-            : lead.website_status === "has_website" ? "estimate"
-            : "opportunity"
+            (lead.website_status === "has_website" || lead.website_status === "platform_only") && lead.audited_at
+              ? "opportunity"
+              : "estimate"
           } />
         </td>
         {/* Business */}

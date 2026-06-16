@@ -73,7 +73,7 @@ export default function RootLayout({
       className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <head>
         <Script
           id="json-ld"
           type="application/ld+json"
@@ -154,13 +154,13 @@ export default function RootLayout({
             }),
           }}
         />
-        <Script id="no-op-service-worker" strategy="beforeInteractive">
-          {`(function() {
+        <Script id="no-op-service-worker" strategy="beforeInteractive" dangerouslySetInnerHTML={{
+          __html: `(function() {
             if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
             var ua = navigator.userAgent || "";
             var isWebview =
-              /WebView|vscode|Code\/|Electron/i.test(ua) ||
+              /WebView|vscode|Code\\/|Electron/i.test(ua) ||
               typeof window.acquireVsCodeApi === "function";
             var isSecure =
               window.isSecureContext ||
@@ -187,8 +187,10 @@ export default function RootLayout({
                 console.warn("NoOpServiceWorker: failed to patch serviceWorker.register", error);
               }
             }
-          })();`}
-        </Script>
+          })();`
+        }} />
+      </head>
+      <body className="min-h-full flex flex-col">
         <NoOpServiceWorker />
         <TooltipProvider>
           {children}

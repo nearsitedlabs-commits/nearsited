@@ -1,6 +1,5 @@
-import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity, noWebsiteOpportunityScore } from "@/lib/scoring";
 import type { LeadRow, OpportunityStatus } from "./types";
-import { noWebsiteOpportunityScore } from "@/lib/scoring";
 
 /**
  * Derives the lifecycle status for a lead based on existing data.
@@ -48,14 +47,13 @@ export function effectiveOpportunityScore(lead: LeadRow): number {
     return noWebsiteOpportunityScore(lead.review_count ?? 0, lead.rating ?? 0);
   }
 
-  if (lead.website_status === "social_only") {
-    const viability = Math.min(1, ((lead.review_count ?? 0) / 100) * 0.7 + ((lead.rating ?? 0) / 5) * 0.3);
-    return Math.round(55 + viability * 30);
-  }
-
-  if (lead.website_status === "platform_only") {
-    const viability = Math.min(1, ((lead.review_count ?? 0) / 100) * 0.7 + ((lead.rating ?? 0) / 5) * 0.3);
-    return Math.round(50 + viability * 25);
+  if (lead.website_status === "social_only" || lead.website_status === "platform_only" || lead.website_status === "unknown") {
+    return estimatedOpportunity({
+      website_status: lead.website_status,
+      website: lead.website,
+      rating: lead.rating,
+      user_ratings_total: lead.review_count,
+    });
   }
 
   return computeOpportunityScore(

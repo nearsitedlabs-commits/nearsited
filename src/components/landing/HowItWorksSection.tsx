@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
-import { motion, useReducedMotion } from "@/lib/motion";
+import { motion, useSafeReducedMotion } from "@/lib/motion";
 
 const HIERARCHY = [
   {
@@ -43,7 +43,7 @@ const fadeUp = (delay: number) => ({
 });
 
 export function HowItWorksSection() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSafeReducedMotion();
   const anim = (d: number) => (prefersReducedMotion ? {} : fadeUp(d));
 
   return (

@@ -95,7 +95,7 @@ export function PitchCard({
     window.open(`https://wa.me/${contactInfo.phone.replace(/[^0-9]/g, "")}?text=${text}`, "_blank");
   }, [effectiveBody, contactInfo.phone]);
 
-  const summaryLabel = `${TONE_LABELS[pitchConfig.tone] ?? pitchConfig.tone} + ${LENGTH_LABELS[pitchConfig.length] ?? pitchConfig.length} + Direct`;
+  const summaryLabel = `${TONE_LABELS[pitchConfig.tone] ?? pitchConfig.tone} · ${LENGTH_LABELS[pitchConfig.length] ?? pitchConfig.length}`;
 
   return (
     <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
@@ -110,7 +110,7 @@ export function PitchCard({
               key={ch.id}
               type="button"
               onClick={() => setOutreachChannel(ch.id)}
-              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 min-h-[44px] sm:min-h-0 ${
                 outreachChannel === ch.id
                   ? "bg-[var(--color-bg-surface)] text-[var(--color-accent)] shadow-[var(--shadow-xs)]"
                   : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
@@ -154,24 +154,22 @@ export function PitchCard({
 
       {/* Single Tone trigger + Generate button */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((v) => !v)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-          >
-            Tone ▾ <span className="text-[var(--color-text-tertiary)] ml-0.5">({summaryLabel})</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowAdvanced((v) => !v)}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] min-h-[44px] sm:min-h-0"
+        >
+          Tone ▾ <span className="text-[var(--color-text-tertiary)] ml-0.5 hidden sm:inline">({summaryLabel})</span>
+        </button>
 
         {canGenerate ? (
           <button
             onClick={() => handleGeneratePitch()}
             disabled={generatingPitch}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0 flex-1 justify-center sm:flex-none"
           >
             {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
-            {generatingPitch ? "Generating…" : "Generate"}
+            {generatingPitch ? "Generating…" : "Generate pitch"}
           </button>
         ) : (
           <div className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-tertiary)] opacity-60"
@@ -274,21 +272,21 @@ export function PitchCard({
             {outreachChannel === "whatsapp" && contactInfo.phone && (
               <button
                 onClick={handleOpenInWhatsApp}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 min-h-[44px] sm:min-h-0"
               >
                 <ExternalLink className="h-3 w-3" /> Open in WhatsApp ↗
               </button>
             )}
             <button
               onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] min-h-[44px] sm:min-h-0"
             >
               <Copy className="h-3 w-3" /> Copy
             </button>
             <button
               onClick={handleRegenerate}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0"
             >
               {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate

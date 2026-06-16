@@ -7,9 +7,9 @@ import { motion } from "@/lib/motion";
 type ScoreRingProps = {
   score: number | null | undefined;
   size?: number;
-  /** "verified"    = solid ring, quality-score thresholds (≤55 red, ≤74 amber, 75+ green). Lead Detail / Audit / Share.
-   *  "opportunity" = solid ring, opportunity-score thresholds (<40 red, <70 amber, 70+ green). Discover / Leads list.
-   *  "estimate"    = dashed track + 0.65 opacity arc + ~ prefix, opportunity thresholds. Pre-audit discovery. */
+  /** "verified"    = solid ring, quality-score thresholds (<40 red, <70 amber, ≥70 green). Lead Detail / Audit / Share.
+   *  "opportunity" = solid ring, opportunity-score thresholds (<40 red, <70 amber, ≥70 green). Audited leads.
+   *  "estimate"    = dashed track + 0.65 opacity arc, no tilde. Pre-audit / social / no-website leads. */
   variant?: "verified" | "opportunity" | "estimate";
   /** Skip the count-up animation. Use when a parent already handles animation (e.g. AnimatedScoreRing). */
   noAnimate?: boolean;
@@ -36,10 +36,10 @@ function opportunityTier(score: number) {
 function ScoreTooltip({ score, variant }: { score: number; variant: "verified" | "opportunity" | "estimate" }) {
   const isOpp = variant === "opportunity" || variant === "estimate";
   const label = isOpp
-    ? score < 40 ? "Low opportunity" : score < 70 ? "Medium opportunity" : "High opportunity"
+    ? score >= 70 ? "High opportunity" : score >= 45 ? "Good opportunity" : score >= 25 ? "Medium opportunity" : "Low opportunity"
     : score < 40 ? "Poor performance" : score < 70 ? "Needs improvement" : "Good performance";
   const detail = isOpp
-    ? "Score ≥ 70 = high opportunity lead"
+    ? score >= 70 ? "Score ≥ 70 = high opportunity lead" : score >= 45 ? "Score 45–69 = good opportunity" : score >= 25 ? "Score 25–44 = medium opportunity" : "Score < 25 = low opportunity"
     : score < 40 ? "Score < 40 indicates significant issues" : score < 70 ? "Score 40–69 indicates room for improvement" : "Score ≥ 70 indicates solid performance";
   return (
     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-xs rounded-[var(--radius-md)] px-3 py-2 w-56 shadow-xl z-50 leading-relaxed pointer-events-none border border-[var(--color-border-subtle)]">
@@ -141,7 +141,7 @@ export function ScoreRing({
           fill="var(--text-secondary)"
           fontFamily="var(--font-sans, Geist)"
         >
-          ~{displayValue}
+          {displayValue}
         </text>
       </svg>
     );
@@ -155,7 +155,6 @@ export function ScoreRing({
   }
 
   // ── Solid variants (verified / opportunity) with animation ────────────
-  const _isOpp = variant === "opportunity";
   const offset = CIRCUMFERENCE - (clamped / 100) * CIRCUMFERENCE;
 
   const ring = (

@@ -25,6 +25,7 @@
  *   ✗ No spinning loaders
  */
 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, LayoutGroup, animate, useReducedMotion as _useReducedMotion, type Variants, type Easing } from "framer-motion";
 
 // ── Duration & Easing Tokens ──────────────────────────────────────────────────
@@ -65,6 +66,24 @@ export function prefersReducedMotion(): boolean {
 /** Returns a sanitised duration that respects reduced-motion preferences. */
 export function safeDuration(base: number): number {
   return prefersReducedMotion() ? 0 : base;
+}
+
+/**
+ * SSR-safe hook for prefers-reduced-motion.
+ * Returns false on the server and during hydration (same value both sides),
+ * then updates to the real preference after mount — eliminating hydration mismatches
+ * that occur when useReducedMotion() reads the media query synchronously on the client.
+ */
+export function useSafeReducedMotion(): boolean {
+  const [reduces, setReduces] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduces(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduces(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduces;
 }
 
 // ── Variants ──────────────────────────────────────────────────────────────────

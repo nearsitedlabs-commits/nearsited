@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 
 /**
  * Notifies the admin when a new user signs up.
@@ -11,10 +12,24 @@ import { NextRequest, NextResponse } from "next/server";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { email, name } = await request.json();
-    if (!email) {
+    const identifier = getRateLimitIdentifier(request);
+    const blocked = await checkRateLimit(request, rateLimiter, identifier);
+    if (blocked) return blocked;
+
+    const body = await request.json();
+    const { email, name } = body;
+    if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
@@ -26,7 +41,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true, skipped: true });
     }
 
-    const displayName = name || email;
+    const displayName = escapeHtml(typeof name === "string" ? name : email);
+    const safeEmail = escapeHtml(email);
     const now = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Calcutta",
       dateStyle: "full",
@@ -42,7 +58,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         from: `Nearsited <notifications@${process.env.RESEND_DOMAIN || "nearsited.io"}>`,
         to: [adminEmail],
-        subject: `🎉 New signup: ${displayName}`,
+        subject: `New signup: ${displayName}`,
         html: `
           <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
             <h2 style="color: #8a9777;">New user signed up</h2>
@@ -53,7 +69,7 @@ export async function POST(request: NextRequest) {
               </tr>
               <tr>
                 <td style="padding: 8px 0; color: #888; font-size: 13px;">Email</td>
-                <td style="padding: 8px 0; font-size: 13px;">${email}</td>
+                <td style="padding: 8px 0; font-size: 13px;">${safeEmail}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; color: #888; font-size: 13px;">Time</td>

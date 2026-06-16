@@ -1,8 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { buildGoogleUrl } from "@/lib/google-places";
 import { businessTypes } from "@/lib/data/businessTypes";
+import { validateUrl } from "@/lib/url-security";
 
 const PLACES_BASE = "https://maps.googleapis.com/maps/api/place";
+const MAX_REDIRECTS = 5;
+
+function isGoogleMapsShortLink(rawUrl: string): boolean {
+  try {
+    const host = new URL(rawUrl).hostname.toLowerCase();
+    return host === "goo.gl" || host === "maps.app.goo.gl";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resolves a Google Maps short link, re-validating every redirect hop with
+ * validateUrl() so a malicious short link can't be used to make the server
+ * fetch a private/internal address (SSRF).
+ */
+async function resolveShortLink(startUrl: string): Promise<string> {
+  let currentUrl = startUrl;
+  for (let hop = 0; hop < MAX_REDIRECTS; hop++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    let resp: Response;
+    try {
+      resp = await fetch(currentUrl, { method: "HEAD", redirect: "manual", signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
+    if (resp.status < 300 || resp.status >= 400) return currentUrl;
+    const location = resp.headers.get("location");
+    if (!location) return currentUrl;
+    const nextUrl = new URL(location, currentUrl).href;
+    const validated = await validateUrl(nextUrl);
+    if (!validated) return currentUrl;
+    currentUrl = validated.href;
+  }
+  return currentUrl;
+}
 
 function extractNameFromMapsUrl(raw: string): string | null {
   try {
@@ -44,6 +84,15 @@ function extractCity(formattedAddress: string): string {
 }
 
 export async function GET(request: NextRequest) {
+  // Auth check — prevents unauthenticated callers from burning Google Places API quota
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const identifier = getRateLimitIdentifier(request, user.id);
+  const blocked = await checkRateLimit(request, rateLimiter, identifier);
+  if (blocked) return blocked;
+
   const { searchParams } = new URL(request.url);
   const mapsUrl = searchParams.get("mapsUrl");
   const query = searchParams.get("query");
@@ -57,16 +106,17 @@ export async function GET(request: NextRequest) {
   let searchQuery: string | null = null;
 
   if (mapsUrl) {
-    // Follow short-URL redirects server-side
+    // Follow short-URL redirects server-side — only for genuine goo.gl links,
+    // and only after validating the link itself and every redirect hop.
     let resolvedUrl = mapsUrl;
-    if (/goo\.gl|maps\.app\.goo\.gl/i.test(mapsUrl)) {
-      try {
-        const controller = new AbortController();
-        setTimeout(() => controller.abort(), 5000);
-        const resp = await fetch(mapsUrl, { method: "HEAD", redirect: "follow", signal: controller.signal });
-        resolvedUrl = resp.url || mapsUrl;
-      } catch {
-        resolvedUrl = mapsUrl;
+    if (isGoogleMapsShortLink(mapsUrl)) {
+      const validatedStart = await validateUrl(mapsUrl);
+      if (validatedStart) {
+        try {
+          resolvedUrl = await resolveShortLink(validatedStart.href);
+        } catch {
+          resolvedUrl = mapsUrl;
+        }
       }
     }
     searchQuery = extractNameFromMapsUrl(resolvedUrl);

@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { motion, useReducedMotion } from "@/lib/motion";
+import { motion, useSafeReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { Loader2, Pencil } from "lucide-react";
-import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
+import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, blendQualityForOpportunity, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 import { Toast } from "@/components/ui/Toast";
@@ -86,7 +86,7 @@ function urlToDisplayName(name: string): string {
 
 export default function LeadDetailClient({ business, audits, designAnalyses, pipelineStatus, savedPitch, backTo = "leads", autoAnalyze = false }: Props) {
   const { toast, showToast, setToast } = useToast();
-  const shouldReduce = !!useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
   const [showAllIssues, setShowAllIssues] = useState(false);
   const [showTechDetails, setShowTechDetails] = useState(false);
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
@@ -164,7 +164,10 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   const projScore                 = allIssues.length > 0 ? projection(overall, allIssues) : overall;
   const opportunityDelta          = Math.max(0, projScore - overall);
   const effectiveOpportunityScore = biz.opportunity_score ??
-    computeOpportunityScore(overall || biz.performance_score || biz.design_score || 50, biz.review_count ?? 0, biz.rating ?? 0, biz.business_type ?? undefined);
+    computeOpportunityScore(
+      blendQualityForOpportunity(mobilePerfScore, desktopPerfScore, biz.design_score),
+      biz.review_count ?? 0, biz.rating ?? 0, biz.business_type ?? undefined,
+    );
   const displayOpportunityScore   = hasAudit
     ? effectiveOpportunityScore
     : estimatedOpportunity({
@@ -357,7 +360,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 <button
                   onClick={analysis.handleFullAnalysis}
                   disabled={analysis.runningFullAnalysis}
-                  className="shrink-0 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="shrink-0 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0"
                 >
                   {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Now"}
@@ -390,7 +393,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                 {business.phone && (
                   <a
                     href={`tel:${business.phone}`}
-                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors min-h-[44px] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                   >
                     {business.phone}
                   </a>
@@ -403,7 +406,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                    className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs text-[var(--color-text-secondary)] transition-colors min-h-[44px] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                   >
                     Maps ↗
                   </a>

@@ -23,12 +23,18 @@ export async function validateUrl(url: string): Promise<URL | null> {
       hostname === "localhost" ||
       hostname === "127.0.0.1" ||
       hostname === "0.0.0.0" ||
+      hostname === "::1" ||
       hostname === "[::1]" ||
       hostname.endsWith(".local") ||
       hostname.endsWith(".internal") ||
       /^10\.\d+\.\d+\.\d+$/.test(hostname) ||
       /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+$/.test(hostname) ||
-      /^192\.168\.\d+\.\d+$/.test(hostname)
+      /^192\.168\.\d+\.\d+$/.test(hostname) ||
+      /^169\.254\.\d+\.\d+$/.test(hostname) ||
+      /^127\.\d+\.\d+\.\d+$/.test(hostname) ||
+      hostname.startsWith("fe80:") ||
+      hostname.startsWith("fc") ||
+      hostname.startsWith("fd")
     ) {
       return null;
     }

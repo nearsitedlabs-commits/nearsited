@@ -44,9 +44,12 @@ function buildNoDigitalCallBrief(name: string, type: string, city: string | null
 export default function NoDigitalPresencePage({ business, pipelineStatus, savedPitch, backTo = "leads" }: Props) {
   const [currentPipelineStatus, setCurrentPipelineStatus] = useState<string | null>(pipelineStatus);
   const [generatingPitch, setGeneratingPitch] = useState(false);
-  const [pitchResult, setPitchResult] = useState<{ subject: string; body: string } | null>(
-    savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
-  );
+  const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
+  const [pitchResults, setPitchResults] = useState<Record<string, { subject: string; body: string } | null>>({
+    email: savedPitch ? { subject: savedPitch.subject, body: savedPitch.body } : null,
+    whatsapp: null,
+  });
+  const pitchResult = pitchResults[activeChannel] ?? null;
   const [pitchError, setPitchError] = useState<string | null>(null);
   const [pitchTone, setPitchTone] = useState<"professional" | "friendly" | "luxury">("friendly");
   const [pitchLength, setPitchLength] = useState<"short" | "medium" | "detailed">("short");
@@ -54,7 +57,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
   const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
   const [toast, setToast] = useState<string | null>(null);
-  const [activeChannel, setActiveChannel] = useState<"email" | "whatsapp">("email");
   const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
     email: null, phone: null, loading: true,
   });
@@ -77,8 +79,8 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   };
 
   const oppScore = estimatedOpportunity({
-    website_status: "no_website",
-    website: null,
+    website_status: biz.website_status ?? "no_website",
+    website: biz.website ?? null,
     rating: biz.rating ?? null,
     user_ratings_total: biz.review_count ?? null,
   });
@@ -116,7 +118,9 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
   }, [biz.id, currentPipelineStatus, showToast]);
 
-  const handleGeneratePitch = useCallback(async (force = true) => {
+  const handleGeneratePitch = useCallback(async (force = true, overrideTone?: string, overrideLength?: string) => {
+    const tone = overrideTone ?? pitchTone;
+    const length = overrideLength ?? pitchLength;
     setGeneratingPitch(true);
     setPitchError(null);
     setAiQuotaError(null);
@@ -124,7 +128,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessId: biz.id, tone: pitchTone, length: pitchLength,
+          businessId: biz.id, tone, length,
           channel: activeChannel,
           workflow: "no_digital_presence",
           focus: pitchFocus, opening: pitchOpening, urgency: pitchUrgency,
@@ -147,7 +151,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
       }
       const data = await res.json();
       if (data.success && data.pitch?.body) {
-        setPitchResult({ subject: data.pitch.subject ?? "", body: data.pitch.body });
+        setPitchResults((prev) => ({ ...prev, [activeChannel]: { subject: data.pitch.subject ?? "", body: data.pitch.body } }));
         setAiRetryCount(0);
         setAiQuotaError(null);
       } else {
@@ -183,10 +187,9 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   }, [handleGeneratePitch]);
 
   const handleUseFallback = useCallback(() => {
-    // Switch to lighter tone/length for faster generation
     setPitchTone("friendly");
     setPitchLength("short");
-    handleGeneratePitch(true);
+    handleGeneratePitch(true, "friendly", "short");
   }, [handleGeneratePitch]);
 
   const clearQuotaTimer = useCallback(() => {

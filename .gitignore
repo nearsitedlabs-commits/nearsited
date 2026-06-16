@@ -47,3 +47,16 @@ batch2/
 research_markdown.md
 .env.local
 .env
+
+# editor / ide
+.claude/
+
+# audit & verification artifacts
+audit-*.png
+mobile-*.png
+section-*.png
+audit-output.json
+scripts/mobile-audit.mjs
+scripts/verify-*.mjs
+scripts/mobile-audit-shots/
+scripts/verify-screenshots/

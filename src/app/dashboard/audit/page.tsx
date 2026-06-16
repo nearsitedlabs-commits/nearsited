@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Loader2, Search } from "lucide-react";
 import { readNdjsonStream } from "@/lib/ndjson";
 import { FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 import {
   AuditForm,
   AuditProgressPanel,
@@ -78,7 +78,7 @@ export default function AuditPage() {
   const pendingAutoRunRef = useRef<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const cancelledRef = useRef(false);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   // Read hasCompletedAudit from localStorage on mount
   useEffect(() => {

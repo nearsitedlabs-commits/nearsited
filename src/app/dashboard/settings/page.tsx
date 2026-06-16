@@ -4,10 +4,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User, CreditCard, Key, Trash2, Loader2, Bell, Shield, Download, AlertTriangle } from "lucide-react";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 import { Toast } from "@/components/ui/Toast";
 import { BottomSheet } from "@/components/ui/mobile/BottomSheet";
-import { MobileHeader } from "@/components/ui/mobile/MobileHeader";
 
 type UserData = {
   email: string | null;
@@ -82,6 +81,8 @@ function ConfirmModal({
   const onCancelRef = useRef(onCancel);
   // Keep ref current after every render (no stale closure, no render-phase mutation)
   useEffect(() => { onCancelRef.current = onCancel; });
+  // Reset typed text when modal closes so stale input doesn't persist on reopen
+  useEffect(() => { if (!open) setTyped(""); }, [open]);
 
   // Focus trap — auto-focuses first element, traps Tab, closes on Escape
   useEffect(() => {
@@ -183,25 +184,32 @@ function Toggle({ checked, onChange, label, disabled }: {
   disabled?: boolean;
 }) {
   return (
-    <div className={`flex min-h-[56px] items-center justify-between lg:min-h-0 ${disabled ? "opacity-50" : ""}`}>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={`flex w-full min-h-[56px] lg:min-h-0 items-center justify-between text-left ${
+        disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      }`}
+    >
       <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
-      <button
-        onClick={() => !disabled && onChange(!checked)}
-        disabled={disabled}
-        className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+      <span
+        aria-hidden="true"
+        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
           checked ? "bg-[var(--color-accent)]" : "bg-[var(--color-bg-elevated)]"
-        } ${disabled ? "cursor-not-allowed" : ""}`}
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
+        }`}
       >
         <span
+          aria-hidden="true"
           className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
             checked ? "translate-x-4" : "translate-x-0"
           }`}
         />
-      </button>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -215,7 +223,7 @@ export default function SettingsPage() {
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   // ── Profile state ───────────────────────────────────────────────────────
   const [editingName, setEditingName] = useState(false);
@@ -513,8 +521,8 @@ export default function SettingsPage() {
 
   const pageContent = (
     <>
-      <div className="mb-8 hidden lg:block">
-        <h1 className="text-3xl font-normal tracking-tight text-[var(--color-text-primary)]">Your <em className="italic text-[var(--color-accent)]">workspace.</em></h1>
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-2xl lg:text-3xl font-normal tracking-tight text-[var(--color-text-primary)]">Your <em className="italic text-[var(--color-accent)]">workspace.</em></h1>
       </div>
 
       <StaggerContainer>
@@ -536,7 +544,7 @@ export default function SettingsPage() {
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.email ?? "—"}</span>
                   <button
                     onClick={() => setShowEmailForm(!showEmailForm)}
-                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
+                    className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                   >
                     Change
                   </button>
@@ -652,7 +660,7 @@ export default function SettingsPage() {
                       <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.full_name ?? "—"}</span>
                       <button
                         onClick={() => { setNameInput(user?.full_name ?? ""); setEditingName(true); }}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                        className="inline-flex cursor-pointer items-center min-h-[44px] gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                       >
                         Edit
                       </button>
@@ -671,7 +679,7 @@ export default function SettingsPage() {
                 <span className="text-sm text-[var(--color-text-secondary)]">Password</span>
                 <button
                   onClick={() => setShowPasswordForm(!showPasswordForm)}
-                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
+                  className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                 >
                   Change
                 </button>
@@ -971,7 +979,7 @@ export default function SettingsPage() {
                 <a
                   href="/api/export/user-data"
                   download
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
                 >
                   <Download className="h-3.5 w-3.5" />
                   Export
@@ -984,7 +992,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setConfirmDelete(true)}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10"
+                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] border border-red-500/30 px-3 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10"
                 >
                   Delete
                 </button>
@@ -1024,7 +1032,6 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen">
-      <MobileHeader title="Settings" />
       <div className="mx-auto max-w-2xl px-4 pt-6 pb-6 sm:px-6 sm:pt-8 lg:pb-8">
         {shouldReduce ? pageContent : <FadeUp>{pageContent}</FadeUp>}
       </div>

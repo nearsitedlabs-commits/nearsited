@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "@/lib/motion";
+import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -14,7 +14,7 @@ type ReportTab = "weak" | "none" | "social" | "platform";
 
 export function SampleReportSection({ navigate }: { navigate: (href: string) => void }) {
   const [activeTab, setActiveTab] = useState<ReportTab>("weak");
-  const prefersReducedMotion = useReducedMotion() ?? true;
+  const prefersReducedMotion = useSafeReducedMotion();
 
   const tabs: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
     { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
@@ -37,21 +37,24 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
           </p>
         </div>
 
-        {/* Tab strip — scrollable on mobile */}
-        <div className="mt-8 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
-                  : "border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Tab strip — scrollable on mobile, fade-out edge shows overflow */}
+        <div className="relative mt-8">
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[var(--color-bg-page)] to-transparent sm:hidden" />
+          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
+                    : "border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <Card variant="default" padding="lg" className="mt-4 border-[var(--border-strong)]">

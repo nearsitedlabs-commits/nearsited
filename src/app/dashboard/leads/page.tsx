@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 import { useToast } from "@/lib/shared-hooks";
 import { Toast } from "@/components/ui/Toast";
 import { FilterPanel } from "@/components/filters/FilterPanel";
@@ -30,7 +30,7 @@ export default function LeadsPage() {
   const { analysingIds, analyseProgress, handleAnalyse } = useLeadInlineAnalysis();
 
   const router = useRouter();
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useSafeReducedMotion();
   const { toast: toastMsg, showToast, setToast } = useToast();
 
   const [filters, setFiltersState] = useState<FilterState>(() =>

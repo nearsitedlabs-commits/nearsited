@@ -55,10 +55,10 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
         <motion.div {...fadeUp(0)} className="space-y-5">
-          <h1 className="text-[var(--text-hero)] font-semibold tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]">
-            Your next client is out there
-            <br />
-            <em className="italic not-italic">without a website</em>
+          <h1 className="text-[var(--text-hero)] font-bold tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]">
+            Your next client<br />
+            is out there —<br />
+            <span className="text-[var(--color-accent)]">without a website</span>
           </h1>
           <p className="max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
             Nearsited finds local businesses with no website, social-only presence, platform-only listings, or weak websites. Ranks them by opportunity, writes the pitch.

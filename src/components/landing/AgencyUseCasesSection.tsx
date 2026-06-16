@@ -6,7 +6,7 @@ import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
 import { StaggerContainer, FadeUp } from "@/lib/motion";
-import { useReducedMotion } from "@/lib/motion";
+import { useSafeReducedMotion } from "@/lib/motion";
 
 const USE_CASES = [
   {
@@ -33,7 +33,7 @@ const USE_CASES = [
 ];
 
 export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) => void }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSafeReducedMotion();
 
   const rows = USE_CASES.map((uc) => {
     const Icon = uc.icon;

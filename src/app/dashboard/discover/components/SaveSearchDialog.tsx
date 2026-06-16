@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "@/lib/motion";
+import { motion, useSafeReducedMotion } from "@/lib/motion";
 
 type SaveSearchDialogProps = {
   onSave: (name: string) => void;
@@ -14,7 +14,7 @@ export function SaveSearchDialog({
 }: SaveSearchDialogProps) {
   const [name, setName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const shouldReduce = useReducedMotion();
+  const shouldReduce = useSafeReducedMotion();
 
   useEffect(() => {
     inputRef.current?.focus();

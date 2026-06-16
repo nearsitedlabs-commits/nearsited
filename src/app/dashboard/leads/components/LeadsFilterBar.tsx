@@ -61,7 +61,7 @@ export function LeadsFilterBar({
             <button
               key={tab.value}
               onClick={() => onFilterTabClick(tab.value)}
-              className={`cursor-pointer rounded-[var(--radius-sm)] px-2.5 py-1 text-xs transition-colors duration-150 ${
+              className={`cursor-pointer rounded-[var(--radius-sm)] px-2.5 py-1 text-xs transition-colors duration-150 min-h-[44px] sm:min-h-0 sm:py-1 ${
                 isActive
                   ? "font-medium text-[var(--color-text-primary)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)]"
                   : "font-normal text-[var(--color-text-tertiary)] border border-transparent hover:text-[var(--color-text-secondary)]"
@@ -78,7 +78,7 @@ export function LeadsFilterBar({
         <button
           onClick={handleToggleSearch}
           aria-label={searchOpen ? "Close search" : "Open search"}
-          className={`cursor-pointer inline-flex items-center justify-center h-7 w-7 rounded-[var(--radius-sm)] transition-colors duration-150 ${
+          className={`cursor-pointer inline-flex items-center justify-center min-h-[44px] min-w-[44px] sm:h-7 sm:min-h-0 sm:w-7 sm:min-w-0 rounded-[var(--radius-sm)] transition-colors duration-150 ${
             searchOpen || searchQuery
               ? "text-[var(--color-text-primary)] bg-[var(--color-bg-elevated)]"
               : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-elevated)]"
@@ -90,7 +90,7 @@ export function LeadsFilterBar({
         {/* Filters drawer button */}
         <button
           onClick={onOpenFilterDrawer}
-          className={`cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${
+          className={`cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium transition-colors duration-150 min-h-[44px] sm:min-h-0 sm:py-1 ${
             activeFilterCount > 0
               ? "text-[var(--color-text-primary)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)]"
               : "text-[var(--color-text-tertiary)] border border-transparent hover:text-[var(--color-text-secondary)]"

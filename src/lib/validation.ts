@@ -70,7 +70,6 @@ export const paginationSchema = z.object({
 export const pipelineStatusSchema = z.enum([
   "new_lead",
   "analysed",
-  "pitch_generated",
   "contacted",
   "in_conversation",
   "won",
@@ -200,12 +199,13 @@ export const pitchSchema = z.object({
           issues: z
             .array(
               z.object({
-                title: z.string(),
-                detail: z.string(),
+                title: z.string().max(200),
+                detail: z.string().max(1000),
                 point_deduction: z.number().optional(),
-                impact: z.string().optional(),
+                impact: z.string().max(50).optional(),
               }),
             )
+            .max(20)
             .nullable()
             .optional(),
         })
@@ -216,12 +216,13 @@ export const pitchSchema = z.object({
           issues: z
             .array(
               z.object({
-                title: z.string(),
-                detail: z.string(),
+                title: z.string().max(200),
+                detail: z.string().max(1000),
                 point_deduction: z.number().optional(),
-                impact: z.string().optional(),
+                impact: z.string().max(50).optional(),
               }),
             )
+            .max(20)
             .nullable()
             .optional(),
         })
@@ -232,8 +233,8 @@ export const pitchSchema = z.object({
   length: z.enum(["short", "medium", "detailed"]).optional(),
   channel: z.enum(["email", "whatsapp"]).optional(),
   workflow: z.enum(["website", "social_only", "no_digital_presence"]).optional(),
-  socialPlatforms: z.array(z.string()).optional(),
-  focus: z.string().optional(),
+  socialPlatforms: z.array(z.string().max(50)).max(20).optional(),
+  focus: z.string().max(500).optional(),
   opening: z.enum(["direct", "question", "empathy", "data"]).optional(),
   urgency: z.enum(["low", "medium", "high"]).optional(),
   force: z.boolean().optional().default(false),

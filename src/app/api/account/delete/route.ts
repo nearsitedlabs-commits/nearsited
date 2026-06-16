@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { withAuth } from "@/lib/api/with-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 /**
  * Permanently deletes the user account and all associated data.
@@ -10,10 +9,9 @@ import { createClient } from "@/lib/supabase/server";
  */
 export const POST = withAuth(async ({ user }) => {
   const admin = createAdminClient();
-  const server = await createClient();
 
   // 1. Delete the auth user (this cascades via trigger to profiles)
-  const { error: authError } = await server.auth.admin.deleteUser(user.id);
+  const { error: authError } = await admin.auth.admin.deleteUser(user.id);
   if (authError) {
     console.error(`[ACCOUNT/DELETE] auth delete failed for user=...${user.id.slice(-4)}`, {
       message: authError.message,

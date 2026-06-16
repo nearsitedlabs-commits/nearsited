@@ -17,44 +17,67 @@ type ContactInfo = {
 
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 const FETCH_TIMEOUT_MS = 5_000;
+const MAX_REDIRECTS = 3;
 
 /**
  * Fetch a website's HTML and extract email addresses only.
+ * Follows redirects manually, re-validating each hop with validateUrl()
+ * so a redirect can't be used to reach a private/internal address (SSRF).
  */
 async function scrapeWebsiteForEmail(url: string): Promise<string | null> {
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    let currentUrl = url;
 
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; NearsitedBot/1.0)" },
-    });
-    clearTimeout(timeout);
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-    if (!res.ok) return null;
-
-    const html = await res.text();
-
-    // Extract emails from mailto: links and plain text
-    const emails = new Set<string>();
-    const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g);
-    if (mailtoMatches) {
-      mailtoMatches.forEach((m) => emails.add(m.replace("mailto:", "")));
-    }
-    const emailMatches = html.match(EMAIL_REGEX);
-    if (emailMatches) {
-      emailMatches.forEach((e) => {
-        if (!e.includes(".png") && !e.includes(".jpg") && !e.includes(".css") && !e.includes(".js")) {
-          emails.add(e);
-        }
+      const res = await fetch(currentUrl, {
+        signal: controller.signal,
+        redirect: "manual",
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; NearsitedBot/1.0)" },
       });
+      clearTimeout(timeout);
+
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get("location");
+        if (!location) return null;
+        const nextUrl = new URL(location, currentUrl).href;
+        const validated = await validateUrl(nextUrl);
+        if (!validated) return null;
+        currentUrl = validated.href;
+        continue;
+      }
+
+      if (!res.ok) return null;
+
+      const html = await res.text();
+      return extractEmailFromHtml(html);
     }
 
-    return emails.size > 0 ? Array.from(emails)[0] : null;
+    return null;
   } catch {
     return null;
   }
+}
+
+function extractEmailFromHtml(html: string): string | null {
+  // Extract emails from mailto: links and plain text
+  const emails = new Set<string>();
+  const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g);
+  if (mailtoMatches) {
+    mailtoMatches.forEach((m) => emails.add(m.replace("mailto:", "")));
+  }
+  const emailMatches = html.match(EMAIL_REGEX);
+  if (emailMatches) {
+    emailMatches.forEach((e) => {
+      if (!e.includes(".png") && !e.includes(".jpg") && !e.includes(".css") && !e.includes(".js")) {
+        emails.add(e);
+      }
+    });
+  }
+
+  return emails.size > 0 ? Array.from(emails)[0] : null;
 }
 
 // ── Route ────────────────────────────────────────────────────────────────────
