@@ -31,9 +31,12 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   function validate(em: string, pw: string) {
     const errs: typeof fieldErrors = {};
     if (!em) errs.email = "Email is required.";
+    else if (!EMAIL_RE.test(em)) errs.email = "Enter a valid email address.";
     if (!pw) errs.password = "Password is required.";
     return errs;
   }
@@ -130,13 +133,18 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })); }}
+            onBlur={() => {
+              if (email && !EMAIL_RE.test(email)) {
+                setFieldErrors((p) => ({ ...p, email: "Enter a valid email address." }));
+              }
+            }}
             placeholder="you@example.com"
             autoComplete="email"
             autoFocus
             className={`${inputBase} ${fieldErrors.email ? "border-[var(--color-danger)]/60" : "border-[var(--color-border-subtle)]"}`}
           />
           {fieldErrors.email && (
-            <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.email}</p>
+            <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.email}</p>
           )}
         </div>
 
@@ -167,29 +175,28 @@ export default function LoginPage() {
             </button>
           </div>
           {fieldErrors.password && (
-            <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.password}</p>
+            <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.password}</p>
           )}
-        </div>
-
-        {/* Remember me */}
-        <div className="flex items-center justify-between">
-          <label className="flex cursor-pointer items-center gap-2 text-xs text-[var(--color-text-tertiary)]">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-3.5 w-3.5 rounded accent-[var(--color-accent)]"
-            />
-            Remember me
-          </label>
+          {/* Forgot password link — directly below the password field */}
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-accent)] transition-colors"
+            className="mt-2 flex min-h-[44px] items-center text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-accent)] transition-colors lg:min-h-0"
           >
             Forgot password?
           </button>
         </div>
+
+        {/* Remember me */}
+        <label className="flex cursor-pointer items-center gap-2 text-xs text-[var(--color-text-tertiary)]">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="h-3.5 w-3.5 rounded accent-[var(--color-accent)]"
+          />
+          Remember me
+        </label>
 
         {/* Submit */}
         <button

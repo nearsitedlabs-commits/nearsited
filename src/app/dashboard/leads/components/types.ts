@@ -36,7 +36,7 @@ export type LeadRow = {
   opportunity_score: number | null;
 };
 
-export type OpportunityTab = "all" | "no_website" | "has_website" | "social_only" | "platform_only" | "social_platform" | "in_pipeline" | "flagged";
+export type OpportunityTab = "all" | "no_website" | "has_website" | "social_only" | "platform_only" | "social_platform" | "audited" | "analysed" | "in_pipeline" | "flagged";
 export type PipelineTab = "all_pipeline" | "pipeline_in" | "pipeline_prospect" | "pipeline_contacted" | "pipeline_in_conversation" | "pipeline_won";
 export type TabFilter = OpportunityTab | PipelineTab;
 
@@ -54,14 +54,16 @@ export const ANALYSE_STEPS: { key: string; label: string }[] = [
   { key: "design_complete",    label: "Analysis complete" },
 ];
 
-export const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string }[] = [
+export const OPPORTUNITY_FILTER_OPTIONS: { value: OpportunityTab; label: string; tooltip?: string }[] = [
   { value: "all",           label: "All" },
-  { value: "no_website",    label: "No site" },
-  { value: "has_website",   label: "Has site" },
-  { value: "social_only",   label: "Social only" },
-  { value: "platform_only", label: "Platform only" },
-  { value: "in_pipeline",   label: "In pipeline" },
-  { value: "flagged",       label: "Flagged" },
+  { value: "no_website",    label: "No site",       tooltip: "Businesses with no web presence — your best prospects" },
+  { value: "has_website",   label: "Has site",       tooltip: "Businesses with an existing website you can audit and improve" },
+  { value: "social_only",   label: "Social only",    tooltip: "Businesses found only on Facebook, Instagram, etc." },
+  { value: "platform_only", label: "Platform only",  tooltip: "Businesses on booking or listing platforms, not their own site" },
+  { value: "audited",       label: "Audited",        tooltip: "Businesses with a completed performance & SEO audit" },
+  { value: "analysed",      label: "Analysed",       tooltip: "Businesses with a completed design analysis" },
+  { value: "in_pipeline",   label: "In pipeline",    tooltip: "Businesses you've added to your outreach pipeline" },
+  { value: "flagged",       label: "Flagged",        tooltip: "Businesses you've flagged for outreach" },
 ];
 
 export const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = [

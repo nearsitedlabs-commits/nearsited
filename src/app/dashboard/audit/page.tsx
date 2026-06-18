@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Loader2, Search } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { readNdjsonStream } from "@/lib/ndjson";
 import { FadeUp } from "@/lib/motion";
 import { useSafeReducedMotion } from "@/lib/motion";
@@ -737,12 +738,9 @@ export default function AuditPage() {
             </div>
 
             {/* View Example Report CTA */}
-            <button
-              onClick={() => setShowExampleModal(true)}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-            >
+            <Button variant="secondary" size="sm" onClick={() => setShowExampleModal(true)}>
               View Example Report
-            </button>
+            </Button>
           </div>
         )}
       </>
@@ -767,22 +765,19 @@ export default function AuditPage() {
   if (error && !running && !auditResult) {
     const errorContent = (
       <>
-        <div className="rounded-[var(--radius-md)] border border-red-500/30 bg-red-500/10 p-6 text-center">
+        <div className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 p-6 text-center">
           <AlertTriangle className="mx-auto h-8 w-8 text-[var(--score-high)]" />
           <h2 className="mt-3 text-lg font-medium text-[var(--color-text-primary)]">
             Review Failed
           </h2>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{error}</p>
-          <button
-            onClick={() => {
-              setError(null);
-              setStep("idle");
-              setRunning(false);
-            }}
-            className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90"
+          <Button
+            variant="primary"
+            className="mt-4"
+            onClick={() => { setError(null); setStep("idle"); setRunning(false); }}
           >
             Try Again
-          </button>
+          </Button>
         </div>
       </>
     );
@@ -835,27 +830,27 @@ export default function AuditPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="mt-4 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+        <div className="mt-4 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
           {error}
         </div>
       )}
 
       {/* Quota error */}
       {quotaError && (
-        <div className="mt-4 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 px-5 py-4">
+        <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-5 py-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-info)]" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-warning)]" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-amber-400">{quotaError}</p>
+              <p className="text-sm font-medium text-[var(--color-warning)]">{quotaError}</p>
               {quotaRetryTimer > 0 && (
-                <p className="mt-0.5 text-xs text-amber-500">
+                <p className="mt-0.5 text-xs text-[var(--color-warning)]">
                   Retry available in {quotaRetryTimer}s
                 </p>
               )}
             </div>
             <button
               onClick={clearQuotaTimer}
-              className="cursor-pointer shrink-0 rounded-[var(--radius-sm)] border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/25"
+              className="cursor-pointer shrink-0 rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/15 px-3 py-1.5 text-xs font-medium text-[var(--color-warning)] transition-colors hover:bg-[var(--color-warning)]/25"
             >
               {quotaRetryTimer > 0 ? `Wait ${quotaRetryTimer}s` : "Dismiss"}
             </button>
@@ -872,7 +867,7 @@ export default function AuditPage() {
 
       {/* Both timed out */}
       {bothTimedOut && (
-        <div className="mt-6 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 p-8 text-center">
           <AlertTriangle className="mx-auto h-10 w-10 text-[var(--color-info)]" />
           <h2 className="mt-4 text-lg font-medium text-[var(--color-text-primary)]">
             Couldn&rsquo;t reach the site
@@ -883,20 +878,12 @@ export default function AuditPage() {
             different URL.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button
-              onClick={() => handleRun()}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90"
-            >
-              <Loader2 className="h-4 w-4" />
-              Try again
-            </button>
-            <button
-              onClick={handleReset}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-            >
-              <Search className="h-4 w-4" />
-              Try a different URL
-            </button>
+            <Button variant="primary" onClick={() => handleRun()}>
+              <Loader2 className="h-4 w-4" /> Try again
+            </Button>
+            <Button variant="secondary" onClick={handleReset}>
+              <Search className="h-4 w-4" /> Try a different URL
+            </Button>
           </div>
         </div>
       )}

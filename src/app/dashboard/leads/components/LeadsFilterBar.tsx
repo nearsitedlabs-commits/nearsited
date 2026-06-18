@@ -48,11 +48,15 @@ export function LeadsFilterBar({
         {OPPORTUNITY_FILTER_OPTIONS.map((tab) => {
           const isActive =
             tab.value === "all"
-              ? filters.websiteStatus.length === 0 && !filters.flaggedOnly && activePipelineTab === "all_pipeline"
+              ? filters.websiteStatus.length === 0 && !filters.flaggedOnly && !filters.auditedOnly && !filters.analysedOnly && activePipelineTab === "all_pipeline"
               : tab.value === "flagged"
               ? filters.flaggedOnly
               : tab.value === "in_pipeline"
               ? activePipelineTab !== "all_pipeline"
+              : tab.value === "audited"
+              ? filters.auditedOnly
+              : tab.value === "analysed"
+              ? filters.analysedOnly
               : tab.value === "social_platform"
               ? filters.websiteStatus.length > 0 && filters.websiteStatus.every(s => s === "social_only" || s === "platform_only")
               : filters.websiteStatus.length === 1 && filters.websiteStatus[0] === tab.value;
@@ -61,6 +65,7 @@ export function LeadsFilterBar({
             <button
               key={tab.value}
               onClick={() => onFilterTabClick(tab.value)}
+              title={tab.tooltip}
               className={`cursor-pointer rounded-[var(--radius-sm)] px-2.5 py-1 text-xs transition-colors duration-150 min-h-[44px] sm:min-h-0 sm:py-1 ${
                 isActive
                   ? "font-medium text-[var(--color-text-primary)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)]"
@@ -68,6 +73,9 @@ export function LeadsFilterBar({
               }`}
             >
               {tab.label}
+              {tab.tooltip && (
+                <span aria-hidden="true" className="ml-0.5 text-[9px] opacity-50">ⓘ</span>
+              )}
             </button>
           );
         })}

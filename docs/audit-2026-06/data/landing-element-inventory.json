@@ -1,0 +1,439 @@
+{
+  "buttons": [
+    {
+      "text": "",
+      "variant": "secondary",
+      "selector": "[aria-label=\"Open navigation menu\"]",
+      "tag": "button"
+    },
+    {
+      "text": "Sign in",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Get startedGet started free",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Overview\"]",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"How it works\"]",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Why Nearsited\"]",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Sample report\"]",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Use cases\"]",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Pricing\"]",
+      "tag": "button"
+    },
+    {
+      "text": "Find your first opportunity",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "See how agencies win",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "85Marina Legal ConsultantsDubai Marina · LegalNo Website",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "72Blue Wave RestaurantJBR · Food & BeverageSocial Only",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "72Bright Smile DentalJumeirah · HealthcareWeak Website",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Copy pitch →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Find your first opportunity",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Weak Website",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "No site",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Social Only",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Platform Only",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Try it now →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Weak Website",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "No Website",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Social Only",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Platform Only",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Tone: Professional",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Regenerate",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Copy pitch →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Start finding clients →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "I already have enough clients.",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Isn't this just another tool I'll never use?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "I can find leads myself on Google Maps.",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "The local businesses I'd pitch don't rank on Google anyway.",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "I don't do cold outreach.",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "I already use Apollo or Hunter for prospecting.",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Try Nearsited free →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Start free →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "How does Nearsited help me win more website projects?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "What kind of businesses does Nearsited find?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "How accurate is the opportunity score?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Do I need technical skills to use it?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "What if there are no good opportunities in my city?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "How is this different from cold email tools?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "How current is the business data? Are these businesses still active?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Which cities and countries does Nearsited cover?",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Monthly",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "AnnualSAVE 20%",
+      "variant": "unknown",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Get started →",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Get started →",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Find your first opportunity",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Sign in",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Subscribe",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "",
+      "variant": "unknown",
+      "selector": "[aria-label=\"Dismiss cookie notice\"]",
+      "tag": "button"
+    },
+    {
+      "text": "Decline",
+      "variant": "secondary",
+      "selector": "button",
+      "tag": "button"
+    },
+    {
+      "text": "Accept",
+      "variant": "primary",
+      "selector": "button",
+      "tag": "button"
+    }
+  ],
+  "links": [
+    {
+      "text": "NearSited",
+      "href": "#",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "How it works",
+      "href": "#how",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Sample report",
+      "href": "#report",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Pricing",
+      "href": "/pricing",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "FAQ",
+      "href": "#faq",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Find your first opportunity",
+      "href": "/signup",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "How it works",
+      "href": "#how",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Sample report",
+      "href": "#report",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Sample pitch",
+      "href": "#pitch",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Pricing",
+      "href": "/pricing",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "About",
+      "href": "/#story",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Contact",
+      "href": "mailto:nearsitedlabs@gmail.com",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Terms",
+      "href": "/terms",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Privacy",
+      "href": "/privacy",
+      "isExternal": false,
+      "tag": "a"
+    },
+    {
+      "text": "Again Live",
+      "href": "https://againlive.com",
+      "isExternal": true,
+      "tag": "a"
+    },
+    {
+      "text": "Privacy Policy",
+      "href": "/privacy",
+      "isExternal": false,
+      "tag": "a"
+    }
+  ],
+  "formElements": [
+    {
+      "type": "email",
+      "name": "",
+      "placeholder": "your@email.com"
+    }
+  ]
+}

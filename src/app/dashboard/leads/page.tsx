@@ -61,41 +61,46 @@ export default function LeadsPage() {
 
   const setFilters = useCallback((f: FilterState) => {
     setFiltersState(f);
-    setPage(1);
+    handlePageChange(1);
     setMobileLoadCount(PAGE_SIZE);
     const params = filtersToParams(f);
     router.replace(`${window.location.pathname}${params.toString() ? `?${params}` : ""}`, { scroll: false });
-  }, [router, setMobileLoadCount]);
+  }, [router, setMobileLoadCount, handlePageChange]);
 
   // Opportunity filter tab clicks — handles new split tabs + in_pipeline chip
   const handleFilterTabClick = useCallback((tab: OpportunityTab) => {
-    setPage(1);
     if (tab === "all") {
       setActivePipelineTab("all_pipeline");
-      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false, auditedOnly: false, analysedOnly: false });
     } else if (tab === "flagged") {
       setActivePipelineTab("all_pipeline");
-      setFilters({ ...filters, flaggedOnly: true, websiteStatus: [] });
+      setFilters({ ...filters, flaggedOnly: true, websiteStatus: [], auditedOnly: false, analysedOnly: false });
     } else if (tab === "in_pipeline") {
       setActivePipelineTab(activePipelineTab === "all_pipeline" ? "pipeline_in" : "all_pipeline");
-      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false });
+      setFilters({ ...filters, websiteStatus: [], flaggedOnly: false, auditedOnly: false, analysedOnly: false });
+    } else if (tab === "audited") {
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, auditedOnly: true, analysedOnly: false, websiteStatus: [], flaggedOnly: false });
+    } else if (tab === "analysed") {
+      setActivePipelineTab("all_pipeline");
+      setFilters({ ...filters, analysedOnly: true, auditedOnly: false, websiteStatus: [], flaggedOnly: false });
     } else if (tab === "social_platform") {
       setActivePipelineTab("all_pipeline");
-      setFilters({ ...filters, websiteStatus: ["social_only", "platform_only"], flaggedOnly: false });
+      setFilters({ ...filters, websiteStatus: ["social_only", "platform_only"], flaggedOnly: false, auditedOnly: false, analysedOnly: false });
     } else {
       // single-status tabs: no_website, has_website, social_only, platform_only
       setActivePipelineTab("all_pipeline");
-      setFilters({ ...filters, websiteStatus: [tab as string], flaggedOnly: false });
+      setFilters({ ...filters, websiteStatus: [tab as string], flaggedOnly: false, auditedOnly: false, analysedOnly: false });
     }
   }, [filters, setFilters, activePipelineTab]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setSearchQuery(val);
-    setPage(1);
+    handlePageChange(1);
     if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     searchDebounceRef.current = setTimeout(() => setDebouncedSearch(val), 300);
-  }, []);
+  }, [handlePageChange]);
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery("");
@@ -105,7 +110,7 @@ export default function LeadsPage() {
 
   // KPI tile click — filter table to subset
   const handleKpiClick = useCallback((type: string) => {
-    setPage(1);
+    handlePageChange(1);
     switch (type) {
       case "unaudited":
         setFilters({ ...filters, auditedOnly: true, websiteStatus: [] });
@@ -122,7 +127,7 @@ export default function LeadsPage() {
         setActivePipelineTab("all_pipeline");
         setFilters({ ...filters, websiteStatus: [], flaggedOnly: false, auditedOnly: false });
     }
-  }, [filters, setFilters]);
+  }, [filters, setFilters, handlePageChange]);
 
   // Row-level pipeline actions
   const handleRowAddToPipeline = useCallback(async (id: string) => {

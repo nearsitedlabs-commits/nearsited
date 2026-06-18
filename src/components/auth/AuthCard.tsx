@@ -39,7 +39,7 @@ export default function AuthCard({
         {/* Logo */}
         <div className="mb-6 flex justify-center">
           <Link href="/" className="opacity-80 transition-opacity hover:opacity-100">
-            <Image src="/logo-icon.svg" alt="Nearsited" width={40} height={23} />
+            <Image src="/logo-icon.svg" alt="Nearsited" width={40} height={24} sizes="40px" />
           </Link>
         </div>
 
@@ -63,6 +63,7 @@ export default function AuthCard({
             {error && (
               <motion.div
                 key={error}
+                role="alert"
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}

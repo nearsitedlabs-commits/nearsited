@@ -112,9 +112,9 @@ export function WhyNearsitedSection() {
                 >
                   <div className="flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: item.color }} />
-                    <span className="text-[13px] font-medium leading-tight md:text-[15px]" style={{ color: item.color }}>{item.label}</span>
+                    <span className="text-sm font-medium leading-tight md:text-base" style={{ color: item.color }}>{item.label}</span>
                   </div>
-                  <span className="text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]">{item.sub}</span>
+                  <span className="text-xs leading-snug text-[var(--color-text-tertiary)]">{item.sub}</span>
                 </div>
               </motion.div>
             ))}

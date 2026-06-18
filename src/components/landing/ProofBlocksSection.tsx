@@ -24,7 +24,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
           &ldquo;I was spending 3 hours every week just finding businesses to pitch. I built Nearsited so I could spend that time closing instead.&rdquo;
         </p>
         <footer className="mt-4 flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent)]/10 text-xs font-semibold text-[var(--color-accent)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent)]/10 text-xs font-medium text-[var(--color-accent)]">
             AS
           </div>
           <div>
@@ -41,7 +41,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
             key={point.stat}
             className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
           >
-            <p className="text-3xl font-semibold tracking-tight text-[var(--color-accent)]">
+            <p className="text-3xl font-bold tracking-tight text-[var(--color-accent)]">
               {point.stat}
             </p>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">

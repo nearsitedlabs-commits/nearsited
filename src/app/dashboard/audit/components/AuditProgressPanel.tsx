@@ -48,7 +48,7 @@ export function AuditProgressPanel({
         {running && onCancel && (
           <button
             onClick={onCancel}
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-red-500/40 hover:text-red-400"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-danger)]/40 hover:text-[var(--color-danger)]"
           >
             <span className="h-3.5 w-3.5 flex items-center justify-center">
               <span className="sr-only">×</span>

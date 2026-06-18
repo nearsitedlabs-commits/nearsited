@@ -20,6 +20,7 @@ export type FilterState = {
   dateRange:     string;    // "all" | "today" | "7d" | "30d"
   flaggedOnly:   boolean;
   auditedOnly:   boolean;
+  analysedOnly:  boolean;
   sortBy:        SortOption;
 };
 
@@ -35,6 +36,7 @@ export const DEFAULT_FILTERS: FilterState = {
   dateRange:     "all",
   flaggedOnly:   false,
   auditedOnly:   false,
+  analysedOnly:  false,
   sortBy:        "score_desc",
 };
 
@@ -49,6 +51,7 @@ export function countActiveFilters(f: FilterState): number {
   if (f.dateRange !== "all")                 n++;
   if (f.flaggedOnly)                         n++;
   if (f.auditedOnly)                         n++;
+  if (f.analysedOnly)                        n++;
   return n;
 }
 
@@ -63,8 +66,9 @@ export function filtersToParams(f: FilterState): URLSearchParams {
   if (f.city)                               p.set("city",    f.city);
   if (f.activity !== "all")                 p.set("activity", f.activity);
   if (f.dateRange !== "all")                p.set("date",    f.dateRange);
-  if (f.flaggedOnly)                        p.set("flagged", "1");
-  if (f.auditedOnly)                        p.set("audited", "1");
+  if (f.flaggedOnly)                        p.set("flagged",  "1");
+  if (f.auditedOnly)                        p.set("audited",  "1");
+  if (f.analysedOnly)                       p.set("analysed", "1");
   if (f.sortBy !== DEFAULT_FILTERS.sortBy)  p.set("sort",    f.sortBy);
   return p;
 }
@@ -81,8 +85,9 @@ export function paramsToFilters(params: URLSearchParams): FilterState {
   f.city      = params.get("city")     ?? "";
   f.activity  = params.get("activity") ?? "all";
   f.dateRange = params.get("date")     ?? "all";
-  f.flaggedOnly = params.get("flagged") === "1";
-  f.auditedOnly = params.get("audited") === "1";
+  f.flaggedOnly  = params.get("flagged")  === "1";
+  f.auditedOnly  = params.get("audited")  === "1";
+  f.analysedOnly = params.get("analysed") === "1";
   const sort = params.get("sort");
   if (sort) f.sortBy = sort as SortOption;
   return f;
@@ -200,7 +205,10 @@ export function applyFilters<T extends FilterableLead>(
   if (filters.flaggedOnly) result = result.filter(l => l.flagged_for_outreach);
 
   // Audited only
-  if (filters.auditedOnly) result = result.filter(l => l.audited_at !== null);
+  if (filters.auditedOnly)  result = result.filter(l => l.audited_at !== null);
+
+  // Design-analysed only
+  if (filters.analysedOnly) result = result.filter(l => l.design_analyzed_at !== null);
 
   // Search
   if (searchQuery.trim()) {

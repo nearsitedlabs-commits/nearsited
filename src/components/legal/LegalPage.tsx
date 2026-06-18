@@ -13,11 +13,13 @@ export type TOCSection = {
 type Props = {
   title: string;
   lastUpdated: string;
+  /** ISO 8601 date for schema.org structured data (defaults to 2026-06-08) */
+  dateModified?: string;
   toc: TOCSection[];
   children: ReactNode;
 };
 
-export function LegalPage({ title, lastUpdated, toc, children }: Props) {
+export function LegalPage({ title, lastUpdated, dateModified = "2026-06-08", toc, children }: Props) {
   const [activeId, setActiveId] = useState<string>(toc[0]?.id ?? "");
   const [tocSheetOpen, setTocSheetOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -48,8 +50,20 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
     return () => observerRef.current?.disconnect();
   }, [toc]);
 
+  const schemaJson = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: title,
+    dateModified: dateModified,
+  });
+
   return (
-    <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text-primary)]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaJson }}
+      />
+      <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text-primary)]">
       {/* Top bar */}
       <div className="border-b border-[var(--color-border-subtle)]">
         <div className="mx-auto max-w-[1000px] flex items-center justify-between px-6 py-4">
@@ -81,7 +95,7 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
                       .getElementById(section.id)
                       ?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className={`block py-1 text-[13px] leading-snug transition-colors ${
+                  className={`block py-1 text-sm leading-snug transition-colors ${
                     activeId === section.id
                       ? "font-medium text-[var(--color-accent)]"
                       : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
@@ -94,7 +108,7 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
           </aside>
 
           {/* Content */}
-          <main className="min-w-0 max-w-[720px]">
+          <main className="min-w-0 max-w-prose">
             <h1 className="text-[1.75rem] font-medium leading-tight tracking-[-0.02em] text-[var(--color-text-primary)]">
               {title}
             </h1>
@@ -102,7 +116,7 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
               Last updated: {lastUpdated}
             </p>
 
-            <div className="mt-10 space-y-10 text-sm leading-[1.7] text-[var(--color-text-secondary)]">
+            <div className="mt-10 space-y-10 text-base lg:text-body leading-[1.7] text-[var(--color-text-secondary)]">
               {children}
             </div>
 
@@ -127,7 +141,7 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
         <button
           type="button"
           onClick={() => setTocSheetOpen(true)}
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/90 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-lg backdrop-blur-sm transition-colors hover:text-[var(--color-text-primary)]"
+          className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/90 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-lg backdrop-blur-sm transition-colors hover:text-[var(--color-text-primary)]"
         >
           Jump to section
           <ChevronDown className="h-3.5 w-3.5" />
@@ -156,6 +170,59 @@ export function LegalPage({ title, lastUpdated, toc, children }: Props) {
         </nav>
       </BottomSheet>
     </div>
+
+    <style>{`
+      @media print {
+        /* Hide TOC sidebar on desktop */
+        .lg\\:grid > aside {
+          display: none !important;
+        }
+
+        /* Hide mobile TOC chip */
+        .fixed.bottom-6 {
+          display: none !important;
+        }
+
+        /* Remove grid layout — use single column */
+        .lg\\:grid {
+          display: block !important;
+        }
+
+        /* Reset sticky/fixed positioning */
+        .sticky {
+          position: static !important;
+        }
+
+        /* Remove min-height, use white background with black text */
+        .min-h-screen {
+          min-height: auto !important;
+          background: #fff !important;
+          color: #000 !important;
+        }
+
+        /* All text in black */
+        [class*="text-"] {
+          color: #000 !important;
+        }
+
+        /* Links keep underline for clarity */
+        a {
+          color: #000 !important;
+          text-decoration: underline !important;
+        }
+
+        /* Remove box shadows, borders become lighter */
+        * {
+          box-shadow: none !important;
+        }
+
+        /* Ensure content fills page width */
+        .mx-auto {
+          max-width: none !important;
+        }
+      }
+    `}</style>
+    </>
   );
 }
 

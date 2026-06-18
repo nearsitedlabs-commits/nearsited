@@ -184,7 +184,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
       {countActiveFilters(filters) > 0 && (
         <button
           onClick={() => { onReset(); trackFilter("filter_reset"); }}
-          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-red-500/30 hover:text-red-400"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-danger)]/30 hover:text-[var(--color-danger)]"
         >
           <RotateCcw className="h-3 w-3" /> Reset all filters
         </button>

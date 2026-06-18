@@ -16,7 +16,7 @@ export default function DiscoverLoading() {
         </div>
 
         {/* Search card */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5">
+        <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5">
           <div className="flex flex-wrap gap-2.5">
             <SkeletonLoader className="flex-1" height="44px" radius="12px" />
             <SkeletonLoader className="flex-1" height="44px" radius="12px" />
@@ -27,7 +27,7 @@ export default function DiscoverLoading() {
         </div>
 
         {/* Results skeleton */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden">
+        <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] overflow-hidden">
           {/* Summary bar */}
           <div className="flex items-center gap-3 border-b border-[var(--color-border-subtle)] px-5 py-3.5">
             <SkeletonLoader width="80px" height="24px" radius="6px" />

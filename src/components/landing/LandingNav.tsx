@@ -60,7 +60,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   // ── Logo ──
   const logo = (
     <a href="#" className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
-      <Image src="/logo-icon.svg" alt="" width={36} height={21} className="block shrink-0" />
+      <Image src="/logo-icon.svg" alt="" width={36} height={22} sizes="36px" className="block shrink-0" />
       <span className="text-[22px] font-medium tracking-[0.02em] text-[var(--color-text-primary)]">NearSited</span>
     </a>
   );

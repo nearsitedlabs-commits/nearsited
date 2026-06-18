@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 type OutreachChannel = "email" | "whatsapp";
 
@@ -98,7 +99,7 @@ export function PitchCard({
   const summaryLabel = `${TONE_LABELS[pitchConfig.tone] ?? pitchConfig.tone} · ${LENGTH_LABELS[pitchConfig.length] ?? pitchConfig.length}`;
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
       <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Pitch</h2>
 
       {/* Channel toggle */}
@@ -154,23 +155,25 @@ export function PitchCard({
 
       {/* Single Tone trigger + Generate button */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <button
-          type="button"
+        <Button
+          variant="secondary" size="sm"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] min-h-[44px] sm:min-h-0"
+          className="min-h-[44px] sm:min-h-0"
         >
           Tone ▾ <span className="text-[var(--color-text-tertiary)] ml-0.5 hidden sm:inline">({summaryLabel})</span>
-        </button>
+        </Button>
 
         {canGenerate ? (
-          <button
+          <Button
+            variant="primary" size="sm"
             onClick={() => handleGeneratePitch()}
             disabled={generatingPitch}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0 flex-1 justify-center sm:flex-none"
+            loading={generatingPitch}
+            icon={<Send className="h-3 w-3" />}
+            className="flex-1 sm:flex-none min-h-[44px] sm:min-h-0"
           >
-            {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
             {generatingPitch ? "Generating…" : "Generate pitch"}
-          </button>
+          </Button>
         ) : (
           <div className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-tertiary)] opacity-60"
             title="Analyse this lead first to generate a pitch">
@@ -270,27 +273,23 @@ export function PitchCard({
           </div>
           <div className="flex flex-wrap gap-2 mt-2">
             {outreachChannel === "whatsapp" && contactInfo.phone && (
-              <button
-                onClick={handleOpenInWhatsApp}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:opacity-90 min-h-[44px] sm:min-h-0"
-              >
+              <Button variant="primary" size="sm" onClick={handleOpenInWhatsApp} className="min-h-[44px] sm:min-h-0">
                 <ExternalLink className="h-3 w-3" /> Open in WhatsApp ↗
-              </button>
+              </Button>
             )}
-            <button
-              onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] min-h-[44px] sm:min-h-0"
-            >
+            <Button variant="secondary" size="sm" onClick={handleCopyPitch} className="min-h-[44px] sm:min-h-0">
               <Copy className="h-3 w-3" /> Copy
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary" size="sm"
               onClick={handleRegenerate}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0"
+              loading={generatingPitch}
+              icon={<RefreshCw className="h-3 w-3" />}
+              className="min-h-[44px] sm:min-h-0"
             >
-              {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate
-            </button>
+            </Button>
           </div>
         </div>
       ) : (

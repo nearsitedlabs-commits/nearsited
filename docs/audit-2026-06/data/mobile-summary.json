@@ -1,0 +1,326 @@
+{
+  "landing": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 22,
+    "smallTargets": [
+      {
+        "tag": "A",
+        "text": "NearSited",
+        "width": 154,
+        "height": 24
+      },
+      {
+        "tag": "A",
+        "text": "How it works",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "Sample report",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "Pricing",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "FAQ",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Sign in",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "width": 0,
+        "height": 0
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  },
+  "login": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 5,
+    "smallTargets": [
+      {
+        "tag": "A",
+        "text": "NearSited",
+        "width": 96,
+        "height": 20
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "width": 40,
+        "height": 24
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "width": 14,
+        "height": 14
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Forgot password?",
+        "width": 99,
+        "height": 16
+      },
+      {
+        "tag": "A",
+        "text": "Sign up",
+        "width": 50,
+        "height": 18
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  },
+  "signup": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 6,
+    "smallTargets": [
+      {
+        "tag": "A",
+        "text": "NearSited",
+        "width": 96,
+        "height": 20
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "width": 40,
+        "height": 24
+      },
+      {
+        "tag": "A",
+        "text": "Terms",
+        "width": 30,
+        "height": 14
+      },
+      {
+        "tag": "A",
+        "text": "Privacy policy",
+        "width": 69,
+        "height": 14
+      },
+      {
+        "tag": "A",
+        "text": "Sign in",
+        "width": 45,
+        "height": 18
+      },
+      {
+        "tag": "A",
+        "text": "Privacy Policy",
+        "width": 76,
+        "height": 16
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  },
+  "pricing": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 4,
+    "smallTargets": [
+      {
+        "tag": "BUTTON",
+        "text": "NearSited",
+        "width": 116,
+        "height": 24
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Home",
+        "width": 38,
+        "height": 20
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Pricing",
+        "width": 44,
+        "height": 20
+      },
+      {
+        "tag": "A",
+        "text": "Contact",
+        "width": 51,
+        "height": 20
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  },
+  "privacy": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 15,
+    "smallTargets": [
+      {
+        "tag": "A",
+        "text": "← Nearsited",
+        "width": 80,
+        "height": 20
+      },
+      {
+        "tag": "A",
+        "text": "1. What We Collect",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "2. How We Use Your Data",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "3. Third-Party Services",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "4. Data Retention",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "5. Cookies & Tracking",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "6. Your Rights",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "7. International Transfers",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "8. Changes to This Policy",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "nearsitedlabs@gmail.com",
+        "width": 165,
+        "height": 18
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  },
+  "terms": {
+    "hasHorizontalScroll": false,
+    "bodyFontSize": "16px",
+    "smallTargetsCount": 17,
+    "smallTargets": [
+      {
+        "tag": "A",
+        "text": "← Nearsited",
+        "width": 80,
+        "height": 20
+      },
+      {
+        "tag": "A",
+        "text": "1. Introduction",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "2. Account Registration",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "3. Acceptable Use",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "4. Subscriptions & Billing",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "5. Refund Policy",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "6. Intellectual Property",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "7. Termination",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "8. Limitation of Liability",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "A",
+        "text": "9. Governing Law",
+        "width": 0,
+        "height": 0
+      }
+    ],
+    "hasBottomNav": false,
+    "hasMobileHeader": false
+  }
+}

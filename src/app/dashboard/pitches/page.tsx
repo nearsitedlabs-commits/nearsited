@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Copy, ExternalLink, Loader2, RefreshCw, Search, Trash2, Check, ArrowRight, EllipsisVertical, X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { PITCH_STATUS_LABELS } from "@/lib/ui-constants";
 import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
 import { Toast } from "@/components/ui/Toast";
@@ -302,7 +303,7 @@ export default function PitchesPage() {
 
     return (
       <FadeUp key={pitch.id}>
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
+        <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4">
 
           {/* ── Tappable body — opens full pitch sheet on mobile ──────── */}
           <div
@@ -520,21 +521,12 @@ export default function PitchesPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
-              title="Search"
-            >
-              <Search className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => fetchPitches(true)}
-              disabled={refreshing}
-              className="inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)] disabled:cursor-not-allowed disabled:opacity-40"
-              title="Refresh"
-            >
-              <Loader2 className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            </button>
+            <Button variant="icon" icon={<Search className="h-4 w-4" />} onClick={() => setShowFilters(!showFilters)}>
+              Search
+            </Button>
+            <Button variant="icon" icon={<Loader2 className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />} onClick={() => fetchPitches(true)} disabled={refreshing}>
+              Refresh
+            </Button>
           </div>
         </div>
 

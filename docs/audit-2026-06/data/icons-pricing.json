@@ -1,0 +1,161 @@
+{
+  "page": "pricing",
+  "url": "/pricing",
+  "count": 14,
+  "icons": [
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "50 opportunity analyses per month",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "3 city searches per month",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Email pitch generation",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Pipeline tracking",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "200 opportunity analyses per month",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "10 city searches per month",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Email + WhatsApp pitch generation",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "White-label shareable reports",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Priority support",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "All 4 opportunity types: no website, social, platform, weak site",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Unlimited AI pitch generation",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "Unlimited pipeline management",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(138, 151, 119)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "PDF audit exports",
+      "innerHtml": "<path d=\"M20 6 9 17l-5-5\"></path>"
+    },
+    {
+      "tag": "svg",
+      "classes": "lucide lucide-search h-4 w-4",
+      "width": "24",
+      "height": "24",
+      "color": "rgb(255, 255, 255)",
+      "ariaHidden": "true",
+      "role": null,
+      "adjacentText": "",
+      "innerHtml": "<path d=\"m21 21-4.34-4.34\"></path><circle cx=\"11\" cy=\"11\" r=\"8\"></circle>"
+    }
+  ]
+}

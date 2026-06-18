@@ -38,10 +38,13 @@ function SignupPageContent() {
   const searchParams = useSearchParams();
   const needsVerification = searchParams.get("verify") === "1";
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   function validate(name: string, em: string, pw: string, cpw: string) {
     const errs: typeof fieldErrors = {};
     if (!name.trim()) errs.fullName = "Name is required.";
     if (!em) errs.email = "Email is required.";
+    else if (!EMAIL_RE.test(em)) errs.email = "Enter a valid email address.";
     if (!pw) errs.password = "Password is required.";
     else if (pw.length < 8) errs.password = "Password must be at least 8 characters.";
     if (pw && cpw && pw !== cpw) errs.confirmPassword = "Passwords don't match.";
@@ -183,7 +186,7 @@ function SignupPageContent() {
             autoFocus
             className={`${inputBase} ${fieldErrors.fullName ? "border-[var(--color-danger)]/60" : "border-[var(--color-border-subtle)]"}`}
           />
-          {fieldErrors.fullName && <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.fullName}</p>}
+          {fieldErrors.fullName && <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.fullName}</p>}
         </div>
 
         {/* Email */}
@@ -198,11 +201,16 @@ function SignupPageContent() {
             required
             value={email}
             onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })); }}
+            onBlur={() => {
+              if (email && !EMAIL_RE.test(email)) {
+                setFieldErrors((p) => ({ ...p, email: "Enter a valid email address." }));
+              }
+            }}
             placeholder="you@example.com"
             autoComplete="email"
             className={`${inputBase} ${fieldErrors.email ? "border-[var(--color-danger)]/60" : "border-[var(--color-border-subtle)]"}`}
           />
-          {fieldErrors.email && <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.email}</p>}
+          {fieldErrors.email && <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.email}</p>}
         </div>
 
         {/* Password */}
@@ -231,10 +239,8 @@ function SignupPageContent() {
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          {fieldErrors.password
-            ? <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.password}</p>
-            : <PasswordStrengthMeter password={password} />
-          }
+          {fieldErrors.password && <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.password}</p>}
+          <PasswordStrengthMeter password={password} />
         </div>
 
         {/* Confirm password */}
@@ -264,7 +270,7 @@ function SignupPageContent() {
             </button>
           </div>
           {fieldErrors.confirmPassword && (
-            <p className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.confirmPassword}</p>
+            <p role="alert" className="mt-1 text-xs text-[var(--color-danger)]">{fieldErrors.confirmPassword}</p>
           )}
         </div>
 

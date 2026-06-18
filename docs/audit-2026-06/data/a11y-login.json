@@ -1,0 +1,27 @@
+{
+  "issues": [
+    {
+      "type": "unlabeled-input",
+      "detail": "INPUT has no id or aria-label"
+    }
+  ],
+  "issueCount": 1,
+  "liveRegionCount": 0,
+  "hasFocusOutline": true,
+  "focusStyleDetails": "INPUT: outline=solid 2px rgb(138, 151, 119)",
+  "landmarks": {
+    "main": 0,
+    "nav": 0,
+    "header": 1,
+    "footer": 0
+  },
+  "headingStructure": [
+    {
+      "level": "H1",
+      "text": "Welcome back."
+    }
+  ],
+  "totalImages": 2,
+  "totalButtons": 4,
+  "totalInputs": 3
+}

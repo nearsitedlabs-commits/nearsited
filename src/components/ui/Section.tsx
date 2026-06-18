@@ -25,11 +25,10 @@ export type SectionProps = HTMLAttributes<HTMLElement> & {
 
 const WRAPPER: Record<SectionVariant, string> = {
   card:
-    "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] " +
-    "border border-[var(--color-border-subtle)] p-4",
+    "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4",
   flush: "",
   bordered:
-    "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-4",
+    "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4",
 };
 
 const TITLE_BOTTOM: Record<SectionVariant, string> = {

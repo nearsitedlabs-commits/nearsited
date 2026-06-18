@@ -15,7 +15,7 @@ export default function LeadsLoading() {
         {/* KPI strip */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
+            <div key={i} className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4">
               <SkeletonLoader width="48px" height="28px" radius="4px" />
               <SkeletonLoader className="mt-1" width="80px" height="12px" radius="4px" />
             </div>
@@ -40,7 +40,7 @@ export default function LeadsLoading() {
         </div>
 
         {/* Table skeleton — new column layout: checkbox, score, business, site, last audit, status, action */}
-        <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+        <div className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]">
           {/* Table header */}
           <div className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-3">
             <div className="flex gap-3">

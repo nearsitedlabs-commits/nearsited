@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
 
   experimental: {
     // Tree-shake icon and animation imports so only used components are bundled
-    optimizePackageImports: ["lucide-react", "recharts", "framer-motion"],
+    optimizePackageImports: ["lucide-react", "framer-motion"],
   },
 
   async headers() {

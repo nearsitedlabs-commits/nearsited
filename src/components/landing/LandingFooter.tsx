@@ -62,7 +62,7 @@ export function LandingFooter() {
         <div className="mx-auto grid max-w-7xl gap-10 md:gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
             <div className="mb-4 inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-sans)' }}>
-              <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
+              <Image src="/logo-icon.svg" alt="" width={28} height={17} sizes="28px" className="block shrink-0" />
               <span className="text-base font-medium tracking-[0.02em] text-[var(--color-text-primary)]">NearSited</span>
               </div>
               <p className="max-w-sm text-sm leading-7 text-[var(--color-text-tertiary)]">

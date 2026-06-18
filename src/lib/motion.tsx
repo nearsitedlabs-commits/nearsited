@@ -163,6 +163,10 @@ interface MotionBoxProps {
 
 /** Fade in + slide up 12px. Default entrance for cards, sections, rows. */
 export function FadeUp({ children, className }: MotionBoxProps) {
+  const prefersReduced = useSafeReducedMotion();
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
   return (
     <motion.div
       variants={fadeUpVariants}
@@ -178,6 +182,10 @@ export function FadeUp({ children, className }: MotionBoxProps) {
 
 /** Simple opacity fade-in. For subtle reveals like badges or secondary content. */
 export function FadeIn({ children, className }: MotionBoxProps) {
+  const prefersReduced = useSafeReducedMotion();
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
   return (
     <motion.div
       variants={fadeInVariants}
@@ -193,6 +201,10 @@ export function FadeIn({ children, className }: MotionBoxProps) {
 
 /** Staggers entrance of child FadeUp/FadeIn elements. Wrap around a list. */
 export function StaggerContainer({ children, className }: MotionBoxProps) {
+  const prefersReduced = useSafeReducedMotion();
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
   return (
     <motion.div
       variants={staggerVariants}
@@ -254,15 +266,9 @@ export function SkeletonLoader({
   radius = "8px",
 }: SkeletonProps) {
   return (
-    <motion.div
-      className={`bg-[var(--bg-elevated)] ${className}`}
+    <div
+      className={`skeleton ${className}`}
       style={{ width, height, borderRadius: radius }}
-      animate={{ opacity: [0.3, 0.5, 0.3] }}
-      transition={{
-        duration: 1.5,
-        ease: "easeInOut",
-        repeat: Infinity,
-      }}
     />
   );
 }

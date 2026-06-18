@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { ChevronDown } from "lucide-react";
 import { SectionLabel } from "@/components/landing/SectionLabel";
@@ -9,42 +10,61 @@ import { useAccordion } from "@/lib/shared-hooks";
 
 const faqs = [
   {
+    id: "faq-how",
     q: "How does Nearsited help me win more website projects?",
     a: "It removes the three biggest bottlenecks in agency sales: finding the right leads, knowing what to pitch, and writing outreach that gets replies. Nearsited finds businesses with no website, social-only presence, platform-only listings, and weak websites, then gives you evidence-based pitches for each. Instead of 10 hours prospecting, you spend 10 minutes.",
   },
   {
+    id: "faq-what-kind",
     q: "What kind of businesses does Nearsited find?",
     a: "Four types: businesses with no website at all (often the highest-value leads), social-only businesses running entirely off Instagram or Facebook, businesses listed only on third-party booking or delivery platforms (Fresha, Booksy, Deliveroo), and businesses with weak websites scoring below 60 on performance, mobile, SEO, design, or trust. Dentists, restaurants, lawyers, gyms, web agencies, hotels. 249 business types across 18 industry categories in any city.",
   },
   {
+    id: "faq-accuracy",
     q: "How accurate is the opportunity score?",
     a: "The opportunity score combines website weakness and business viability into a single 0–100 number. Higher means a hotter lead. A business with a broken website and active Google reviews scores high because it's both pitchable and likely to respond. Scores above 70 are where you should start — the gap is real and the business is likely viable. Use it to prioritise, not to disqualify.",
   },
   {
+    id: "faq-technical",
     q: "Do I need technical skills to use it?",
     a: "No. Enter a city and business type. Get ranked leads. Read the audit summary. Click to generate a pitch. If you can type two words and click a button, you can use Nearsited.",
   },
   {
+    id: "faq-no-opportunities",
     q: "What if there are no good opportunities in my city?",
     a: "That's extremely unlikely. Most cities have 40–60% of local businesses with below-average websites — and many more with no website at all. But if you run a search and genuinely find nothing pitchable, email us and we'll refund your unused credits. No questions.",
   },
   {
+    id: "faq-vs-cold-email",
     q: "How is this different from cold email tools?",
     a: "Cold email tools blast generic messages and hope someone replies. Nearsited is the opposite: every pitch is personalised around a real online presence gap — no website, social-only, platform-only, or a broken site. You're not selling. You're showing them a problem they can verify themselves. That's a fundamentally different conversation.",
   },
   {
+    id: "faq-data-currency",
     q: "How current is the business data? Are these businesses still active?",
     a: "Business data comes directly from Google Places, which is updated continuously by businesses and Google's crawlers. You're seeing live Google reviews, ratings, and website data, not a static database. That said, some businesses close or update without immediately reflecting it on Google. Leads with reviews in the last 30 days and an active rating are almost always still open. We recommend a quick Google check before reaching out.",
   },
   {
+    id: "faq-cities",
     q: "Which cities and countries does Nearsited cover?",
     a: "Nearsited works in any location where Google Places has data, which covers most major and mid-size cities globally. You can search 29,000+ locations worldwide. Results quality is highest in English-speaking markets and India. If your city has good Google Maps coverage, Nearsited will find opportunities there.",
   },
 ];
 
 export function LandingFAQ() {
-  const { openIndex, toggle } = useAccordion();
+  const { openIndex, toggle, setOpenIndex } = useAccordion();
   const prefersReducedMotion = useSafeReducedMotion();
+
+  // Check URL hash on mount to deep-link a specific FAQ
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (!hash) return;
+    const matchIndex = faqs.findIndex((faq) => faq.id === hash);
+    if (matchIndex >= 0) {
+      // Small delay so the accordion animation is ready
+      setTimeout(() => setOpenIndex(matchIndex), 100);
+    }
+  }, [setOpenIndex]);
 
   return (
     <section id="faq" className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
@@ -62,6 +82,7 @@ export function LandingFAQ() {
             {faqs.map((faq, i) => (
               <div
                 key={faq.q}
+                id={faq.id}
                 className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
               >
                 <button
@@ -79,7 +100,7 @@ export function LandingFAQ() {
                 {prefersReducedMotion ? (
                   openIndex === i && (
                     <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4">
-                      <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
+                      <p className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
                     </div>
                   )
                 ) : (
@@ -94,7 +115,7 @@ export function LandingFAQ() {
                         className="overflow-hidden"
                       >
                         <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4">
-                          <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
+                          <p className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{faq.a}</p>
                         </div>
                       </motion.div>
                     )}

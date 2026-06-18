@@ -27,7 +27,6 @@ export function StatTile({ label, value, accent, className }: StatTileProps) {
     <div
       className={cn(
         "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]",
-        "border border-[var(--color-border-subtle)]",
         "px-4 py-3",
         accent ? ACCENT_BORDER[accent] : "",
         className,

@@ -1,0 +1,61 @@
+{
+  "page": "privacy",
+  "url": "/privacy",
+  "borderCount": 3,
+  "elements": [
+    {
+      "tag": "TR",
+      "classes": "",
+      "text": "sb-refresh-tokenRefreshes your session token automatically7 days",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 2768.484375,
+        "width": 688,
+        "height": 36.5
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    },
+    {
+      "tag": "DIV",
+      "classes": "border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Privacy questions or data requests? Email nearsitedlabs@gmail.com — we aim to re",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 4092.28125,
+        "width": 688,
+        "height": 105
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-12 border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions? nearsitedlabs@gmail.com",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 4245.28125,
+        "width": 688,
+        "height": 53
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    }
+  ]
+}

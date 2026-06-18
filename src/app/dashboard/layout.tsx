@@ -7,6 +7,7 @@ import SidebarNav from "./sidebar-nav";
 import MobileBottomNav from "./mobile-nav";
 import CreditsWidget from "@/components/ui/CreditsWidget";
 import { MobileProfileSheet } from "./mobile-profile-sheet";
+import { DashboardLayoutWrapper } from "./layout-client";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -37,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           href="/dashboard"
           className="flex h-16 items-center gap-2.5 border-b border-[var(--color-border-subtle)] px-5 transition-colors hover:bg-white/[0.02]"
         >
-          <Image src="/logo-icon.svg" alt="" width={36} height={21} className="block shrink-0" />
+          <Image src="/logo-icon.svg" alt="" width={36} height={22} sizes="36px" className="block shrink-0" />
           <span className="text-xl font-normal tracking-tight text-[var(--color-text-primary)]">
             NearSited
           </span>
@@ -77,7 +78,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               href="/dashboard"
               className="flex items-center gap-2 transition-opacity hover:opacity-80"
             >
-              <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
+              <Image src="/logo-icon.svg" alt="" width={28} height={17} sizes="28px" className="block shrink-0" />
               <span className="text-base font-normal tracking-tight text-[var(--color-text-primary)]">
                 NearSited
               </span>
@@ -93,7 +94,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
           id="main-content"
           className="mobile-content-offset flex-1 overflow-auto bg-[var(--color-bg-page)]"
         >
-          {children}
+          <DashboardLayoutWrapper>
+            {children}
+          </DashboardLayoutWrapper>
         </main>
       </div>
 

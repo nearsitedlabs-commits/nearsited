@@ -27,7 +27,7 @@ export function AuditDetailsCard({
   const auditsToShow = [mobileAudit, desktopAudit].filter(Boolean) as AuditRow[];
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
       <button
         onClick={onToggleTechDetails}
         className="inline-flex w-full cursor-pointer items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
@@ -50,7 +50,7 @@ export function AuditDetailsCard({
           {auditsToShow.length > 0 && (
             <div className="space-y-3">
               {auditsToShow.map((audit) => (
-                <div key={audit.id as string} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
+                <div key={audit.id as string} className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
                   <p className="text-xs font-medium text-[var(--color-text-primary)] mb-2">
                     {audit.strategy === "mobile" ? "Mobile" : "Desktop"} Web Vitals
                   </p>

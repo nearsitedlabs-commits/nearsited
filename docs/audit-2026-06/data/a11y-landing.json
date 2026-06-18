@@ -1,0 +1,118 @@
+{
+  "issues": [],
+  "issueCount": 0,
+  "liveRegionCount": 0,
+  "hasFocusOutline": true,
+  "focusStyleDetails": "INPUT: outline=solid 2px rgba(0, 0, 0, 0)",
+  "landmarks": {
+    "main": 1,
+    "nav": 1,
+    "header": 0,
+    "footer": 2
+  },
+  "headingStructure": [
+    {
+      "level": "H1",
+      "text": "Your next clientis out there —without a website"
+    },
+    {
+      "level": "H2",
+      "text": "Four steps to your next website project."
+    },
+    {
+      "level": "H3",
+      "text": "Find opportunities"
+    },
+    {
+      "level": "H3",
+      "text": "Understand the gap"
+    },
+    {
+      "level": "H3",
+      "text": "Generate outreach"
+    },
+    {
+      "level": "H3",
+      "text": "Win more website projects"
+    },
+    {
+      "level": "H3",
+      "text": "How opportunity scoring works"
+    },
+    {
+      "level": "H2",
+      "text": "Other tools find bad websites. Nearsited finds every opportu"
+    },
+    {
+      "level": "H3",
+      "text": "Traditional prospecting"
+    },
+    {
+      "level": "H3",
+      "text": "Nearsited"
+    },
+    {
+      "level": "H2",
+      "text": "Every opportunity type, one platform."
+    },
+    {
+      "level": "H3",
+      "text": "Bright Smile Dental"
+    },
+    {
+      "level": "H2",
+      "text": "Every opportunity type gets a tailored pitch."
+    },
+    {
+      "level": "H2",
+      "text": "Built for agencies that prospect locally."
+    },
+    {
+      "level": "H3",
+      "text": "Solo freelancers"
+    },
+    {
+      "level": "H3",
+      "text": "Small agencies"
+    },
+    {
+      "level": "H3",
+      "text": "Design studios"
+    },
+    {
+      "level": "H3",
+      "text": "SEO agencies"
+    },
+    {
+      "level": "H2",
+      "text": "What’s stopping you?"
+    },
+    {
+      "level": "H2",
+      "text": "Built for agencies that actually close deals."
+    },
+    {
+      "level": "H2",
+      "text": "Questions about closing deals."
+    },
+    {
+      "level": "H2",
+      "text": "Start finding clients this week."
+    },
+    {
+      "level": "H3",
+      "text": "Starter"
+    },
+    {
+      "level": "H3",
+      "text": "Agency"
+    },
+    {
+      "level": "H2",
+      "text": "Your next client is out there, without a website."
+    }
+  ],
+  "totalImages": 2,
+  "totalButtons": 52,
+  "totalInputs": 1
+}

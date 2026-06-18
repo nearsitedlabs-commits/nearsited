@@ -44,14 +44,14 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
         </div>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <h3 className="text-[15px] font-medium text-[var(--color-text-primary)]">{uc.title}</h3>
+            <h3 className="text-base font-medium text-[var(--color-text-primary)]">{uc.title}</h3>
             {"badge" in uc && uc.badge && (
               <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
                 {uc.badge}
               </span>
             )}
           </div>
-          <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{uc.desc}</p>
+          <p className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{uc.desc}</p>
         </div>
       </div>
     );

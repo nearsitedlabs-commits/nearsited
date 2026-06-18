@@ -1,0 +1,22 @@
+{
+  "issues": [],
+  "issueCount": 0,
+  "liveRegionCount": 0,
+  "hasFocusOutline": true,
+  "focusStyleDetails": "INPUT: outline=solid 2px rgb(138, 151, 119)",
+  "landmarks": {
+    "main": 0,
+    "nav": 0,
+    "header": 1,
+    "footer": 0
+  },
+  "headingStructure": [
+    {
+      "level": "H1",
+      "text": "Find your next client."
+    }
+  ],
+  "totalImages": 2,
+  "totalButtons": 4,
+  "totalInputs": 4
+}

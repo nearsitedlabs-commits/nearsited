@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, Globe, Loader2, MapPin, RotateCcw, Search, X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import type { AuditStep } from "./types";
 
 const EXAMPLE_URLS = ["lawfirmdubai.com", "dentalcaretoronto.ca", "accountingbrisbane.com.au"];
@@ -72,21 +73,13 @@ export function AuditForm({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <button
-              onClick={() => onRun()}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-            >
-              <RotateCcw className="h-3 w-3" />
-              Re-run
-            </button>
+            <Button variant="secondary" size="sm" onClick={() => onRun()}>
+              <RotateCcw className="h-3 w-3" /> Re-run
+            </Button>
             {onReset && (
-              <button
-                onClick={onReset}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-              >
-                <X className="h-3 w-3" />
-                New search
-              </button>
+              <Button variant="secondary" size="sm" onClick={onReset}>
+                <X className="h-3 w-3" /> New search
+              </Button>
             )}
           </div>
         </div>
@@ -128,14 +121,9 @@ export function AuditForm({
       </div>
 
       <div className="mt-3">
-        <button
-          onClick={() => onRun()}
-          disabled={running || !url.trim()}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Search className="h-4 w-4" />
-          Analyse
-        </button>
+        <Button variant="primary" onClick={() => onRun()} disabled={running || !url.trim()}>
+          <Search className="h-4 w-4" /> Analyse
+        </Button>
       </div>
 
       {/* Google Maps lookup */}
@@ -163,19 +151,15 @@ export function AuditForm({
               }
             }}
           />
-          <button
-            type="button"
+          <Button
+            variant="secondary" size="sm"
             onClick={() => void onMapsLookup()}
             disabled={!mapsLookupUrl.trim() || mapsLookupLoading}
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+            loading={mapsLookupLoading}
+            icon={<Search className="h-3.5 w-3.5" />}
           >
-            {mapsLookupLoading ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Search className="h-3.5 w-3.5" />
-            )}
             Look up
-          </button>
+          </Button>
         </div>
         {mapsLookupHint && (
           <p

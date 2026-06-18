@@ -1,0 +1,220 @@
+{
+  "page": "login",
+  "url": "/login",
+  "distinctColors": 11,
+  "colors": [
+    "rgb(10, 14, 18)",
+    "rgb(138, 130, 120)",
+    "rgb(138, 151, 119)",
+    "rgb(18, 23, 30)",
+    "rgb(184, 176, 168)",
+    "rgb(229, 231, 235)",
+    "rgb(240, 237, 232)",
+    "rgb(255, 255, 255)",
+    "rgb(26, 32, 40)",
+    "rgba(255, 255, 255, 0.06)",
+    "rgba(255, 255, 255, 0.1)"
+  ],
+  "elements": [
+    {
+      "tag": "HEADER",
+      "text": "NearSitedSign in",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative z-20 flex items-center gap-2 px-6 py-4 md:px-8"
+    },
+    {
+      "tag": "A",
+      "text": "NearSited",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2 text-sm text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-primary"
+    },
+    {
+      "tag": "SPAN",
+      "text": "NearSited",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-right h-3.5 w-3.5 shrink-0 text-[var(--color-text-tertiary)]/50"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Sign in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "Welcome back.Pick up where you left off.Continue with Google",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(10, 14, 18)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg-page)] px-4 py-12"
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "opacity-80 transition-opacity hover:opacity-100"
+    },
+    {
+      "tag": "H1",
+      "text": "Welcome back.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[1.75rem] font-medium leading-tight tracking-[-0.03em] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Pick up where you left off.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1.5 text-sm leading-relaxed text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Continue with Google",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "classes": "flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-st"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-4 w-4 shrink-0"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "w-full border-t border-[var(--color-border-subtle)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "or",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "bg-[var(--color-bg-surface)] px-3 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Email",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-1.5 block text-xs font-medium text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgb(138, 151, 119)",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[v"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Password",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-1.5 block text-xs font-medium text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[v"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "absolute right-0 top-1/2 -translate-y-1/2 flex min-h-[44px] min-w-[44px] items-center justify-center text-[var(--color-t"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-eye h-4 w-4"
+    },
+    {
+      "tag": "LABEL",
+      "text": "Remember me",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex cursor-pointer items-center gap-2 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(138, 130, 120)",
+      "classes": "h-3.5 w-3.5 rounded accent-[var(--color-accent)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Forgot password?",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-accent)] transition-colors"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Sign in",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-[44px] w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 text-sm "
+    },
+    {
+      "tag": "P",
+      "text": "Don’t have an account? Sign up",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-5 text-center text-sm text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "A",
+      "text": "Sign up",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-accent)] hover:underline"
+    }
+  ]
+}

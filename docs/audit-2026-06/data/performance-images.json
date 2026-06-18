@@ -1,0 +1,30 @@
+{
+  "totalImages": 2,
+  "nextImages": 2,
+  "imagesWithoutSizes": 2,
+  "lazyLoaded": 2,
+  "images": [
+    {
+      "src": "/logo-icon.svg",
+      "alt": "",
+      "width": "36",
+      "height": "21",
+      "naturalWidth": 254,
+      "naturalHeight": 150,
+      "loading": "lazy",
+      "isNextImage": true,
+      "sizes": ""
+    },
+    {
+      "src": "/logo-icon.svg",
+      "alt": "",
+      "width": "28",
+      "height": "16",
+      "naturalWidth": 254,
+      "naturalHeight": 150,
+      "loading": "lazy",
+      "isNextImage": true,
+      "sizes": ""
+    }
+  ]
+}

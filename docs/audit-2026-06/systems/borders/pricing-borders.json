@@ -1,0 +1,295 @@
+{
+  "page": "pricing",
+  "url": "/pricing",
+  "borderCount": 16,
+  "elements": [
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-transparent bg-transparent text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-elevated)] focus-visible:border-[var(--color-accent)]/50 min-h-[44px] lg:min-h-[36px]",
+      "text": "Sign in",
+      "border": "1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1032.9375,
+        "y": -2426,
+        "width": 78.875,
+        "height": 42
+      },
+      "classification": "ghost",
+      "reason": "Ghost button — transparent border (no visible affordance)"
+    },
+    {
+      "tag": "DIV",
+      "classes": "relative flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm",
+      "text": "MonthlyAnnualSAVE 20%",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "9999px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 518.265625,
+        "y": -2038.84375,
+        "width": 243.46875,
+        "height": 54
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)] p-6 flex h-full flex-col",
+      "text": "StarterFor solo freelancers and independent web designers.$19/mo50 opportunity a",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1960.84375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] mt-8 w-full",
+      "text": "Get started →",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 281,
+        "y": -1561.84375,
+        "width": 322,
+        "height": 42
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] hover:shadow-[var(--brand-shadow-md)] hover:border-[var(--border-strong)] transition-all duration-150 ease-out cursor-pointer p-6 flex h-full flex-col border-[var(--color-accent)]/30 ring-1 ring-[var(--accent)]/10",
+      "text": "Best valueAgencyFor small agencies and growing web design teams.$49/mo200 opport",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 652,
+        "y": -1960.84375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)] mb-4 self-start",
+      "text": "Best value",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 677,
+        "y": -1935.84375,
+        "width": 81.125,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-8 mx-auto max-w-3xl rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-6 py-5",
+      "text": "Everything included on all plansAll 4 opportunity types: no website, social, pla",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 256,
+        "y": -1450.84375,
+        "width": 768,
+        "height": 124.796875
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-20",
+      "text": "How credits workWhat is a credit?One analysis uses 2 credits — 1 for the perform",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -1178.046875,
+        "width": 1280,
+        "height": 874.0625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "When are credits used?Every analysis uses 2 credits: 1 for the performance audit",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -859.984375,
+        "width": 704,
+        "height": 152
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "How many credits do I get?Free: 10 full analyses lifetime (credits do not reset ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -691.984375,
+        "width": 704,
+        "height": 180
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "What happens when I run out?You can still log in, view your pipeline, manage lea",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -495.984375,
+        "width": 704,
+        "height": 124
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-20",
+      "text": "A note from the founderI run a web design agency. I built Nearsited because I wa",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": -303.984375,
+        "width": 1280,
+        "height": 567.90625
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-8 text-left",
+      "text": "I run a web design agency. I built Nearsited because I was spending 10 hours a w",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 336,
+        "y": -182.078125,
+        "width": 608,
+        "height": 366
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-20",
+      "text": "See if there are opportunities in your city.Enter a city and business type. Near",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": 263.921875,
+        "width": 1280,
+        "height": 447.3125
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] px-8 py-3 text-base",
+      "text": "Sign in",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 709.140625,
+        "y": 537.234375,
+        "width": 117.28125,
+        "height": 50
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)"
+    },
+    {
+      "tag": "FOOTER",
+      "classes": "border-t border-[var(--color-border-subtle)] px-6 py-10 md:px-8",
+      "text": "© 2026 Nearsited. Built by Again Labs.HomePricingContact",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": 699.234375,
+        "width": 1280,
+        "height": 101
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    }
+  ]
+}

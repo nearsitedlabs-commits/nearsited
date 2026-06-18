@@ -1,0 +1,158 @@
+[
+  {
+    "name": "node_modules_next_dist_compiled_next-devtools_index_0553esy.js",
+    "duration": 59,
+    "size": 218127,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_compiled_react-dom_058-ah~._.js",
+    "duration": 66,
+    "size": 184041,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_client_0fhqo1d._.js",
+    "duration": 56,
+    "size": 151514,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_motion-dom_dist_es_0d99cg6._.js",
+    "duration": 82,
+    "size": 92901,
+    "initiatorType": "script"
+  },
+  {
+    "name": "src_01n.o20._.js",
+    "duration": 90,
+    "size": 58847,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_0caypo_._.js",
+    "duration": 70,
+    "size": 46516,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_115brz8._.js",
+    "duration": 33,
+    "size": 46342,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_framer-motion_dist_es_06qqbds._.js",
+    "duration": 68,
+    "size": 43799,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_0zrham9._.js",
+    "duration": 50,
+    "size": 43655,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_0w_7sz7._.js",
+    "duration": 85,
+    "size": 39307,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_0i2.l7c._.js",
+    "duration": 87,
+    "size": 33545,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_compiled_react-server-dom-turbopack_0p3wegg._.js",
+    "duration": 27,
+    "size": 32086,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_compiled_0rpq4pf._.js",
+    "duration": 26,
+    "size": 28641,
+    "initiatorType": "script"
+  },
+  {
+    "name": "turbopack-_0p44nws._.js",
+    "duration": 47,
+    "size": 22702,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_tailwind-merge_dist_bundle-mjs_mjs_0ezz.e5._.js",
+    "duration": 49,
+    "size": 19623,
+    "initiatorType": "script"
+  },
+  {
+    "name": "src_0u1ud1w._.js",
+    "duration": 64,
+    "size": 5827,
+    "initiatorType": "script"
+  },
+  {
+    "name": "%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_0yjw1oe._.js",
+    "duration": 7,
+    "size": 4175,
+    "initiatorType": "script"
+  },
+  {
+    "name": "_0rqeker._.js",
+    "duration": 35,
+    "size": 1056,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_%40swc_helpers_cjs_0-4ujiy._.js",
+    "duration": 36,
+    "size": 1039,
+    "initiatorType": "script"
+  },
+  {
+    "name": "%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_10z625~._.js",
+    "duration": 15,
+    "size": 975,
+    "initiatorType": "link"
+  },
+  {
+    "name": "src_app_layout_tsx_004glpo._.js",
+    "duration": 66,
+    "size": 892,
+    "initiatorType": "script"
+  },
+  {
+    "name": "src_components_02f4_m~._.js",
+    "duration": 75,
+    "size": 713,
+    "initiatorType": "script"
+  },
+  {
+    "name": "src_app_page_tsx_05.~59-._.js",
+    "duration": 79,
+    "size": 630,
+    "initiatorType": "script"
+  },
+  {
+    "name": "%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_10mygs7._.js",
+    "duration": 5,
+    "size": 589,
+    "initiatorType": "script"
+  },
+  {
+    "name": "src_app_not-found_tsx_05.~59-._.js",
+    "duration": 85,
+    "size": 563,
+    "initiatorType": "script"
+  },
+  {
+    "name": "node_modules_next_dist_client_components_builtin_global-error_05.~59-.js",
+    "duration": 82,
+    "size": 512,
+    "initiatorType": "script"
+  }
+]

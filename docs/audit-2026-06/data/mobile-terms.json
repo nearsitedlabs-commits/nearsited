@@ -1,0 +1,117 @@
+{
+  "hasHorizontalScroll": false,
+  "bodyFontSize": "16px",
+  "viewportWidth": 375,
+  "viewportHeight": 667,
+  "smallTargets": [
+    {
+      "tag": "A",
+      "text": "← Nearsited",
+      "width": 80,
+      "height": 20
+    },
+    {
+      "tag": "A",
+      "text": "1. Introduction",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "2. Account Registration",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "3. Acceptable Use",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "4. Subscriptions & Billing",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "5. Refund Policy",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "6. Intellectual Property",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "7. Termination",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "8. Limitation of Liability",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "9. Governing Law",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "10. Changes to These Terms",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "Google’s Terms of Service",
+      "width": 166,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "Privacy Policy",
+      "width": 89,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Jump to section",
+      "width": 162,
+      "height": 42
+    }
+  ],
+  "smallTextElements": [
+    {
+      "tag": "P",
+      "text": "Contents",
+      "fontSize": "10px"
+    }
+  ]
+}

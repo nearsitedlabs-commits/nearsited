@@ -7,16 +7,16 @@ import { Search, ExternalLink, Check, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { ScoreRing } from "@/components/ui/ScoreRing";
+import { ScoreCircle } from "@/components/ui/ScoreCircle";
 
 const CanvasBackground = dynamic(
   () => import("@/components/ui/CanvasBackground").then((mod) => ({ default: mod.CanvasBackground })),
-  { ssr: false },
+  { ssr: false, loading: () => <div className="absolute inset-0 bg-[var(--color-bg-page)]" aria-hidden="true" /> },
 );
 
 const OpportunityAtlas = dynamic(
   () => import("@/components/landing/atlas/OpportunityAtlas"),
-  { ssr: false },
+  { ssr: false, loading: () => <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-bg-page)] to-transparent hidden md:block" aria-hidden="true" /> },
 );
 
 const OPP_TYPES = ["no_website", "social_only", "has_website"] as const; // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -50,17 +50,17 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
       <OpportunityAtlas />
       <CanvasBackground />
 
-      <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pt-6 pb-16 sm:px-6 md:gap-12 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10">
+      <div className="relative mx-auto grid max-w-7xl lg:gap-8 gap-4 px-4 pt-6 pb-16 sm:px-6 md:gap-12 md:min-h-[calc(100svh-var(--nav-height,80px))] md:grid-cols-2 md:items-center md:px-8 md:pt-8 md:pb-20 lg:px-10">
 
       {/* Left: Copy */}
       <div className="relative z-10 flex flex-col justify-center space-y-6">
         <motion.div {...fadeUp(0)} className="space-y-5">
-          <h1 className="text-[length:var(--text-hero)] font-bold tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]">
+          <h1 className="text-[length:var(--text-hero)] font-bold tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)] [font-family:var(--font-display)]">
             Your next client<br />
             is out there —<br />
             <span className="text-[var(--color-accent)]">without a website</span>
           </h1>
-          <p className="max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
+          <p className="max-w-xl text-base leading-6 lg:leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
             Nearsited finds local businesses with no website, social-only presence, platform-only listings, or weak websites. Ranks them by opportunity, writes the pitch.
           </p>
         </motion.div>
@@ -86,7 +86,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
 
         <motion.div {...fadeUp(0.25)} className="flex flex-col gap-2 text-sm text-[var(--color-text-tertiary)] sm:flex-row sm:flex-wrap sm:gap-6">
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
-          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free analyses</span>
+          <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />20 free analyses</span>
           <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
         </motion.div>
       </div>
@@ -117,20 +117,20 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                   key={opp.type}
                   type="button"
                   onClick={() => setActiveOpp(opp.type)}
-                  className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 ${
+                  className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] ${
                     activeOpp === opp.type
                       ? "border-[var(--color-accent)]/50 bg-[var(--color-accent)]/10"
                       : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent)]/30"
                   }`}
                 >
-                  <ScoreRing score={opp.score} size={32} variant="estimate" />
+                  <span aria-hidden="true"><ScoreCircle score={opp.score} size={32} variant="estimated" /></span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-[var(--color-text-primary)]">{opp.name}</p>
                     <p className="text-xs text-[var(--color-text-tertiary)]">{opp.desc}</p>
                   </div>
                   <div className="shrink-0">
                     <span
-                      className="inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap"
+                      className="inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap"
                       style={{ borderColor: `${opp.badgeColor}30`, backgroundColor: `${opp.badgeColor}10`, color: opp.badgeColor }}
                     >
                       {opp.badge}
@@ -148,7 +148,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
               </div>
               <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">{PITCHES[activeOpp]}</p>
               <div className="mt-3 border-t border-[var(--color-border-subtle)] pt-3">
-                <Button variant="primary" onClick={handleCopy} className="w-full text-xs">
+                <Button variant="secondary" onClick={handleCopy} className="w-full text-xs">
                   {copied ? "Copied!" : "Copy pitch →"}
                 </Button>
               </div>

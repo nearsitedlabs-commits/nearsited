@@ -1,0 +1,14 @@
+{
+  "firstButton": {
+    "outline": "rgb(184, 176, 168) none 3px",
+    "outline-color": "rgb(184, 176, 168)",
+    "box-shadow": "none",
+    "outline-offset": "0px"
+  },
+  "input-email": {
+    "outline": "rgb(138, 151, 119) solid 2px",
+    "outline-color": "rgb(138, 151, 119)",
+    "box-shadow": "none",
+    "border-color": "rgba(255, 255, 255, 0.06)"
+  }
+}

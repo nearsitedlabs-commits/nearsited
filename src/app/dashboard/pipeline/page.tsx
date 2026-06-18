@@ -218,7 +218,7 @@ export default function PipelinePage() {
 
   return (
     <>
-    <div className="min-h-screen bg-[var(--color-bg-page)]">
+    <motion.div layout className="min-h-screen bg-[var(--color-bg-page)]">
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8">
         {/* Header — stands alone, no card wrapper (Rule E) */}
         <div className="mb-6">
@@ -238,7 +238,7 @@ export default function PipelinePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center"
+            className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-6 sm:px-12 py-12 sm:py-20 text-center"
           >
             <p className="text-sm font-medium text-[var(--color-text-primary)]">
               Pipeline is empty.
@@ -261,7 +261,7 @@ export default function PipelinePage() {
                 const stageItems = grouped[stage] ?? [];
                 const isOpen = !collapsedStages.has(stage);
                 return (
-                  <div key={stage} className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+                  <div key={stage} className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]">
                     {/* Stage header — tappable to toggle */}
                     <button
                       type="button"
@@ -333,7 +333,7 @@ export default function PipelinePage() {
           </>
         )}
       </div>
-    </div>
+    </motion.div>
     {toastMsg && <Toast message={toastMsg} onClose={() => setToast(null)} />}
     </>
   );

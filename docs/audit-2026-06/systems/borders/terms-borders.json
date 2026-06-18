@@ -1,0 +1,43 @@
+{
+  "page": "terms",
+  "url": "/terms",
+  "borderCount": 2,
+  "elements": [
+    {
+      "tag": "DIV",
+      "classes": "border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions about these Terms? Email nearsitedlabs@gmail.com — we aim to respond w",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 3693.71875,
+        "width": 688,
+        "height": 105
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-12 border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions? nearsitedlabs@gmail.com",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 3846.71875,
+        "width": 688,
+        "height": 53
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border"
+    }
+  ]
+}

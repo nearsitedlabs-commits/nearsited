@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User, CreditCard, Key, Trash2, Loader2, Bell, Shield, Download, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
 import { useSafeReducedMotion } from "@/lib/motion";
 import { Toast } from "@/components/ui/Toast";
@@ -150,25 +151,18 @@ function ConfirmModal({
           </div>
         )}
         <div className="mt-6 flex items-center justify-end gap-3">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:opacity-50 cursor-pointer"
-          >
+          <Button variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={destructive ? "destructive" : "primary"}
+            size="sm"
             onClick={onConfirm}
             disabled={!canConfirm || loading}
-            className={`flex items-center gap-1.5 rounded-[var(--radius-sm)] px-4 py-2 text-xs font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer ${
-              destructive
-                ? "bg-red-500/80 hover:bg-red-500"
-                : "bg-[var(--color-accent)] hover:opacity-90"
-            }`}
           >
             {loading && <Loader2 className="h-3 w-3 animate-spin" />}
             {confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -799,22 +793,22 @@ export default function SettingsPage() {
             {(!sub || sub.tier === "free") && (
               <div className="mt-4 space-y-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                  <button
+                  <Button
+                    variant="secondary"
                     onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-4 py-2.5 min-h-[44px] text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Starter — $19/mo
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="primary"
                     onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
                     disabled={upgrading !== null}
-                    className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2.5 min-h-[44px] text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:opacity-50"
                   >
                     {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                     Upgrade to Agency — $49/mo
-                  </button>
+                  </Button>
                 </div>
                 {/* Benefits list — kept in sync with landing page Pricing.tsx */}
                 <div className="space-y-1.5">

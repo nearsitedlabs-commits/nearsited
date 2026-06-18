@@ -1,0 +1,887 @@
+{
+  "page": "privacy",
+  "url": "/privacy",
+  "distinctColors": 6,
+  "colors": [
+    "rgb(10, 14, 18)",
+    "rgb(138, 130, 120)",
+    "rgb(138, 151, 119)",
+    "rgb(184, 176, 168)",
+    "rgb(229, 231, 235)",
+    "rgb(240, 237, 232)"
+  ],
+  "elements": [
+    {
+      "tag": "DIV",
+      "text": "← NearsitedContents1. What We Collect2. How We Use Your Data",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(10, 14, 18)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "A",
+      "text": "← Nearsited",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "ASIDE",
+      "text": "Contents1. What We Collect2. How We Use Your Data3. Third-Pa",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "hidden lg:block"
+    },
+    {
+      "tag": "P",
+      "text": "Contents",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-3 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "A",
+      "text": "1. What We Collect",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors font-medium text-[var(--color-accent)]"
+    },
+    {
+      "tag": "A",
+      "text": "2. How We Use Your Data",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "3. Third-Party Services",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "4. Data Retention",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "5. Cookies & Tracking",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "6. Your Rights",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "7. International Transfers",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "A",
+      "text": "8. Changes to This Policy",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block py-1 text-[13px] leading-snug transition-colors text-[var(--color-text-tertiary)] hover:text-[var(--color-text-sec"
+    },
+    {
+      "tag": "MAIN",
+      "text": "Privacy policyLast updated: 8 June 2026Nearsited is operated",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "min-w-0 max-w-[720px]"
+    },
+    {
+      "tag": "H1",
+      "text": "Privacy policy",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[1.75rem] font-medium leading-tight tracking-[-0.02em] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Last updated: 8 June 2026",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Nearsited is operated by Again Labs, a proprietorship regist",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-[1.7] text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "SECTION",
+      "text": "1. What We Collect1.1 Account informationWhen you sign up, w",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "1. What We Collect",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "H3",
+      "text": "1.1 Account information",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "When you sign up, we collect your email address and full nam",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "1.2 Business discovery data (Google Places)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "When you run a discovery search, Nearsited queries the Googl",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "1.3 Website audit data (PageSpeed)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "When you run an audit on a business website, we send the web",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "1.4 Website screenshots (ScreenshotCore)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Design analysis requires a screenshot of the target website.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "1.5 Pitch generation inputs (Gemini AI)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "When you generate a pitch, we send a prompt to Gemini (Googl",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "These inputs are not used to train AI models.We use the Gemi",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2"
+    },
+    {
+      "tag": "H3",
+      "text": "1.6 Leads, pipeline, and pitches (your data)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Leads you save, pipeline entries, notes, and generated pitch",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "1.7 Usage analytics",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "We collect basic usage data — which pages you visit, which f",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "2. How We Use Your DataTo provide and maintain the Nearsited",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "2. How We Use Your Data",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "To provide and maintain the Nearsited service.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "To process payments and manage your subscription via Dodo Pa",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "To send service-related emails: payment receipts, subscripti",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "To improve the product based on how it is used (anonymised u",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "To detect and prevent abuse, fraud, or violations of our Ter",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "We do not sell your data. We do not share your leads with co",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-3"
+    },
+    {
+      "tag": "SECTION",
+      "text": "3. Third-Party ServicesNearsited relies on the following thi",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "3. Third-Party Services",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Nearsited relies on the following third-party services to op",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "Supabase (Supabase Inc., USA)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Database, authentication, and file storage. Stores your acco",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1"
+    },
+    {
+      "tag": "P",
+      "text": "Dodo Payments",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Payment processing for Starter and Agency subscriptions. We ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1"
+    },
+    {
+      "tag": "P",
+      "text": "Google Cloud — Places API, PageSpeed API, Gemini API",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Places API: receives city name and business type to return b",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1"
+    },
+    {
+      "tag": "P",
+      "text": "ScreenshotCore",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Receives the URL of a target business website to capture a s",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1"
+    },
+    {
+      "tag": "P",
+      "text": "Each third-party service is subject to its own privacy polic",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-5"
+    },
+    {
+      "tag": "SECTION",
+      "text": "4. Data RetentionAccount data: retained for as long as your ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "4. Data Retention",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "Account data: retained for as long as your account is active",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Leads, audits, pitches, pipeline: retained until you delete ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Google Places cache: individual place records expire after 7",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "PageSpeed audit results: retained until you delete the assoc",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "After account deletion: all personal data is deleted or anon",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Payment records: retained for 7 years as required by Indian ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "5. Cookies & TrackingWe use only the cookies necessary to ru",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "5. Cookies & Tracking",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "We use only the cookies necessary to run the service:",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "TH",
+      "text": "Cookie",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "pb-2 pr-6 text-left text-xs font-medium text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "TH",
+      "text": "Purpose",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "pb-2 pr-6 text-left text-xs font-medium text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "TH",
+      "text": "Expires",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "pb-2 text-left text-xs font-medium text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "TD",
+      "text": "sb-access-token",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2 pr-6 font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "TD",
+      "text": "Supabase session auth token — keeps you logged in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2 pr-6"
+    },
+    {
+      "tag": "TD",
+      "text": "1 hour",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2"
+    },
+    {
+      "tag": "TD",
+      "text": "sb-refresh-token",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2 pr-6 font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "TD",
+      "text": "Refreshes your session token automatically",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2 pr-6"
+    },
+    {
+      "tag": "TD",
+      "text": "7 days",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "py-2"
+    },
+    {
+      "tag": "P",
+      "text": "We do not use advertising cookies, tracking pixels, or any t",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4"
+    },
+    {
+      "tag": "SECTION",
+      "text": "6. Your RightsRegardless of where you are located, you have ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "6. Your Rights",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Regardless of where you are located, you have the following ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Access: request a copy of the personal data we hold about yo",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Correction: update or correct inaccurate data in your accoun",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Deletion: delete your account and all associated data from S",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Export: download a JSON export of all your data from Setting",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Objection: opt out of usage analytics by emailing us — you w",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "6.1 EU / EEA / UK users (GDPR)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "If you are in the EU, EEA, or UK, the General Data Protectio",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "The right to data portability (machine-readable export — ava",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "The right to restrict processing (we stop using your data wh",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "The right to withdraw consent at any time.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "The right to lodge a complaint with your local supervisory a",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "Our lawful basis for processing: performance of contract (pr",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-3"
+    },
+    {
+      "tag": "H3",
+      "text": "6.2 UAE users (PDPL)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "If you are in the UAE, the Personal Data Protection Law 2021",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H3",
+      "text": "6.3 California users (CCPA)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "We do not sell personal information as defined by the CCPA. ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] hover:underline"
+    },
+    {
+      "tag": "P",
+      "text": "To exercise any of these rights, email nearsitedlabs@gmail.c",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4"
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] hover:underline"
+    },
+    {
+      "tag": "SECTION",
+      "text": "7. International TransfersAgain Labs is based in Kerala, Ind",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "7. International Transfers",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Again Labs is based in Kerala, India. Our infrastructure is ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "For EU/EEA users, transfers to the USA rely on Standard Cont",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "8. Changes to This PolicyWe will notify you by email of any ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "H2",
+      "text": "8. Changes to This Policy",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "scroll-mt-6 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "We will notify you by email of any material changes to this ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "Privacy questions or data requests? Email nearsitedlabs@gmai",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] hover:underline"
+    },
+    {
+      "tag": "P",
+      "text": "See also: Terms of Service",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "A",
+      "text": "Terms of Service",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] hover:underline"
+    },
+    {
+      "tag": "P",
+      "text": "Questions? nearsitedlabs@gmail.com",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] hover:underline"
+    }
+  ]
+}

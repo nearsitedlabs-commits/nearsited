@@ -16,7 +16,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy policy" lastUpdated="8 June 2026" toc={TOC}>
 
-      <p className="text-sm leading-[1.7] text-[var(--color-text-secondary)]">
+      <p className="text-base lg:text-body leading-[1.7] text-[var(--color-text-secondary)]">
         Nearsited is operated by Again Labs, a proprietorship registered in Kerala, India. This policy explains what data we collect, why we collect it, and how we handle it. We built Nearsited as a solo founder product — we have no data-brokering business, no ad network, and no incentive to sell your information.
       </p>
 
@@ -206,11 +206,11 @@ export default function PrivacyPage() {
 
       {/* Contact — flush block */}
       <div className="border-t border-[var(--color-border-subtle)] pt-8">
-        <p className="text-sm text-[var(--color-text-secondary)]">
+        <p className="text-base lg:text-body text-[var(--color-text-secondary)]">
           <strong className="text-[var(--color-text-primary)]">Privacy questions or data requests?</strong>{" "}
           Email <a href="mailto:nearsitedlabs@gmail.com" className="text-[var(--color-accent)] hover:underline">nearsitedlabs@gmail.com</a> — we aim to respond within 2 business days.
         </p>
-        <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+        <p className="mt-3 text-base lg:text-body text-[var(--color-text-secondary)]">
           See also:{" "}
           <Link href="/terms" className="text-[var(--color-accent)] hover:underline">Terms of Service</Link>
         </p>

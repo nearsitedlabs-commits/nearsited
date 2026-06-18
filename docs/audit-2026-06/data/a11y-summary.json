@@ -1,0 +1,42 @@
+{
+  "landing": {
+    "totalIssues": 0,
+    "byType": {
+      "missingAlt": 0,
+      "emptyButton": 0,
+      "headingSkip": 0,
+      "unlabeledInput": 0
+    },
+    "liveRegionCount": 0
+  },
+  "login": {
+    "totalIssues": 1,
+    "byType": {
+      "missingAlt": 0,
+      "emptyButton": 0,
+      "headingSkip": 0,
+      "unlabeledInput": 1
+    },
+    "liveRegionCount": 0
+  },
+  "signup": {
+    "totalIssues": 0,
+    "byType": {
+      "missingAlt": 0,
+      "emptyButton": 0,
+      "headingSkip": 0,
+      "unlabeledInput": 0
+    },
+    "liveRegionCount": 0
+  },
+  "pricing": {
+    "totalIssues": 0,
+    "byType": {
+      "missingAlt": 0,
+      "emptyButton": 0,
+      "headingSkip": 0,
+      "unlabeledInput": 0
+    },
+    "liveRegionCount": 0
+  }
+}

@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function SignOutButton({ compact }: { compact?: boolean }) {
   const router = useRouter();
@@ -16,22 +17,15 @@ export default function SignOutButton({ compact }: { compact?: boolean }) {
 
   if (compact) {
     return (
-      <button
-        onClick={handleSignOut}
-        className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
-        title="Sign out"
-      >
-        <LogOut className="h-4 w-4" />
-      </button>
+      <Button variant="icon" icon={<LogOut className="h-4 w-4" />} onClick={handleSignOut}>
+        Sign out
+      </Button>
     );
   }
 
   return (
-    <button
-      onClick={handleSignOut}
-      className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
-    >
+    <Button variant="secondary" size="sm" onClick={handleSignOut}>
       Sign out
-    </button>
+    </Button>
   );
 }

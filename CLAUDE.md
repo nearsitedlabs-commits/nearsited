@@ -1,5 +1,5 @@
 # CLAUDE.md — Nearsited
-*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-16.*
+*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-18.*
 
 ---
 
@@ -496,11 +496,13 @@ All v1 phases are now COMPLETE. Specific items:
 - [x] Autofill override for dark inputs
 
 ### Remaining v1 items:
-- Leads page: "Audited" / "Analysed" filter tabs (audited_at / design_analyzed_at IS NOT NULL)
-- Leads page: pagination position restored on back-navigation (sessionStorage)
-- Leads page: filter tab tooltips (ⓘ with plain-English explanations)
+- ✅ Leads page: "Audited" / "Analysed" filter tabs — implemented in `OPPORTUNITY_FILTER_OPTIONS` + `handleFilterTabClick`
+- ✅ Leads page: pagination position restored on back-navigation — sessionStorage read/write in `page.tsx`
+- ✅ Leads page: filter tab tooltips — `tooltip` field in `OPPORTUNITY_FILTER_OPTIONS`, `ⓘ` indicator in `LeadsFilterBar`
 - ✅ `/api/pitch` DB persistence: `channel` column migration created at [`scripts/migrate-vibecode-fixes.sql`](scripts/migrate-vibecode-fixes.sql) — run via Supabase SQL editor
 - ✅ `/api/contact-info`: `contact_info` JSONB column migration created at [`scripts/migrate-vibecode-fixes.sql`](scripts/migrate-vibecode-fixes.sql) — run via Supabase SQL editor
+
+**V1 is complete.** All features shipped. Analysis kit Phases 0–3 complete (2026-06-18).
 
 **V2:** UX analysis (Playwright+queue+worker+Storage — build these together), Radar/decay monitoring, Competitor tab, mockup generation, Stripe/credits, Campaigns/Templates/Reports/Integrations, Pitch Deck + Loom export, vertical packs. Job queue added with first async feature.
 
@@ -735,4 +737,48 @@ These patterns ensure future AI iterations can work with the codebase without br
 
 ---
 
-*Update this file the moment a schema, enum, model name, runtime, or convention changes. Last updated: 2026-06-16.*
+## Code Review Checklist (Phase 3 — Architecture Enforcement)
+
+Run this checklist on every PR that touches UI code. Automated ESLint rules (3.1–3.3) catch the common cases; this list covers the rest.
+
+### Buttons
+- [ ] Every `<button>` or `[role="button"]` uses a `<Button>` variant (`primary`, `secondary`, `ghost`, `destructive`) — no inline `inline-flex cursor-pointer` clones
+- [ ] At most **one `<PrimaryButton>`** per page section
+- [ ] Secondary/tertiary actions are in `<ActionMenu>` if there are 3+
+- [ ] Destructive actions (delete, remove, sign out) use the `destructive` variant, not `hover:text-red-400`
+
+### Border Radius
+- [ ] Only `rounded-[var(--radius-sm)]` (6px) or `rounded-[var(--radius-md)]` (10px) used — **no `rounded-full`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, or arbitrary `rounded-[Xpx]`**
+
+### Design Tokens
+- [ ] All colors reference CSS variables (`--color-*`, `--bg-*`, `--text-*`) — no raw Tailwind semantic colors (`red-500`, `amber-500`, `green-500`)
+- [ ] Semantic meaning preserved: danger=red, warning=amber, success=deep-green, info=blue, accent=sage
+- [ ] Zero-value metrics use gray (not green/red): "Won: 0" → gray, not green
+
+### Decorative SVGs (3.4)
+- [ ] Every `<svg>` has either `aria-hidden="true"` (decorative) or `role="img"` + nested `<title>` (meaningful)
+- [ ] Lucide icons used as button affordances do not need `aria-hidden` when the `<button>` has an accessible label
+- [ ] No SVG IDs hardcoded (e.g. `id="glow-opp"`) — use `useId()` to prevent multi-instance collisions
+
+### Accessibility
+- [ ] Every interactive element has a 44×44px minimum touch target on mobile
+- [ ] Error banners have `aria-live="polite"` for screen reader announcement
+- [ ] Every `role="dialog"` has a keyboard focus trap and `aria-modal="true"`
+- [ ] `focus-visible:ring-2` ring present on all interactive elements (cards, buttons, links)
+
+### Mobile
+- [ ] Page tested at 380px width — no horizontal overflow
+- [ ] `hover:` CSS gated with `@media (hover: hover)` — no sticky hover on touch
+
+### Typography
+- [ ] Font sizes from the 9-step scale only: `--text-xs/sm/base/body/lg/xl/2xl/display/hero`
+- [ ] Hero headlines use `font-[family-name:var(--font-display)]` (Switzer), not `font-sans`
+- [ ] No heading level skips (h1→h3 without h2)
+
+### Performance
+- [ ] All `<Image>` from `next/image` have a `sizes` prop — no bare `<img>` for logos or product images
+- [ ] No Framer Motion `motion.*` in dashboard routes — use CSS transitions + `.animate-fadeUp`
+
+---
+
+*Update this file the moment a schema, enum, model name, runtime, or convention changes. Last updated: 2026-06-18.*

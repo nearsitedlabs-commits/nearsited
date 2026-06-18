@@ -38,7 +38,17 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     .select("tier, audits_used, audits_limit, searches_used, searches_limit, credits_reset_at")
     .eq("user_id", userId)
     .maybeSingle();
-  if (data) return data as SubRow;
+  if (data) {
+    // Backfill limits that may be null/0 on rows created before those columns were added.
+    const patch: Partial<SubRow> = {};
+    if (!data.searches_limit) patch.searches_limit = FREE_SEARCH_LIMIT;
+    if (!data.audits_limit) patch.audits_limit = FREE_AUDIT_LIMIT;
+    if (Object.keys(patch).length) {
+      await subTable().update(patch).eq("user_id", userId);
+      return { ...data, ...patch } as SubRow;
+    }
+    return data as SubRow;
+  }
 
   // No row — provision free tier with monthly reset from day one
   const now = new Date();

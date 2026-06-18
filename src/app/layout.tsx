@@ -74,6 +74,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Switzer — hero display font (Fontshare CDN).
+            To self-host: download from fontshare.com/fonts/switzer, place in
+            /public/fonts/, and replace with next/font/local. */}
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap"
+        />
         <Script
           id="json-ld"
           type="application/ld+json"

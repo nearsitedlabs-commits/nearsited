@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { SectionLabel } from "@/components/landing/SectionLabel";
 import { motion, AnimatePresence, useSafeReducedMotion, type Variants } from "@/lib/motion";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -133,17 +134,18 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
           whileInView="visible"
           viewport={viewport}
         >
-          {mode === "inline" && (
-            <div className="mb-4 inline-flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-accent)]">
-              <span className="block h-px w-6 bg-[var(--color-accent)]" />
-              Pricing
-            </div>
+          {mode === "inline" && <SectionLabel>Pricing</SectionLabel>}
+          {mode === "page" ? (
+            <h1 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--color-text-primary)]">
+              Start finding clients this week.
+            </h1>
+          ) : (
+            <h2 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--color-text-primary)]">
+              Start finding clients this week.
+            </h2>
           )}
-          <h2 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--color-text-primary)]">
-            Start finding clients this week.
-          </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--color-text-secondary)]">
-            Start with 10 free analyses. No credit card needed.
+            Start with 20 free analyses. No credit card needed.
           </p>
         </motion.div>
 
@@ -183,21 +185,15 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                 }`}
               >
                 {billing === b && (
-                  <motion.div
-                    layoutId="billing-pill"
-                    className="absolute inset-0 rounded-full bg-[var(--color-bg-surface)] shadow-sm"
-                    transition={
-                      shouldReduce
-                        ? { duration: 0 }
-                        : { type: "spring", stiffness: 400, damping: 35 }
-                    }
+                  <div
+                    className="absolute inset-0 rounded-full bg-[var(--color-bg-surface)] shadow-sm transition-all duration-300"
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-1.5">
                   {b === "monthly" ? "Monthly" : "Annual"}
                   {b === "annual" && (
-                    <span className="self-center leading-none text-[0.6rem] font-semibold tracking-wide text-[var(--color-accent)]">
-                      SAVE 20%
+                    <span className="self-center leading-none text-[0.6rem] font-medium tracking-wide text-[var(--color-accent)]">
+                      SAVE 21%
                     </span>
                   )}
                 </span>
@@ -274,7 +270,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                     initial={shouldReduce ? false : { opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={shouldReduce ? undefined : { opacity: 0, y: 8 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                    transition={{ duration: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
                     className="mt-6"
                   >
                     <p className="text-3xl font-medium tracking-tight text-[var(--color-text-primary)]">

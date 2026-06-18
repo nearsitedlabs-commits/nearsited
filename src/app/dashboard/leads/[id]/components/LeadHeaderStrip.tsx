@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, FileDown, MapPin, Phone, Share2, TrendingUp } 
 import { getLeadWebUrl } from "@/components/ui/LeadAffordances";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { ActionMenu } from "@/components/ui/ActionMenu";
+import { Button } from "@/components/ui/Button";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 
 type Props = {
@@ -135,12 +136,9 @@ export function LeadHeaderStrip({
               options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
             />
           ) : (
-            <button
-              onClick={() => onPipelineChange("new_lead")}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 px-3.5 py-2 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white min-h-[44px] sm:min-h-0"
-            >
+            <Button variant="secondary" size="sm" onClick={() => onPipelineChange("new_lead")} className="min-h-[44px] sm:min-h-0">
               <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
-            </button>
+            </Button>
           )}
           {/* PDF + Share inline on desktop */}
           <a
@@ -149,12 +147,9 @@ export function LeadHeaderStrip({
           >
             <FileDown className="h-3.5 w-3.5" /> PDF
           </a>
-          <button
-            onClick={onShare}
-            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
-          >
+          <Button variant="secondary" size="sm" onClick={onShare} className="hidden sm:inline-flex">
             <Share2 className="h-3.5 w-3.5" /> Share
-          </button>
+          </Button>
           {/* ⋯ overflow on mobile — PDF + Share collapsed here */}
           <div className="sm:hidden">
             <ActionMenu

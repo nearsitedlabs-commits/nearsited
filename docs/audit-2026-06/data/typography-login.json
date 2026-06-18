@@ -1,0 +1,194 @@
+{
+  "page": "login",
+  "url": "/login",
+  "count": 17,
+  "elements": [
+    {
+      "tag": "a",
+      "text": "NearSited",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "span",
+      "text": "NearSited",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "span",
+      "text": "Sign in",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(184, 176, 168)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "rgb(240, 237, 232)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "h1",
+      "text": "Welcome back.",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "28px",
+      "fontWeight": "500",
+      "lineHeight": "35px",
+      "letterSpacing": "-0.84px",
+      "color": "rgb(240, 237, 232)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "p",
+      "text": "Pick up where you left off.",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22.75px",
+      "letterSpacing": "normal",
+      "color": "rgb(184, 176, 168)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "button",
+      "text": "Continue with Google",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(184, 176, 168)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "span",
+      "text": "",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "rgb(240, 237, 232)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "span",
+      "text": "or",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "16px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "label",
+      "text": "Email",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "12px",
+      "fontWeight": "500",
+      "lineHeight": "16px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "label",
+      "text": "Password",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "12px",
+      "fontWeight": "500",
+      "lineHeight": "16px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "button",
+      "text": "",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "label",
+      "text": "Remember me",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "16px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "button",
+      "text": "Forgot password?",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "16px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "button",
+      "text": "Sign in",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(255, 255, 255)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "p",
+      "text": "Don’t have an account? Sign up",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 130, 120)",
+      "textTransform": "none"
+    },
+    {
+      "tag": "a",
+      "text": "Sign up",
+      "fontFamily": "Geist, \"Geist Fallback\"",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "rgb(138, 151, 119)",
+      "textTransform": "none"
+    }
+  ]
+}

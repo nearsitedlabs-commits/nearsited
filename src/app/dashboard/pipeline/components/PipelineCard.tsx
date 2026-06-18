@@ -71,7 +71,7 @@ export function PipelineCard({
         }
       }}
       onClick={() => onCardClick(item.id)}
-      className={`cursor-grab active:cursor-grabbing rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] border-t-[3px] bg-[var(--color-bg-elevated)] p-2.5 transition-shadow ${
+      className={`cursor-grab active:cursor-grabbing rounded-[var(--radius-sm)] border-t-[3px] bg-[var(--color-bg-elevated)] p-2.5 transition-shadow ${
         draggingId === item.pipeline_id
           ? "shadow-[var(--brand-shadow-lg)] z-10"
           : "shadow-[var(--brand-shadow-xs)] hover:shadow-[var(--brand-shadow-sm)]"

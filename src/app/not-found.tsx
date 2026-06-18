@@ -26,6 +26,7 @@ export default function NotFound() {
           alt="NearSited"
           width={40}
           height={24}
+          sizes="40px"
           className="block shrink-0"
           priority
         />

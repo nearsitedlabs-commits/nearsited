@@ -1,0 +1,42 @@
+{
+  "loadedFonts": [
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist",
+    "Geist Fallback",
+    "Geist Mono",
+    "Geist Mono",
+    "Geist Mono",
+    "Geist Mono",
+    "Geist Mono",
+    "Geist Mono",
+    "Geist Mono Fallback",
+    "__nextjs-Geist",
+    "__nextjs-Geist Mono",
+    "__nextjs-Geist",
+    "__nextjs-Geist Mono"
+  ],
+  "bodyFontFamily": "Geist, \"Geist Fallback\"",
+  "fontPreloads": [
+    "/_next/static/media/797e433ab948586e-s.p.08e28id.o-okb.woff2",
+    "/_next/static/media/caa3a2e1cccd8315-s.p.09~u27dqhyhd6.woff2"
+  ],
+  "hasFontDisplay": "loaded"
+}

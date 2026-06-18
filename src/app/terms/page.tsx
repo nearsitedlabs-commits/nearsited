@@ -172,11 +172,11 @@ export default function TermsPage() {
 
       {/* Contact — flush block at bottom, outside numbered sections */}
       <div className="border-t border-[var(--color-border-subtle)] pt-8">
-        <p className="text-sm text-[var(--color-text-secondary)]">
+        <p className="text-base lg:text-body text-[var(--color-text-secondary)]">
           <strong className="text-[var(--color-text-primary)]">Questions about these Terms?</strong>{" "}
           Email <a href="mailto:nearsitedlabs@gmail.com" className="text-[var(--color-accent)] hover:underline">nearsitedlabs@gmail.com</a> — we aim to respond within 2 business days.
         </p>
-        <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+        <p className="mt-3 text-base lg:text-body text-[var(--color-text-secondary)]">
           See also:{" "}
           <Link href="/privacy" className="text-[var(--color-accent)] hover:underline">Privacy Policy</Link>
         </p>

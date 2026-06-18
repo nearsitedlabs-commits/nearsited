@@ -1,0 +1,34 @@
+{
+  "landing": {
+    "totalRequests": 30,
+    "jsResourceCount": 26,
+    "totalJSSizeKB": 1053,
+    "imageCount": 2,
+    "nextImageCount": 2,
+    "domNodes": 967
+  },
+  "login": {
+    "totalRequests": 34,
+    "jsResourceCount": 30,
+    "totalJSSizeKB": 237,
+    "imageCount": 2,
+    "nextImageCount": 2,
+    "domNodes": 142
+  },
+  "signup": {
+    "totalRequests": 34,
+    "jsResourceCount": 30,
+    "totalJSSizeKB": 20,
+    "imageCount": 2,
+    "nextImageCount": 2,
+    "domNodes": 150
+  },
+  "pricing": {
+    "totalRequests": 32,
+    "jsResourceCount": 28,
+    "totalJSSizeKB": 233,
+    "imageCount": 1,
+    "nextImageCount": 1,
+    "domNodes": 249
+  }
+}

@@ -1,0 +1,4036 @@
+{
+  "page": "landing",
+  "url": "/",
+  "distinctColors": 27,
+  "colors": [
+    "rgb(10, 14, 18)",
+    "rgb(122, 159, 122)",
+    "rgb(138, 130, 120)",
+    "rgb(138, 151, 119)",
+    "rgb(154, 196, 154)",
+    "rgb(176, 192, 160)",
+    "rgb(18, 23, 30)",
+    "rgb(184, 176, 168)",
+    "rgb(196, 102, 90)",
+    "rgb(196, 152, 74)",
+    "rgb(229, 231, 235)",
+    "rgb(240, 237, 232)",
+    "rgb(255, 255, 255)",
+    "rgb(26, 32, 40)",
+    "rgb(74, 143, 90)",
+    "rgba(10, 14, 18, 0.7)",
+    "rgba(138, 151, 119, 0.1)",
+    "rgba(138, 151, 119, 0.18)",
+    "rgba(138, 151, 119, 0.25)",
+    "rgba(138, 151, 119, 0.5)",
+    "rgba(196, 102, 90, 0.1)",
+    "rgba(255, 255, 255, 0.04)",
+    "rgba(255, 255, 255, 0.06)",
+    "rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgb(138, 151, 119)",
+    "rgba(255, 255, 255, 0.08)",
+    "rgba(255, 255, 255, 0.1)",
+    "rgba(255, 255, 255, 0.35)"
+  ],
+  "elements": [
+    {
+      "tag": "DIV",
+      "text": "NearSitedHow it worksSample reportPricingFAQSign inGet start",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(10, 14, 18)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "NAV",
+      "text": "NearSitedHow it worksSample reportPricingFAQSign inGet start",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)]/80 backdrop-blur-xl"
+    },
+    {
+      "tag": "A",
+      "text": "NearSited",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-2.5 text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "NearSited",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[22px] font-medium tracking-[0.02em] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "How it works",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "A",
+      "text": "How it works",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px aft"
+    },
+    {
+      "tag": "LI",
+      "text": "Sample report",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "A",
+      "text": "Sample report",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px aft"
+    },
+    {
+      "tag": "LI",
+      "text": "Pricing",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "A",
+      "text": "Pricing",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px aft"
+    },
+    {
+      "tag": "LI",
+      "text": "FAQ",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "A",
+      "text": "FAQ",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px aft"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Sign in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "classes": "items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Sign in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Get startedGet started free",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Get startedGet started free",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "Get started free",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "hidden sm:inline"
+    },
+    {
+      "tag": "NAV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 lg:flex"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(10, 14, 18, 0.7)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(138, 151, 119, 0.18)",
+      "borderColor": "rgba(138, 151, 119, 0.5)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-house"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(255, 255, 255, 0.04)",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgba(255, 255, 255, 0.35)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-book-open"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(255, 255, 255, 0.04)",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgba(255, 255, 255, 0.35)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-sparkles"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(255, 255, 255, 0.04)",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgba(255, 255, 255, 0.35)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-file-text"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(255, 255, 255, 0.04)",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgba(255, 255, 255, 0.35)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-briefcase"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "group flex h-8 w-8 items-center justify-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(255, 255, 255, 0.04)",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "classes": "flex items-center justify-center rounded-full"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgba(255, 255, 255, 0.35)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-credit-card"
+    },
+    {
+      "tag": "MAIN",
+      "text": "Your next clientis out there —without a websiteNearsited fin",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "pt-16 lg:pt-20"
+    },
+    {
+      "tag": "SECTION",
+      "text": "Your next clientis out there —without a websiteNearsited fin",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative overflow-hidden [overflow-x:clip]"
+    },
+    {
+      "tag": "H1",
+      "text": "Your next clientis out there —without a website",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[length:var(--text-hero)] font-bold tracking-[-0.04em] leading-[0.92] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "without a website",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)]"
+    },
+    {
+      "tag": "P",
+      "text": "Nearsited finds local businesses with no website, social-onl",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-4 w-4 shrink-0 items-center justify-center"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-search h-4 w-4"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "See how agencies win",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-4 w-4 shrink-0 items-center justify-center"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-external-link h-4 w-4"
+    },
+    {
+      "tag": "SPAN",
+      "text": "See how agencies win",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "No credit card",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "10 free analyses",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Cancel anytime",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "Opportunities · DubaiSample85Marina Legal ConsultantsDubai M",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 border-[var(--border-"
+    },
+    {
+      "tag": "P",
+      "text": "Opportunities · Dubai",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Sample",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgb(154, 196, 154)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--badge-green-text)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "85Marina Legal ConsultantsDubai Marina · LegalNo Website",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all durat"
+    },
+    {
+      "tag": "svg",
+      "text": "85",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex-shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "Marina Legal Consultants",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "truncate text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Dubai Marina · Legal",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No Website",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(196, 102, 90)",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "72Blue Wave RestaurantJBR · Food & BeverageSocial Only",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all durat"
+    },
+    {
+      "tag": "svg",
+      "text": "72",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex-shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "Blue Wave Restaurant",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "truncate text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "JBR · Food & Beverage",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Social Only",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(196, 152, 74)",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "72Bright Smile DentalJumeirah · HealthcareWeak Website",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all durat"
+    },
+    {
+      "tag": "svg",
+      "text": "72",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex-shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "Bright Smile Dental",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "truncate text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Jumeirah · Healthcare",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Weak Website",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(196, 152, 74)",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap"
+    },
+    {
+      "tag": "DIV",
+      "text": "AI pitch · ready to send\"Hi, I noticed Marina Legal has grea",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "mt-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-message-square h-3 w-3 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "P",
+      "text": "\"Hi, I noticed Marina Legal has great reviews but no website",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)] italic"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Copy pitch →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 font-medium transition-colors durat"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Copy pitch →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "DIV",
+      "text": "Live discovery across 29,000+ cities·Built by a solo founder",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-y border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+    },
+    {
+      "tag": "LI",
+      "text": "Live discovery across 29,000+ cities",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "LI",
+      "text": "·Built by a solo founder tired of prospecting manually",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "SPAN",
+      "text": "·",
+      "color": "rgba(255, 255, 255, 0.1)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "hidden sm:inline text-[var(--color-border-strong)]"
+    },
+    {
+      "tag": "LI",
+      "text": "·From city search to ready-to-send pitch in under 2 minutes",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "SPAN",
+      "text": "·",
+      "color": "rgba(255, 255, 255, 0.1)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "hidden sm:inline text-[var(--color-border-strong)]"
+    },
+    {
+      "tag": "SECTION",
+      "text": "The workflowFour steps to your next website project.From fin",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Four steps to your next website project.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "P",
+      "text": "From finding the right lead to closing the deal, every step ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto text-center"
+    },
+    {
+      "tag": "SPAN",
+      "text": "01",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[2.5rem] font-medium italic tracking-[-0.04em] text-[var(--color-text-tertiary)]/40 leading-none w-12 text"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-search h-3.5 w-3.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Find opportunities",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Enter a city + business category. Nearsited surfaces hyperlo",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "02",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[2.5rem] font-medium italic tracking-[-0.04em] text-[var(--color-text-tertiary)]/40 leading-none w-12 text"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-target h-3.5 w-3.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Understand the gap",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Every lead gets an opportunity score (0–100) backed by websi",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "03",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[2.5rem] font-medium italic tracking-[-0.04em] text-[var(--color-text-tertiary)]/40 leading-none w-12 text"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-mail h-3.5 w-3.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Generate outreach",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "One click generates a personalised pitch tailored to the opp",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "04",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[2.5rem] font-medium italic tracking-[-0.04em] text-[var(--color-text-tertiary)]/40 leading-none w-12 text"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-trending-up h-3.5 w-3.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Win more website projects",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Track every lead through a pipeline: New → Contacted → In Co",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "How opportunity scoring worksEvery lead gets a single 0–100 ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-6"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[va"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-info h-4 w-4"
+    },
+    {
+      "tag": "H3",
+      "text": "How opportunity scoring works",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-semibold text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Every lead gets a single 0–100 opportunity score that combin",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "< 40Low",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(196, 102, 90)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-2 w-2 rounded-full shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "< 40",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs font-semibold text-[var(--color-text-primary)] leading-none"
+    },
+    {
+      "tag": "P",
+      "text": "Low",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] text-[var(--color-text-tertiary)] leading-none"
+    },
+    {
+      "tag": "DIV",
+      "text": "40–69Medium",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(196, 152, 74)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-2 w-2 rounded-full shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "40–69",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs font-semibold text-[var(--color-text-primary)] leading-none"
+    },
+    {
+      "tag": "P",
+      "text": "Medium",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] text-[var(--color-text-tertiary)] leading-none"
+    },
+    {
+      "tag": "DIV",
+      "text": "70+High",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(122, 159, 122)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-2 w-2 rounded-full shrink-0"
+    },
+    {
+      "tag": "P",
+      "text": "70+",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs font-semibold text-[var(--color-text-primary)] leading-none"
+    },
+    {
+      "tag": "P",
+      "text": "High",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] text-[var(--color-text-tertiary)] leading-none"
+    },
+    {
+      "tag": "P",
+      "text": "Use the score to prioritise, not to disqualify. A low score ",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-3 text-xs leading-6 text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "A",
+      "text": "Find your first opportunity",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-4 w-4 shrink-0 items-center justify-center"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-search h-4 w-4"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "Why NearsitedOther tools find bad websites. Nearsited finds ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "scroll-mt-20 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Other tools find bad websites. Nearsited finds every opportu",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "P",
+      "text": "Most tools show you which sites score low. Nearsited goes fu",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto text-center"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--score-high)]/10"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-triangle-alert h-4 w-4 text-[var(--score-high)]"
+    },
+    {
+      "tag": "H3",
+      "text": "Traditional prospecting",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-base font-medium text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "✕No way to find businesses that have no website at all",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No way to find businesses that have no website at all",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕Cannot discover social-only or platform-only businesses",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Cannot discover social-only or platform-only businesses",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕Manual website checking, one business at a time",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Manual website checking, one business at a time",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕No prioritisation, you guess who to contact first",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No prioritisation, you guess who to contact first",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕Generic cold outreach with no supporting evidence",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Generic cold outreach with no supporting evidence",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕No built-in pipeline. Spreadsheets or external CRM required",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No built-in pipeline. Spreadsheets or external CRM required.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "✕Hours of research before a single pitch is sent",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70"
+    },
+    {
+      "tag": "SPAN",
+      "text": "✕",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-0.5 shrink-0 text-[var(--score-high)] font-bold"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Hours of research before a single pitch is sent",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "DIV",
+      "text": "NearsitedFinds businesses with no website, social-only, and ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-full rounded-[var(--radius-md)] bg-[var(--color-accent)]/[0.04] px-6 py-6"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-zap h-4 w-4 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "H3",
+      "text": "Nearsited",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-base font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "Finds businesses with no website, social-only, and platform-",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Finds businesses with no website, social-only, and platform-",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Surfaces weak websites ranked by opportunity score, not qual",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Surfaces weak websites ranked by opportunity score, not qual",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Every lead gets an estimated score instantly. Analyse only t",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Every lead gets an estimated score instantly. Analyse only t",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Pitch angle changes completely per lead type. Not one generi",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch angle changes completely per lead type. Not one generi",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Generates evidence-based pitches citing real audit data",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Generates evidence-based pitches citing real audit data",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Built-in pipeline to track every lead from discovery to clos",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Built-in pipeline to track every lead from discovery to clos",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "From search to pitch-ready lead in under 2 minutes",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "From search to pitch-ready lead in under 2 minutes",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "DIV",
+      "text": "Four opportunity types · all in one searchNo WebsiteBiggest ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 md:mt-10 md"
+    },
+    {
+      "tag": "P",
+      "text": "Four opportunity types · all in one search",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-3 text-center text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-text-tertiary)] md:mb-4 md:tracking-[0.18e"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(196, 102, 90)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 shrink-0 rounded-full"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No Website",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[13px] font-medium leading-tight md:text-[15px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Biggest opportunity",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(196, 152, 74)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 shrink-0 rounded-full"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Social Only",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[13px] font-medium leading-tight md:text-[15px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Social-only presence",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(176, 192, 160)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 shrink-0 rounded-full"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Platform Only",
+      "color": "rgb(176, 192, 160)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[13px] font-medium leading-tight md:text-[15px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Third-party platform",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 shrink-0 rounded-full"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Weak Website",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[13px] font-medium leading-tight md:text-[15px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Redesign opportunity",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[10px] leading-snug text-[var(--color-text-tertiary)] md:text-[11px]"
+    },
+    {
+      "tag": "SECTION",
+      "text": "SAMPLE OPPORTUNITY REPORTEvery opportunity type, one platfor",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Every opportunity type, one platform.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] "
+    },
+    {
+      "tag": "P",
+      "text": "Nearsited discovers all four kinds of website opportunity. H",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] "
+    },
+    {
+      "tag": "P",
+      "text": "Sample data — actual output uses real audit data from Google",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-3 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Weak Website",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(138, 151, 119)",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "No site",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Social Only",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Platform Only",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color"
+    },
+    {
+      "tag": "DIV",
+      "text": "Bright Smile DentalOpportunity: 87/100Verifiedbrightsmile.ae",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 mt-4 border-[var(--bo"
+    },
+    {
+      "tag": "H3",
+      "text": "Bright Smile Dental",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xl font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Opportunity: 87/100",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Verified",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "P",
+      "text": "brightsmile.ae · Jumeirah, Dubai · Dentist",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "5 critical issues foundSlow mobile load time (LCP: 4.2s)High",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(196, 102, 90, 0.1)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-triangle-alert h-4 w-4 text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "5 critical issues found",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--score-high)]"
+    },
+    {
+      "tag": "LI",
+      "text": "Slow mobile load time (LCP: 4.2s)HighPitch: Faster experienc",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Slow mobile load time (LCP: 4.2s)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "High",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[11px] text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch: Faster experience = more bookings",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] text-xs"
+    },
+    {
+      "tag": "LI",
+      "text": "Missing local SEO schemaMediumPitch: Local SEO = free patien",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Missing local SEO schema",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Medium",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[11px] text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch: Local SEO = free patient acquisition",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] text-xs"
+    },
+    {
+      "tag": "LI",
+      "text": "No SSL certificate badgeHighPitch: Trust signals = higher co",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No SSL certificate badge",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "High",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[11px] text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch: Trust signals = higher conversion",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] text-xs"
+    },
+    {
+      "tag": "LI",
+      "text": "Outdated design (last updated 2021)MediumPitch: Modern desig",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Outdated design (last updated 2021)",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Medium",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[11px] text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch: Modern design = perceived quality",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] text-xs"
+    },
+    {
+      "tag": "LI",
+      "text": "No clear CTA above the foldHighPitch: Clear CTA = measurable",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3"
+    },
+    {
+      "tag": "SPAN",
+      "text": "No clear CTA above the fold",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "High",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "shrink-0 text-[11px] text-[var(--score-high)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pitch: Clear CTA = measurable bookings",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-accent)] text-xs"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-3 w-3 transition-transform group-open:rotate-90"
+    },
+    {
+      "tag": "DIV",
+      "text": "Performance42",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "Performance",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "42",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xl font-bold"
+    },
+    {
+      "tag": "DIV",
+      "text": "Mobile UX39",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "Mobile UX",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "39",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xl font-bold"
+    },
+    {
+      "tag": "DIV",
+      "text": "SEO48",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "SEO",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "48",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xl font-bold"
+    },
+    {
+      "tag": "DIV",
+      "text": "Design36",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "Design",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "36",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xl font-bold"
+    },
+    {
+      "tag": "DIV",
+      "text": "Trust38",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "Trust",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "38",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xl font-bold"
+    },
+    {
+      "tag": "DIV",
+      "text": "Want to find opportunities like this in your city?Choose fro",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevat"
+    },
+    {
+      "tag": "P",
+      "text": "Want to find opportunities like this in your city?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Choose from 249 business types across 16 industries. Get ran",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Try it now →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Try it now →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "Sample pitchesEvery opportunity type gets a tailored pitch.P",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Every opportunity type gets a tailored pitch.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] "
+    },
+    {
+      "tag": "P",
+      "text": "Pitches are generated from real opportunity data, not templa",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] "
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-zap mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Angle adapts to the opportunity type: new build, social conv",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-file-text mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Adjustable tone: professional, friendly, or luxury",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-trending-up mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Cites real data: performance scores, missing features, estim",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Weak Website",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(138, 151, 119)",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors "
+    },
+    {
+      "tag": "BUTTON",
+      "text": "No Website",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors "
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Social Only",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors "
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Platform Only",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors "
+    },
+    {
+      "tag": "DIV",
+      "text": "Sample pitchWeak WebsiteReady to sendTone: Professional · Fo",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 border-[var(--border-"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-message-square h-4 w-4 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Sample pitch",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Weak Website",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Ready to send",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgb(154, 196, 154)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--badge-green-text)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "Tone: Professional · For: Bright Smile Dental · 1.4sHi Dr. S",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5"
+    },
+    {
+      "tag": "P",
+      "text": "Tone: Professional · For: Bright Smile Dental · 1.4s",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-4 text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Hi Dr. Sameer,",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "I ran a quick audit of brightsmile.ae and found several issu",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "brightsmile.ae",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "4.2s mobile load time: 53% of visitors leave before seeing y",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "4.2s mobile load time",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--score-high)]"
+    },
+    {
+      "tag": "LI",
+      "text": "No local SEO: you’re not appearing in Google’s local pack fo",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "No local SEO",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--score-high)]"
+    },
+    {
+      "tag": "LI",
+      "text": "Missing trust signals: no SSL badge or social proof above th",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "Missing trust signals",
+      "color": "rgb(196, 102, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--score-high)]"
+    },
+    {
+      "tag": "P",
+      "text": "Fixing these could recover an estimated $1,000–$3,000/month ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "an estimated $1,000–$3,000/month",
+      "color": "rgb(74, 143, 90)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "font-medium text-[var(--color-success)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Tone: Professional",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Tone: Professional",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Regenerate",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Regenerate",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Copy pitch →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Copy pitch →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "P",
+      "text": "Every pitch is unique. No templates. Pitch angle, evidence, ",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 text-center text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "SECTION",
+      "text": "Who it’s forBuilt for agencies that prospect locally.Whether",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "scroll-mt-20 border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Built for agencies that prospect locally.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "P",
+      "text": "Whether you’re a solo freelancer, a small agency, or a speci",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto text-center"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-users h-4.5 w-4.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Solo freelancers",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Stop spending hours prospecting. Surface qualified leads in ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-building2 lucide-building-2 h-4.5 w-4.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Small agencies",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "White-label shareable reports",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 p"
+    },
+    {
+      "tag": "P",
+      "text": "Replace cold email with warm, evidence-based outreach. Give ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-palette h-4.5 w-4.5"
+    },
+    {
+      "tag": "H3",
+      "text": "Design studios",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Turn your portfolio into prospecting fuel. Find businesses w",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--col"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-trending-up h-4.5 w-4.5"
+    },
+    {
+      "tag": "H3",
+      "text": "SEO agencies",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[15px] font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Find businesses with poor PageSpeed, missing local SEO, and ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Start finding clients →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Start finding clients →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "ObjectionsWhat’s stopping you?We hear these objections every",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "What’s stopping you?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "P",
+      "text": "We hear these objections every week. Here’s the honest answe",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto text-center"
+    },
+    {
+      "tag": "DIV",
+      "text": "I already have enough clients.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "I already have enough clients.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "I already have enough clients.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "Isn't this just another tool I'll never use?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Isn't this just another tool I'll never use?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Isn't this just another tool I'll never use?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "I can find leads myself on Google Maps.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "I can find leads myself on Google Maps.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "I can find leads myself on Google Maps.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "The local businesses I'd pitch don't rank on Google anyway.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "The local businesses I'd pitch don't rank on Google anyway.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "The local businesses I'd pitch don't rank on Google anyway.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "I don't do cold outreach.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "I don't do cold outreach.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "I don't do cold outreach.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "I already use Apollo or Hunter for prospecting.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "I already use Apollo or Hunter for prospecting.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "I already use Apollo or Hunter for prospecting.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "P",
+      "text": "Still have objections? The best way to answer them is to try",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm text-[var(--color-text-secondary)] mb-4"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Try Nearsited free →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Try Nearsited free →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "What it doesBuilt for agencies that actually close deals.“I ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Built for agencies that actually close deals.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "BLOCKQUOTE",
+      "text": "“I was spending 3 hours every week just finding businesses t",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgb(138, 151, 119)",
+      "classes": "mt-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-2 border-l-[var(--color-accent)] bg-"
+    },
+    {
+      "tag": "P",
+      "text": "“I was spending 3 hours every week just finding businesses t",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-base italic leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "FOOTER",
+      "text": "ASAdin SheikFounder, Again Labs. Built this to solve his own",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 flex items-center gap-3"
+    },
+    {
+      "tag": "DIV",
+      "text": "AS",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent)]/10 text-xs font-semibold text-[var(--colo"
+    },
+    {
+      "tag": "P",
+      "text": "Adin Sheik",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Founder, Again Labs. Built this to solve his own problem.",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xs text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "249business types across 13 industry categories",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "249",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-3xl font-semibold tracking-tight text-[var(--color-accent)]"
+    },
+    {
+      "tag": "P",
+      "text": "business types across 13 industry categories",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-sm leading-6 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "4opportunity types: no website, social, platform, weak",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "4",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-3xl font-semibold tracking-tight text-[var(--color-accent)]"
+    },
+    {
+      "tag": "P",
+      "text": "opportunity types: no website, social, platform, weak",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-sm leading-6 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "<2 minfrom city search to ready-to-send pitch",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
+    },
+    {
+      "tag": "P",
+      "text": "<2 min",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-3xl font-semibold tracking-tight text-[var(--color-accent)]"
+    },
+    {
+      "tag": "P",
+      "text": "from city search to ready-to-send pitch",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-sm leading-6 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Early adopters get launch pricing locked in permanently. The",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto mt-10 max-w-xl text-center"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Start free →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Start free →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "FAQQuestions about closing deals.No fluff. No marketing spea",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Questions about closing deals.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.25rem,4vw+0.5rem,2.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[var(--color-text-primary)] te"
+    },
+    {
+      "tag": "P",
+      "text": "No fluff. No marketing speak. Just answers that help you dec",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] mx-auto text-center"
+    },
+    {
+      "tag": "DIV",
+      "text": "How does Nearsited help me win more website projects?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "How does Nearsited help me win more website projects?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "How does Nearsited help me win more website projects?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "What kind of businesses does Nearsited find?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "What kind of businesses does Nearsited find?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "What kind of businesses does Nearsited find?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "How accurate is the opportunity score?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "How accurate is the opportunity score?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "How accurate is the opportunity score?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "Do I need technical skills to use it?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Do I need technical skills to use it?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Do I need technical skills to use it?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "What if there are no good opportunities in my city?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "What if there are no good opportunities in my city?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "What if there are no good opportunities in my city?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "How is this different from cold email tools?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "How is this different from cold email tools?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "How is this different from cold email tools?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "How current is the business data? Are these businesses still",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "How current is the business data? Are these businesses still",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "How current is the business data? Are these businesses still",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "DIV",
+      "text": "Which cities and countries does Nearsited cover?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Which cities and countries does Nearsited cover?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Which cities and countries does Nearsited cover?",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-sm font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-chevron-down h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200"
+    },
+    {
+      "tag": "SECTION",
+      "text": "PricingStart finding clients this week.Start with 10 free an",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "block h-px w-6 bg-[var(--color-accent)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Start finding clients this week.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Start with 10 free analyses. No credit card needed.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Brand new. Built by one person. Locked-in beta pricing for t",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-[var(--color-text-secondary)] leading-7"
+    },
+    {
+      "tag": "P",
+      "text": "Beta pricing · Lock in your rate for 12 months. No surprises",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-2 text-[var(--color-text-tertiary)] text-xs"
+    },
+    {
+      "tag": "DIV",
+      "text": "MonthlyAnnualSAVE 20%",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "relative flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 tex"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Monthly",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative rounded-full px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "absolute inset-0 rounded-full bg-[var(--color-bg-surface)] shadow-sm"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Monthly",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative z-10 flex items-center gap-1.5"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "AnnualSAVE 20%",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative rounded-full px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] text-[var(--color-text-tertiary)"
+    },
+    {
+      "tag": "SPAN",
+      "text": "AnnualSAVE 20%",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "relative z-10 flex items-center gap-1.5"
+    },
+    {
+      "tag": "SPAN",
+      "text": "SAVE 20%",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "self-center leading-none text-[0.6rem] font-semibold tracking-wide text-[var(--color-accent)]"
+    },
+    {
+      "tag": "DIV",
+      "text": "StarterFor solo freelancers and independent web designers.$1",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] shadow-[var(--brand-s"
+    },
+    {
+      "tag": "H3",
+      "text": "Starter",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xl font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "For solo freelancers and independent web designers.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1.5 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "P",
+      "text": "$19/mo",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-3xl font-medium tracking-tight text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "50 opportunity analyses per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "50 opportunity analyses per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "3 city searches per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "3 city searches per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Email pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Email pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Pipeline tracking",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Pipeline tracking",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Get started →",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Get started →",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "DIV",
+      "text": "Best valueAgencyFor small agencies and growing web design te",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] hover:shadow-[var(--brand"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Best value",
+      "color": "rgb(196, 152, 74)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "H3",
+      "text": "Agency",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-xl font-medium text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "For small agencies and growing web design teams.",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-1.5 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "P",
+      "text": "$49/mo",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-3xl font-medium tracking-tight text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "LI",
+      "text": "200 opportunity analyses per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "200 opportunity analyses per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "10 city searches per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "10 city searches per month",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Email + WhatsApp pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Email + WhatsApp pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "White-label shareable reports",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "White-label shareable reports",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Priority support",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Priority support",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Get started →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Get started →",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "DIV",
+      "text": "Everything included on all plansAll 4 opportunity types: no ",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "mt-8 mx-auto max-w-3xl rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated"
+    },
+    {
+      "tag": "P",
+      "text": "Everything included on all plans",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] text-center"
+    },
+    {
+      "tag": "LI",
+      "text": "All 4 opportunity types: no website, social, platform, weak ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "All 4 opportunity types: no website, social, platform, weak ",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Unlimited AI pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Unlimited AI pitch generation",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "Unlimited pipeline management",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Unlimited pipeline management",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "LI",
+      "text": "PDF audit exports",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2 text-sm text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "PDF audit exports",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SECTION",
+      "text": "Start finding website opportunities todayYour next client is",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24"
+    },
+    {
+      "tag": "DIV",
+      "text": "Start finding website opportunities todayYour next client is",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "classes": "relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--color-bg-surface)] px"
+    },
+    {
+      "tag": "DIV",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Start finding website opportunities today",
+      "color": "rgb(176, 192, 160)",
+      "backgroundColor": "rgba(138, 151, 119, 0.1)",
+      "borderColor": "rgba(138, 151, 119, 0.25)",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap b"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(176, 192, 160)",
+      "backgroundColor": "rgb(176, 192, 160)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--badge-indigo-text)]"
+    },
+    {
+      "tag": "H2",
+      "text": "Your next client is out there, without a website.",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Enter a city and business type. Find businesses with no webs",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]"
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(138, 151, 119)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex h-4 w-4 shrink-0 items-center justify-center"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-search h-4 w-4"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Find your first opportunity",
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Sign in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Sign in",
+      "color": "rgb(184, 176, 168)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": ""
+    },
+    {
+      "tag": "SPAN",
+      "text": "No credit card",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "10 free analyses",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "SPAN",
+      "text": "Cancel anytime",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "flex items-center gap-2"
+    },
+    {
+      "tag": "svg",
+      "text": "",
+      "color": "rgb(138, 151, 119)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "lucide lucide-check h-3.5 w-3.5 text-[var(--color-accent)]"
+    },
+    {
+      "tag": "FOOTER",
+      "text": "NearSitedDiscover untapped opportunities: businesses that ne",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(18, 23, 30)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "relative overflow-hidden border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-12 md:px-8"
+    },
+    {
+      "tag": "SPAN",
+      "text": "NearSited",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "text-base font-medium tracking-[0.02em] text-[var(--color-text-primary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Discover untapped opportunities: businesses that need websit",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "max-w-sm text-sm leading-7 text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "P",
+      "text": "Stay updated",
+      "color": "rgb(138, 130, 120)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(229, 231, 235)",
+      "classes": "mb-2 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]"
+    },
+    {
+      "tag": "INPUT",
+      "text": "",
+      "color": "rgb(240, 237, 232)",
+      "backgroundColor": "rgb(26, 32, 40)",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "classes": "min-h-[44px] min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var("
+    }
+  ]
+}

@@ -29,7 +29,7 @@ export function MobileCard({ item, score, onStatusChange, onPhoneCopied }: Mobil
 
   return (
     <div
-      className={`min-h-[72px] cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[3px] bg-[var(--color-bg-surface)] p-3 transition-colors hover:bg-[var(--color-bg-elevated)] active:bg-[var(--color-bg-elevated)] ${borderClass}`}
+      className={`min-h-[72px] cursor-pointer rounded-[var(--radius-md)] border-l-[3px] bg-[var(--color-bg-surface)] p-3 transition-colors hover:bg-[var(--color-bg-elevated)] active:bg-[var(--color-bg-elevated)] ${borderClass}`}
       onClick={() => router.push(`/dashboard/leads/${item.id}`)}
       role="button"
       tabIndex={0}

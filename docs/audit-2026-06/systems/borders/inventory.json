@@ -1,0 +1,2802 @@
+{
+  "meta": {
+    "generated": "2026-06-18",
+    "method": "Playwright capture — all elements with non-zero border on all public pages",
+    "totalBorderInstances": 137,
+    "totalPages": 7,
+    "pagesAudited": [
+      "landing",
+      "login",
+      "signup",
+      "pricing",
+      "privacy",
+      "terms",
+      "reset-password"
+    ],
+    "uniqueBorderColors": 12,
+    "uniqueBorderRadii": 4,
+    "uniqueBorderWidths": 4
+  },
+  "classificationSummary": [
+    {
+      "classification": "ghost",
+      "count": 2,
+      "percentage": 1,
+      "examples": [
+        {
+          "tag": "BUTTON",
+          "classes": "items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-",
+          "border": "1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0)",
+          "page": "landing",
+          "text": "Sign in"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colo",
+          "border": "1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0)",
+          "page": "pricing",
+          "text": "Sign in"
+        }
+      ]
+    },
+    {
+      "classification": "decorative",
+      "count": 82,
+      "percentage": 60,
+      "examples": [
+        {
+          "tag": "DIV",
+          "classes": "flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": ""
+        },
+        {
+          "tag": "DIV",
+          "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 border-[var(--border-",
+          "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+          "page": "landing",
+          "text": "Opportunities · DubaiSample85Marina Legal ConsultantsDubai M"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mt-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "AI pitch · ready to send\"Hi, I noticed Marina Legal has grea"
+        },
+        {
+          "tag": "DIV",
+          "classes": "mt-3 border-t border-[var(--color-border-subtle)] pt-3",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "Copy pitch →"
+        },
+        {
+          "tag": "DIV",
+          "classes": "border-y border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "Live discovery across 29,000+ cities·Built by a solo founder"
+        }
+      ]
+    },
+    {
+      "classification": "functional",
+      "count": 38,
+      "percentage": 28,
+      "examples": [
+        {
+          "tag": "SPAN",
+          "classes": "flex items-center justify-center rounded-full",
+          "border": "1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5)",
+          "page": "landing",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "classes": "flex items-center justify-center rounded-full",
+          "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+          "page": "landing",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "classes": "flex items-center justify-center rounded-full",
+          "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+          "page": "landing",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "classes": "flex items-center justify-center rounded-full",
+          "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+          "page": "landing",
+          "text": ""
+        },
+        {
+          "tag": "SPAN",
+          "classes": "flex items-center justify-center rounded-full",
+          "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+          "page": "landing",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "classification": "ambiguous",
+      "count": 15,
+      "percentage": 11,
+      "examples": [
+        {
+          "tag": "BUTTON",
+          "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "See how agencies win"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all durat",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "72Blue Wave RestaurantJBR · Food & BeverageSocial Only"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all durat",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "72Bright Smile DentalJumeirah · HealthcareWeak Website"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "No site"
+        },
+        {
+          "tag": "BUTTON",
+          "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-color",
+          "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+          "page": "landing",
+          "text": "Social Only"
+        }
+      ]
+    }
+  ],
+  "borderTokens": {
+    "colors": [
+      "rgba(0, 0, 0, 0)",
+      "rgba(255, 255, 255, 0.06)",
+      "rgba(138, 151, 119, 0.5)",
+      "rgba(255, 255, 255, 0.08)",
+      "rgba(255, 255, 255, 0.1)",
+      "rgb(229, 231, 235)",
+      "rgb(196, 102, 90)",
+      "rgb(196, 152, 74)",
+      "rgb(240, 237, 232)",
+      "rgb(138, 151, 119)",
+      "rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgb(138, 151, 119)",
+      "rgba(138, 151, 119, 0.25)"
+    ],
+    "radii": [
+      "6px",
+      "10px",
+      "9999px",
+      "0px"
+    ],
+    "widths": [
+      "1px",
+      "1px 0px 0px",
+      "1px 0px",
+      "1px 1px 1px 2px"
+    ]
+  },
+  "elements": [
+    {
+      "tag": "BUTTON",
+      "classes": "items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-transparent bg-transparent text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-elevated)] focus-visible:border-[var(--color-accent)]/50 min-h-[44px] lg:min-h-[36px] hidden sm:inline-flex",
+      "text": "Sign in",
+      "border": "1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 998.140625,
+        "y": 17,
+        "width": 78.875,
+        "height": 42
+      },
+      "classification": "ghost",
+      "reason": "Ghost button — transparent border (no visible affordance)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7)] px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgba(10, 14, 18, 0.7)",
+      "rect": {
+        "x": 1218,
+        "y": 285,
+        "width": 42,
+        "height": 230
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5) | 1px solid rgba(138, 151, 119, 0.5)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(138, 151, 119, 0.5)",
+      "borderRadius": "9999px",
+      "background": "rgba(138, 151, 119, 0.18)",
+      "rect": {
+        "x": 1223,
+        "y": 294,
+        "width": 32,
+        "height": 32
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "borderRadius": "9999px",
+      "background": "rgba(255, 255, 255, 0.04)",
+      "rect": {
+        "x": 1225,
+        "y": 332,
+        "width": 28,
+        "height": 28
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "borderRadius": "9999px",
+      "background": "rgba(255, 255, 255, 0.04)",
+      "rect": {
+        "x": 1225,
+        "y": 368,
+        "width": 28,
+        "height": 28
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "borderRadius": "9999px",
+      "background": "rgba(255, 255, 255, 0.04)",
+      "rect": {
+        "x": 1225,
+        "y": 404,
+        "width": 28,
+        "height": 28
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "borderRadius": "9999px",
+      "background": "rgba(255, 255, 255, 0.04)",
+      "rect": {
+        "x": 1225,
+        "y": 440,
+        "width": 28,
+        "height": 28
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "flex items-center justify-center rounded-full",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08) | 1px solid rgba(255, 255, 255, 0.08)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.08)",
+      "borderRadius": "9999px",
+      "background": "rgba(255, 255, 255, 0.04)",
+      "rect": {
+        "x": 1225,
+        "y": 476,
+        "width": 28,
+        "height": 28
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] w-full px-6 py-3 text-base sm:w-auto",
+      "text": "See how agencies win",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 323.21875,
+        "y": -9905.625,
+        "width": 240.078125,
+        "height": 50
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 border-[var(--border-strong)]",
+      "text": "Opportunities · DubaiSample85Marina Legal ConsultantsDubai Marina · LegalNo Webs",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 732,
+        "y": -10519.3125,
+        "width": 440,
+        "height": 540
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)] shrink-0",
+      "text": "Sample",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1070.453125,
+        "y": -10494.3125,
+        "width": 76.546875,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 border-[var(--color-accent)]/50 bg-[var(--color-accent)]/10",
+      "text": "85Marina Legal ConsultantsDubai Marina · LegalNo Website",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "10px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 757,
+        "y": -10456.3125,
+        "width": 390,
+        "height": 62
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap",
+      "text": "No Website",
+      "border": "1px solid rgb(196, 102, 90) | 1px solid rgb(196, 102, 90) | 1px solid rgb(196, 102, 90) | 1px solid rgb(196, 102, 90)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(196, 102, 90)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1066.546875,
+        "y": -10432.5625,
+        "width": 63.453125,
+        "height": 19.5
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent)]/30",
+      "text": "72Blue Wave RestaurantJBR · Food & BeverageSocial Only",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 757,
+        "y": -10384.3125,
+        "width": 390,
+        "height": 62
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap",
+      "text": "Social Only",
+      "border": "1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(196, 152, 74)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1067.46875,
+        "y": -10360.5625,
+        "width": 62.53125,
+        "height": 19.5
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-4 py-3 text-left transition-all duration-150 border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent)]/30",
+      "text": "72Bright Smile DentalJumeirah · HealthcareWeak Website",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 757,
+        "y": -10312.3125,
+        "width": 390,
+        "height": 62
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap",
+      "text": "Weak Website",
+      "border": "1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74) | 1px solid rgb(196, 152, 74)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(196, 152, 74)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1054.015625,
+        "y": -10288.5625,
+        "width": 75.984375,
+        "height": 19.5
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4",
+      "text": "AI pitch · ready to send\"Hi, I noticed Marina Legal has great reviews but no web",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 757,
+        "y": -10234.3125,
+        "width": 390,
+        "height": 230
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-3 border-t border-[var(--color-border-subtle)] pt-3",
+      "text": "Copy pitch →",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 774,
+        "y": -10070.3125,
+        "width": 356,
+        "height": 49
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "border-y border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]",
+      "text": "Live discovery across 29,000+ cities·Built by a solo founder tired of prospectin",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": -9735.625,
+        "width": 1280,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "The workflowFour steps to your next website project.From finding the right lead ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -9685.625,
+        "width": 1280,
+        "height": 1418.40625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex gap-6 py-8 first:pt-0 last:pb-0",
+      "text": "02Understand the gapEvery lead gets an opportunity score (0–100) backed by websi",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 256,
+        "y": -9172.21875,
+        "width": 768,
+        "height": 157
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex gap-6 py-8 first:pt-0 last:pb-0",
+      "text": "03Generate outreachOne click generates a personalised pitch tailored to the oppo",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 256,
+        "y": -9015.21875,
+        "width": 768,
+        "height": 157
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex gap-6 py-8 first:pt-0 last:pb-0",
+      "text": "04Win more website projectsTrack every lead through a pipeline: New → Contacted ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 256,
+        "y": -8858.21875,
+        "width": 768,
+        "height": 125
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-6",
+      "text": "How opportunity scoring worksEvery lead gets a single 0–100 opportunity score th",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 304,
+        "y": -8685.21875,
+        "width": 672,
+        "height": 250
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5",
+      "text": "< 40Low",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 373,
+        "y": -8560.21875,
+        "width": 187.328125,
+        "height": 64
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5",
+      "text": "40–69Medium",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 568.328125,
+        "y": -8560.21875,
+        "width": 187.328125,
+        "height": 64
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5",
+      "text": "70+High",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 763.65625,
+        "y": -8560.21875,
+        "width": 187.328125,
+        "height": 64
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "scroll-mt-20 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24",
+      "text": "Why NearsitedOther tools find bad websites. Nearsited finds every opportunity.Mo",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": -8267.21875,
+        "width": 1280,
+        "height": 1014.890625
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "h-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] px-6 py-6",
+      "text": "Traditional prospecting✕No way to find businesses that have no website at all✕Ca",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 32,
+        "y": -7857.8125,
+        "width": 596,
+        "height": 332
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6",
+      "text": "Four opportunity types · all in one searchNo WebsiteBiggest opportunitySocial On",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 32,
+        "y": -7501.8125,
+        "width": 1216,
+        "height": 153.484375
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4",
+      "text": "No WebsiteBiggest opportunity",
+      "border": "1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(240, 237, 232)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 57,
+        "y": -7429.203125,
+        "width": 282.5,
+        "height": 71.875
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4",
+      "text": "Social OnlySocial-only presence",
+      "border": "1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(240, 237, 232)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 351.5,
+        "y": -7429.203125,
+        "width": 282.5,
+        "height": 71.875
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4",
+      "text": "Platform OnlyThird-party platform",
+      "border": "1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(240, 237, 232)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 646,
+        "y": -7429.203125,
+        "width": 282.5,
+        "height": 71.875
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4",
+      "text": "Weak WebsiteRedesign opportunity",
+      "border": "1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232) | 1px solid rgb(240, 237, 232)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(240, 237, 232)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 940.5,
+        "y": -7429.203125,
+        "width": 282.5,
+        "height": 71.875
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "SAMPLE OPPORTUNITY REPORTEvery opportunity type, one platform.Nearsited discover",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -7252.328125,
+        "width": 1280,
+        "height": 1191.15625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+      "text": "Weak Website",
+      "border": "1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(138, 151, 119)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 32,
+        "y": -6956.671875,
+        "width": 128.03125,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "No site",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 168.03125,
+        "y": -6956.671875,
+        "width": 79.96875,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "Social Only",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -6956.671875,
+        "width": 107.640625,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] border px-4 py-2 min-h-[44px] text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "Platform Only",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 371.640625,
+        "y": -6956.671875,
+        "width": 123.71875,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 mt-4 border-[var(--border-strong)]",
+      "text": "Bright Smile DentalOpportunity: 87/100Verifiedbrightsmile.ae · Jumeirah, Dubai ·",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 32,
+        "y": -6892.671875,
+        "width": 1216,
+        "height": 735.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)]",
+      "text": "Opportunity: 87/100",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 249.671875,
+        "y": -6864.671875,
+        "width": 135.421875,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)]",
+      "text": "Verified",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 397.09375,
+        "y": -6864.671875,
+        "width": 65.03125,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5",
+      "text": "5 critical issues foundSlow mobile load time (LCP: 4.2s)HighPitch: Faster experi",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "10px",
+      "background": "rgba(196, 102, 90, 0.1)",
+      "rect": {
+        "x": 57,
+        "y": -6766.671875,
+        "width": 1166,
+        "height": 446
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center",
+      "text": "Performance42",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 57,
+        "y": -6276.171875,
+        "width": 223.59375,
+        "height": 74.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center",
+      "text": "Mobile UX39",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 292.59375,
+        "y": -6276.171875,
+        "width": 223.59375,
+        "height": 74.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center",
+      "text": "SEO48",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 528.1875,
+        "y": -6276.171875,
+        "width": 223.609375,
+        "height": 74.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center",
+      "text": "Design36",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 763.796875,
+        "y": -6276.171875,
+        "width": 223.59375,
+        "height": 74.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center",
+      "text": "Trust38",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 999.390625,
+        "y": -6276.171875,
+        "width": 223.609375,
+        "height": 74.5
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between",
+      "text": "Want to find opportunities like this in your city?Choose from 249 business types",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 57,
+        "y": -6264.171875,
+        "width": 1166,
+        "height": 82
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-14 md:py-24",
+      "text": "Sample pitchesEvery opportunity type gets a tailored pitch.Pitches are generated",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": -6061.171875,
+        "width": 1280,
+        "height": 842
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+      "text": "Weak Website",
+      "border": "1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(138, 151, 119)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 664,
+        "y": -5964.171875,
+        "width": 128.03125,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "No Website",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 800.03125,
+        "y": -5964.171875,
+        "width": 109.203125,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "Social Only",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 917.234375,
+        "y": -5964.171875,
+        "width": 107.640625,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]",
+      "text": "Platform Only",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 1032.875,
+        "y": -5964.171875,
+        "width": 123.71875,
+        "height": 44
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] p-6 border-[var(--border-strong)]",
+      "text": "Sample pitchWeak WebsiteReady to sendTone: Professional · For: Bright Smile Dent",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 664,
+        "y": -5904.171875,
+        "width": 584,
+        "height": 589
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)]",
+      "text": "Weak Website",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 998,
+        "y": -5879.171875,
+        "width": 102.59375,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)]",
+      "text": "Ready to send",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1108.59375,
+        "y": -5879.171875,
+        "width": 114.40625,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5",
+      "text": "Tone: Professional · For: Bright Smile Dental · 1.4sHi Dr. Sameer,I ran a quick ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 689,
+        "y": -5841.171875,
+        "width": 534,
+        "height": 453
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-5 flex flex-col gap-3 border-t border-[var(--color-border-subtle)] pt-4 sm:flex-row sm:items-center sm:justify-between",
+      "text": "Tone: ProfessionalRegenerateCopy pitch →",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 710,
+        "y": -5468.171875,
+        "width": 492,
+        "height": 59
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] flex-1 sm:flex-none",
+      "text": "Tone: Professional",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 710,
+        "y": -5451.171875,
+        "width": 153.8125,
+        "height": 42
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] flex-1 sm:flex-none",
+      "text": "Regenerate",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 871.8125,
+        "y": -5451.171875,
+        "width": 109.375,
+        "height": 42
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "scroll-mt-20 border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "Who it’s forBuilt for agencies that prospect locally.Whether you’re a solo freel",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -5219.171875,
+        "width": 1280,
+        "height": 1066.40625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent)]",
+      "text": "White-label shareable reports",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 474.234375,
+        "y": -4703.515625,
+        "width": 157.03125,
+        "height": 21
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "ObjectionsWhat’s stopping you?We hear these objections every week. Here’s the ho",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -4152.765625,
+        "width": 1280,
+        "height": 927.65625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "I already have enough clients.",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3877.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "Isn't this just another tool I'll never use?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3803.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "I can find leads myself on Google Maps.",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3729.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "The local businesses I'd pitch don't rank on Google anyway.",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3655.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "I don't do cold outreach.",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3581.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "I already use Apollo or Hunter for prospecting.",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -3507.109375,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "What it doesBuilt for agencies that actually close deals.“I was spending 3 hours",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -3225.109375,
+        "width": 1280,
+        "height": 881.40625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BLOCKQUOTE",
+      "classes": "mt-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-2 border-l-[var(--color-accent)] bg-[var(--color-bg-elevated)] p-6 text-left",
+      "text": "“I was spending 3 hours every week just finding businesses to pitch. I built Nea",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 2px solid rgb(138, 151, 119)",
+      "borderWidth": "1px 1px 1px 2px",
+      "borderColor": "rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgba(255, 255, 255, 0.06) rgb(138, 151, 119)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 304,
+        "y": -2935.703125,
+        "width": 672,
+        "height": 158
+      },
+      "classification": "functional",
+      "reason": "Semantic accent border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center",
+      "text": "249business types across 13 industry categories",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 304,
+        "y": -2745.703125,
+        "width": 208,
+        "height": 166
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center",
+      "text": "4opportunity types: no website, social, platform, weak",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 536,
+        "y": -2745.703125,
+        "width": 208,
+        "height": 166
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center",
+      "text": "<2 minfrom city search to ready-to-send pitch",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 768,
+        "y": -2745.703125,
+        "width": 208,
+        "height": 166
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "FAQQuestions about closing deals.No fluff. No marketing speak. Just answers that",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -2343.703125,
+        "width": 1280,
+        "height": 951.65625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "How does Nearsited help me win more website projects?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -2040.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "What kind of businesses does Nearsited find?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1970.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "How accurate is the opportunity score?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1900.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "Do I need technical skills to use it?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1830.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "What if there are no good opportunities in my city?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1760.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "How is this different from cold email tools?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1690.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "How current is the business data? Are these businesses still active?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1620.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden",
+      "text": "Which cities and countries does Nearsited cover?",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1550.046875,
+        "width": 768,
+        "height": 62
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "PricingStart finding clients this week.Start with 10 free analyses. No credit ca",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -1392.046875,
+        "width": 1280,
+        "height": 1166.859375
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "relative flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm",
+      "text": "MonthlyAnnualSAVE 20%",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "9999px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 518.265625,
+        "y": -1009.984375,
+        "width": 243.46875,
+        "height": 54
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)] p-6 flex h-full flex-col",
+      "text": "StarterFor solo freelancers and independent web designers.$19/mo50 opportunity a",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -923.984375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] mt-8 w-full",
+      "text": "Get started →",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 281,
+        "y": -524.984375,
+        "width": 322,
+        "height": 42
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] hover:shadow-[var(--brand-shadow-md)] hover:border-[var(--border-strong)] transition-all duration-150 ease-out cursor-pointer p-6 flex h-full flex-col border-[var(--color-accent)]/30 ring-1 ring-[var(--accent)]/10",
+      "text": "Best valueAgencyFor small agencies and growing web design teams.$49/mo200 opport",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 652,
+        "y": -923.984375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)] mb-4 self-start",
+      "text": "Best value",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 677,
+        "y": -898.984375,
+        "width": 81.125,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-8 mx-auto max-w-3xl rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-6 py-5",
+      "text": "Everything included on all plansAll 4 opportunity types: no website, social, pla",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 256,
+        "y": -433.984375,
+        "width": 768,
+        "height": 124.796875
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-14 md:py-24",
+      "text": "Start finding website opportunities todayYour next client is out there, without ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -225.1875,
+        "width": 1280,
+        "height": 654.3125
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-[var(--color-bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16",
+      "text": "Start finding website opportunities todayYour next client is out there, without ",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 32,
+        "y": -116.98369598388672,
+        "width": 1216,
+        "height": 461.3125
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--badge-indigo-bg)] border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)]",
+      "text": "Start finding website opportunities today",
+      "border": "1px solid rgba(138, 151, 119, 0.25) | 1px solid rgba(138, 151, 119, 0.25) | 1px solid rgba(138, 151, 119, 0.25) | 1px solid rgba(138, 151, 119, 0.25)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(138, 151, 119, 0.25)",
+      "borderRadius": "6px",
+      "background": "rgba(138, 151, 119, 0.1)",
+      "rect": {
+        "x": 507.984375,
+        "y": -48.98369598388672,
+        "width": 264.03125,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] w-full px-8 py-3 text-base sm:w-auto",
+      "text": "Sign in",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 730.96875,
+        "y": 185.32879638671875,
+        "width": 117.28125,
+        "height": 50
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "FOOTER",
+      "classes": "relative overflow-hidden border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-12 md:px-8",
+      "text": "NearSitedDiscover untapped opportunities: businesses that need websites, redesig",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": 429.125,
+        "width": 1280,
+        "height": 370.796875
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[44px] min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition disabled:opacity-50 border-[var(--color-border-subtle)] focus:border-[var(--color-accent)]/50",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 32,
+        "y": 622.921875,
+        "width": 346.421875,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-10 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-subtle)] pt-6 text-sm text-[var(--color-text-tertiary)] md:flex-row",
+      "text": "© 2026 Nearsited. All rights reserved.Built by Again Labs · Again Live family of",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 32,
+        "y": 706.921875,
+        "width": 1216,
+        "height": 45
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "landing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-6",
+      "text": "Continue with GoogleorEmailPasswordRemember meForgot password?Sign in",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 450,
+        "y": 304.6875,
+        "width": 380,
+        "height": 390
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "login"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50",
+      "text": "Continue with Google",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 329.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "login"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "w-full border-t border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 475,
+        "y": 401.1875,
+        "width": 330,
+        "height": 1
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "login"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(138, 151, 119)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 451.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "login"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 pr-10 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 533.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "login"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-6",
+      "text": "Continue with GoogleorFull nameEmailPasswordConfirm passwordSign upBy signing up",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 450,
+        "y": 235.390625,
+        "width": 380,
+        "height": 555.875
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50",
+      "text": "Continue with Google",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 260.390625,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "w-full border-t border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 475,
+        "y": 331.890625,
+        "width": 330,
+        "height": 1
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(138, 151, 119)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 382.390625,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 464.390625,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 pr-10 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 546.390625,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 pr-10 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 628.390625,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "signup"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-transparent bg-transparent text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-elevated)] focus-visible:border-[var(--color-accent)]/50 min-h-[44px] lg:min-h-[36px]",
+      "text": "Sign in",
+      "border": "1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0) | 1px solid rgba(0, 0, 0, 0)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(0, 0, 0, 0)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 1032.9375,
+        "y": -2426,
+        "width": 78.875,
+        "height": 42
+      },
+      "classification": "ghost",
+      "reason": "Ghost button — transparent border (no visible affordance)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "relative flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm",
+      "text": "MonthlyAnnualSAVE 20%",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "9999px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 518.265625,
+        "y": -2038.84375,
+        "width": 243.46875,
+        "height": 54
+      },
+      "classification": "functional",
+      "reason": "Pill/badge/chip border",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)] p-6 flex h-full flex-col",
+      "text": "StarterFor solo freelancers and independent web designers.$19/mo50 opportunity a",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 256,
+        "y": -1960.84375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] px-4 py-2.5 text-sm font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] mt-8 w-full",
+      "text": "Get started →",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 281,
+        "y": -1561.84375,
+        "width": 322,
+        "height": 42
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] border shadow-[var(--brand-shadow-sm)] hover:shadow-[var(--brand-shadow-md)] hover:border-[var(--border-strong)] transition-all duration-150 ease-out cursor-pointer p-6 flex h-full flex-col border-[var(--color-accent)]/30 ring-1 ring-[var(--accent)]/10",
+      "text": "Best valueAgencyFor small agencies and growing web design teams.$49/mo200 opport",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 652,
+        "y": -1960.84375,
+        "width": 372,
+        "height": 466
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)] mb-4 self-start",
+      "text": "Best value",
+      "border": "1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235) | 1px solid rgb(229, 231, 235)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(229, 231, 235)",
+      "borderRadius": "6px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 677,
+        "y": -1935.84375,
+        "width": 81.125,
+        "height": 22
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-8 mx-auto max-w-3xl rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-6 py-5",
+      "text": "Everything included on all plansAll 4 opportunity types: no website, social, pla",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 256,
+        "y": -1450.84375,
+        "width": 768,
+        "height": 124.796875
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-20",
+      "text": "How credits workWhat is a credit?One analysis uses 2 credits — 1 for the perform",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": -1178.046875,
+        "width": 1280,
+        "height": 874.0625
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "When are credits used?Every analysis uses 2 credits: 1 for the performance audit",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -859.984375,
+        "width": 704,
+        "height": 152
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "How many credits do I get?Free: 10 full analyses lifetime (credits do not reset ",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -691.984375,
+        "width": 704,
+        "height": 180
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5",
+      "text": "What happens when I run out?You can still log in, view your pipeline, manage lea",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 288,
+        "y": -495.984375,
+        "width": 704,
+        "height": 124
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-20",
+      "text": "A note from the founderI run a web design agency. I built Nearsited because I wa",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 0,
+        "y": -303.984375,
+        "width": 1280,
+        "height": 567.90625
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-8 text-left",
+      "text": "I run a web design agency. I built Nearsited because I was spending 10 hours a w",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 336,
+        "y": -182.078125,
+        "width": 608,
+        "height": 366
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "SECTION",
+      "classes": "border-t border-[var(--color-border-subtle)] py-20",
+      "text": "See if there are opportunities in your city.Enter a city and business type. Near",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": 263.921875,
+        "width": 1280,
+        "height": 447.3125
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-medium transition-colors duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-border-strong)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface)] min-h-[44px] lg:min-h-[36px] px-8 py-3 text-base",
+      "text": "Sign in",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 709.140625,
+        "y": 537.234375,
+        "width": 117.28125,
+        "height": 50
+      },
+      "classification": "ambiguous",
+      "reason": "Secondary button — border is affordance but too subtle (6% white)",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "FOOTER",
+      "classes": "border-t border-[var(--color-border-subtle)] px-6 py-10 md:px-8",
+      "text": "© 2026 Nearsited. Built by Again Labs.HomePricingContact",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 0,
+        "y": 699.234375,
+        "width": 1280,
+        "height": 101
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "pricing"
+    },
+    {
+      "tag": "TR",
+      "classes": "",
+      "text": "sb-refresh-tokenRefreshes your session token automatically7 days",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 2768.484375,
+        "width": 688,
+        "height": 36.5
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "privacy"
+    },
+    {
+      "tag": "DIV",
+      "classes": "border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Privacy questions or data requests? Email nearsitedlabs@gmail.com — we aim to re",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 4092.28125,
+        "width": 688,
+        "height": 105
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "privacy"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-12 border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions? nearsitedlabs@gmail.com",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 4245.28125,
+        "width": 688,
+        "height": 53
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "privacy"
+    },
+    {
+      "tag": "DIV",
+      "classes": "border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions about these Terms? Email nearsitedlabs@gmail.com — we aim to respond w",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 3693.71875,
+        "width": 688,
+        "height": 105
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "terms"
+    },
+    {
+      "tag": "DIV",
+      "classes": "mt-12 border-t border-[var(--color-border-subtle)] pt-8",
+      "text": "Questions? nearsitedlabs@gmail.com",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 428,
+        "y": 3846.71875,
+        "width": 688,
+        "height": 53
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "terms"
+    },
+    {
+      "tag": "DIV",
+      "classes": "rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-6",
+      "text": "Continue with GoogleorEmailPasswordRemember meForgot password?Sign in",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "10px",
+      "background": "rgb(18, 23, 30)",
+      "rect": {
+        "x": 450,
+        "y": 304.6875,
+        "width": 380,
+        "height": 390
+      },
+      "classification": "decorative",
+      "reason": "Perimeter border on element with background (bg provides definition)",
+      "sourcePage": "reset-password"
+    },
+    {
+      "tag": "BUTTON",
+      "classes": "flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50",
+      "text": "Continue with Google",
+      "border": "1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1) | 1px solid rgba(255, 255, 255, 0.1)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.1)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 329.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Button interactive affordance",
+      "sourcePage": "reset-password"
+    },
+    {
+      "tag": "SPAN",
+      "classes": "w-full border-t border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06) | 0px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px 0px 0px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "rect": {
+        "x": 475,
+        "y": 401.1875,
+        "width": 330,
+        "height": 1
+      },
+      "classification": "decorative",
+      "reason": "Unclassified border",
+      "sourcePage": "reset-password"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119) | 1px solid rgb(138, 151, 119)",
+      "borderWidth": "1px",
+      "borderColor": "rgb(138, 151, 119)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 451.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "reset-password"
+    },
+    {
+      "tag": "INPUT",
+      "classes": "min-h-[48px] sm:min-h-[44px] w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--accent-tint)] disabled:opacity-50 pr-10 border-[var(--color-border-subtle)]",
+      "text": "",
+      "border": "1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06) | 1px solid rgba(255, 255, 255, 0.06)",
+      "borderWidth": "1px",
+      "borderColor": "rgba(255, 255, 255, 0.06)",
+      "borderRadius": "6px",
+      "background": "rgb(26, 32, 40)",
+      "rect": {
+        "x": 475,
+        "y": 533.6875,
+        "width": 330,
+        "height": 44
+      },
+      "classification": "functional",
+      "reason": "Form input affordance",
+      "sourcePage": "reset-password"
+    }
+  ]
+}

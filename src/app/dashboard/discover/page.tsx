@@ -386,7 +386,7 @@ export default function DiscoverPage() {
   const locationLabel = cities.find((c) => c.value === city)?.label ?? city;
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-page)] px-4 py-8 sm:px-6 lg:px-8">
+    <motion.div layout className="min-h-screen bg-[var(--color-bg-page)] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl space-y-5">
         <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -535,6 +535,6 @@ export default function DiscoverPage() {
         {showSave && <SaveSearchDialog onSave={saveSearch} onCancel={() => setShowSave(false)} />}
       </AnimatePresence>
       {toastMsg && <Toast message={toastMsg} onClose={() => setToast(null)} />}
-    </div>
+    </motion.div>
   );
 }

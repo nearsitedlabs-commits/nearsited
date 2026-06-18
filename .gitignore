@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/test-results/
 
 # next.js
 /.next/
@@ -32,6 +33,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
+.env
 
 # vercel
 .vercel
@@ -39,24 +42,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-batch1/
-batch2/
-research_markdown.md
-batch1/
-batch2/
-research_markdown.md
-.env.local
-.env
 
 # editor / ide
 .claude/
 
-# audit & verification artifacts
+# audit & verification artifacts — one-time tooling, not production code
+audit-tests/
+playwright.config.ts
 audit-*.png
 mobile-*.png
 section-*.png
 audit-output.json
 scripts/mobile-audit.mjs
 scripts/verify-*.mjs
+scripts/fix-networkidle.ps1
 scripts/mobile-audit-shots/
 scripts/verify-screenshots/
+
+# spurious files created by shell redirects
+$null
+
+# legacy research artifacts
+batch1/
+batch2/
+research_markdown.md

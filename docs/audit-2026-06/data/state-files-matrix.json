@@ -1,0 +1,54 @@
+{
+  "/": {
+    "loading": false,
+    "error": false
+  },
+  "/login": {
+    "loading": true,
+    "error": false
+  },
+  "/signup": {
+    "loading": true,
+    "error": false
+  },
+  "/dashboard": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/radar": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/settings": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/templates": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/discover": {
+    "loading": true,
+    "error": false
+  },
+  "/dashboard/leads": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/leads/[id]": {
+    "loading": true,
+    "error": false
+  },
+  "/dashboard/audit": {
+    "loading": true,
+    "error": false
+  },
+  "/dashboard/pipeline": {
+    "loading": true,
+    "error": true
+  },
+  "/dashboard/pitches": {
+    "loading": true,
+    "error": true
+  }
+}

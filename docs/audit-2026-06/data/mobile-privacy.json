@@ -1,0 +1,105 @@
+{
+  "hasHorizontalScroll": false,
+  "bodyFontSize": "16px",
+  "viewportWidth": 375,
+  "viewportHeight": 667,
+  "smallTargets": [
+    {
+      "tag": "A",
+      "text": "← Nearsited",
+      "width": 80,
+      "height": 20
+    },
+    {
+      "tag": "A",
+      "text": "1. What We Collect",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "2. How We Use Your Data",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "3. Third-Party Services",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "4. Data Retention",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "5. Cookies & Tracking",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "6. Your Rights",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "7. International Transfers",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "8. Changes to This Policy",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "Terms of Service",
+      "width": 106,
+      "height": 18
+    },
+    {
+      "tag": "A",
+      "text": "nearsitedlabs@gmail.com",
+      "width": 165,
+      "height": 18
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Jump to section",
+      "width": 162,
+      "height": 42
+    }
+  ],
+  "smallTextElements": [
+    {
+      "tag": "P",
+      "text": "Contents",
+      "fontSize": "10px"
+    }
+  ]
+}

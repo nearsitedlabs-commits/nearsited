@@ -58,7 +58,7 @@ export function StageColumn({
 
   return (
     <div
-      className={`shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden transition-all duration-200 ease-in-out ${
+      className={`shrink-0 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] overflow-hidden transition-all duration-200 ease-in-out ${
         isEmpty
           ? "w-[48px] hover:w-[220px] group"
           : "w-[220px]"

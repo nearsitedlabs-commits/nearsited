@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckCircle2, ExternalLink, FileText, Loader2, Mail, Plus, X } from "lucide-react";
+import { CheckCircle2, ExternalLink, FileText, Mail, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/Button";
 import type { StrategyResult, DesignResult } from "./types";
 import { businessTypes } from "@/lib/data/businessTypes";
 import { useRouter } from "next/navigation";
@@ -229,18 +230,16 @@ export function ReviewCompleteActions({
                 : " and design analysis."}
             </p>
           </div>
-          <button
+          <Button
+            variant="primary"
             onClick={handlePrimaryAction}
             disabled={primaryLoading || timedOut}
-            className="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-6 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            loading={primaryLoading}
+            icon={<Mail className="h-4 w-4" />}
+            className="w-full sm:w-auto"
           >
-            {primaryLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Mail className="h-4 w-4" />
-            )}
             {primaryLoading ? "Saving & generating…" : "Generate pitch →"}
-          </button>
+          </Button>
         </div>
 
         {/* Primary action error */}
@@ -267,14 +266,13 @@ export function ReviewCompleteActions({
                       View full report →
                     </Link>
                   )}
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(pitchResult);
-                    }}
-                    className="cursor-pointer text-xs font-medium text-[var(--color-accent)] hover:underline"
+                  <Button
+                    variant="ghost" size="sm"
+                    onClick={() => navigator.clipboard.writeText(pitchResult)}
+                    className="text-[var(--color-accent)]"
                   >
                     Copy to clipboard
-                  </button>
+                  </Button>
                 </div>
               </div>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-text-secondary)]">
@@ -294,12 +292,9 @@ export function ReviewCompleteActions({
               <p className="text-sm font-medium text-[var(--color-text-primary)]">
                 Add a few details (optional)
               </p>
-              <button
-                onClick={() => setShowSaveForm(false)}
-                className="cursor-pointer rounded-[var(--radius-sm)] p-1 text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-primary)]"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <Button variant="icon" icon={<X className="h-4 w-4" />} onClick={() => setShowSaveForm(false)}>
+                Close
+              </Button>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-3">
@@ -336,18 +331,15 @@ export function ReviewCompleteActions({
             )}
 
             <div className="mt-3 flex flex-wrap items-center gap-3">
-              <button
+              <Button
+                variant="primary" size="sm"
                 onClick={() => handleSaveOnly(false)}
                 disabled={saveLoading}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-5 py-2 text-sm font-medium text-white transition-colors duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                loading={saveLoading}
+                icon={<FileText className="h-4 w-4" />}
               >
-                {saveLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <FileText className="h-4 w-4" />
-                )}
                 {saveLoading ? "Saving…" : "Save & View Report"}
-              </button>
+              </Button>
               <button
                 onClick={() => handleSaveOnly(true)}
                 disabled={saveLoading}
@@ -358,14 +350,13 @@ export function ReviewCompleteActions({
             </div>
           </div>
         ) : (
-          <button
+          <Button
+            variant="secondary" size="sm"
             onClick={handleOpenSaveForm}
             disabled={timedOut || savedBusinessId != null}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <FileText className="h-3.5 w-3.5" />
-            Save without pitch
-          </button>
+            <FileText className="h-3.5 w-3.5" /> Save without pitch
+          </Button>
         )}
 
         {/* Open full report */}
@@ -394,19 +385,15 @@ export function ReviewCompleteActions({
             )}
           </div>
         ) : (
-          <button
-            type="button"
+          <Button
+            variant="secondary" size="sm"
             onClick={handleAddToPipeline}
             disabled={pipelineLoading || timedOut}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+            loading={pipelineLoading}
+            icon={<Plus className="h-3.5 w-3.5" />}
           >
-            {pipelineLoading ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Plus className="h-3.5 w-3.5" />
-            )}
             {pipelineLoading ? "Adding…" : "+ Pipeline"}
-          </button>
+          </Button>
         )}
 
         {pipelineError && (

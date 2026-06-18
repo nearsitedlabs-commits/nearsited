@@ -99,7 +99,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   </div>
                   <details className="mt-4 group">
                     <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
-                      <svg className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                      <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
                       Technical Analysis
                     </summary>
                     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -311,7 +311,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
                   </div>
                   <details className="mt-4 group">
                     <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
-                      <svg className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                      <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
                       Technical Analysis
                     </summary>
                     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

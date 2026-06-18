@@ -88,7 +88,7 @@ export default function PricingPage() {
             className="inline-flex items-center gap-2.5 text-base font-medium text-[var(--text-primary)]"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            <Image src="/logo-icon.svg" alt="" width={28} height={16} className="block shrink-0" />
+            <Image src="/logo-icon.svg" alt="" width={28} height={17} sizes="28px" className="block shrink-0" />
             <span className="text-base font-medium tracking-[0.02em] text-[var(--text-primary)]">
               NearSited
             </span>
@@ -143,7 +143,7 @@ export default function PricingPage() {
                     className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5"
                   >
                     <p className="text-sm font-medium text-[var(--text-primary)]">{item.q}</p>
-                    <p className="mt-1.5 text-sm leading-7 text-[var(--text-secondary)]">{item.a}</p>
+                    <p className="mt-1.5 text-base lg:text-body leading-7 text-[var(--text-secondary)]">{item.a}</p>
                   </motion.div>
                 ))}
               </motion.div>

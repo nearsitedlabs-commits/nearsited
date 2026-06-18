@@ -1,0 +1,38 @@
+{
+  "issues": [],
+  "issueCount": 0,
+  "liveRegionCount": 0,
+  "hasFocusOutline": false,
+  "focusStyleDetails": "",
+  "landmarks": {
+    "main": 1,
+    "nav": 0,
+    "header": 1,
+    "footer": 1
+  },
+  "headingStructure": [
+    {
+      "level": "H2",
+      "text": "Start finding clients this week."
+    },
+    {
+      "level": "H3",
+      "text": "Starter"
+    },
+    {
+      "level": "H3",
+      "text": "Agency"
+    },
+    {
+      "level": "H2",
+      "text": "What is a credit?"
+    },
+    {
+      "level": "H2",
+      "text": "See if there are opportunities in your city."
+    }
+  ],
+  "totalImages": 1,
+  "totalButtons": 11,
+  "totalInputs": 0
+}

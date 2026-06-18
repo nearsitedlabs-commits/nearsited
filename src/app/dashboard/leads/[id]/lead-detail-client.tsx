@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, useSafeReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { Loader2, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, blendQualityForOpportunity, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
 import { Toast } from "@/components/ui/Toast";
+import { Button } from "@/components/ui/Button";
 import { useToast } from "@/lib/shared-hooks";
 
 // Hooks
@@ -290,27 +291,25 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               extraActions={
                 <>
                   {!biz.place_id && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="icon"
+                      icon={<Pencil className="h-4 w-4" />}
                       onClick={() => setShowEditPanel((v) => !v)}
                       title="Edit business details"
-                      className="shrink-0 rounded-[var(--radius-sm)] p-1.5 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-secondary)] transition-colors"
                     >
-                      <Pencil className="h-4 w-4" />
-                    </button>
+                      Edit business
+                    </Button>
                   )}
                   {hasWebsite && (
-                    <button
+                    <Button
+                      variant={hasAudit ? "secondary" : "primary"}
+                      size="sm"
                       onClick={analysis.handleFullAnalysis}
                       disabled={analysis.runningFullAnalysis}
-                      className={hasAudit
-                        ? "inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
-                        : "inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                      }
+                      loading={analysis.runningFullAnalysis}
                     >
-                      {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                       {analysis.runningFullAnalysis ? "Analysing…" : hasAudit ? "Re-analyse" : "Analyse Opportunity"}
-                    </button>
+                    </Button>
                   )}
                 </>
               }
@@ -357,14 +356,16 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">Scores not yet verified</p>
                   <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">Run an analysis to get real performance, design, and SEO scores.</p>
                 </div>
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={analysis.handleFullAnalysis}
                   disabled={analysis.runningFullAnalysis}
-                  className="shrink-0 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] sm:min-h-0"
+                  loading={analysis.runningFullAnalysis}
+                  className="shrink-0 min-h-[44px] sm:min-h-0"
                 >
-                  {analysis.runningFullAnalysis && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Now"}
-                </button>
+                </Button>
               </div>
             </MaybeFadeUp>
           )}

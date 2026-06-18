@@ -142,7 +142,7 @@ function ringOffset(value: number): number {
 
 export default function OpportunityPreviewCard() {
   return (
-    <div className="w-full max-w-sm overflow-hidden rounded-[20px] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
+    <div className="w-full max-w-sm overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
       {/* Top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
 

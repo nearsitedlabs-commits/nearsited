@@ -21,7 +21,7 @@ export function AnalysisProgressBanner({ running, completedKeys, activeKeys }: P
     "Starting analysis…";
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-5 py-4">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-5 py-4">
       <div className="flex items-center justify-between mb-2.5">
         <span className="text-sm font-medium text-[var(--color-text-primary)]">Analysing opportunity</span>
         <span className="text-xs tabular-nums text-[var(--color-text-tertiary)]">

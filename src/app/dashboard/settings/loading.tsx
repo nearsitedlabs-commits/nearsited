@@ -17,7 +17,7 @@ export default function SettingsLoading() {
 
         <div className="space-y-6">
           {/* Profile section */}
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
             <SkeletonLoader width="120px" height="18px" radius="4px" />
             <div className="mt-5 space-y-4">
               <div>
@@ -33,10 +33,10 @@ export default function SettingsLoading() {
           </div>
 
           {/* Plan section */}
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
             <SkeletonLoader width="100px" height="18px" radius="4px" />
             <div className="mt-5 space-y-4">
-              <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+              <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-4">
                 <div>
                   <SkeletonLoader width="100px" height="16px" radius="4px" />
                   <SkeletonLoader className="mt-1" width="140px" height="12px" radius="4px" />
@@ -52,7 +52,7 @@ export default function SettingsLoading() {
           </div>
 
           {/* Danger zone */}
-          <div className="rounded-[var(--radius-md)] border border-red-500/20 bg-[var(--color-bg-surface)] p-6">
+          <div className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/20 bg-[var(--color-bg-surface)] p-6">
             <SkeletonLoader width="100px" height="18px" radius="4px" />
             <SkeletonLoader className="mt-2" width="240px" height="12px" radius="4px" />
             <SkeletonLoader className="mt-4" width="140px" height="36px" radius="8px" />

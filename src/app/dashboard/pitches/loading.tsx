@@ -30,7 +30,7 @@ export default function PitchesLoading() {
         {/* Pitch cards grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5">
+            <div key={i} className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5">
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div className="flex-1">

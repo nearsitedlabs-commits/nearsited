@@ -1,0 +1,54 @@
+{
+  "hasHorizontalScroll": false,
+  "bodyFontSize": "16px",
+  "viewportWidth": 375,
+  "viewportHeight": 667,
+  "smallTargets": [
+    {
+      "tag": "BUTTON",
+      "text": "NearSited",
+      "width": 116,
+      "height": 24
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Home",
+      "width": 38,
+      "height": 20
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Pricing",
+      "width": 44,
+      "height": 20
+    },
+    {
+      "tag": "A",
+      "text": "Contact",
+      "width": 51,
+      "height": 20
+    }
+  ],
+  "smallTextElements": [
+    {
+      "tag": "SPAN",
+      "text": "SAVE 20%",
+      "fontSize": "9.6px"
+    },
+    {
+      "tag": "P",
+      "text": "Everything included on all plans",
+      "fontSize": "11.2px"
+    },
+    {
+      "tag": "DIV",
+      "text": "How credits work",
+      "fontSize": "11.2px"
+    },
+    {
+      "tag": "DIV",
+      "text": "A note from the founder",
+      "fontSize": "11.2px"
+    }
+  ]
+}

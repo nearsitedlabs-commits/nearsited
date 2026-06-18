@@ -24,7 +24,7 @@ const TYPE_STYLES: Record<ToastType, { bg: string; icon: ReactNode }> = {
     ),
   },
   error: {
-    bg: "bg-red-500",
+    bg: "bg-[var(--color-danger)]",
     icon: (
       <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
         <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
