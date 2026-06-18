@@ -5,6 +5,17 @@
  * Contains all prompt-building logic for Gemini-based pitch generation.
  */
 
+// ── Helpers ──────────────────────────────────────────────────────────────────────
+
+/**
+ * Strips taglines from a business name for use in greetings.
+ * "Malama Digital | Hawaii Web Design & Hawaii SEO Services" → "Malama Digital"
+ * "Brighton Dental — Expert Care" → "Brighton Dental"
+ */
+export function cleanBusinessName(name: string): string {
+  return name.split(/\s*[|—–-]\s*/)[0].trim();
+}
+
 // ── Industry-Specific Context ──────────────────────────────────────────────────
 
 export function getBusinessTypeContext(businessType: string): string {

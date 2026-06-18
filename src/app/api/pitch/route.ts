@@ -14,6 +14,7 @@ import {
   buildAuditOnlyPrompt,
   buildDesignOnlyPrompt,
   cleanGeminiJson,
+  cleanBusinessName,
 } from "@/lib/pitch/prompts";
 import { GEMINI_URL } from "@/lib/gemini";
 import { retryWithBackoff } from "@/lib/api/retry";
@@ -225,7 +226,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      promptBusinessName = business.name ?? "there";
+      promptBusinessName = cleanBusinessName(business.name ?? "there");
       promptBusinessType = business.business_type ?? "business";
       promptLocation = business.city ?? "their market";
       promptWebsite = business.website ?? "";
