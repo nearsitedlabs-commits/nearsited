@@ -403,6 +403,14 @@ Urgency: ${urgencyInstruction(urgency)}${focus && focus !== "all" ? `\nFocus par
         );
       }
 
+      // Post-process: remove duplicate consecutive words (AI stutter artifact)
+      if (parsedPitch.body) {
+        parsedPitch.body = parsedPitch.body.replace(/\b(\w+)\s+\1\b/gi, "$1");
+      }
+      if (parsedPitch.subject) {
+        parsedPitch.subject = parsedPitch.subject.replace(/\b(\w+)\s+\1\b/gi, "$1");
+      }
+
       if (!parsedPitch.subject || !parsedPitch.body) {
         console.error("[PITCH] Gemini response missing required fields");
         return NextResponse.json(
