@@ -124,8 +124,10 @@
   --space-16: 64px;
 
   /* ── Border radius — ONLY two values allowed app-wide ─── */
-  --radius-sm: 6px;   /* pills, badges, small buttons */
-  --radius-md: 10px;  /* cards, modals, larger surfaces */
+  /* Experiment: sharp rectangles everywhere. Revert to revert:
+     --radius-sm: 6px;   --radius-md: 10px;  */
+  --radius-sm: 0px;
+  --radius-md: 0px;
 
   /* Pipeline tint overlays (for badge backgrounds on dark surfaces) */
   --pipeline-analysed-tint:    rgba(96,165,250,0.15);
