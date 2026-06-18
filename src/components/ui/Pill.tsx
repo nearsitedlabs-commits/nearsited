@@ -22,11 +22,11 @@ export type PillProps = {
 // ── Style maps ────────────────────────────────────────────────────────────────
 
 const VARIANT_STYLES: Record<PillVariant, string> = {
-  info:    "text-[var(--color-info)] decoration-[var(--color-info)]/50",
-  warning: "text-[var(--color-warning)] decoration-[var(--color-warning)]/50",
-  success: "text-[var(--color-success)] decoration-[var(--color-success)]/50",
-  danger:  "text-[var(--color-danger)] decoration-[var(--color-danger)]/50",
-  neutral: "text-[var(--color-text-tertiary)] decoration-[var(--color-border-subtle)]",
+  info:    "bg-[rgba(96,165,250,0.12)] border-[rgba(96,165,250,0.25)] text-[var(--color-info)]",
+  warning: "bg-[rgba(196,152,74,0.12)] border-[rgba(196,152,74,0.25)] text-[var(--color-warning)]",
+  success: "bg-[rgba(74,143,90,0.12)] border-[rgba(74,143,90,0.25)] text-[var(--color-success)]",
+  danger:  "bg-[rgba(196,102,90,0.12)] border-[rgba(196,102,90,0.25)] text-[var(--color-danger)]",
+  neutral: "bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-tertiary)]",
 };
 
 const DOT_STYLES: Record<PillVariant, string> = {
@@ -38,14 +38,13 @@ const DOT_STYLES: Record<PillVariant, string> = {
 };
 
 const SIZE_STYLES: Record<PillSize, string> = {
-  sm: "text-[10px]",
-  md: "text-xs",
+  sm: "px-2 py-0.5 text-[10px]",
+  md: "px-2.5 py-1 text-xs",
 };
 
 const BASE =
   "inline-flex items-center gap-1.5 " +
-  "underline decoration-2 underline-offset-2 " +
-  "whitespace-nowrap font-medium";
+  "rounded-[var(--radius-sm)] border whitespace-nowrap font-medium";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
