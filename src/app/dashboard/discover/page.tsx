@@ -1,5 +1,7 @@
 "use client";
 
+import { MAJOR_CITIES } from "@/lib/data/major-cities";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -268,7 +270,24 @@ export default function DiscoverPage() {
     return groups;
   }, [processed]);
 
-  const randomize = useCallback(() => { const pool = citiesFullRef.current; if (!pool.length) return; setCity(pool[Math.floor(Math.random() * pool.length)].value); setBizType(businessTypes[Math.floor(Math.random() * businessTypes.length)].value); }, []);
+  const randomize = useCallback(() => {
+    // Filter pool to major metros only — rare business types (e.g. trampoline
+    // park, helicopter tour) don't exist in small towns. A 10 km Google Places
+    // search in a major metro is far more likely to return results.
+    const majorSet = new Set(MAJOR_CITIES.map((n) => n.toLowerCase()));
+    const pool = citiesFullRef.current.filter((c) => majorSet.has(c.city.toLowerCase()));
+    if (pool.length < 2) return; // need at least 2 to randomise
+    // Pick a city different from the current one (avoids repeating the same combo)
+    let newCity: string;
+    do { newCity = pool[Math.floor(Math.random() * pool.length)].value; }
+    while (newCity === city && pool.length > 1);
+    // Pick a business type different from the current one
+    let newBizType: string;
+    do { newBizType = businessTypes[Math.floor(Math.random() * businessTypes.length)].value; }
+    while (newBizType === bizType && businessTypes.length > 1);
+    setCity(newCity);
+    setBizType(newBizType);
+  }, [city, bizType]);
 
   const analyseOpp = useCallback(async (id: string, website: string) => {
     setAnalyseProg((p) => { const n = new Map(p); n.set(id, { step: "starting", label: "Starting audit…", phase: "audit" }); return n; });

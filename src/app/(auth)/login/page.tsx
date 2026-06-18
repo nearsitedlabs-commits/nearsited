@@ -54,6 +54,25 @@ export default function LoginPage() {
     setLoading(true);
     const { error: authErr } = await supabase.auth.signInWithPassword({ email: em, password: pw });
     if (authErr) { setError(authErr.message); setLoading(false); return; }
+
+    // Check if the account was soft-deleted — reject login if so
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("deleted_at")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (profile?.deleted_at) {
+        // Sign them out and show a clear message — account was deleted
+        await supabase.auth.signOut();
+        setError("This account has been permanently deleted and cannot be signed into. If you'd like to use Nearsited again, please create a new account with a different email address.");
+        setLoading(false);
+        return;
+      }
+    }
+
     router.push("/dashboard");
     router.refresh();
   }

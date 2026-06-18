@@ -62,7 +62,8 @@ create table public.profiles (
   email             text,
   full_name         text,
   notification_prefs jsonb default '{"audit_complete":true,"pitch_generated":true,"low_credits":true,"weekly_digest":true}'::jsonb,
-  created_at        timestamptz default now()
+  created_at        timestamptz default now(),
+  deleted_at        timestamptz                     -- set on soft-delete (account deletion)
 );
 
 alter table public.profiles enable row level security;
@@ -71,6 +72,13 @@ create policy "users read/update own profile" on public.profiles
   using (id = auth.uid()) with check (id = auth.uid());
 ```
 `id` is NOT defaulted — it must equal the auth user's id.
+
+**`deleted_at`**: Set to `now()` when the user soft-deletes their account via Settings → Data & Privacy → Delete my account. When non-null:
+- The auth user is **kept** in `auth.users` so the email stays "taken" (prevents re-registration for a fresh free trial).
+- Login is rejected with a "permanently deleted" message.
+- `getSubscription()` and `deductAudit()` return a capped row (audits_used = audits_limit), blocking all audit usage.
+- `ensureSubscription()` in the auth callback skips free-trial provisioning.
+- Active sessions are revoked immediately.
 
 **`notification_prefs` keys** (all boolean, default `true`):
 | Key | Description |

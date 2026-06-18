@@ -61,7 +61,25 @@ function safeRedirect(destination: string | null): string {
 
 async function ensureSubscription(userId: string) {
   const admin = createAdminClient();
-  const now = new Date();
+
+  // ── Soft-delete guard ──────────────────────────────────────────────────
+  // If the profile has deleted_at set, the account was previously deleted.
+  // Do NOT provision a fresh free trial — the auth user is kept so the email
+  // stays "taken" and Supabase Auth prevents re-registration. However, if
+  // this code path is reached (e.g., via OAuth re-link), bail out to prevent
+  // a trial reset.
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("deleted_at")
+    .eq("id", userId)
+    .maybeSingle() as { data: { deleted_at: string | null } | null };
+
+  if (profile?.deleted_at) {
+    console.log(`[AUTH/CALLBACK] Skipping subscription provision for soft-deleted user=...${userId.slice(-4)}`);
+    return;
+  }
+
+  // ── Provision free trial ───────────────────────────────────────────────
   await admin.from("subscriptions").upsert(
     { user_id: userId, tier: "free_trial", audits_limit: FREE_TRIAL_AUDIT_LIMIT, audits_used: 0, credits_reset_at: null },
     { onConflict: "user_id", ignoreDuplicates: true }

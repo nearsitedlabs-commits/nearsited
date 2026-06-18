@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { citySearchQuerySchema } from "@/lib/validation";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { MAJOR_CITIES } from "@/lib/data/major-cities";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -78,20 +79,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Otherwise sort popular first and limit results for the search dropdown
-    const POPULAR_CITIES = [
-      "Dubai", "Abu Dhabi", "London", "New York", "Los Angeles", "Singapore",
-      "Hong Kong", "Tokyo", "Paris", "Zurich", "Geneva", "Dublin", "Amsterdam",
-      "Berlin", "Madrid", "Barcelona", "Rome", "Milan", "Sydney", "Melbourne",
-      "Toronto", "Vancouver", "San Francisco", "Chicago", "Miami", "Boston",
-      "Seattle", "Austin", "Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad",
-      "Kochi", "Thiruvananthapuram", "Riyadh", "Jeddah", "Doha", "Kuwait City",
-      "Muscat", "Manama", "Bangkok", "Kuala Lumpur", "Jakarta", "Manila", "Seoul",
-      "Shanghai", "Beijing", "Istanbul", "Lisbon", "Vienna", "Munich", "Edinburgh",
-      "Manchester", "Birmingham", "Glasgow", "Dallas", "Houston", "Phoenix",
-      "Denver", "Atlanta", "Brisbane", "Perth", "Auckland", "Cape Town", "Sharjah", "Ajman",
-    ];
     const popularityIndex = new Map<string, number>(
-      POPULAR_CITIES.map((name, i) => [name.toLowerCase(), i]),
+      MAJOR_CITIES.map((name, i) => [name.toLowerCase(), i]),
     );
     const MAX_RESULTS = 200;
     const seenPopular = new Set<string>();

@@ -30,7 +30,10 @@ type DeductResult = {
 };
 
 /**
- * Returns the user's subscription row. If none exists, provisions a free-trial row.
+ * Returns the user's subscription row. If none exists, provisions a free-trial row
+ * UNLESS the profile is soft-deleted (deleted_at is set), in which case the
+ * subscription is capped at the limit and no further usage is allowed.
+ *
  * As a side-effect, backfills zero limits to the database defaults.
  */
 export async function getSubscription(userId: string): Promise<SubRow> {
@@ -49,6 +52,28 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     }
     return data as SubRow;
   }
+
+  // ── Soft-delete guard ──────────────────────────────────────────────────
+  // If the profile has deleted_at set, do NOT provision a new free trial.
+  // Return a capped subscription row that blocks all usage.
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("deleted_at")
+    .eq("id", userId)
+    .maybeSingle() as { data: { deleted_at: string | null } | null };
+
+  if (profile?.deleted_at) {
+    console.log(`[AUDITS] getSubscription blocked for soft-deleted user=...${userId.slice(-4)}`);
+    return {
+      tier: "free_trial",
+      audits_used: FREE_TRIAL_AUDIT_LIMIT,  // Capped — no more audits
+      audits_limit: FREE_TRIAL_AUDIT_LIMIT,
+      searches_used: 0,
+      searches_limit: 0,
+      credits_reset_at: null,
+    };
+  }
+  // ── End soft-delete guard ──────────────────────────────────────────────
 
   // No row — provision free trial (lifetime, no monthly reset)
   const row: SubRow = {
@@ -118,6 +143,22 @@ export async function checkAudit(
 export async function deductAudit(
   userId: string
 ): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
+  // ── Soft-delete guard ──────────────────────────────────────────────────
+  // If the profile is soft-deleted, reject immediately. The RPC function
+  // would otherwise upsert a fresh subscription row with audits_used = 0
+  // if the old row was cleaned up.
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("deleted_at")
+    .eq("id", userId)
+    .maybeSingle() as { data: { deleted_at: string | null } | null };
+
+  if (profile?.deleted_at) {
+    console.log(`[AUDITS] deductAudit blocked for soft-deleted user=...${userId.slice(-4)}`);
+    return { success: false, audits_used: FREE_TRIAL_AUDIT_LIMIT, audits_limit: FREE_TRIAL_AUDIT_LIMIT };
+  }
+  // ── End soft-delete guard ──────────────────────────────────────────────
+
   // Defensive backfill: ensure audits_limit is not 0 before the RPC locks the row.
   await getSubscription(userId);
 

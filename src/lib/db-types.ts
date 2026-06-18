@@ -257,10 +257,13 @@ export interface ShareLinkRow {
 /**
  * Maps to the `profiles` table (auth-linked user profiles).
  * Used by the dodo webhook to look up users by email.
+ * `deleted_at` is set on soft-delete — when non-null the account is
+ * considered deleted and cannot be used (login blocked, audits rejected).
  */
 export interface ProfileRow {
   id: string;
   email: string | null;
+  deleted_at: string | null;
 }
 
 // ── Derived / Composite Types ───────────────────────────────────────────────
