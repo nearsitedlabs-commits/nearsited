@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDodoClient, getDodoProducts, FREE_AUDIT_LIMIT } from "@/lib/dodo";
+import { getDodoClient, getDodoProducts, FREE_TRIAL_AUDIT_LIMIT } from "@/lib/dodo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isProcessed, markProcessed } from "@/lib/webhook-idempotency";
 
@@ -120,12 +120,12 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId)
         .maybeSingle() as { data: { audits_used: number } | null };
       const currentUsed = (currentSub as { audits_used: number } | null)?.audits_used ?? 0;
-      const cappedUsed = Math.min(currentUsed, FREE_AUDIT_LIMIT);
+      const cappedUsed = Math.min(currentUsed, FREE_TRIAL_AUDIT_LIMIT);
 
       const { error } = await subTable
         .update({
-          tier: "free",
-          audits_limit: FREE_AUDIT_LIMIT,
+          tier: "free_trial",
+          audits_limit: FREE_TRIAL_AUDIT_LIMIT,
           audits_used: cappedUsed,
           dodo_subscription_id: sub.subscription_id,
         })

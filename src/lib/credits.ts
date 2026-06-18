@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { FREE_AUDIT_LIMIT, FREE_SEARCH_LIMIT } from "@/lib/dodo";
+import { FREE_TRIAL_AUDIT_LIMIT } from "@/lib/dodo";
+import { getAuditLimit } from "@/lib/tier-features";
 
 /**
  * Returns the admin client — bypasses RLS, used only in server code.
@@ -21,17 +22,15 @@ type SubRow = {
   credits_reset_at: string | null;
 };
 
-/** Shape returned by the deduct_audit_credit / deduct_search_credit RPC. */
+/** Shape returned by the deduct_audit_credit RPC. */
 type DeductResult = {
   success: boolean;
   audits_used?: number;
   audits_limit?: number;
-  searches_used?: number;
-  searches_limit?: number;
 };
 
 /**
- * Returns the user's subscription row. If none exists, provisions a free-tier row.
+ * Returns the user's subscription row. If none exists, provisions a free-trial row.
  * As a side-effect, backfills zero limits to the database defaults.
  */
 export async function getSubscription(userId: string): Promise<SubRow> {
@@ -40,10 +39,10 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     .eq("user_id", userId)
     .maybeSingle();
   if (data) {
-    // Backfill limits that may be null/0 on rows created before those columns were added.
+    // Backfill audits_limit that may be null/0 on rows created before migration.
+    const limit = getAuditLimit(data.tier);
     const patch: Partial<SubRow> = {};
-    if (!data.searches_limit) patch.searches_limit = FREE_SEARCH_LIMIT;
-    if (!data.audits_limit) patch.audits_limit = FREE_AUDIT_LIMIT;
+    if (!data.audits_limit) patch.audits_limit = limit;
     if (Object.keys(patch).length) {
       await subTable().update(patch).eq("user_id", userId);
       return { ...data, ...patch } as SubRow;
@@ -51,20 +50,21 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     return data as SubRow;
   }
 
-  // No row — provision free tier with monthly reset from day one
-  const now = new Date();
-  const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
+  // No row — provision free trial (lifetime, no monthly reset)
   const row: SubRow = {
-    tier: "free",
+    tier: "free_trial",
     audits_used: 0,
-    audits_limit: FREE_AUDIT_LIMIT,
+    audits_limit: FREE_TRIAL_AUDIT_LIMIT,
     searches_used: 0,
-    searches_limit: FREE_SEARCH_LIMIT,
-    credits_reset_at: nextReset,
+    searches_limit: 0,
+    credits_reset_at: null, // Free trial is lifetime; no monthly reset
   };
-  const { error: upsertError } = await subTable().upsert({ user_id: userId, ...row }, { onConflict: "user_id", ignoreDuplicates: true });
+  const { error: upsertError } = await subTable().upsert(
+    { user_id: userId, ...row },
+    { onConflict: "user_id", ignoreDuplicates: true }
+  );
   if (upsertError) {
-    console.error(`[CREDITS] getSubscription upsert failed for user=...${userId.slice(-4)}`, {
+    console.error(`[AUDITS] getSubscription upsert failed for user=...${userId.slice(-4)}`, {
       code: upsertError.code,
       message: upsertError.message,
     });
@@ -74,13 +74,16 @@ export async function getSubscription(userId: string): Promise<SubRow> {
 
 /**
  * Checks if the user may run an audit.
- * Auto-resets monthly counter when credits_reset_at is in the past.
+ * Auto-resets monthly counter when credits_reset_at is in the past (paid plans only).
+ * Free Trial: lifetime allowance, never resets.
  * Returns { allowed, audits_used, audits_limit }.
  */
-export async function checkCredit(userId: string): Promise<{ allowed: boolean; audits_used: number; audits_limit: number }> {
+export async function checkAudit(
+  userId: string
+): Promise<{ allowed: boolean; audits_used: number; audits_limit: number }> {
   let row = await getSubscription(userId);
 
-  // Monthly reset
+  // Monthly reset — for paid plans only (free_trial has no credits_reset_at)
   if (row.credits_reset_at && new Date(row.credits_reset_at) <= new Date()) {
     const now = new Date();
     const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
@@ -88,34 +91,34 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
       .update({ audits_used: 0, credits_reset_at: nextReset })
       .eq("user_id", userId);
     row = { ...row, audits_used: 0, credits_reset_at: nextReset };
-    console.log(`[CREDITS] Monthly reset user=...${userId.slice(-4)}`);
+    console.log(`[AUDITS] Monthly reset user=...${userId.slice(-4)}`);
   }
 
   const allowed = row.audits_used < row.audits_limit;
-  console.log(`[CREDITS] check user=...${userId.slice(-4)} used=${row.audits_used} limit=${row.audits_limit} allowed=${allowed}`);
+  console.log(
+    `[AUDITS] check user=...${userId.slice(-4)} used=${row.audits_used} limit=${row.audits_limit} allowed=${allowed}`
+  );
   return { allowed, audits_used: row.audits_used, audits_limit: row.audits_limit };
 }
 
 /**
- * Atomically checks and deducts one audit credit via the
- * `deduct_audit_credit` PostgreSQL function.
+ * Atomically checks and deducts one audit via the `deduct_audit_credit`
+ * PostgreSQL function.
  *
  * Uses `SELECT … FOR UPDATE` + `SET audits_used = audits_used + 1` inside a
  * single server-side transaction, eliminating the race condition where two
  * concurrent requests both read `audits_used` before either writes.
  *
  * Monthly resets are handled inside the function, so callers no longer need
- * a separate `checkCredit()` call for correctness (though `checkCredit()` is
+ * a separate `checkAudit()` call for correctness (though `checkAudit()` is
  * still useful as a fast-path early-return to avoid wasted work).
  *
  * Returns `{ success, audits_used, audits_limit }`.
  */
-export async function deductCredit(
-  userId: string,
+export async function deductAudit(
+  userId: string
 ): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
   // Defensive backfill: ensure audits_limit is not 0 before the RPC locks the row.
-  // The RPC itself handles zero limits (COALESCE(NULLIF(..., 0), FREE_AUDIT_LIMIT)),
-  // but fixing it here gives defense-in-depth.
   await getSubscription(userId);
 
   const { data, error } = await admin.rpc("deduct_audit_credit", {
@@ -123,7 +126,7 @@ export async function deductCredit(
   });
 
   if (error) {
-    console.error(`[CREDITS] deductCredit RPC failed for user=...${userId.slice(-4)}`, {
+    console.error(`[AUDITS] deductAudit RPC failed for user=...${userId.slice(-4)}`, {
       code: error.code,
       message: error.message,
     });
@@ -134,13 +137,13 @@ export async function deductCredit(
 
   if (!result.success) {
     console.log(
-      `[CREDITS] deductCredit rejected user=...${userId.slice(-4)} ` +
-        `used=${result.audits_used} limit=${result.audits_limit} — limit reached`,
+      `[AUDITS] deductAudit rejected user=...${userId.slice(-4)} ` +
+        `used=${result.audits_used} limit=${result.audits_limit} — limit reached`
     );
   } else {
     console.log(
-      `[CREDITS] deducted user=...${userId.slice(-4)} ` +
-        `now=${result.audits_used}/${result.audits_limit}`,
+      `[AUDITS] deducted user=...${userId.slice(-4)} ` +
+        `now=${result.audits_used}/${result.audits_limit}`
     );
   }
 
@@ -152,20 +155,20 @@ export async function deductCredit(
 }
 
 /**
- * Atomically refunds one audit credit via the `refund_audit_credit`
- * PostgreSQL function. Used when a credit was reserved with `deductCredit()`
+ * Atomically refunds one audit via the `refund_audit_credit`
+ * PostgreSQL function. Used when an audit was reserved with `deductAudit()`
  * before expensive external API work, but that work ultimately failed to
  * produce a persisted result — the reservation should not be charged.
  */
-export async function refundCredit(
-  userId: string,
+export async function refundAudit(
+  userId: string
 ): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
   const { data, error } = await admin.rpc("refund_audit_credit", {
     p_user_id: userId,
   });
 
   if (error) {
-    console.error(`[CREDITS] refundCredit RPC failed for user=...${userId.slice(-4)}`, {
+    console.error(`[AUDITS] refundAudit RPC failed for user=...${userId.slice(-4)}`, {
       code: error.code,
       message: error.message,
     });
@@ -173,116 +176,13 @@ export async function refundCredit(
   }
 
   const result = data as DeductResult;
-  console.log(`[CREDITS] refunded audit credit user=...${userId.slice(-4)} now=${result.audits_used}/${result.audits_limit}`);
+  console.log(
+    `[AUDITS] refunded audit user=...${userId.slice(-4)} now=${result.audits_used}/${result.audits_limit}`
+  );
 
   return {
     success: result.success,
     audits_used: result.audits_used ?? 0,
     audits_limit: result.audits_limit ?? 0,
-  };
-}
-
-/**
- * Checks if the user may run a city search.
- * Auto-resets monthly counter when credits_reset_at is in the past (paid plans).
- * Free users: no reset (lifetime allowance of FREE_SEARCH_LIMIT).
- */
-export async function checkSearch(userId: string): Promise<{ allowed: boolean; searches_used: number; searches_limit: number }> {
-  let row = await getSubscription(userId);
-
-  // Monthly reset for paid plans only
-  if (row.credits_reset_at && new Date(row.credits_reset_at) <= new Date()) {
-    const now = new Date();
-    const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
-    await subTable()
-      .update({ searches_used: 0, credits_reset_at: nextReset })
-      .eq("user_id", userId);
-    row = { ...row, searches_used: 0, credits_reset_at: nextReset };
-    console.log(`[CREDITS] Monthly search reset user=...${userId.slice(-4)}`);
-  }
-
-  const allowed = row.searches_used < row.searches_limit;
-  console.log(`[CREDITS] search check user=...${userId.slice(-4)} used=${row.searches_used} limit=${row.searches_limit} allowed=${allowed}`);
-  return { allowed, searches_used: row.searches_used, searches_limit: row.searches_limit };
-}
-
-/**
- * Atomically checks and deducts one search credit via the
- * `deduct_search_credit` PostgreSQL function.
- *
- * Same atomic pattern as `deductCredit` — eliminates the race condition
- * by performing the check and increment inside a single locked transaction.
- *
- * Returns `{ success, searches_used, searches_limit }`.
- */
-export async function deductSearch(
-  userId: string,
-): Promise<{ success: boolean; searches_used: number; searches_limit: number }> {
-  // Defensive backfill: ensure searches_limit is not 0 before the RPC locks the row.
-  // The RPC itself handles zero limits (COALESCE(NULLIF(..., 0), FREE_SEARCH_LIMIT)),
-  // but fixing it here gives defense-in-depth.
-  await getSubscription(userId);
-
-  const { data, error } = await admin.rpc("deduct_search_credit", {
-    p_user_id: userId,
-  });
-
-  if (error) {
-    console.error(`[CREDITS] deductSearch RPC failed for user=...${userId.slice(-4)}`, {
-      code: error.code,
-      message: error.message,
-    });
-    return { success: false, searches_used: 0, searches_limit: 0 };
-  }
-
-  const result = data as DeductResult;
-
-  if (!result.success) {
-    console.log(
-      `[CREDITS] deductSearch rejected user=...${userId.slice(-4)} ` +
-        `used=${result.searches_used} limit=${result.searches_limit} — limit reached`,
-    );
-  } else {
-    console.log(
-      `[CREDITS] search deducted user=...${userId.slice(-4)} ` +
-        `now=${result.searches_used}/${result.searches_limit}`,
-    );
-  }
-
-  return {
-    success: result.success,
-    searches_used: result.searches_used ?? 0,
-    searches_limit: result.searches_limit ?? 0,
-  };
-}
-
-/**
- * Atomically refunds one search credit via the `refund_search_credit`
- * PostgreSQL function. Used when a credit was reserved with `deductSearch()`
- * before expensive external API work, but that work ultimately failed to
- * produce a result — the reservation should not be charged.
- */
-export async function refundSearch(
-  userId: string,
-): Promise<{ success: boolean; searches_used: number; searches_limit: number }> {
-  const { data, error } = await admin.rpc("refund_search_credit", {
-    p_user_id: userId,
-  });
-
-  if (error) {
-    console.error(`[CREDITS] refundSearch RPC failed for user=...${userId.slice(-4)}`, {
-      code: error.code,
-      message: error.message,
-    });
-    return { success: false, searches_used: 0, searches_limit: 0 };
-  }
-
-  const result = data as DeductResult;
-  console.log(`[CREDITS] refunded search credit user=...${userId.slice(-4)} now=${result.searches_used}/${result.searches_limit}`);
-
-  return {
-    success: result.success,
-    searches_used: result.searches_used ?? 0,
-    searches_limit: result.searches_limit ?? 0,
   };
 }

@@ -46,6 +46,9 @@ export const expensiveOpLimiter = createLimiter(5, "60 s", "@upstash/ratelimit/e
 // Per-token rate limiter for shared report links (60 req/min per token)
 export const shareTokenLimiter = createLimiter(60, "60 s", "@upstash/ratelimit/share");
 
+// Anonymous Quick Audit: 3 requests per 7 days per IP
+export const anonymousAuditLimiter = createLimiter(3, "7 d", "@upstash/ratelimit/quick-audit");
+
 // Helper to get identifier from request (prefers user ID, falls back to IP)
 export function getRateLimitIdentifier(request: NextRequest, userId?: string): string {
   if (userId) return userId;

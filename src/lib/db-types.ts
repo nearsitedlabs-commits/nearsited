@@ -197,8 +197,9 @@ export interface PlacesCacheRow {
 /**
  * Maps to the `subscriptions` table (§2.10).
  *
- * Billing / audit-credit tracking. Provisioned on signup (free tier) and
+ * Billing / audit-credit tracking. Provisioned on signup (free trial) and
  * updated by the Dodo Payments webhook.
+ * Tier values: free_trial | solo | agency | scale
  */
 export interface SubscriptionRow {
   id: string;

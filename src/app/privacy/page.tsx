@@ -89,7 +89,7 @@ export default function PrivacyPage() {
 
           <div>
             <p className="font-medium text-[var(--color-text-primary)]">Dodo Payments</p>
-            <p className="mt-1">Payment processing for Starter and Agency subscriptions. We never store, see, or access your full payment card details. Dodo Payments holds all payment instrument data. Dodo shares only subscription status, renewal dates, and payment confirmation with us.</p>
+            <p className="mt-1">Payment processing for Solo, Agency, and Scale subscriptions. We never store, see, or access your full payment card details. Dodo Payments holds all payment instrument data. Dodo shares only subscription status, renewal dates, and payment confirmation with us.</p>
           </div>
 
           <div>

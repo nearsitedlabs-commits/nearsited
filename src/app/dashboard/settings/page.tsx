@@ -16,18 +16,19 @@ type UserData = {
 };
 
 type SubData = {
-  tier: "free" | "starter" | "agency";
+  tier: "free_trial" | "solo" | "agency" | "scale";
   audits_used: number;
   audits_limit: number;
   searches_used: number;
   searches_limit: number;
 };
 
-const TIER_LABELS: Record<string, string> = { free: "Free", starter: "Starter", agency: "Agency" };
+const TIER_LABELS: Record<string, string> = { free_trial: "Free Trial", solo: "Solo", agency: "Agency", scale: "Scale" };
 const TIER_COLORS: Record<string, string> = {
-  free:    "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  starter: "border-blue-500/30 bg-blue-500/10 text-blue-400",
-  agency:  "border-purple-500/30 bg-purple-500/10 text-purple-400",
+  free_trial: "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+  solo:       "border-blue-500/30 bg-blue-500/10 text-blue-400",
+  agency:     "border-purple-500/30 bg-purple-500/10 text-purple-400",
+  scale:      "border-amber-500/30 bg-amber-500/10 text-amber-400",
 };
 
 /** Benefits copy — kept in sync with landing page Pricing.tsx PLANS array */
@@ -322,7 +323,7 @@ export default function SettingsPage() {
       setLoading(false);
 
       // Auto-trigger checkout if user arrived here after selecting a plan while logged out
-      if (resolvedSub.tier === "free") {
+      if (resolvedSub.tier === "free_trial") {
         try {
           const pending = localStorage.getItem("pendingUpgradePlan");
           if (pending) {
@@ -350,7 +351,8 @@ export default function SettingsPage() {
       const json = await res.json();
       if (json.synced && json.reason === "reconciled") {
         setSub({ tier: json.tier, audits_used: json.audits_used, audits_limit: json.audits_limit, searches_used: json.searches_used, searches_limit: json.searches_limit });
-        setSyncMsg(`Upgrade confirmed! You're now on the ${json.tier === "starter" ? "Starter" : "Agency"} plan.`);
+        const tierLabel = json.tier === "solo" ? "Solo" : json.tier === "agency" ? "Agency" : json.tier === "scale" ? "Scale" : json.tier;
+        setSyncMsg(`Upgrade confirmed! You're now on the ${tierLabel} plan.`);
         setTimeout(() => setSyncMsg(null), 6000);
       } else if (json.synced && json.reason === "already_in_sync") {
         setSyncMsg(null);
@@ -767,16 +769,16 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-[var(--color-text-primary)]">{TIER_LABELS[sub?.tier ?? "free"]} Plan</p>
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">{TIER_LABELS[sub?.tier ?? "free_trial"]} Plan</p>
                 <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                  {sub?.tier === "free"
-                    ? `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 20} free credits used`
-                    : `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 0} credits used this month`
+                  {sub?.tier === "free_trial"
+                    ? `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 20} free audits used (lifetime)`
+                    : `${sub?.audits_used ?? 0} / ${sub?.audits_limit ?? 0} audits used this month`
                   }
                 </p>
               </div>
-              <span className={`rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free"]}`}>
-                {TIER_LABELS[sub?.tier ?? "free"]}
+              <span className={`rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free_trial"]}`}>
+                {TIER_LABELS[sub?.tier ?? "free_trial"]}
               </span>
             </div>
 
@@ -790,33 +792,44 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {(!sub || sub.tier === "free") && (
+            {(!sub || sub.tier === "free_trial") && (
               <div className="mt-4 space-y-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                   <Button
                     variant="secondary"
-                    onClick={() => handleUpgrade("pdt_0NgKrmYBX9pAp9NhbeMqp")}
+                    onClick={() => handleUpgrade(process.env.NEXT_PUBLIC_DODO_PRODUCT_SOLO_MONTHLY ?? "pdt_solo_monthly")}
                     disabled={upgrading !== null}
                   >
-                    {upgrading === "pdt_0NgKrmYBX9pAp9NhbeMqp" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                    Upgrade to Starter — $19/mo
+                    {upgrading === process.env.NEXT_PUBLIC_DODO_PRODUCT_SOLO_MONTHLY ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                    Upgrade to Solo — $29/mo
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={() => handleUpgrade("pdt_0NgKsF0ROmm9U603GRqMm")}
+                    onClick={() => handleUpgrade(process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_MONTHLY ?? "pdt_agency_monthly")}
                     disabled={upgrading !== null}
                   >
-                    {upgrading === "pdt_0NgKsF0ROmm9U603GRqMm" ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                    Upgrade to Agency — $49/mo
+                    {upgrading === process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_MONTHLY ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                    Upgrade to Agency — $89/mo
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleUpgrade(process.env.NEXT_PUBLIC_DODO_PRODUCT_SCALE_MONTHLY ?? "pdt_scale_monthly")}
+                    disabled={upgrading !== null}
+                  >
+                    {upgrading === process.env.NEXT_PUBLIC_DODO_PRODUCT_SCALE_MONTHLY ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                    Scale — $249/mo
                   </Button>
                 </div>
-                {/* Benefits list — kept in sync with landing page Pricing.tsx */}
+                {/* Benefits list */}
                 <div className="space-y-1.5">
                   <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed">
-                    <span className="font-medium text-[var(--color-text-secondary)]">Starter:</span> {PLAN_BENEFITS.starter}
+                    <span className="font-medium text-[var(--color-text-secondary)]">Solo:</span> 100 audits/mo, unlimited searches, 5 saved searches, unlimited pipeline.
                   </p>
                   <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed">
-                    <span className="font-medium text-[var(--color-text-secondary)]">Agency:</span> {PLAN_BENEFITS.agency}
+                    <span className="font-medium text-[var(--color-text-secondary)]">Agency:</span> 500 audits/mo, 3 seats, team workspace, API access, custom templates.
+                  </p>
+                  <p className="text-[11px] text-[var(--color-text-tertiary)] leading-relaxed">
+                    <span className="font-medium text-[var(--color-text-secondary)]">Scale:</span> 2,000 audits/mo, 10 seats, full API, white-label, Slack/Discord support.
                   </p>
                 </div>
               </div>

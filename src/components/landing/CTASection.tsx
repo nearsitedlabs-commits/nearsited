@@ -34,7 +34,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
               </div>
               <div className="mt-6 flex flex-col items-center gap-3 text-sm text-[var(--color-text-tertiary)] sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
-                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free analyses</span>
+                <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />20 free audits</span>
                 <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
               </div>
             </div>
@@ -62,7 +62,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
                 </div>
                 <div className="mt-6 flex flex-col items-center gap-3 text-sm text-[var(--color-text-tertiary)] sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
                   <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />No credit card</span>
-                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />10 free analyses</span>
+                  <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />20 free audits</span>
                   <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--color-accent)]" />Cancel anytime</span>
                 </div>
               </div>

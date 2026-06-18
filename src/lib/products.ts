@@ -15,34 +15,41 @@ let _validProducts: readonly string[] | null = null;
  * Returns the list of valid Dodo Payments product IDs.
  *
  * Reads from the following env vars at first call, then caches:
- * - `DODO_PRODUCT_STARTER_MONTHLY`
- * - `DODO_PRODUCT_STARTER_ANNUAL`
+ * - `DODO_PRODUCT_SOLO_MONTHLY`
+ * - `DODO_PRODUCT_SOLO_ANNUAL`
  * - `DODO_PRODUCT_AGENCY_MONTHLY`
  * - `DODO_PRODUCT_AGENCY_ANNUAL`
+ * - `DODO_PRODUCT_SCALE_MONTHLY`
+ * - `DODO_PRODUCT_SCALE_ANNUAL`
  *
  * Throws if any of the required env vars are missing.
  */
 export function getValidProducts(): readonly string[] {
   if (_validProducts) return _validProducts;
 
-  const starterMonthly = process.env.DODO_PRODUCT_STARTER_MONTHLY;
-  const starterAnnual = process.env.DODO_PRODUCT_STARTER_ANNUAL;
-  const agencyMonthly = process.env.DODO_PRODUCT_AGENCY_MONTHLY;
-  const agencyAnnual = process.env.DODO_PRODUCT_AGENCY_ANNUAL;
+  const soloMonthly    = process.env.DODO_PRODUCT_SOLO_MONTHLY;
+  const soloAnnual     = process.env.DODO_PRODUCT_SOLO_ANNUAL;
+  const agencyMonthly  = process.env.DODO_PRODUCT_AGENCY_MONTHLY;
+  const agencyAnnual   = process.env.DODO_PRODUCT_AGENCY_ANNUAL;
+  const scaleMonthly   = process.env.DODO_PRODUCT_SCALE_MONTHLY;
+  const scaleAnnual    = process.env.DODO_PRODUCT_SCALE_ANNUAL;
 
-  if (!starterMonthly || !starterAnnual || !agencyMonthly || !agencyAnnual) {
+  if (!soloMonthly || !soloAnnual || !agencyMonthly || !agencyAnnual || !scaleMonthly || !scaleAnnual) {
     throw new Error(
       "Missing one or more DODO_PRODUCT_* environment variables. " +
-      "Ensure DODO_PRODUCT_STARTER_MONTHLY, DODO_PRODUCT_STARTER_ANNUAL, " +
-      "DODO_PRODUCT_AGENCY_MONTHLY, and DODO_PRODUCT_AGENCY_ANNUAL are set."
+      "Ensure DODO_PRODUCT_SOLO_MONTHLY, DODO_PRODUCT_SOLO_ANNUAL, " +
+      "DODO_PRODUCT_AGENCY_MONTHLY, DODO_PRODUCT_AGENCY_ANNUAL, " +
+      "DODO_PRODUCT_SCALE_MONTHLY, and DODO_PRODUCT_SCALE_ANNUAL are set."
     );
   }
 
   _validProducts = Object.freeze([
-    starterMonthly,
-    starterAnnual,
+    soloMonthly,
+    soloAnnual,
     agencyMonthly,
     agencyAnnual,
+    scaleMonthly,
+    scaleAnnual,
   ]);
 
   return _validProducts;

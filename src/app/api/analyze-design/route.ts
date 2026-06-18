@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
-import { checkCredit, deductCredit, refundCredit } from "@/lib/credits";
+import { checkAudit, deductAudit, refundAudit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { businessWebsiteSchema } from "@/lib/validation";
 import { writeJson, writeStep } from "@/lib/api/stream-utils";
@@ -56,11 +56,11 @@ export async function POST(request: NextRequest) {
     const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
     if (blocked) return blocked;
 
-    // 4. Credit check — runs before any external API calls
-    const credit = await checkCredit(user.id);
+    // 4. Audit check — runs before any external API calls
+    const credit = await checkAudit(user.id);
     if (!credit.allowed) {
       return NextResponse.json(
-        { error: credit.audits_limit <= 20 ? "Free plan credit limit reached. Upgrade your plan to run more design analyses." : `Monthly credit limit reached (${credit.audits_used}/${credit.audits_limit}). Credits reset at the start of next month.`, code: "CREDIT_LIMIT", retryAfter: 0 },
+        { error: credit.audits_limit <= 20 ? "Free Trial audit limit reached (20 lifetime). Upgrade to keep auditing." : `Monthly audit limit reached (${credit.audits_used}/${credit.audits_limit}). Resets at the start of next month.`, code: "AUDIT_LIMIT", retryAfter: 0 },
         { status: 429 },
       );
     }
@@ -132,25 +132,25 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         let creditReserved = false;
         try {
-          // Reserve the credit BEFORE running ScreenshotCore + Gemini (real,
+          // Reserve the audit BEFORE running ScreenshotCore + Gemini (real,
           // paid calls). The atomic RPC closes the race where concurrent
-          // requests all pass the non-atomic checkCredit() gate above and
+          // requests all pass the non-atomic checkAudit() gate above and
           // each trigger the expensive calls before any of them reaches a
           // deduction. If reservation fails, no external call is made.
           if (shouldPersist) {
-            const reserved = await deductCredit(currentUser.id);
+            const reserved = await deductAudit(currentUser.id);
             if (!reserved.success) {
               console.warn(
-                `[DESIGN] Credit reservation rejected for user=...${currentUser.id.slice(-4)} ` +
+                `[DESIGN] Audit reservation rejected for user=...${currentUser.id.slice(-4)} ` +
                   `used=${reserved.audits_used}/${reserved.audits_limit} — limit reached`,
               );
               writeJson(controller, encoder, {
                 type: "error",
-                code: "CREDIT_LIMIT",
+                code: "AUDIT_LIMIT",
                 message:
                   reserved.audits_limit <= 20
-                    ? "Free plan credit limit reached. Upgrade your plan to run more design analyses."
-                    : `Monthly credit limit reached (${reserved.audits_used}/${reserved.audits_limit}). Credits reset at the start of next month.`,
+                    ? "Free Trial audit limit reached (20 lifetime). Upgrade to keep auditing."
+                    : `Monthly audit limit reached (${reserved.audits_used}/${reserved.audits_limit}). Resets at the start of next month.`,
               });
               controller.close();
               return;
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
             (desktop.status === "error" && desktop.error === "AI_QUOTA_EXCEEDED");
 
           if (isQuotaExceeded) {
-            if (creditReserved) await refundCredit(currentUser.id);
+            if (creditReserved) await refundAudit(currentUser.id);
             writeJson(controller, encoder, {
               type: "error",
               error: "AI_QUOTA_EXCEEDED",
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
             (desktop.status === "error" && desktop.error === "AI_SERVICE_BUSY");
 
           if (isServiceBusy) {
-            if (creditReserved) await refundCredit(currentUser.id);
+            if (creditReserved) await refundAudit(currentUser.id);
             writeJson(controller, encoder, {
               type: "error",
               error: "AI_SERVICE_BUSY",
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
 
           // ── Both strategies failed — emit error instead of "done" ──
           if (mobile.status === "error" && desktop.status === "error") {
-            if (creditReserved) await refundCredit(currentUser.id);
+            if (creditReserved) await refundAudit(currentUser.id);
             const msg = "Design analysis failed — screenshots could not be captured. Try again later.";
             console.error("[DESIGN] Both strategies failed — emitting error:", msg);
             writeJson(controller, encoder, { type: "error", message: msg });
@@ -318,7 +318,7 @@ export async function POST(request: NextRequest) {
 
           // 9. If persistence failed, emit error instead of "done"
           if (shouldPersist && persistenceErrors.length > 0) {
-            if (creditReserved) await refundCredit(currentUser.id);
+            if (creditReserved) await refundAudit(currentUser.id);
             console.error("[DESIGN] Persistence failed — emitting error instead of done");
             writeJson(controller, encoder, {
               type: "error",
@@ -348,7 +348,7 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           console.error("[DESIGN] Stream error:", error);
           if (creditReserved) {
-            const refunded = await refundCredit(currentUser.id);
+            const refunded = await refundAudit(currentUser.id);
             if (!refunded.success) {
               console.error(`[DESIGN] Credit refund failed for user=...${currentUser.id.slice(-4)} after stream error`);
             }

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { LandingScrollNav } from "@/components/landing/LandingScrollNav";
 import { LandingHero } from "@/components/landing/LandingHero";
+import { QuickAuditSection } from "@/components/landing/QuickAuditSection";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { WhyNearsitedSection } from "@/components/landing/WhyNearsitedSection";
@@ -27,10 +28,11 @@ export default function LandingPageClient() {
       <LandingScrollNav />
       <main className="pt-16 lg:pt-20">
         <LandingHero navigate={navigate} />
+        <QuickAuditSection navigate={navigate} />
         <TrustBar />
         <HowItWorksSection />
         <WhyNearsitedSection />
-<SampleReportSection navigate={navigate} />
+        <SampleReportSection navigate={navigate} />
         <SamplePitchSection navigate={navigate} />
         <AgencyUseCasesSection navigate={navigate} />
         <ObjectionsSection navigate={navigate} />

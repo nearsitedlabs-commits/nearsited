@@ -7,7 +7,6 @@ import { geocodeCity, fetchPlacesWithPagination, fetchPlaceDetails } from "@/lib
 import { discoverSchema } from "@/lib/validation";
 import { writeJson, writeProgress } from "@/lib/api/stream-utils";
 import { BUSINESS_TYPE_TO_PLACES_TYPE } from "@/lib/data/places-types";
-import { checkSearch, deductSearch, refundSearch } from "@/lib/credits";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,16 +35,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Search limit check — must pass before any external API calls
-    const searchCheck = await checkSearch(user.id);
-    if (!searchCheck.allowed) {
-      console.log(`[DISCOVER] Search limit reached for user=...${user.id.slice(-4)} used=${searchCheck.searches_used}/${searchCheck.searches_limit}`);
-      return NextResponse.json(
-        { error: "Search limit reached", searches_used: searchCheck.searches_used, searches_limit: searchCheck.searches_limit },
-        { status: 429 },
-      );
-    }
-
     const apiKey = process.env.GOOGLE_PLACES_API_KEY;
     if (!apiKey) {
       console.log("[DISCOVER] Missing Google Places API key");
@@ -60,19 +49,6 @@ export async function POST(request: NextRequest) {
     const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
     if (blocked) return blocked;
 
-    // Reserve the search credit BEFORE any paid external API calls (geocode +
-    // Nearby Search + Place Details). The atomic RPC closes the race where
-    // concurrent requests all pass the non-atomic checkSearch() gate above
-    // and each trigger expensive calls before any reaches a deduction.
-    const reserved = await deductSearch(user.id);
-    if (!reserved.success) {
-      console.log(`[DISCOVER] Search reservation rejected for user=...${user.id.slice(-4)} used=${reserved.searches_used}/${reserved.searches_limit}`);
-      return NextResponse.json(
-        { error: "Search limit reached", searches_used: reserved.searches_used, searches_limit: reserved.searches_limit },
-        { status: 429 },
-      );
-    }
-
     const radius = radiusMeters ?? 10000; // default 10km
     const expandedRadius = Math.round(radius * 1.5);
 
@@ -81,7 +57,6 @@ export async function POST(request: NextRequest) {
 
     if (!geocodeResult.ok || !geocodeResult.data) {
       console.log("[DISCOVER] Geocoding failed:", { error: geocodeResult.error, city });
-      await refundSearch(user.id);
       const statusCode = geocodeResult.timedOut ? 504 : geocodeResult.status === 404 ? 404 : 502;
       const errorMsg = geocodeResult.timedOut
         ? "Geocoding request timed out — please try again"
@@ -164,7 +139,6 @@ export async function POST(request: NextRequest) {
 
     if (uniquePlaces.length === 0) {
       console.log("[DISCOVER] No businesses found for:", { city, businessType });
-      await refundSearch(user.id);
       return NextResponse.json({
         businesses: [],
         total: 0,
@@ -433,9 +407,6 @@ export async function POST(request: NextRequest) {
 
           console.log("[DISCOVER] Success - returning:", { total: upsertedBusinesses.length, flagged });
 
-          // Search credit was already reserved up-front (before geocode/Places
-          // calls) via deductSearch() above — nothing further to deduct here.
-
           writeJson(controller, encoder, {
             type: "done",
             businesses: upsertedBusinesses,
@@ -446,7 +417,6 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (error) {
           console.error("[DISCOVER] Stream error:", error);
-          await refundSearch(user.id);
           writeJson(controller, encoder, { type: "error", message: "Internal server error during streaming" });
           controller.close();
         }

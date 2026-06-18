@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { computeOpportunityScore, blendQualityForOpportunity } from "@/lib/scoring";
-import { checkCredit, deductCredit, refundCredit } from "@/lib/credits";
+import { checkAudit, deductAudit, refundAudit } from "@/lib/credits";
 import { expensiveOpLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { createTimeoutController } from "@/lib/api/timeout";
 import { businessWebsiteSchema } from "@/lib/validation";
@@ -205,11 +205,11 @@ export async function POST(request: NextRequest) {
     const blocked = await checkRateLimit(request, expensiveOpLimiter, identifier);
     if (blocked) return blocked;
 
-    // 3. Credit check — runs before any external API calls
-    const credit = await checkCredit(user.id);
+    // 3. Audit check — runs before any external API calls
+    const credit = await checkAudit(user.id);
     if (!credit.allowed) {
       return NextResponse.json(
-        { error: credit.audits_limit <= 20 ? "Free plan credit limit reached. Upgrade your plan to run more audits." : `Monthly credit limit reached (${credit.audits_used}/${credit.audits_limit}). Credits reset at the start of next month.`, code: "CREDIT_LIMIT", retryAfter: 0 },
+        { error: credit.audits_limit <= 20 ? "Free Trial audit limit reached (20 lifetime). Upgrade to keep auditing." : `Monthly audit limit reached (${credit.audits_used}/${credit.audits_limit}). Resets at the start of next month.`, code: "AUDIT_LIMIT", retryAfter: 0 },
         { status: 429 },
       );
     }
@@ -272,26 +272,26 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         let creditReserved = false;
         try {
-          // Reserve the credit BEFORE running PageSpeed (real, paid calls).
+          // Reserve the audit BEFORE running PageSpeed (real, paid calls).
           // The atomic RPC closes the race where concurrent requests all pass
-          // the non-atomic checkCredit() gate above and each trigger PageSpeed
+          // the non-atomic checkAudit() gate above and each trigger PageSpeed
           // before any of them reaches a deduction. If the reservation fails
           // (limit hit by a concurrent request, or genuinely at limit), no
           // PageSpeed call is made.
           if (shouldPersist) {
-            const reserved = await deductCredit(user.id);
+            const reserved = await deductAudit(user.id);
             if (!reserved.success) {
               console.warn(
-                `[AUDIT] Credit reservation rejected for user=...${user.id.slice(-4)} ` +
+                `[AUDIT] Audit reservation rejected for user=...${user.id.slice(-4)} ` +
                   `used=${reserved.audits_used}/${reserved.audits_limit} — limit reached`,
               );
               writeJson(controller, encoder, {
                 type: "error",
-                code: "CREDIT_LIMIT",
+                code: "AUDIT_LIMIT",
                 message:
                   reserved.audits_limit <= 20
-                    ? "Free plan credit limit reached. Upgrade your plan to run more audits."
-                    : `Monthly credit limit reached (${reserved.audits_used}/${reserved.audits_limit}). Credits reset at the start of next month.`,
+                    ? "Free Trial audit limit reached (20 lifetime). Upgrade to keep auditing."
+                    : `Monthly audit limit reached (${reserved.audits_used}/${reserved.audits_limit}). Resets at the start of next month.`,
               });
               controller.close();
               return;
@@ -479,9 +479,9 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           console.error("[AUDIT] Stream error:", error);
           if (creditReserved) {
-            const refunded = await refundCredit(user.id);
+            const refunded = await refundAudit(user.id);
             if (!refunded.success) {
-              console.error(`[AUDIT] Credit refund failed for user=...${user.id.slice(-4)} after stream error`);
+              console.error(`[AUDIT] Audit refund failed for user=...${user.id.slice(-4)} after stream error`);
             }
           }
           writeJson(controller, encoder, {

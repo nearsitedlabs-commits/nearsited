@@ -34,16 +34,28 @@ const faqItem: Variants = {
 
 const FAQ_ITEMS = [
   {
-    q: "When are credits used?",
-    a: "Every analysis uses 2 credits: 1 for the performance audit and 1 for the design analysis. If the design analysis isn't available, only 1 credit is used. Searching for businesses and generating pitches do not use credits.",
+    q: "When is an audit used?",
+    a: "One audit is used every time you run a performance audit or a design analysis on a business. Searching for businesses, browsing your pipeline, and generating pitches do not use audits.",
   },
   {
-    q: "How many credits do I get?",
-    a: "Free: 10 full analyses lifetime (credits do not reset — they last until used up). Starter: 25 full analyses per month (50 credits). Agency: 100 full analyses per month (200 credits). Each full analysis uses 2 credits — 1 for the performance audit and 1 for the design analysis. Paid plan credits reset at the start of each billing month; unused credits do not roll over.",
+    q: "How many audits do I get?",
+    a: "Free Trial: 20 audits total (lifetime — they never reset). Solo: 100 audits per month. Agency: 500 audits per month. Scale: 2,000 audits per month. Paid plan audits reset at the start of each billing month; unused audits do not roll over.",
   },
   {
     q: "What happens when I run out?",
-    a: "You can still log in, view your pipeline, manage leads, and access generated pitches. To run more analyses, either wait for your credits to reset or upgrade to a higher plan.",
+    a: "You can still log in, view your pipeline, manage leads, and access generated pitches. To run more audits, upgrade to a higher plan, or buy a booster pack (100 additional audits for $19).",
+  },
+  {
+    q: "What if I need more audits than my plan allows?",
+    a: "You can buy a one-time booster pack (100 audits for $19) for temporary volume spikes, or we charge $0.50 per extra audit beyond your plan limit. You'll get a prompt before any overage charges.",
+  },
+  {
+    q: "Can I switch plans?",
+    a: "Yes — upgrade anytime (takes effect immediately). Downgrades take effect at the next billing cycle. No partial refunds on downgrades.",
+  },
+  {
+    q: "Is there a money-back guarantee?",
+    a: "Yes — 14-day money-back guarantee on any paid plan. No questions asked.",
   },
 ];
 
@@ -110,7 +122,7 @@ export default function PricingPage() {
           {/* Pricing cards — animated internally */}
           <Pricing navigate={navigate} mode="page" onPlanSelect={handlePlanSelect} />
 
-          {/* How Credits Work */}
+          {/* How Audits Work */}
           <motion.section
             className="border-t border-[var(--color-border-subtle)] py-20"
             {...fadeUp(shouldReduce)}
@@ -119,13 +131,13 @@ export default function PricingPage() {
               <div className="text-center">
                 <div className="mb-4 inline-flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--accent)]">
                   <span className="block h-px w-6 bg-[var(--accent)]" />
-                  How credits work
+                  How audits work
                 </div>
                 <h2 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--text-primary)]">
-                  What is a credit?
+                  What is an audit?
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--text-secondary)]">
-                  One analysis uses 2 credits — 1 for the performance audit and 1 for the design analysis. Credits are deducted when you review a business for redesign opportunities.
+                  An audit is a full performance + design analysis of a business website. Each audit runs PageSpeed Insights and AI design analysis. Searching for leads, generating pitches, and managing your pipeline do not use audits.
                 </p>
               </div>
 
@@ -196,7 +208,7 @@ export default function PricingPage() {
                   onClick={() => navigate("/signup")}
                   className="px-8 py-3 text-base"
                 >
-                  Try it free for 14 days
+                  Audit 20 leads free →
                 </Button>
                 <Button
                   variant="secondary"
@@ -207,7 +219,7 @@ export default function PricingPage() {
                 </Button>
               </div>
               <p className="mt-6 text-sm text-[var(--text-tertiary)]">
-                No credit card required. Full access for 14 days.
+                No credit card required. 20 free audits, lifetime.
               </p>
             </div>
           </motion.section>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { FREE_AUDIT_LIMIT } from "@/lib/dodo";
+import { FREE_TRIAL_AUDIT_LIMIT } from "@/lib/dodo";
 
 const DEFAULT_REDIRECT = "/dashboard";
 
@@ -62,9 +62,8 @@ function safeRedirect(destination: string | null): string {
 async function ensureSubscription(userId: string) {
   const admin = createAdminClient();
   const now = new Date();
-  const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
   await admin.from("subscriptions").upsert(
-    { user_id: userId, tier: "free", audits_limit: FREE_AUDIT_LIMIT, audits_used: 0, credits_reset_at: nextReset },
+    { user_id: userId, tier: "free_trial", audits_limit: FREE_TRIAL_AUDIT_LIMIT, audits_used: 0, credits_reset_at: null },
     { onConflict: "user_id", ignoreDuplicates: true }
   );
 }

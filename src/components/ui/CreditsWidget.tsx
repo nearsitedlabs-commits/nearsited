@@ -4,12 +4,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Toast } from "@/components/ui/Toast";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { getTierLabel } from "@/lib/tier-features";
 
-const TIER_LABELS: Record<string, string> = { free: "Free", starter: "Starter", agency: "Agency" };
+const TIER_LABELS: Record<string, string> = {
+  free_trial: "Free Trial",
+  solo: "Solo",
+  agency: "Agency",
+  scale: "Scale",
+};
 
 type SubData = { tier: string; audits_used: number; audits_limit: number };
 
-export default function CreditsWidget() {
+export default function AuditsWidget() {
   const [sub, setSub] = useState<SubData | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const hasShownToast = useRef(false);
@@ -28,34 +34,38 @@ export default function CreditsWidget() {
 
   useEffect(() => {
     refresh();
-    window.addEventListener("credits:updated", refresh);
+    window.addEventListener("audits:updated", refresh);
     window.addEventListener("focus", refresh);
     return () => {
-      window.removeEventListener("credits:updated", refresh);
+      window.removeEventListener("audits:updated", refresh);
       window.removeEventListener("focus", refresh);
     };
   }, [refresh]);
 
-  const tier = sub?.tier ?? "free";
+  const tier = sub?.tier ?? "free_trial";
   const used = sub?.audits_used ?? 0;
   const limit = sub?.audits_limit ?? 20;
   const remaining = limit - used;
   const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
   const barColor = pct >= 95 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-[var(--color-accent)]";
+  const isFreeTrial = tier === "free_trial";
 
-  // Show low-balance toast once per session when credits are critically low
+  // Show low-balance toast once per session when audits are critically low
   useEffect(() => {
     if (!sub) return;
     if (pct >= 80 && !hasShownToast.current) {
       hasShownToast.current = true;
-      const creditWord = tier === "free" ? "free credit" : "credit";
-      const msg = remaining <= 1
-        ? `You've used all ${limit} ${creditWord}s. Upgrade to continue.`
-        : `${remaining} ${creditWord}${remaining !== 1 ? "s" : ""} remaining. Upgrade when you need more.`;
+      const msg = isFreeTrial
+        ? remaining <= 1
+          ? `You've used all ${limit} free audits. Upgrade to continue auditing.`
+          : `${remaining} free audit${remaining !== 1 ? "s" : ""} remaining. Upgrade when you need more.`
+        : remaining <= 1
+          ? `You've used all ${limit} audits this month. Upgrade or buy a booster pack.`
+          : `${remaining} audit${remaining !== 1 ? "s" : ""} remaining this month.`;
       const id = setTimeout(() => setToast(msg), 0);
       return () => clearTimeout(id);
     }
-  }, [pct, limit, remaining, sub, tier]);
+  }, [pct, limit, remaining, sub, tier, isFreeTrial]);
 
   return (
     <>
@@ -64,8 +74,10 @@ export default function CreditsWidget() {
       )}
       <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-3 py-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-[var(--color-accent)]">{TIER_LABELS[tier] ?? tier} Plan</span>
-          {tier === "free" && (
+          <span className="text-xs font-medium text-[var(--color-accent)]">
+            {TIER_LABELS[tier] ?? getTierLabel(tier)} Plan
+          </span>
+          {isFreeTrial && (
             <Link href="/pricing" className="text-[10px] text-[var(--color-accent)] hover:underline">Upgrade</Link>
           )}
         </div>
@@ -73,9 +85,10 @@ export default function CreditsWidget() {
           <>
             <div className="mt-1 flex items-center gap-1">
               <p className="text-[10px] text-[var(--color-text-tertiary)]">
-                {used} / {limit} {tier === "free" ? "free " : ""}credits used
+                {used} / {limit} {isFreeTrial ? "free " : ""}audits used
+                {!isFreeTrial && " this month"}
               </p>
-              <Tooltip content="Free credits are lifetime and don't reset — upgrade for a monthly allowance.">
+              <Tooltip content={isFreeTrial ? "Free Trial audits are lifetime and don't reset — upgrade for a monthly allowance." : "Paid plan audits reset at the start of each billing month."}>
                 <span className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-[var(--color-border-subtle)] text-[9px] text-[var(--color-text-tertiary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
                   ?
                 </span>

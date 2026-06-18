@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -24,7 +24,7 @@ type Plan = {
   annualPrice: string;
   annualNote: string;
   description: string;
-  features: string[];
+  features: { label: string; included: boolean }[];
   featured: boolean;
   cta: string;
   badge?: string;
@@ -33,64 +33,119 @@ type Plan = {
 };
 
 // ── Plans ─────────────────────────────────────────────────────────────────────
-// Product IDs are read from NEXT_PUBLIC_ env vars when available, falling back
-// to the hardcoded sandbox IDs for local development. Set the env vars in
-// deployment to control which products are used without code changes.
 
 const PLANS: Plan[] = [
   {
-    id: "starter",
-    name: "Starter",
-    monthlyPrice: "$19/mo",
-    annualPrice: "$15/mo",
-    annualNote: "billed $180/yr",
-    description: "For solo freelancers and independent web designers.",
+    id: "free_trial",
+    name: "Free Trial",
+    monthlyPrice: "$0",
+    annualPrice: "$0",
+    annualNote: "forever free",
+    description: "Audit 20 leads. No credit card.",
     features: [
-      "50 opportunity analyses per month",
-      "3 city searches per month",
-      "Email pitch generation",
-      "Pipeline tracking",
+      { label: "20 audits (lifetime)", included: true },
+      { label: "Unlimited searches", included: true },
+      { label: "Unlimited AI pitch generation", included: true },
+      { label: "10 pipeline leads", included: true },
+      { label: "3 default pitch templates", included: true },
+      { label: "Saved searches", included: false },
+      { label: "Team workspace", included: false },
+      { label: "API access", included: false },
+      { label: "White-label", included: false },
     ],
     featured: false,
     monthlyProductId:
-      process.env.NEXT_PUBLIC_DODO_PRODUCT_STARTER_MONTHLY ??
-      "pdt_0NgKrmYBX9pAp9NhbeMqp",
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_FREE_TRIAL ?? "",
     annualProductId:
-      process.env.NEXT_PUBLIC_DODO_PRODUCT_STARTER_ANNUAL ??
-      "pdt_0NgKs5x6MXKvmMOQemKP2",
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_FREE_TRIAL ?? "",
+    cta: "Start free →",
+  },
+  {
+    id: "solo",
+    name: "Solo",
+    monthlyPrice: "$29/mo",
+    annualPrice: "$24/mo",
+    annualNote: "billed $288/yr (save 2 months)",
+    description: "For freelancers. 100 audits/mo.",
+    features: [
+      { label: "100 audits per month", included: true },
+      { label: "Unlimited searches", included: true },
+      { label: "Unlimited AI pitch generation", included: true },
+      { label: "Unlimited pipeline", included: true },
+      { label: "5 saved searches", included: true },
+      { label: "3 default pitch templates", included: true },
+      { label: "Team workspace", included: false },
+      { label: "API access", included: false },
+      { label: "White-label", included: false },
+    ],
+    featured: false,
+    monthlyProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_SOLO_MONTHLY ??
+      "pdt_solo_monthly_placeholder",
+    annualProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_SOLO_ANNUAL ??
+      "pdt_solo_annual_placeholder",
     cta: "Get started →",
   },
   {
     id: "agency",
     name: "Agency",
-    monthlyPrice: "$49/mo",
-    annualPrice: "$39/mo",
-    annualNote: "billed $468/yr",
-    description: "For small agencies and growing web design teams.",
+    monthlyPrice: "$89/mo",
+    annualPrice: "$74/mo",
+    annualNote: "billed $888/yr (save 2 months)",
+    description: "For small teams. 500 audits/mo, 3 seats.",
     features: [
-      "200 opportunity analyses per month",
-      "10 city searches per month",
-      "Email + WhatsApp pitch generation",
-      "White-label shareable reports",
-      "Priority support",
+      { label: "500 audits per month", included: true },
+      { label: "Unlimited searches", included: true },
+      { label: "Unlimited AI pitch generation", included: true },
+      { label: "Unlimited pipeline", included: true },
+      { label: "Unlimited saved searches", included: true },
+      { label: "3 user seats", included: true },
+      { label: "Team workspace", included: true },
+      { label: "API access (read-only)", included: true },
+      { label: "Custom pitch templates", included: true },
+      { label: "Priority support", included: true },
+      { label: "White-label", included: false },
     ],
     featured: true,
+    badge: "Best value",
     monthlyProductId:
       process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_MONTHLY ??
-      "pdt_0NgKsF0ROmm9U603GRqMm",
+      "pdt_agency_monthly_placeholder",
     annualProductId:
       process.env.NEXT_PUBLIC_DODO_PRODUCT_AGENCY_ANNUAL ??
-      "pdt_0NgKsQO5UXCVGZskhrv89",
+      "pdt_agency_annual_placeholder",
     cta: "Get started →",
-    badge: "Best value",
   },
-];
-
-const SHARED_FEATURES = [
-  "All 4 opportunity types: no website, social, platform, weak site",
-  "Unlimited AI pitch generation",
-  "Unlimited pipeline management",
-  "PDF audit exports",
+  {
+    id: "scale",
+    name: "Scale",
+    monthlyPrice: "$249/mo",
+    annualPrice: "$207/mo",
+    annualNote: "billed $2,484/yr (save 2 months)",
+    description: "For high-volume operators. 2,000 audits/mo, white-label.",
+    features: [
+      { label: "2,000 audits per month", included: true },
+      { label: "Unlimited searches", included: true },
+      { label: "Unlimited AI pitch generation", included: true },
+      { label: "Unlimited pipeline", included: true },
+      { label: "Unlimited saved searches", included: true },
+      { label: "10 user seats", included: true },
+      { label: "Team workspace", included: true },
+      { label: "API access (full)", included: true },
+      { label: "Custom pitch templates", included: true },
+      { label: "White-label", included: true },
+      { label: "Slack/Discord support", included: true },
+    ],
+    featured: false,
+    monthlyProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_SCALE_MONTHLY ??
+      "pdt_scale_monthly_placeholder",
+    annualProductId:
+      process.env.NEXT_PUBLIC_DODO_PRODUCT_SCALE_ANNUAL ??
+      "pdt_scale_annual_placeholder",
+    cta: "Get started →",
+  },
 ];
 
 // ── Animation config ──────────────────────────────────────────────────────────
@@ -105,7 +160,7 @@ const fadeUp: Variants = {
 
 const cardContainer: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0.06 } },
 };
 
 const cardItem: Variants = {
@@ -113,7 +168,7 @@ const cardItem: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease } },
 };
 
-// ── Component ──────────────────────────────────────────────────────────────────
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
@@ -145,11 +200,11 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
             </h2>
           )}
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[var(--color-text-secondary)]">
-            Start with 20 free analyses. No credit card needed.
+            Audit 20 leads free. No credit card needed.
           </p>
         </motion.div>
 
-        {/* Founder-honest context */}
+        {/* Anchor value statement */}
         <motion.div
           className="mt-8 mx-auto max-w-2xl border-l-2 border-l-[var(--color-accent)] pl-5 text-sm"
           variants={fadeUp}
@@ -158,10 +213,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
           viewport={viewport}
         >
           <p className="text-[var(--color-text-secondary)] leading-7">
-            Brand new. Built by one person. Locked-in beta pricing for the first 50 sign-ups. The product output is the proof — try the free tier, run a city, judge for yourself.
-          </p>
-          <p className="mt-2 text-[var(--color-text-tertiary)] text-xs">
-            Beta pricing · Lock in your rate for 12 months. No surprises when beta ends.
+            One closed client at $1,500 covers a full year of Agency.
           </p>
         </motion.div>
 
@@ -193,7 +245,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                   {b === "monthly" ? "Monthly" : "Annual"}
                   {b === "annual" && (
                     <span className="self-center leading-none text-[0.6rem] font-medium tracking-wide text-[var(--color-accent)]">
-                      SAVE 21%
+                      SAVE ~17%
                     </span>
                   )}
                 </span>
@@ -202,9 +254,9 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
           </div>
         </motion.div>
 
-        {/* Plan cards */}
+        {/* Plan cards — 4-column on xl, 2-column on md, stacked on sm */}
         <motion.div
-          className="mt-6 grid gap-6 md:grid-cols-2 md:max-w-3xl md:mx-auto"
+          className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4"
           variants={cardContainer}
           initial="hidden"
           whileInView="visible"
@@ -285,17 +337,27 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                 <ul className="mt-6 flex-1 space-y-3">
                   {plan.features.map((feature) => (
                     <li
-                      key={feature}
+                      key={feature.label}
                       className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
                     >
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-                      <span>{feature}</span>
+                      {feature.included ? (
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
+                      ) : (
+                        <Minus className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-text-tertiary)]" />
+                      )}
+                      <span className={feature.included ? "" : "text-[var(--color-text-tertiary)]"}>
+                        {feature.label}
+                      </span>
                     </li>
                   ))}
                 </ul>
                 <Button
-                  variant={plan.featured ? "primary" : "secondary"}
+                  variant={plan.featured ? "primary" : plan.id === "free_trial" ? "ghost" : "secondary"}
                   onClick={() => {
+                    if (plan.id === "free_trial") {
+                      navigate("/signup");
+                      return;
+                    }
                     const productId = billing === "monthly" ? plan.monthlyProductId : plan.annualProductId;
                     if (onPlanSelect) onPlanSelect(productId);
                     else navigate(`/signup?plan=${productId}`);
@@ -309,28 +371,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
           ))}
         </motion.div>
 
-        {/* Shared features */}
-        <motion.div
-          className="mt-8 mx-auto max-w-3xl rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-6 py-5"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewport}
-        >
-          <p className="mb-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] text-center">
-            Everything included on all plans
-          </p>
-          <ul className="flex flex-wrap justify-center gap-x-8 gap-y-2.5">
-            {SHARED_FEATURES.map((feature) => (
-              <li key={feature} className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
-                <Check className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent)]" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-
-        {/* Trust row — page mode only */}
+        {/* Trust / guarantee row — page mode only */}
         {mode === "page" && (
           <motion.div
             className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--color-text-tertiary)]"
@@ -341,15 +382,15 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
           >
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
-              Cancel anytime during trial
+              14-day money-back guarantee
             </span>
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
-              Your data stays yours
+              Cancel anytime
             </span>
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
-              Built by an agency founder who needed this
+              $0.50/audit overage available
             </span>
           </motion.div>
         )}

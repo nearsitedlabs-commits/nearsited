@@ -58,15 +58,13 @@ export default function TermsPage() {
 
       <LegalSection id="billing" heading="4. Subscriptions & Billing">
         <LegalSubSection heading="4.1 Plans">
-          <p>Nearsited offers three tiers:</p>
+          <p>Nearsited offers four tiers:</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5">
-            <li><strong className="text-[var(--color-text-primary)]">Free:</strong> 20 lifetime opportunity analyses and 3 city searches. No payment required.</li>
-            <li><strong className="text-[var(--color-text-primary)]">Starter ($19/month):</strong> 50 analyses per month, 3 city searches per month, email pitch generation, pipeline tracking.</li>
-            <li><strong className="text-[var(--color-text-primary)]">Agency ($49/month):</strong> 200 analyses per month, 10 city searches per month, email and WhatsApp pitch generation, white-label shared reports, priority support.</li>
+            <li><strong className="text-[var(--color-text-primary)]">Free Trial:</strong> 20 lifetime audits, unlimited searches, 10 pipeline leads. No payment required.</li>
+            <li><strong className="text-[var(--color-text-primary)]">Solo ($29/month):</strong> 100 audits per month, unlimited searches, 5 saved searches, unlimited pipeline.</li>
+            <li><strong className="text-[var(--color-text-primary)]">Agency ($89/month):</strong> 500 audits per month, 3 seats, team workspace, API access, custom pitch templates, priority support.</li>
+            <li><strong className="text-[var(--color-text-primary)]">Scale ($249/month):</strong> 2,000 audits per month, 10 seats, full API access, white-label, Slack/Discord support.</li>
           </ul>
-          <p className="mt-3">
-            Beta pricing is locked for 12 months from your first subscription date. We will give 30 days&rsquo; notice before any price change affects renewing subscriptions.
-          </p>
         </LegalSubSection>
 
         <LegalSubSection heading="4.2 Payment Processing">
