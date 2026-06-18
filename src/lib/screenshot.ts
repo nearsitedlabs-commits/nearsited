@@ -15,9 +15,25 @@
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
+/**
+ * ScreenshotCore API: https://screenshotcore.com/api/v1/screenshot
+ *
+ * Parameters used:
+ * - url, viewport_width, viewport_height, format, access_key
+ * - block_ads: blocks ad content that might interfere
+ * - delay: ms to wait AFTER page load for JS hydration (Next.js SPAs need this)
+ * - scroll_to: we use "body" to ensure full page is rendered
+ *
+ * Known limitation: JS-heavy sites (Next.js, React SPAs) need longer delays
+ * to fully hydrate and render content. The 30s timeout + 5s delay gives
+ * most sites enough time.
+ */
 export const SCREENSHOTCORE_URL = "https://screenshotcore.com/api/v1/screenshot";
 
-export const SCREENSHOT_TIMEOUT_MS = 15_000;
+export const SCREENSHOT_TIMEOUT_MS = 30_000;
+
+/** Delay in ms AFTER initial page load to allow JavaScript hydration. */
+export const SCREENSHOT_DELAY_MS = 5_000;
 
 export const MOBILE_VIEWPORT = { width: 390, height: 844 };
 export const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
@@ -48,6 +64,8 @@ export async function takeScreenshot(
     format: "png",
     block_ads: "true",
     block_cookie_banners: "true",
+    delay: String(SCREENSHOT_DELAY_MS),
+    scroll_to: "body",
     access_key: accessKey,
   });
 
