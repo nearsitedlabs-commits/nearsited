@@ -49,11 +49,11 @@ export function LeadNameLink({
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      className={`inline-flex items-center gap-0.5 text-[var(--color-text-primary)] [@media(hover:hover)]:hover:underline underline-offset-2 ${className}`}
+      className={`inline-flex items-start gap-0.5 text-[var(--color-text-primary)] [@media(hover:hover)]:hover:underline underline-offset-2 ${className}`}
       aria-label={`Open ${name} website`}
     >
-      <span dir="auto" className="truncate">{name}</span>
-      <ExternalLink className="h-3 w-3 shrink-0 text-[var(--color-text-tertiary)]" aria-hidden="true" />
+      <span dir="auto" className="break-words">{name}</span>
+      <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 text-[var(--color-text-tertiary)]" aria-hidden="true" />
     </a>
   );
 }
