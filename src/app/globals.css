@@ -317,7 +317,7 @@ input, select, textarea, button, option {
 :root {
   /* Typography scale tokens */
   --font-display:  'Switzer', var(--font-sans, Geist); /* Hero headlines only — loaded from Fontshare CDN */
-  --text-hero:     clamp(2rem, calc(8vw + 0.5rem), 8rem);  /* Hero H1 — 32px mobile → 128px desktop */
+  --text-hero:     clamp(1.75rem, calc(6vw + 0.5rem), 6rem);  /* Hero H1 — 28px mobile → 96px desktop */
   --text-display:  2.5rem;                          /* Section headings — Geist */
   --text-2xl: 1.5rem;
   --text-xl:  1.25rem;

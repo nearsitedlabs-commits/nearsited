@@ -34,78 +34,78 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   weak: {
     label: "Weak Website",
     badgeColor: "amber",
-    metaFor: "Bright Smile Dental · 1.4s",
+    metaFor: "Brighton Dental · 1.4s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-        <p>Hi Dr. Sameer,</p>
+        <p>Hi Dr. Mehta,</p>
         <p>
-          I ran a quick audit of <span className="font-medium text-[var(--color-text-primary)]">brightsmile.ae</span> and found several issues quietly costing you new patients.
+          I ran brightondental.co.uk through a website audit and found a few issues that are likely costing you new patients.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
-          <li><span className="text-[var(--score-high)]">4.2s mobile load time</span>: 53% of visitors leave before seeing your content</li>
-          <li><span className="text-[var(--score-high)]">No local SEO</span>: you&rsquo;re not appearing in Google&rsquo;s local pack for &ldquo;dentist Jumeirah&rdquo;</li>
-          <li><span className="text-[var(--score-high)]">Missing trust signals</span>: no SSL badge or social proof above the fold</li>
+          <li>The homepage takes <span className="font-medium text-[var(--color-text-primary)]">4.2 seconds</span> to load on mobile — Google says over half of visitors leave if it&rsquo;s slower than 3s</li>
+          <li>Your <span className="font-medium text-[var(--color-text-primary)]">SSL certificate expired</span> three months ago — Chrome shows &ldquo;Not Secure&rdquo; in the address bar</li>
+          <li>No local SEO markup, so you&rsquo;re not appearing in Google&rsquo;s local results for &ldquo;dentist near me&rdquo;</li>
         </ul>
-        <p>Fixing these could recover <span className="font-medium text-[var(--color-success)]">an estimated $1,000–$3,000/month</span> in missed revenue. Happy to walk you through the full audit?</p>
+        <p>These are straightforward fixes. Happy to walk through what I found and what it would take to sort them out.</p>
       </div>
     ),
   },
   none: {
     label: "No Website",
     badgeColor: "red",
-    metaFor: "Marina Legal Consultants · 1.2s",
+    metaFor: "Harbor Legal Group · 1.2s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi,</p>
         <p>
-          I was looking for legal services in Dubai Marina and found <span className="font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</span>, great Google reviews but no website.
+          I was looking for legal services in downtown Austin and came across <span className="font-medium text-[var(--color-text-primary)]">Harbor Legal Group</span> — great Google reviews, but no website.
         </p>
-        <p>Every day without a website, potential clients searching &ldquo;legal consultant Dubai Marina&rdquo; are going to competitors who have one. Your 4.7★ reputation deserves more than a Google listing.</p>
+        <p>Every day without one, potential clients searching for lawyers in your area are finding competitors first. Your 4.7★ reputation is invisible on Google outside of Maps.</p>
         <ul className="list-disc space-y-1.5 pl-4">
-          <li>Clients can&rsquo;t find your services without calling first</li>
-          <li>No portfolio, no testimonials, no contact form</li>
-          <li>Zero Google search visibility outside Maps</li>
+          <li>No way for clients to learn about your services without calling</li>
+          <li>No portfolio of case experience or client testimonials</li>
+          <li>Zero Google search presence beyond the Maps listing</li>
         </ul>
-        <p>I build professional websites for legal firms. Would you be open to a quick chat about what this could mean for your enquiry volume?</p>
+        <p>I build websites for legal practices. Would you be open to a quick conversation about what this could mean for your practice?</p>
       </div>
     ),
   },
   social: {
     label: "Social Only",
     badgeColor: "indigo",
-    metaFor: "Blue Wave Restaurant · 1.1s",
+    metaFor: "The Hideaway Cafe · 1.1s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-        <p>Hi Blue Wave team,</p>
+        <p>Hi,</p>
         <p>
-          Your <span className="font-medium text-[var(--color-text-primary)]">Instagram</span> looks incredible. 4,200 followers and great content. But right now, that audience is trapped on a platform you don&rsquo;t own.
+          I was checking out cafes in Byron Bay and found <span className="font-medium text-[var(--color-text-primary)]">The Hideaway Cafe</span> on Instagram — 4,200 followers and great content. But you don&rsquo;t have a website.
         </p>
         <ul className="list-disc space-y-1.5 pl-4">
-          <li>No website = no way to take online reservations</li>
-          <li>No Google search presence: invisible to people who don&rsquo;t already know you</li>
-          <li>If Instagram changes its algorithm, you lose everything overnight</li>
+          <li>No online menu that shows up in Google searches</li>
+          <li>No reservation system — every booking goes through DMs</li>
+          <li>If Instagram changes its algorithm, you lose direct visibility to new customers</li>
         </ul>
-        <p>A website would turn your existing followers into bookings you control, with an online menu, reservation form, and Google visibility. Worth a 10-minute conversation?</p>
+        <p>A simple website with your menu, location, and a booking form would capture everyone searching for cafes in Byron Bay. Happy to show you some examples.</p>
       </div>
     ),
   },
   platform: {
     label: "Platform Only",
     badgeColor: "indigo",
-    metaFor: "Bloom Spa & Wellness · 1.3s",
+    metaFor: "Bloom Beauty Bar · 1.3s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
         <p>Hi,</p>
         <p>
-          I found <span className="font-medium text-[var(--color-text-primary)]">Bloom Spa & Wellness</span> on Fresha, great reviews, but no website of your own.
+          I found <span className="font-medium text-[var(--color-text-primary)]">Bloom Beauty Bar</span> on Booksy — great reviews, but no website of your own.
         </p>
-        <p>Right now every booking goes through Fresha&rsquo;s platform. That means you&rsquo;re paying a commission on every appointment, you don&rsquo;t own your client list, and if Fresha changes its terms you lose everything overnight.</p>
+        <p>Right now every booking goes through Booksy. That means you&rsquo;re paying commission on every appointment and you don&rsquo;t own the relationship with your clients. If their fee structure changes or your listing drops, your entire online presence disappears.</p>
         <ul className="list-disc space-y-1.5 pl-4">
-          <li>No Google search presence outside the Fresha listing</li>
-          <li>No direct bookings: every client goes through a third party</li>
-          <li>No brand story, no portfolio, no SEO you control</li>
+          <li>No Google search presence outside the Booksy listing</li>
+          <li>No direct bookings — every client goes through a third party</li>
+          <li>No way to showcase your work, pricing, or build a brand</li>
         </ul>
-        <p>A professional website would give you direct bookings, your own client database, and visibility on Google. Would you be open to a quick call?</p>
+        <p>A professional website would let clients book directly, build your own client list, and get found on Google. Worth a quick chat?</p>
       </div>
     ),
   },

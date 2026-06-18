@@ -32,6 +32,7 @@ type DeductResult = {
 
 /**
  * Returns the user's subscription row. If none exists, provisions a free-tier row.
+ * As a side-effect, backfills zero limits to the database defaults.
  */
 export async function getSubscription(userId: string): Promise<SubRow> {
   const { data } = await subTable()
@@ -112,6 +113,11 @@ export async function checkCredit(userId: string): Promise<{ allowed: boolean; a
 export async function deductCredit(
   userId: string,
 ): Promise<{ success: boolean; audits_used: number; audits_limit: number }> {
+  // Defensive backfill: ensure audits_limit is not 0 before the RPC locks the row.
+  // The RPC itself handles zero limits (COALESCE(NULLIF(..., 0), FREE_AUDIT_LIMIT)),
+  // but fixing it here gives defense-in-depth.
+  await getSubscription(userId);
+
   const { data, error } = await admin.rpc("deduct_audit_credit", {
     p_user_id: userId,
   });
@@ -212,6 +218,11 @@ export async function checkSearch(userId: string): Promise<{ allowed: boolean; s
 export async function deductSearch(
   userId: string,
 ): Promise<{ success: boolean; searches_used: number; searches_limit: number }> {
+  // Defensive backfill: ensure searches_limit is not 0 before the RPC locks the row.
+  // The RPC itself handles zero limits (COALESCE(NULLIF(..., 0), FREE_SEARCH_LIMIT)),
+  // but fixing it here gives defense-in-depth.
+  await getSubscription(userId);
+
   const { data, error } = await admin.rpc("deduct_search_credit", {
     p_user_id: userId,
   });

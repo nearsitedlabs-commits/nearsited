@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useSafeReducedMotion } from "@/lib/motion";
 import { useToast } from "@/lib/shared-hooks";
 import { Toast } from "@/components/ui/Toast";
@@ -183,7 +183,9 @@ export default function LeadsPage() {
   }, [filtered, kpiFilterUnaudited]);
 
   const totalPages = Math.max(1, Math.ceil(displayLeads.length / PAGE_SIZE));
-  const paginated = displayLeads.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Clamp page to valid range — handles stale sessionStorage, filter changes shrinking results
+  const safePage = Math.min(page, totalPages);
+  const paginated = displayLeads.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   // Mobile accumulates results via "load more" (not page flipping)
   const mobilePaginated = displayLeads.slice(0, mobileLoadCount);
@@ -398,6 +400,13 @@ export default function LeadsPage() {
               onAddToPipeline={handleRowAddToPipeline}
               onMoveStatus={handleRowMoveStatus}
               onPhoneCopied={handlePhoneCopied}
+              pagination={{
+                page: safePage,
+                totalPages,
+                totalItems: displayLeads.length,
+                pageSize: PAGE_SIZE,
+                onPageChange: handlePageChange,
+              }}
             />
 
             <LeadsMobileCards
@@ -420,25 +429,6 @@ export default function LeadsPage() {
               onLoadMore={() => setMobileLoadCount((c) => c + PAGE_SIZE)}
               onPhoneCopied={handlePhoneCopied}
             />
-
-            {totalPages > 1 && (
-              <div className="mt-6 hidden items-center justify-between md:flex">
-                <p className="text-sm text-[var(--color-text-tertiary)]">
-                  Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, displayLeads.length)} of {displayLeads.length}
-                </p>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handlePageChange(Math.max(1, page - 1))} disabled={page === 1} aria-label="Previous page"
-                    className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <span className="px-3 text-sm text-[var(--color-text-secondary)]">{page} / {totalPages}</span>
-                  <button onClick={() => handlePageChange(Math.min(totalPages, page + 1))} disabled={page === totalPages} aria-label="Next page"
-                    className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40">
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
           </>
         )}
 

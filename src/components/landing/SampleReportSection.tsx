@@ -12,16 +12,241 @@ import { SectionSub } from "@/components/landing/SectionSub";
 
 type ReportTab = "weak" | "none" | "social" | "platform";
 
+type IssueItem = { issue: string; impact: string };
+
+const WEAK_ISSUES: IssueItem[] = [
+  { issue: "Homepage takes 4.2s to load on mobile — Google says 53% of visitors leave if it takes over 3s", impact: "High" },
+  { issue: "No schema markup — not showing up in Google's local pack for 'dentist near me'", impact: "High" },
+  { issue: "SSL certificate expired 3 months ago — Chrome shows 'Not Secure' in the address bar", impact: "Medium" },
+  { issue: "Contact page is a static address with no form, map, or click-to-call button", impact: "Medium" },
+  { issue: "Site hasn't been updated since 2021 — pricing page still mentions COVID protocols", impact: "Low" },
+];
+
+const WEAK_SCORES = [
+  { label: "Performance", score: 42 },
+  { label: "Mobile UX",   score: 39 },
+  { label: "SEO",         score: 48 },
+  { label: "Design",      score: 36 },
+  { label: "Trust",       score: 38 },
+];
+
+// ── Tab config ─────────────────────────────────────────────────────────────────
+
+const TABS: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
+  { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
+  { id: "none",     label: "No site",        badge: "Website Build",       badgeColor: "red" },
+  { id: "social",   label: "Social Only",    badge: "Website Opportunity", badgeColor: "indigo" },
+  { id: "platform", label: "Platform Only",  badge: "Website Build",       badgeColor: "indigo" },
+];
+
+// ── Tab content components to avoid duplication ─────────────────────────────────
+
+function WeakWebsiteContent() {
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Brighton Dental</h3>
+            <Badge color="green">Opportunity: 87/100</Badge>
+            <Badge color="green">Verified</Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">brightondental.co.uk · Brighton, UK · Dentist</p>
+        </div>
+      </div>
+      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+          <span className="text-sm font-medium text-[var(--score-high)]">5 issues found</span>
+        </div>
+        <ul className="space-y-3 text-sm text-[var(--color-text-secondary)]">
+          {WEAK_ISSUES.map((item) => (
+            <li key={item.issue} className="flex items-start justify-between gap-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3">
+              <span className="font-medium text-[var(--color-text-primary)]">{item.issue}</span>
+              <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <details className="mt-4 group">
+        <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
+          <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+          Technical scores
+        </summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {WEAK_SCORES.map((item) => (
+            <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
+              <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                {item.score}
+              </p>
+            </div>
+          ))}
+        </div>
+      </details>
+    </>
+  );
+}
+
+function NoWebsiteContent() {
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Harbor Legal Group</h3>
+            <Badge color="green">Opportunity: 85/100</Badge>
+            <Badge color="green">Verified</Badge>
+            <Badge color="red">No site</Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Downtown, Austin, TX · Legal Services</p>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+          <span className="text-sm font-medium text-[var(--score-high)]">No website detected</span>
+        </div>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
+          This firm has no website. Their entire online presence is a single Google Business profile. No portfolio of case outcomes, no lawyer profiles, no contact form, no blog — and no Google search presence outside Maps. Every competitor firm with a website is capturing the clients they&rsquo;re missing.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
+        {[
+          { label: "Google reviews", value: "4.7★ (38)", note: "Strong social proof" },
+          { label: "In operation", value: "Since 2014", note: "Established practice" },
+          { label: "Website", value: "None", note: "Highest-value opportunity" },
+        ].map((item) => (
+          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
+            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
+            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+          &ldquo;Hi, I noticed Harbor Legal Group has strong reviews but no website. Potential clients searching for a lawyer in downtown Austin are finding your competitors first. I build legal practice websites — would you be open to a quick call?&rdquo;
+        </p>
+      </div>
+    </>
+  );
+}
+
+function SocialOnlyContent() {
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-medium text-[var(--color-text-primary)]">The Hideaway Cafe</h3>
+            <Badge color="green">Opportunity: 72/100</Badge>
+            <Badge color="green">Verified</Badge>
+            <Badge color="indigo">Social Only</Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">instagram.com/hideawaycafe · Byron Bay, NSW · Cafe</p>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-info)]/20 bg-[var(--color-info)]/10 p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle className="h-4 w-4 text-[var(--color-info)]" />
+          <span className="text-sm font-medium text-[var(--color-info)]">No website — Instagram is the entire online presence</span>
+        </div>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
+          This cafe runs its entire digital presence through Instagram. There&rsquo;s no menu page, no table reservation system, no Google search visibility, and no way to capture customer emails. If Instagram changes its algorithm or the account gets flagged, they lose all digital discoverability overnight.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
+        {[
+          { label: "Instagram followers", value: "4,200", note: "Engaged local audience" },
+          { label: "Booking method", value: "DMs & walk-ins", note: "No reservation system" },
+          { label: "Google findability", value: "Low", note: "No SEO footprint" },
+        ].map((item) => (
+          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
+            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
+            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+          &ldquo;Hi, The Hideaway Cafe has a great Instagram following. But Instagram isn&rsquo;t a website — you can&rsquo;t rank on Google, take reservations, or own your customer data through it. A simple website with your menu and a booking form would capture all the people searching for cafes in Byron Bay right now.&rdquo;
+        </p>
+      </div>
+    </>
+  );
+}
+
+function PlatformOnlyContent() {
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bloom Beauty Bar</h3>
+            <Badge color="green">Opportunity: 65/100</Badge>
+            <Badge color="green">Verified</Badge>
+            <Badge color="indigo">Platform Only</Badge>
+          </div>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">booksy.com/bloom-beauty-bar · Williamsburg, Brooklyn, NY · Salon</p>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle className="h-4 w-4 text-[var(--badge-indigo-text)]" />
+          <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Entire online presence is on a third-party platform</span>
+        </div>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
+          This salon exists only as a listing on Booksy. No website means no brand story, no service menu, no Google search presence, and no direct client relationships. Every booking goes through the platform, paying commission each time — with no way to retain customers if they leave.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
+        {[
+          { label: "Online presence",  value: "Booksy only",  note: "No owned property" },
+          { label: "Google findability", value: "Minimal",    note: "No SEO outside platform" },
+          { label: "Direct bookings",  value: "Platform only", note: "Pays commission per appointment" },
+        ].map((item) => (
+          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
+            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
+            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+          &ldquo;Hi, I saw Bloom Beauty Bar is listed on Booksy with good reviews, but you don&rsquo;t have your own website. Every booking through the platform means paying commission, and you don&rsquo;t own the client relationship. A website would let clients book directly and find you on Google — completely on your own terms.&rdquo;
+        </p>
+      </div>
+    </>
+  );
+}
+
+function TabContent({ activeTab }: { activeTab: ReportTab }) {
+  switch (activeTab) {
+    case "weak":     return <WeakWebsiteContent />;
+    case "none":     return <NoWebsiteContent />;
+    case "social":   return <SocialOnlyContent />;
+    case "platform": return <PlatformOnlyContent />;
+  }
+}
+
 export function SampleReportSection({ navigate }: { navigate: (href: string) => void }) {
   const [activeTab, setActiveTab] = useState<ReportTab>("weak");
   const prefersReducedMotion = useSafeReducedMotion();
-
-  const tabs: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
-    { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
-    { id: "none",     label: "No site",     badge: "Website Build",       badgeColor: "red" },
-    { id: "social",   label: "Social Only",    badge: "Website Opportunity", badgeColor: "indigo" },
-    { id: "platform", label: "Platform Only",  badge: "Website Build",       badgeColor: "indigo" },
-  ];
 
   return (
     <section id="report" className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
@@ -37,11 +262,11 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
           </p>
         </div>
 
-        {/* Tab strip — scrollable on mobile, fade-out edge shows overflow */}
+        {/* Tab strip */}
         <div className="relative mt-8">
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[var(--color-bg-page)] to-transparent sm:hidden" />
           <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {tabs.map((tab) => (
+            {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -58,444 +283,23 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
         </div>
 
         <Card variant="default" padding="lg" className="mt-4 border-[var(--border-strong)]">
-
           {prefersReducedMotion ? (
-            <>
-              {/* ── Weak Website ───────────────────────────────────────── */}
-              {activeTab === "weak" && (
-                <>
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bright Smile Dental</h3>
-                        <Badge color="green">Opportunity: 87/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
-                    </div>
-                  </div>
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-                      <span className="text-sm font-medium text-[var(--score-high)]">5 critical issues found</span>
-                    </div>
-                    <ul className="space-y-3 text-sm text-[var(--color-text-secondary)]">
-                      {[
-                        { issue: "Slow mobile load time (LCP: 4.2s)", impact: "High", pitch: "Faster experience = more bookings" },
-                        { issue: "Missing local SEO schema", impact: "Medium", pitch: "Local SEO = free patient acquisition" },
-                        { issue: "No SSL certificate badge", impact: "High", pitch: "Trust signals = higher conversion" },
-                        { issue: "Outdated design (last updated 2021)", impact: "Medium", pitch: "Modern design = perceived quality" },
-                        { issue: "No clear CTA above the fold", impact: "High", pitch: "Clear CTA = measurable bookings" },
-                      ].map((item) => (
-                        <li key={item.issue} className="flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <span className="font-medium text-[var(--color-text-primary)]">{item.issue}</span>
-                            <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact}</span>
-                          </div>
-                          <span className="text-[var(--color-accent)] text-xs">Pitch: {item.pitch}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <details className="mt-4 group">
-                    <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
-                      <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
-                      Technical Analysis
-                    </summary>
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                      {[
-                        { label: "Performance", score: 42 },
-                        { label: "Mobile UX",   score: 39 },
-                        { label: "SEO",         score: 48 },
-                        { label: "Design",      score: 36 },
-                        { label: "Trust",       score: 38 },
-                      ].map((item) => (
-                        <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center">
-                          <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                          <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                            {item.score}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                </>
-              )}
-
-              {/* ── No site ─────────────────────────────────────────── */}
-              {activeTab === "none" && (
-                <>
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</h3>
-                        <Badge color="green">Opportunity: 85/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="red">No site</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-                      <span className="text-sm font-medium text-[var(--score-high)]">No web presence detected</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business has no website. All online visibility relies on a single Google Business listing, no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Google reviews", value: "4.7★ (38)", note: "Strong social proof" },
-                      { label: "In operation", value: "6+ years", note: "Established business" },
-                      { label: "Website", value: "None", note: "Highest-value opportunity" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {/* ── Social Only ────────────────────────────────────────── */}
-              {activeTab === "social" && (
-                <>
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Blue Wave Restaurant</h3>
-                        <Badge color="green">Opportunity: 72/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="indigo">Social Only</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-info)]/20 bg-[var(--color-info)]/10 p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--color-info)]" />
-                      <span className="text-sm font-medium text-[var(--color-info)]">Entire online presence is rented</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business runs its entire online presence through Instagram. No website means no menu page, no reservation form, no SEO, no owned customer data. If Instagram changes its algorithm or bans the account, the business loses all digital visibility overnight.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Instagram followers", value: "4,200", note: "Engaged audience, no website" },
-                      { label: "Booking method", value: "DMs only", note: "No reservation system" },
-                      { label: "Google findability", value: "Minimal", note: "No SEO footprint" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {/* ── Platform Only ──────────────────────────────────────── */}
-              {activeTab === "platform" && (
-                <>
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bloom Spa & Wellness</h3>
-                        <Badge color="green">Opportunity: 65/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="indigo">Platform Only</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--badge-indigo-text)]" />
-                      <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Entire online presence is on a third-party platform</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business exists only as a listing on Fresha. No website means no brand story, no portfolio, no SEO footprint, and no direct bookings. If Fresha changes its fee structure or removes the listing, the business loses all online discoverability overnight.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Online presence",  value: "Fresha only",  note: "No owned web property" },
-                      { label: "Google findability", value: "Minimal",    note: "No SEO outside the platform" },
-                      { label: "Direct bookings",  value: "Platform only", note: "Pays % on every appointment" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform. You&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
-                    </p>
-                  </div>
-                </>
-              )}
-            </>
+            <TabContent activeTab={activeTab} />
           ) : (
             <AnimatePresence mode="wait">
-              {activeTab === "weak" && (
-                <motion.div
-                  key="weak"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bright Smile Dental</h3>
-                        <Badge color="green">Opportunity: 87/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">brightsmile.ae · Jumeirah, Dubai · Dentist</p>
-                    </div>
-                  </div>
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-                      <span className="text-sm font-medium text-[var(--score-high)]">5 critical issues found</span>
-                    </div>
-                    <ul className="space-y-3 text-sm text-[var(--color-text-secondary)]">
-                      {[
-                        { issue: "Slow mobile load time (LCP: 4.2s)", impact: "High", pitch: "Faster experience = more bookings" },
-                        { issue: "Missing local SEO schema", impact: "Medium", pitch: "Local SEO = free patient acquisition" },
-                        { issue: "No SSL certificate badge", impact: "High", pitch: "Trust signals = higher conversion" },
-                        { issue: "Outdated design (last updated 2021)", impact: "Medium", pitch: "Modern design = perceived quality" },
-                        { issue: "No clear CTA above the fold", impact: "High", pitch: "Clear CTA = measurable bookings" },
-                      ].map((item) => (
-                        <li key={item.issue} className="flex flex-col gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <span className="font-medium text-[var(--color-text-primary)]">{item.issue}</span>
-                            <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact}</span>
-                          </div>
-                          <span className="text-[var(--color-accent)] text-xs">Pitch: {item.pitch}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <details className="mt-4 group">
-                    <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
-                      <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
-                      Technical Analysis
-                    </summary>
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                      {[
-                        { label: "Performance", score: 42 },
-                        { label: "Mobile UX",   score: 39 },
-                        { label: "SEO",         score: 48 },
-                        { label: "Design",      score: 36 },
-                        { label: "Trust",       score: 38 },
-                      ].map((item) => (
-                        <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center">
-                          <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                          <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                            {item.score}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                </motion.div>
-              )}
-
-              {activeTab === "none" && (
-                <motion.div
-                  key="none"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Marina Legal Consultants</h3>
-                        <Badge color="green">Opportunity: 85/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="red">No site</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Dubai Marina · Legal Services</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-                      <span className="text-sm font-medium text-[var(--score-high)]">No web presence detected</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business has no website. All online visibility relies on a single Google Business listing, no portfolio, no testimonials, no contact form, no SEO footprint. Every competitor with a website has a structural advantage.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Google reviews", value: "4.7★ (38)", note: "Strong social proof" },
-                      { label: "In operation", value: "6+ years", note: "Established business" },
-                      { label: "Website", value: "None", note: "Highest-value opportunity" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, I noticed Marina Legal Consultants has great reviews but no website. Every day without one, you&rsquo;re invisible to clients searching Google. I build professional legal websites that turn your 4.7★ reputation into new enquiries.&rdquo;
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === "social" && (
-                <motion.div
-                  key="social"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Blue Wave Restaurant</h3>
-                        <Badge color="green">Opportunity: 72/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="indigo">Social Only</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">instagram.com/bluewaverest · JBR, Dubai · Restaurant</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-info)]/20 bg-[var(--color-info)]/10 p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--color-info)]" />
-                      <span className="text-sm font-medium text-[var(--color-info)]">Entire online presence is rented</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business runs its entire online presence through Instagram. No website means no menu page, no reservation form, no SEO, no owned customer data. If Instagram changes its algorithm or bans the account, the business loses all digital visibility overnight.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Instagram followers", value: "4,200", note: "Engaged audience, no website" },
-                      { label: "Booking method", value: "DMs only", note: "No reservation system" },
-                      { label: "Google findability", value: "Minimal", note: "No SEO footprint" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, Blue Wave&rsquo;s Instagram looks great. But Instagram isn&rsquo;t a website. You don&rsquo;t own it, you can&rsquo;t rank on Google, and bookings via DM cost you time every day. A real website takes your 4,200 followers and turns them into reservations you control.&rdquo;
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === "platform" && (
-                <motion.div
-                  key="platform"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bloom Spa & Wellness</h3>
-                        <Badge color="green">Opportunity: 65/100</Badge>
-                        <Badge color="green">Verified</Badge>
-                        <Badge color="indigo">Platform Only</Badge>
-                      </div>
-                      <p className="mt-1 text-sm text-[var(--color-text-secondary)]">fresha.com/bloom-spa · Downtown Dubai · Beauty & Wellness</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <AlertTriangle className="h-4 w-4 text-[var(--badge-indigo-text)]" />
-                      <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Entire online presence is on a third-party platform</span>
-                    </div>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-                      This business exists only as a listing on Fresha. No website means no brand story, no portfolio, no SEO footprint, and no direct bookings. If Fresha changes its fee structure or removes the listing, the business loses all online discoverability overnight.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    {[
-                      { label: "Online presence",  value: "Fresha only",  note: "No owned web property" },
-                      { label: "Google findability", value: "Minimal",    note: "No SEO outside the platform" },
-                      { label: "Direct bookings",  value: "Platform only", note: "Pays % on every appointment" },
-                    ].map((item) => (
-                      <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-                        <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-                        <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch angle</p>
-                    <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-                      &ldquo;Hi, I noticed Bloom Spa is listed on Fresha, but has no website of its own. Every booking goes through Fresha&rsquo;s platform. You&rsquo;re paying a commission each time and have no direct relationship with your clients. A website gives you direct bookings, your own brand, and Google visibility you actually own.&rdquo;
-                    </p>
-                  </div>
-                </motion.div>
-              )}
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                <TabContent activeTab={activeTab} />
+              </motion.div>
             </AnimatePresence>
           )}
 
-          {/* CTA — shared */}
+          {/* CTA */}
           <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Want to find opportunities like this in your city?</p>

@@ -1,4 +1,4 @@
-import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity, noWebsiteOpportunityScore } from "@/lib/scoring";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -98,6 +98,7 @@ export function paramsToFilters(params: URLSearchParams): FilterState {
 export type FilterableLead = {
   id: string;
   website_status: string | null;
+  website: string | null;
   performance_score: number | null;
   design_score: number | null;
   opportunity_score: number | null;
@@ -114,6 +115,23 @@ export type FilterableLead = {
 
 function effectiveOpportunity(lead: FilterableLead): number {
   if (lead.opportunity_score != null) return lead.opportunity_score;
+
+  // Handle unanalysed leads with no website
+  if (lead.website_status === "no_website") {
+    return noWebsiteOpportunityScore(lead.review_count ?? 0, lead.rating ?? 0);
+  }
+
+  // Handle unanalysed leads with social-only, platform-only, or unknown status
+  if (lead.website_status === "social_only" || lead.website_status === "platform_only" || lead.website_status === "unknown") {
+    return estimatedOpportunity({
+      website_status: lead.website_status,
+      website: lead.website,
+      rating: lead.rating,
+      user_ratings_total: lead.review_count,
+    });
+  }
+
+  // Default: compute from performance/design scores (has_website)
   return computeOpportunityScore(
     blendQualityForOpportunity(null, lead.performance_score, lead.design_score),
     lead.review_count ?? 0, lead.rating ?? 0, lead.business_type

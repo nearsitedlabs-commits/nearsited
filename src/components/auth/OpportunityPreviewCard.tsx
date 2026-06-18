@@ -33,9 +33,9 @@ type OppType = {
 const OPPORTUNITIES: OppType[] = [
   // 1. Weak Website
   {
-    name: "Bright Smile Dental",
-    subtitle: "Dental Clinic · Dubai",
-    url: "brightsmile.ae",
+    name: "Brighton Dental",
+    subtitle: "Dental Clinic · Brighton, UK",
+    url: "brightondental.co.uk",
     category: "Healthcare",
     quality: 76,
     reviews: 30,
@@ -47,24 +47,24 @@ const OPPORTUNITIES: OppType[] = [
       { label: "Trust",       value: 38 },
     ],
     badgeLabel: "Weak Website",
-    description: "High-potential local lead with weak web presence.",
+    description: "Established clinic losing patients to slow load times.",
     pitchText: (
       <>
-        I analysed your website and found{" "}
+        I ran parkviewdental.com through an audit and found{" "}
         <span className="font-medium text-[var(--color-text-primary)]">
-          5 critical issues
+          the site takes 4.2s to load
         </span>{" "}
-        that are quietly costing you patients every week&hellip;
+        on mobile — half your visitors are leaving before the page finishes.
       </>
     ),
     scoreColor: "var(--score-good)",
   },
   // 2. Social Only
   {
-    name: "Dubai Fitness Studio",
-    subtitle: "Gym · Dubai Marina",
-    url: "instagram.com/dubaifitness",
-    category: "Fitness",
+    name: "The Hideaway Cafe",
+    subtitle: "Cafe · Byron Bay, NSW",
+    url: "instagram.com/hideawaycafe",
+    category: "Restaurant",
     quality: 79,
     reviews: 85,
     rating: 4.5,
@@ -75,25 +75,25 @@ const OPPORTUNITIES: OppType[] = [
       { label: "Google Maps", value: 0 },
     ],
     badgeLabel: "Social Only",
-    description: "Strong social following, no owned web presence.",
+    description: "Popular cafe with no website — all bookings via DM.",
     pitchText: (
       <>
-        Your Instagram looks great — but you&rsquo;re renting your audience.
-        A website turns followers into{" "}
+        Your Instagram is great, but you&rsquo;re renting your audience.
+        A website means{" "}
         <span className="font-medium text-[var(--color-text-primary)]">
-          booked clients you control
-        </span>
-        .
+          online reservations and Google visibility
+        </span>{" "}
+        you actually own.
       </>
     ),
     scoreColor: "var(--score-good)",
   },
   // 3. No Website
   {
-    name: "Al Noor Plumbing",
-    subtitle: "Plumbing · Deira, Dubai",
+    name: "Harbor Legal Group",
+    subtitle: "Legal Services · Downtown, Austin, TX",
     url: "No website — Google Business only",
-    category: "Home Services",
+    category: "Legal",
     quality: 88,
     reviews: 42,
     rating: 4.7,
@@ -104,14 +104,14 @@ const OPPORTUNITIES: OppType[] = [
       { label: "Website",       value: 0 },
     ],
     badgeLabel: "No Website",
-    description: "Highest-value lead — no website, strong reputation.",
+    description: "Strong reputation, zero online search presence.",
     pitchText: (
       <>
         Great reviews, but{" "}
         <span className="font-medium text-[var(--color-text-primary)]">
-          zero Google visibility
+          invisible on Google
         </span>{" "}
-        beyond Maps. Every day without a website is lost calls and lost jobs.
+        beyond Maps. Every day without a website is potential clients finding competitors.
       </>
     ),
     scoreColor: "var(--score-good)",
@@ -227,9 +227,9 @@ export default function OpportunityPreviewCard() {
         {/* AI pitch preview */}
         <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
           <div className="flex items-center justify-between gap-4">
-            <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
-              <span className="h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
-              AI Pitch — Ready
+            <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+              <span className="block h-px w-5 bg-[var(--color-accent)]" />
+              AI Pitch
             </span>
             <span className="text-[10px] text-[var(--text-muted)]">generated in 1.4s</span>
           </div>

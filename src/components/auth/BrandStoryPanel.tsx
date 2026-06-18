@@ -18,11 +18,9 @@ export default function BrandStoryPanel() {
   const content = (
     <div className="space-y-8">
       <FadeUp>
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
-            <span className="h-1.5 w-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
-            Find website opportunities
-          </span>
+        <div className="mb-4 flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-accent)]">
+          <span className="block h-px w-6 bg-[var(--color-accent)]" />
+          Find website opportunities
         </div>
       </FadeUp>
 

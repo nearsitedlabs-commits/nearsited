@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronLeft } from "lucide-react";
 import { motion, fadeUpVariants, staggerVariants } from "@/lib/motion";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
@@ -26,6 +26,14 @@ type Props = {
   onAddToPipeline: (id: string) => Promise<void>;
   onMoveStatus: (id: string, status: "won" | "lost") => Promise<void>;
   onPhoneCopied?: (msg: string) => void;
+  /** Pagination — when provided, renders a pagination bar inside the table container */
+  pagination?: {
+    page: number;
+    totalPages: number;
+    totalItems: number;
+    pageSize: number;
+    onPageChange: (page: number) => void;
+  };
 };
 
 type ClusterInfo = {
@@ -111,6 +119,7 @@ export function LeadsTable({
   onAddToPipeline,
   onMoveStatus,
   onPhoneCopied,
+  pagination,
 }: Props) {
   const [expandedClusters, setExpandedClusters] = useState<Set<number>>(new Set());
   const allSelected = paginated.length > 0 && paginated.every((l) => selectedIds.has(l.id));
@@ -355,6 +364,34 @@ export function LeadsTable({
           )}
         </table>
       </div>
+
+      {/* Pagination footer — inside the table container */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-[var(--color-border-subtle)] px-4 py-3">
+          <p className="text-sm text-[var(--color-text-tertiary)]">
+            Showing {(pagination.page - 1) * pagination.pageSize + 1}–{Math.min(pagination.page * pagination.pageSize, pagination.totalItems)} of {pagination.totalItems}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => pagination.onPageChange(Math.max(1, pagination.page - 1))}
+              disabled={pagination.page === 1}
+              aria-label="Previous page"
+              className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="px-3 text-sm text-[var(--color-text-secondary)]">{pagination.page} / {pagination.totalPages}</span>
+            <button
+              onClick={() => pagination.onPageChange(Math.min(pagination.totalPages, pagination.page + 1))}
+              disabled={pagination.page === pagination.totalPages}
+              aria-label="Next page"
+              className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

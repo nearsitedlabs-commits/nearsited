@@ -36,6 +36,16 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
     </Link>
   );
 
+  // Audit button — one-click quick audit for new leads with a website
+  const auditBtn = (
+    <button
+      onClick={() => onAnalyse(lead.id, lead.website!)}
+      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
+    >
+      <Eye className="h-3 w-3" /> Audit
+    </button>
+  );
+
   // Retry button (after error)
   const retryBtn = (
     <button
@@ -61,7 +71,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   } else if (hasError) {
     primaryBtn = retryBtn;
   } else if (status === "new" && canAnalyse) {
-    primaryBtn = viewBtn;
+    primaryBtn = auditBtn;
   } else if (status === "pitched") {
     primaryBtn = (
       <Link

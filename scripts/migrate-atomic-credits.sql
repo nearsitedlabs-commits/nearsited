@@ -46,6 +46,10 @@ begin
     v_audits_used := 0;
   end if;
 
+  -- Treat zero limit as the default free limit (20) — fixes race where
+  -- getSubscription() backfilled audits_limit but the RPC row-lock reads 0.
+  v_audits_limit := coalesce(nullif(v_audits_limit, 0), 20);
+
   -- Check if the user has reached their audit limit
   if v_audits_used >= v_audits_limit then
     return json_build_object(
@@ -103,6 +107,10 @@ begin
     where user_id = p_user_id;
     v_searches_used := 0;
   end if;
+
+  -- Treat zero limit as the default free limit (3) — fixes race where
+  -- getSubscription() backfilled searches_limit but the RPC row-lock reads 0.
+  v_searches_limit := coalesce(nullif(v_searches_limit, 0), 3);
 
   -- Check if the user has reached their search limit
   if v_searches_used >= v_searches_limit then
