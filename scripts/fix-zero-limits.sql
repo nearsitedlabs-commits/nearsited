@@ -1,38 +1,54 @@
--- Nearsited — Fix Zero Limits for User
--- =======================================
+-- Nearsited — Fix Zero Limits for User + Unique Constraint
+-- ==========================================================
 --
--- Resets searches_limit and audits_limit from 0 to the free-tier defaults
--- for the user 'nearsitedlabs@gmail.com'.
+-- 1. Adds the UNIQUE constraint on subscriptions.user_id that the RPC functions
+--    rely on (ON CONFLICT (user_id) requires it).
+-- 2. Cleans up any duplicate rows that may have been created before the constraint.
+-- 3. Resets the user's limits to free-tier defaults by email.
 --
--- The race condition: getSubscription() backfills zero→default in JS and
--- writes to DB, but the deduct_*_credit RPC reads the limit directly from
--- the row in a separate transaction — if it sees 0, it rejects immediately.
---
--- Run this in the Supabase SQL Editor after deploying the RPC fix in
--- scripts/migrate-atomic-credits.sql (which adds COALESCE(NULLIF(..., 0), default)
--- to both RPC functions).
+-- Run this in the Supabase SQL Editor.
 
+-- ── Step 1: Remove duplicates ──────────────────────────────────────────────────
+delete from public.subscriptions a
+using public.subscriptions b
+where a.id < b.id and a.user_id = b.user_id;
+
+-- ── Step 2: Add unique constraint (required by RPC's ON CONFLICT) ─────────────
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'subscriptions_user_id_key'
+      and conrelid = 'public.subscriptions'::regclass
+  ) then
+    alter table public.subscriptions
+    add constraint subscriptions_user_id_key unique (user_id);
+  end if;
+end;
+$$;
+
+-- ── Step 3: Reset limits for the testing user ─────────────────────────────────
 do $$
 declare
   v_user_id uuid;
 begin
-  -- Find the user by email in the profiles table
-  select id into strict v_user_id
+  select id into v_user_id
   from public.profiles
   where email = 'nearsitedlabs@gmail.com';
 
-  -- Reset search credits to free-tier defaults
-  update public.subscriptions
-  set searches_used = 0,
-      searches_limit = 3   -- FREE_SEARCH_LIMIT
-  where user_id = v_user_id;
+  if not found then
+    raise warning 'User nearsitedlabs@gmail.com not found in profiles — skipping limit reset';
+    return;
+  end if;
 
-  -- Reset audit credits to free-tier defaults
-  update public.subscriptions
-  set audits_used = 0,
-      audits_limit = 20    -- FREE_AUDIT_LIMIT
-  where user_id = v_user_id;
+  insert into public.subscriptions (user_id, tier, searches_used, searches_limit, audits_used, audits_limit)
+  values (v_user_id, 'free', 0, 3, 0, 20)
+  on conflict (user_id) do update set
+    searches_used = 0,
+    searches_limit = 3,
+    audits_used = 0,
+    audits_limit = 20;
 
-  raise notice 'Reset limits for user % (id=%)', 'nearsitedlabs@gmail.com', v_user_id;
+  raise notice 'Reset limits for user nearsitedlabs@gmail.com (id=%)', v_user_id;
 end;
 $$;
