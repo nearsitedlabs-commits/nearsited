@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -15,11 +14,11 @@ type ReportTab = "weak" | "none" | "social" | "platform";
 type IssueItem = { issue: string; impact: string };
 
 const WEAK_ISSUES: IssueItem[] = [
-  { issue: "Homepage takes 4.2s to load on mobile — Google says 53% of visitors leave if it takes over 3s", impact: "High" },
+  { issue: "Homepage takes 4.2s to load on mobile — 53% of visitors leave if it's over 3s", impact: "High" },
   { issue: "No schema markup — not showing up in Google's local pack for 'dentist near me'", impact: "High" },
-  { issue: "SSL certificate expired 3 months ago — Chrome shows 'Not Secure' in the address bar", impact: "Medium" },
-  { issue: "Contact page is a static address with no form, map, or click-to-call button", impact: "Medium" },
-  { issue: "Site hasn't been updated since 2021 — pricing page still mentions COVID protocols", impact: "Low" },
+  { issue: "SSL certificate expired 3 months ago — Chrome shows 'Not Secure'", impact: "Medium" },
+  { issue: "Contact page has no form, map, or click-to-call button", impact: "Medium" },
+  { issue: "Site not updated since 2021 — pricing page still mentions COVID protocols", impact: "Low" },
 ];
 
 const WEAK_SCORES = [
@@ -30,8 +29,6 @@ const WEAK_SCORES = [
   { label: "Trust",       score: 38 },
 ];
 
-// ── Tab config ─────────────────────────────────────────────────────────────────
-
 const TABS: { id: ReportTab; label: string; badge: string; badgeColor: string }[] = [
   { id: "weak",     label: "Weak Website",   badge: "Redesign",            badgeColor: "amber" },
   { id: "none",     label: "No site",        badge: "Website Build",       badgeColor: "red" },
@@ -39,63 +36,84 @@ const TABS: { id: ReportTab; label: string; badge: string; badgeColor: string }[
   { id: "platform", label: "Platform Only",  badge: "Website Build",       badgeColor: "indigo" },
 ];
 
-// ── Tab content components to avoid duplication ─────────────────────────────────
+// ── Reusable stat row (no borders) ──────────────────────────────────────────────
+
+function StatRow({ items }: { items: { label: string; value: string; note: string }[] }) {
+  return (
+    <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+      {items.map((item) => (
+        <div key={item.label}>
+          <span className="text-[var(--color-text-tertiary)]">{item.label}:</span>{" "}
+          <span className="font-medium text-[var(--color-text-primary)]">{item.value}</span>
+          <span className="text-[var(--color-accent)]"> — {item.note}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Content for each tab ────────────────────────────────────────────────────────
 
 function WeakWebsiteContent() {
   return (
-    <>
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+    <div className="space-y-0">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Brighton Dental</h3>
-            <Badge color="green">Opportunity: 87/100</Badge>
+            <Badge color="green">87/100</Badge>
             <Badge color="green">Verified</Badge>
           </div>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">brightondental.co.uk · Brighton, UK · Dentist</p>
         </div>
       </div>
-      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-          <span className="text-sm font-medium text-[var(--score-high)]">5 issues found</span>
-        </div>
-        <ul className="space-y-3 text-sm text-[var(--color-text-secondary)]">
+
+      {/* Issues */}
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <p className="text-sm font-medium text-[var(--color-text-primary)] mb-3">5 issues found</p>
+        <div className="space-y-2">
           {WEAK_ISSUES.map((item) => (
-            <li key={item.issue} className="flex items-start justify-between gap-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-3">
-              <span className="font-medium text-[var(--color-text-primary)]">{item.issue}</span>
-              <span className="shrink-0 text-[11px] text-[var(--score-high)]">{item.impact}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <details className="mt-4 group">
-        <summary className="cursor-pointer text-[11px] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
-          <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
-          Technical scores
-        </summary>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {WEAK_SCORES.map((item) => (
-            <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-center">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-              <p className="mt-1 text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
-                {item.score}
-              </p>
+            <div key={item.issue} className="flex items-start gap-2 text-sm leading-snug text-[var(--color-text-secondary)]">
+              <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[var(--color-text-tertiary)]" />
+              <span>{item.issue}</span>
+              <span className="shrink-0 text-[11px] text-[var(--score-high)] ml-auto">{item.impact}</span>
             </div>
           ))}
         </div>
-      </details>
-    </>
+      </div>
+
+      {/* Technical scores */}
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <details className="group">
+          <summary className="cursor-pointer text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
+            <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+            Technical scores
+          </summary>
+          <div className="mt-3 grid gap-3 sm:grid-cols-5">
+            {WEAK_SCORES.map((item) => (
+              <div key={item.label}>
+                <p className="text-[11px] text-[var(--color-text-tertiary)]">{item.label}</p>
+                <p className="text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                  {item.score}
+                </p>
+              </div>
+            ))}
+          </div>
+        </details>
+      </div>
+    </div>
   );
 }
 
 function NoWebsiteContent() {
   return (
-    <>
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+    <div className="space-y-0">
+      <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Harbor Legal Group</h3>
-            <Badge color="green">Opportunity: 85/100</Badge>
+            <Badge color="green">85/100</Badge>
             <Badge color="green">Verified</Badge>
             <Badge color="red">No site</Badge>
           </div>
@@ -103,48 +121,40 @@ function NoWebsiteContent() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--score-high)]/30 bg-[var(--score-high-tint)] p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
-          <span className="text-sm font-medium text-[var(--score-high)]">No website detected</span>
-        </div>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
         <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-          This firm has no website. Their entire online presence is a single Google Business profile. No portfolio of case outcomes, no lawyer profiles, no contact form, no blog — and no Google search presence outside Maps. Every competitor firm with a website is capturing the clients they&rsquo;re missing.
+          This firm has no website. Their entire online presence is a single Google Business profile — no portfolio, no lawyer profiles, no contact form, and no Google search presence outside Maps. Every competitor with a website is capturing the clients they&rsquo;re missing.
         </p>
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        {[
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <StatRow items={[
           { label: "Google reviews", value: "4.7★ (38)", note: "Strong social proof" },
           { label: "In operation", value: "Since 2014", note: "Established practice" },
           { label: "Website", value: "None", note: "Highest-value opportunity" },
-        ].map((item) => (
-          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-          </div>
-        ))}
+        ]} />
       </div>
 
-      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
-        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-          &ldquo;Hi, I noticed Harbor Legal Group has strong reviews but no website. Potential clients searching for a lawyer in downtown Austin are finding your competitors first. I build legal practice websites — would you be open to a quick call?&rdquo;
-        </p>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <div className="border-l-2 border-[var(--color-accent)] pl-4">
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+          <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+            &ldquo;Hi, I noticed Harbor Legal Group has strong reviews but no website. Potential clients searching for a lawyer in downtown Austin are finding your competitors first. I build legal practice websites — would you be open to a quick call?&rdquo;
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
 function SocialOnlyContent() {
   return (
-    <>
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+    <div className="space-y-0">
+      <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">The Hideaway Cafe</h3>
-            <Badge color="green">Opportunity: 72/100</Badge>
+            <Badge color="green">72/100</Badge>
             <Badge color="green">Verified</Badge>
             <Badge color="indigo">Social Only</Badge>
           </div>
@@ -152,48 +162,40 @@ function SocialOnlyContent() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-info)]/20 bg-[var(--color-info)]/10 p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle className="h-4 w-4 text-[var(--color-info)]" />
-          <span className="text-sm font-medium text-[var(--color-info)]">No website — Instagram is the entire online presence</span>
-        </div>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
         <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-          This cafe runs its entire digital presence through Instagram. There&rsquo;s no menu page, no table reservation system, no Google search visibility, and no way to capture customer emails. If Instagram changes its algorithm or the account gets flagged, they lose all digital discoverability overnight.
+          This cafe runs its entire digital presence through Instagram. There&rsquo;s no menu page, no table reservation system, no Google search visibility, and no way to capture customer emails. If Instagram changes its algorithm or the account gets flagged, they lose all digital visibility overnight.
         </p>
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        {[
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <StatRow items={[
           { label: "Instagram followers", value: "4,200", note: "Engaged local audience" },
           { label: "Booking method", value: "DMs & walk-ins", note: "No reservation system" },
           { label: "Google findability", value: "Low", note: "No SEO footprint" },
-        ].map((item) => (
-          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-          </div>
-        ))}
+        ]} />
       </div>
 
-      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
-        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-          &ldquo;Hi, The Hideaway Cafe has a great Instagram following. But Instagram isn&rsquo;t a website — you can&rsquo;t rank on Google, take reservations, or own your customer data through it. A simple website with your menu and a booking form would capture all the people searching for cafes in Byron Bay right now.&rdquo;
-        </p>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <div className="border-l-2 border-[var(--color-accent)] pl-4">
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+          <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+            &ldquo;Hi, The Hideaway Cafe has a great Instagram following. But Instagram isn&rsquo;t a website — you can&rsquo;t rank on Google, take reservations, or own your customer data through it. A simple website with your menu and a booking form would capture everyone searching for cafes in Byron Bay right now.&rdquo;
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
 function PlatformOnlyContent() {
   return (
-    <>
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
+    <div className="space-y-0">
+      <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
           <div className="flex items-center gap-3">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bloom Beauty Bar</h3>
-            <Badge color="green">Opportunity: 65/100</Badge>
+            <Badge color="green">65/100</Badge>
             <Badge color="green">Verified</Badge>
             <Badge color="indigo">Platform Only</Badge>
           </div>
@@ -201,37 +203,29 @@ function PlatformOnlyContent() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle className="h-4 w-4 text-[var(--badge-indigo-text)]" />
-          <span className="text-sm font-medium text-[var(--badge-indigo-text)]">Entire online presence is on a third-party platform</span>
-        </div>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
         <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
-          This salon exists only as a listing on Booksy. No website means no brand story, no service menu, no Google search presence, and no direct client relationships. Every booking goes through the platform, paying commission each time — with no way to retain customers if they leave.
+          This salon exists only as a listing on Booksy. No website means no brand story, no service menu, no Google search presence, and no direct client relationships. Every booking goes through the platform, paying commission each time.
         </p>
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        {[
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <StatRow items={[
           { label: "Online presence",  value: "Booksy only",  note: "No owned property" },
           { label: "Google findability", value: "Minimal",    note: "No SEO outside platform" },
           { label: "Direct bookings",  value: "Platform only", note: "Pays commission per appointment" },
-        ].map((item) => (
-          <div key={item.label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">{item.label}</p>
-            <p className="mt-1 text-base font-medium text-[var(--color-text-primary)]">{item.value}</p>
-            <p className="mt-0.5 text-xs text-[var(--color-accent)]">{item.note}</p>
-          </div>
-        ))}
+        ]} />
       </div>
 
-      <div className="mt-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
-        <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
-          &ldquo;Hi, I saw Bloom Beauty Bar is listed on Booksy with good reviews, but you don&rsquo;t have your own website. Every booking through the platform means paying commission, and you don&rsquo;t own the client relationship. A website would let clients book directly and find you on Google — completely on your own terms.&rdquo;
-        </p>
+      <div className="border-t border-[var(--color-border-subtle)] pt-6">
+        <div className="border-l-2 border-[var(--color-accent)] pl-4">
+          <p className="text-xs text-[var(--color-text-tertiary)] mb-2">AI-generated pitch</p>
+          <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">
+            &ldquo;Hi, I saw Bloom Beauty Bar is listed on Booksy with good reviews, but you don&rsquo;t have your own website. Every booking through the platform means paying commission, and you don&rsquo;t own the client relationship. A website would let clients book directly and find you on Google — completely on your own terms.&rdquo;
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -262,7 +256,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
           </p>
         </div>
 
-        {/* Tab strip */}
         <div className="relative mt-8">
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[var(--color-bg-page)] to-transparent sm:hidden" />
           <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -299,7 +292,6 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
             </AnimatePresence>
           )}
 
-          {/* CTA */}
           <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Want to find opportunities like this in your city?</p>

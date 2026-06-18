@@ -147,7 +147,7 @@ export default function OpportunityPreviewCard() {
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
 
       {/* Content */}
-      <div className="space-y-5 p-6">
+      <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -161,13 +161,13 @@ export default function OpportunityPreviewCard() {
               {SELECTED.url}
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-warning)]">
+          <span className="shrink-0 text-[11px] text-[var(--color-text-tertiary)] whitespace-nowrap">
             {SELECTED.badgeLabel}
           </span>
         </div>
 
-        {/* Score ring + summary — static on first paint, animated via CSS */}
-        <div className="flex items-center gap-5 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+        {/* Score ring + summary */}
+        <div className="mt-5 flex items-center gap-5 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-4">
           <div className="relative flex h-[90px] w-[90px] shrink-0 items-center justify-center">
             <svg width="90" height="90" viewBox="0 0 90 90" className="-rotate-90">
               <circle cx="45" cy="45" r="40" fill="none" className="stroke-[var(--border-strong)]" strokeWidth="8" />
@@ -199,9 +199,9 @@ export default function OpportunityPreviewCard() {
           </div>
         </div>
 
-        {/* Metric bars — CSS-animated via @keyframes with staggered delays */}
+        {/* Metric bars */}
         {BAR_DATA.length > 0 && (
-          <div className="space-y-3">
+          <div className="mt-5 border-t border-[var(--color-border-subtle)] pt-5 space-y-3">
             {BAR_DATA.map((item, i) => (
               <div key={item.label} className="space-y-1.5">
                 <div className="flex items-center justify-between text-[11px]">
@@ -225,17 +225,18 @@ export default function OpportunityPreviewCard() {
         )}
 
         {/* AI pitch preview */}
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
-          <div className="flex items-center justify-between gap-4">
-            <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
-              <span className="block h-px w-5 bg-[var(--color-accent)]" />
-              AI Pitch
-            </span>
-            <span className="text-[10px] text-[var(--text-muted)]">generated in 1.4s</span>
+        <div className="mt-5 border-t border-[var(--color-border-subtle)] pt-5">
+          <div className="border-l-2 border-[var(--color-accent)] pl-4">
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)]">
+                AI Pitch
+              </span>
+              <span className="text-[10px] text-[var(--color-text-tertiary)]">generated in 1.4s</span>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+              {SELECTED.pitchText}
+            </p>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-            {SELECTED.pitchText}
-          </p>
         </div>
       </div>
 
