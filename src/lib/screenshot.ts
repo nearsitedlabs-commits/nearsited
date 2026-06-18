@@ -27,6 +27,9 @@
  * Known limitation: JS-heavy sites (Next.js, React SPAs) need longer delays
  * to fully hydrate and render content. The 30s timeout + 5s delay gives
  * most sites enough time.
+ *
+ * Some sites block headless browser user agents. We use a real Chrome UA
+ * string to reduce the chance of being blocked.
  */
 export const SCREENSHOTCORE_URL = "https://screenshotcore.com/api/v1/screenshot";
 
@@ -34,6 +37,10 @@ export const SCREENSHOT_TIMEOUT_MS = 30_000;
 
 /** Delay in ms AFTER initial page load to allow JavaScript hydration. */
 export const SCREENSHOT_DELAY_MS = 5_000;
+
+/** Real Chrome user-agent to avoid headless browser detection. */
+export const SCREENSHOT_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36";
 
 export const MOBILE_VIEWPORT = { width: 390, height: 844 };
 export const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
@@ -66,6 +73,7 @@ export async function takeScreenshot(
     block_cookie_banners: "true",
     delay: String(SCREENSHOT_DELAY_MS),
     scroll_to: "body",
+    user_agent: SCREENSHOT_USER_AGENT,
     access_key: accessKey,
   });
 
