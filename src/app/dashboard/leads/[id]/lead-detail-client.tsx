@@ -293,7 +293,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   {!biz.place_id && (
                     <Button
                       variant="icon"
-                      icon={<Pencil className="h-4 w-4" />}
+                      icon={<Pencil className="h-3.5 w-3.5" />}
                       onClick={() => setShowEditPanel((v) => !v)}
                       title="Edit business details"
                     >

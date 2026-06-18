@@ -76,7 +76,7 @@ export function LeadHeaderStrip({
         href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]"
       >
-        <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
+        <ArrowLeft className="h-3.5 w-3.5" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
         {/* Left: Business info */}

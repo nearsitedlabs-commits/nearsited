@@ -49,7 +49,7 @@ export function LeadHeroSection({
         href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
       >
-        <ArrowLeft className="h-4 w-4" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
+        <ArrowLeft className="h-3.5 w-3.5" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
       </Link>
 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
@@ -66,7 +66,7 @@ export function LeadHeroSection({
                 title="Edit business details"
                 className="mt-1.5 shrink-0 rounded-[var(--radius-sm)] p-1 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-secondary)] transition-colors"
               >
-                <Pencil className="h-4 w-4" />
+                <Pencil className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
