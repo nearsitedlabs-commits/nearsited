@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Building2, Compass, Kanban, FileText, Settings,
+  LayoutDashboard, Building2, Compass, Kanban, FileText, Settings, SearchCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -12,6 +12,7 @@ export type NavItem = {
 export const DASHBOARD_NAV: NavItem[] = [
   { href: "/dashboard",          label: "Dashboard",     icon: LayoutDashboard },
   { href: "/dashboard/discover", label: "Find",           icon: Compass },
+  { href: "/dashboard/audit",    label: "Quick Audit",    icon: SearchCheck },
   { href: "/dashboard/leads",    label: "Opportunities",  icon: Building2 },
   { href: "/dashboard/pipeline", label: "Pipeline",       icon: Kanban },
   { href: "/dashboard/pitches",  label: "Pitches",        icon: FileText },
@@ -22,7 +23,7 @@ export const DASHBOARD_NAV: NavItem[] = [
 export const MOBILE_NAV: NavItem[] = [
   { href: "/dashboard",          label: "Home",           icon: LayoutDashboard },
   { href: "/dashboard/discover", label: "Find",           icon: Compass },
+  { href: "/dashboard/audit",    label: "Quick Audit",    icon: SearchCheck },
   { href: "/dashboard/leads",    label: "Leads",          icon: Building2 },
   { href: "/dashboard/pipeline", label: "Pipeline",       icon: Kanban },
-  { href: "/dashboard/pitches",  label: "Pitches",        icon: FileText },
 ];
