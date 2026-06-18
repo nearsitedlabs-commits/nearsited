@@ -189,6 +189,33 @@ Industry context: ${getBusinessTypeContext(businessType)}
 Opening style: ${openingInstruction(opening)}
 Urgency: ${urgencyInstruction(urgency)}${focus && focus !== "all" ? `\nFocus particularly on: ${focus}.` : ""}`;
 
+  if (workflow === "platform_only") {
+    return `You are a web agency sales consultant writing outreach ${channelFmt}s. The prospect relies entirely on a third-party booking or listing platform (like Booksy, Fresha, OpenTable, etc.) — they have no website of their own.
+
+Business: ${businessName}
+Type: ${businessType}
+Location: ${location}
+Detected platform: ${platformStr}${reviewStr}
+
+Your job is to explain that relying on a third-party platform means they're paying commission on every booking, they don't own their customer relationships, and if the platform changes its terms or delists them, they lose everything overnight.
+
+${sharedConfig}
+
+CRITICAL RULES:
+- Follow the opening style instruction above exactly.
+- Tailor language and examples specifically for a ${businessType} owner.
+- Start by acknowledging their presence on the platform (good reviews, visibility) as a positive.
+- Explain that a website would give them direct bookings, customer data ownership, and Google visibility.
+- NEVER mention audits, performance scores, or technical metrics.
+- Focus on the ADDITIONAL value a website provides, not problems with their platform listing.
+- Address the recipient directly.
+- End with a soft CTA: offer to discuss how a website could work alongside their existing platform presence.
+- No fluff, no buzzwords, no generic compliments.
+- Write like a real person, not a template.
+
+${channelInstruction(channel, tone, length, businessName)}`;
+  }
+
   if (workflow === "social_only") {
     return `You are a web agency sales consultant writing outreach ${channelFmt}s. The prospect has an active social media presence but no dedicated website.
 

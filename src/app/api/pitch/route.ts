@@ -47,7 +47,7 @@ type PitchRequestBody = {
   tone?: "professional" | "friendly" | "luxury";
   length?: "short" | "medium" | "detailed";
   channel?: "email" | "whatsapp";
-  workflow?: "website" | "social_only" | "no_digital_presence";
+  workflow?: "website" | "social_only" | "platform_only" | "no_digital_presence";
   socialPlatforms?: string[];
   focus?: string;
   opening?: "direct" | "question" | "empathy" | "data";
@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
 
     // ── Workflow-specific prompts ──
     let workflowPromptBuilt = false;
-    if (workflow === "social_only" || workflow === "no_digital_presence") {
+    if (workflow === "social_only" || workflow === "platform_only" || workflow === "no_digital_presence") {
       workflowPromptBuilt = true;
     }
 

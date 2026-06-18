@@ -232,7 +232,7 @@ export const pitchSchema = z.object({
   tone: z.enum(["professional", "friendly", "luxury"]).optional(),
   length: z.enum(["short", "medium", "detailed"]).optional(),
   channel: z.enum(["email", "whatsapp"]).optional(),
-  workflow: z.enum(["website", "social_only", "no_digital_presence"]).optional(),
+  workflow: z.enum(["website", "social_only", "platform_only", "no_digital_presence"]).optional(),
   socialPlatforms: z.array(z.string().max(50)).max(20).optional(),
   focus: z.string().max(500).optional(),
   opening: z.enum(["direct", "question", "empathy", "data"]).optional(),
