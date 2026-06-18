@@ -92,10 +92,13 @@ export function usePitchGeneration({
       showToast("Generate a pitch first");
       return;
     }
-    navigator.clipboard.writeText(pitchResult.body).then(() => {
+    const text = outreachChannel === "email" && pitchResult.subject
+      ? `${pitchResult.subject}\n\n${pitchResult.body}`
+      : pitchResult.body;
+    navigator.clipboard.writeText(text).then(() => {
       showToast("Pitch copied to clipboard");
     });
-  }, [pitchResult, showToast]);
+  }, [pitchResult, outreachChannel, showToast]);
 
   return {
     generatingPitch,

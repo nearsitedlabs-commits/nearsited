@@ -37,47 +37,67 @@ export function StatsRow({
           ? "text-[var(--color-info)]"
           : "text-[var(--color-danger)]";
 
-  const stats = [
-    {
-      icon: TrendingUp,
-      label: "Opportunity Score",
-      value: (
-        <span className={scoreColor}>
-          {opportunityScore}
-          <span className="ml-1 text-xs font-normal text-[var(--color-text-tertiary)]">
-            · {label}{isVerified ? "" : " (est.)"}
-          </span>
+  type StatItem = {
+    icon: typeof TrendingUp;
+    label: string;
+    value: React.ReactNode;
+    sub?: string;
+  };
+
+  const stats: StatItem[] = [];
+
+  // Always show the opportunity score
+  stats.push({
+    icon: TrendingUp,
+    label: "Opportunity Score",
+    value: (
+      <span className={scoreColor}>
+        {opportunityScore}
+        <span className="ml-1 text-xs font-normal text-[var(--color-text-tertiary)]">
+          · {label}{isVerified ? "" : " (est.)"}
         </span>
-      ),
-    },
-    {
+      </span>
+    ),
+  });
+
+  if (estimatedValue) {
+    stats.push({
       icon: DollarSign,
       label: "Est. Project Value",
-      value: estimatedValue
-        ? `${estimatedValue.currency}${estimatedValue.low.toLocaleString()}–${estimatedValue.high.toLocaleString()}`
-        : "Pending analysis",
-      sub: estimatedValue ? "Based on industry & size" : undefined,
-    },
-    {
+      value: `${estimatedValue.currency}${estimatedValue.low.toLocaleString()}–${estimatedValue.high.toLocaleString()}`,
+      sub: "Based on industry & size",
+    });
+  }
+
+  if (reviewVelocity30d != null) {
+    stats.push({
       icon: MessageSquare,
       label: "Review Velocity (30d)",
-      value: reviewVelocity30d != null
-        ? `${reviewVelocity30d} new`
-        : "N/A",
-      sub: reviewVelocity30d != null ? "from Google Places" : "Run audit to track",
-    },
-    {
+      value: `${reviewVelocity30d} new`,
+      sub: "from Google Places",
+    });
+  }
+
+  if (localCompetitors) {
+    stats.push({
       icon: Building2,
       label: "Local Competition",
-      value: localCompetitors
-        ? `${localCompetitors.total} nearby / ${localCompetitors.withWebsite} with sites`
-        : "N/A",
-      sub: localCompetitors ? "in this category" : "Run audit to compare",
-    },
-  ];
+      value: `${localCompetitors.total} nearby / ${localCompetitors.withWebsite} with sites`,
+      sub: "in this category",
+    });
+  }
+
+  const gridCols =
+    stats.length === 1
+      ? "grid-cols-1 sm:grid-cols-1"
+      : stats.length === 2
+        ? "grid-cols-2 sm:grid-cols-2"
+        : stats.length === 3
+          ? "grid-cols-2 sm:grid-cols-3"
+          : "grid-cols-2 sm:grid-cols-4";
 
   return (
-    <div className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+    <div className={`mb-6 grid gap-2 sm:gap-3 ${gridCols}`}>
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (

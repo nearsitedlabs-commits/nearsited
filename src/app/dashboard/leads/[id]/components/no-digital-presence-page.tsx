@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { FileDown, Share2 } from "lucide-react";
 import { Toast } from "@/components/ui/Toast";
 import { estimatedOpportunity } from "@/lib/scoring";
 // import { getNoDigitalOpportunityReasons } from "@/lib/lead-types";
@@ -16,6 +15,8 @@ import { PitchCard } from "./PitchCard";
 import { PreCallBrief } from "./PreCallBrief";
 import type { CallBriefSections } from "./PreCallBrief";
 import { AIQuotaBanner } from "./AIQuotaBanner";
+import { OpportunityScoreExplanation } from "./opportunity-score-explanation";
+import { LeadExportSection } from "./LeadExportSection";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -250,10 +251,10 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
         />
 
         {/* ── TWO-COLUMN MAIN ───────────────────────────────────────────── */}
-        <div className="grid gap-6 lg:grid-cols-5">
+        <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 
-          {/* ════ LEFT (≈60%) ════════════════════════════════════════════════ */}
-          <div className="space-y-6 lg:col-span-3 order-2 lg:order-1">
+          {/* ════ LEFT (3fr) ════════════════════════════════════════════════ */}
+          <div className="space-y-6 order-2 lg:order-1">
 
             {/* Pitch card */}
             <PitchCard
@@ -284,30 +285,29 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
             />
           </div>
 
-          {/* ════ RIGHT (≈40%) ═══════════════════════════════════════════════ */}
-          <div className="space-y-6 lg:col-span-2 order-1 lg:order-2">
+          {/* ════ RIGHT (2fr) ═══════════════════════════════════════════════ */}
+          <div className="space-y-6 order-1 lg:order-2">
 
-            {/* Pre-Call Brief (replaces old "Client Call Summary") */}
             <PreCallBrief
               businessName={biz.name}
               businessType={biz.business_type}
               sections={callBrief}
             />
 
-            {/* Export */}
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
-              <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Export</h2>
-              <div className="flex flex-wrap gap-2">
-                <a href={`/api/export/pdf?businessId=${biz.id}`}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
-                  <FileDown className="h-3.5 w-3.5" /> PDF Report
-                </a>
-                <button onClick={handleShare}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
-                  <Share2 className="h-3.5 w-3.5" /> Share Link
-                </button>
-              </div>
-            </div>
+            <OpportunityScoreExplanation
+              websiteStatus={biz.website_status ?? "no_website"}
+              overallScore={oppScore}
+              opportunityScore={oppScore}
+              reviewCount={biz.review_count}
+              rating={biz.rating}
+              hasAudit={false}
+              hasDesign={false}
+              contactAvailable={!contactInfo.loading && (contactInfo.email !== null || contactInfo.phone !== null)}
+              businessType={biz.business_type}
+              issues={[]}
+            />
+
+            <LeadExportSection businessId={biz.id} handleShare={handleShare} />
 
           </div>
         </div>

@@ -215,14 +215,22 @@ export function ResultCard({
                 View
               </Link>
             ) : (
-              <button
-                type="button"
-                onClick={() => onAnalyseOpportunity(business.id, business.website!)}
-                disabled={isLoading}
-                className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-all duration-150 disabled:opacity-50"
-              >
-                Audit
-              </button>
+              <>
+                <Link
+                  href={`/dashboard/leads/${business.id}?from=discover`}
+                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150"
+                >
+                  View
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => onAnalyseOpportunity(business.id, business.website!)}
+                  disabled={isLoading}
+                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-all duration-150 disabled:opacity-50"
+                >
+                  Audit
+                </button>
+              </>
             )}
           </>
         ) : (

@@ -277,8 +277,8 @@ export function PitchCard({
                 <ExternalLink className="h-3 w-3" /> Open in WhatsApp ↗
               </Button>
             )}
-            <Button variant="secondary" size="sm" onClick={handleCopyPitch} className="min-h-[44px] sm:min-h-0">
-              <Copy className="h-3 w-3" /> Copy
+            <Button variant="secondary" size="sm" onClick={handleCopyPitch} icon={<Copy className="h-3 w-3" />} className="min-h-[44px] sm:min-h-0">
+              Copy
             </Button>
             <Button
               variant="secondary" size="sm"
