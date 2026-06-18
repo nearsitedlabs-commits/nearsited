@@ -81,7 +81,7 @@ export function LeadHeaderStrip({
       <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
         {/* Left: Business info */}
         <div className="min-w-0 flex-1">
-          <h1 className="text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--color-text-primary)] leading-tight max-w-[85vw] sm:max-w-[65vw] break-words [text-wrap:balance]">
+          <h1 className="text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--color-text-primary)] leading-tight max-w-full break-words [text-wrap:balance]">
             {businessName}
           </h1>
           {/* One-line meta: type · city · rating */}
