@@ -169,7 +169,9 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
       blendQualityForOpportunity(mobilePerfScore, desktopPerfScore, biz.design_score),
       biz.review_count ?? 0, biz.rating ?? 0, biz.business_type ?? undefined,
     );
-  const displayOpportunityScore   = hasAudit
+  // Use stored score if available (set from quick-audit save); only fall back to
+  // estimatedOpportunity() when no real score has ever been computed for this lead.
+  const displayOpportunityScore   = (biz.opportunity_score != null || hasAudit)
     ? effectiveOpportunityScore
     : estimatedOpportunity({
         website_status: biz.website_status as WebsiteStatus,
@@ -341,7 +343,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             >
               <StatsRow
                 opportunityScore={displayOpportunityScore}
-                isVerified={hasAudit && hasDesign}
+                isVerified={(hasAudit && hasDesign) || biz.opportunity_score != null}
                 estimatedValue={null}
                 reviewVelocity30d={null}
                 localCompetitors={null}

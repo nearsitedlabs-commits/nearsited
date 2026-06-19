@@ -241,10 +241,10 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                     className="absolute inset-0 rounded-full bg-[var(--color-bg-surface)] shadow-sm transition-all duration-300"
                   />
                 )}
-                <span className="relative z-10 flex items-center gap-1.5">
+                <span className="relative z-10 inline-flex items-center gap-1.5">
                   {b === "monthly" ? "Monthly" : "Annual"}
                   {b === "annual" && (
-                    <span className="self-center leading-none text-[0.6rem] font-medium tracking-wide text-[var(--color-accent)]">
+                    <span className="text-[0.6rem] font-medium tracking-wide text-[var(--color-accent)]">
                       SAVE ~17%
                     </span>
                   )}
