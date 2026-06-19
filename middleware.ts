@@ -114,6 +114,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
       }
 
+      // Skip CSRF in development — requests from other devices on the local
+      // network have a different origin (e.g. 192.168.x.x) that won't match.
+      if (process.env.NODE_ENV === "development") {
+        return NextResponse.next();
+      }
+
       // Validate origin
       if (!isTrustedOrigin(request)) {
         console.warn(

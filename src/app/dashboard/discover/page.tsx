@@ -271,20 +271,23 @@ export default function DiscoverPage() {
   }, [processed]);
 
   const randomize = useCallback(() => {
-    // Filter pool to major metros only — rare business types (e.g. trampoline
-    // park, helicopter tour) don't exist in small towns. A 10 km Google Places
-    // search in a major metro is far more likely to return results.
+    // Prefer major metros — rare business types don't exist in small towns.
     const majorSet = new Set(MAJOR_CITIES.map((n) => n.toLowerCase()));
-    const pool = citiesFullRef.current.filter((c) => majorSet.has(c.city.toLowerCase()));
-    if (pool.length < 2) return; // need at least 2 to randomise
-    // Pick a city different from the current one (avoids repeating the same combo)
+    const majorPool = citiesFullRef.current.filter((c) => majorSet.has(c.city.toLowerCase()));
+    // Fall back to full loaded list when city names don't exactly match MAJOR_CITIES
+    // (e.g. "Bengaluru" vs "Bangalore") — avoids silent early-return.
+    const pool = majorPool.length >= 5 ? majorPool : citiesFullRef.current;
+    if (pool.length < 2) return;
     let newCity: string;
     do { newCity = pool[Math.floor(Math.random() * pool.length)].value; }
     while (newCity === city && pool.length > 1);
-    // Pick a business type different from the current one
     let newBizType: string;
     do { newBizType = businessTypes[Math.floor(Math.random() * businessTypes.length)].value; }
     while (newBizType === bizType && businessTypes.length > 1);
+    // Restore the full city list before setting the value so the label resolves
+    // correctly in both SearchableSelect display and handleSubmit's label lookup.
+    setCities(citiesFullRef.current);
+    setCityQ("");
     setCity(newCity);
     setBizType(newBizType);
   }, [city, bizType]);
