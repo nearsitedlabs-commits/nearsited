@@ -73,12 +73,12 @@ export function AuditForm({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => onRun()}>
-              <RotateCcw className="h-3 w-3" /> Re-run
+            <Button variant="secondary" size="sm" onClick={() => onRun()} className="whitespace-nowrap">
+              <RotateCcw className="h-3 w-3 shrink-0" /> Re-run
             </Button>
             {onReset && (
-              <Button variant="secondary" size="sm" onClick={onReset}>
-                <X className="h-3 w-3" /> New search
+              <Button variant="secondary" size="sm" onClick={onReset} className="whitespace-nowrap">
+                <X className="h-3 w-3 shrink-0" /> New search
               </Button>
             )}
           </div>

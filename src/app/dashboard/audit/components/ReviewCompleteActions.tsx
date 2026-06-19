@@ -250,8 +250,8 @@ export function ReviewCompleteActions({
             onClick={handlePrimaryAction}
             disabled={primaryLoading || timedOut}
             loading={primaryLoading}
-            icon={<Mail className="h-4 w-4" />}
-            className="w-full sm:w-auto"
+            icon={<Mail className="h-4 w-4 shrink-0" />}
+            className="w-full sm:w-auto whitespace-nowrap"
           >
             {primaryLoading ? "Saving & generating…" : "Generate pitch →"}
           </Button>
@@ -299,7 +299,7 @@ export function ReviewCompleteActions({
       </div>
 
       {/* ── Secondary actions row ─────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Save without pitch */}
         {showSaveForm ? (
           <div className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 sm:p-5">
@@ -369,8 +369,9 @@ export function ReviewCompleteActions({
             variant="secondary" size="sm"
             onClick={handleOpenSaveForm}
             disabled={timedOut || savedBusinessId != null}
+            className="whitespace-nowrap"
           >
-            <FileText className="h-3.5 w-3.5" /> Save without pitch
+            <FileText className="h-3.5 w-3.5 shrink-0" /> Save without pitch
           </Button>
         )}
 
@@ -405,7 +406,8 @@ export function ReviewCompleteActions({
             onClick={handleAddToPipeline}
             disabled={pipelineLoading || timedOut}
             loading={pipelineLoading}
-            icon={<Plus className="h-3.5 w-3.5" />}
+            icon={<Plus className="h-3.5 w-3.5 shrink-0" />}
+            className="whitespace-nowrap"
           >
             {pipelineLoading ? "Adding…" : "+ Pipeline"}
           </Button>
