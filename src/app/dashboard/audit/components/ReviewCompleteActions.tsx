@@ -409,7 +409,7 @@ export function ReviewCompleteActions({
             icon={<Plus className="h-3.5 w-3.5 shrink-0" />}
             className="whitespace-nowrap"
           >
-            {pipelineLoading ? "Adding…" : "+ Pipeline"}
+            {pipelineLoading ? "Adding…" : "Pipeline"}
           </Button>
         )}
 
