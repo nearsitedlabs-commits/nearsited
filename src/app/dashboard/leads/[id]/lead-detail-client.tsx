@@ -497,6 +497,11 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     contactAvailable={!contactInfo.loading && (contactInfo.email !== null || contactInfo.phone !== null)}
                     businessType={biz.business_type}
                     issues={allIssues}
+                    performanceScore={desktopPerfScore}
+                    mobileScore={mobilePerfScore}
+                    seoScore={desktopAudit?.seo_score ?? null}
+                    designScore={biz.design_score}
+                    trustScoreVal={criteria ? trustScoreVal : null}
                   />
                 </motion.div>
                 <motion.div variants={sectionCard}>

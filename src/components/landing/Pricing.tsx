@@ -15,6 +15,8 @@ export type PricingProps = {
   mode?: "inline" | "page";
   /** If provided, called instead of navigating to /signup when a plan is selected. */
   onPlanSelect?: (productId: string) => void;
+  /** User is authenticated — free trial CTA goes to dashboard instead of signup */
+  isLoggedIn?: boolean;
 };
 
 type Plan = {
@@ -170,7 +172,7 @@ const cardItem: Variants = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProps) {
+export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }: PricingProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const shouldReduce = useSafeReducedMotion();
 
@@ -355,6 +357,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect }: PricingProp
                   variant={plan.featured ? "primary" : plan.id === "free_trial" ? "ghost" : "secondary"}
                   onClick={() => {
                     if (plan.id === "free_trial") {
+                      if (isLoggedIn) { navigate("/dashboard"); return; }
                       navigate("/signup");
                       return;
                     }

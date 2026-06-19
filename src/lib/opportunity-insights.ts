@@ -111,41 +111,43 @@ export function opportunityInsight(
     };
   }
 
-  // Determine the weakest area and build the insight
-  const weaknesses: string[] = [];
+  // Detect weaknesses in two tiers: severe (<50) and moderate (50–70).
+  // Both tiers produce insight text; severe ones generate stronger copy.
+  const weaknesses: Array<{ text: string; severe: boolean }> = [];
   let primaryType: OpportunityInsight["type"] = "mixed";
 
-  if (mobileScore !== null && mobileScore < 50) {
-    weaknesses.push(`poor mobile performance (${mobileScore}/100)`);
-    primaryType = "mobile";
-  }
-  if (performanceScore !== null && performanceScore < 50) {
-    weaknesses.push(`slow desktop performance (${performanceScore}/100)`);
-    if (primaryType === "mixed") primaryType = "performance";
-  }
-  if (seoScore !== null && seoScore < 50) {
-    weaknesses.push(`weak SEO signals (${seoScore}/100)`);
-    if (primaryType === "mixed") primaryType = "seo";
-  }
-  if (designScore !== null && designScore < 50) {
-    weaknesses.push(`outdated design (${designScore}/100)`);
-    if (primaryType === "mixed") primaryType = "design";
-  }
-  if (trustScore !== null && trustScore < 50) {
-    weaknesses.push(`missing trust signals (${trustScore}/100)`);
-    if (primaryType === "mixed") primaryType = "trust";
-  }
+  const checkWeak = (
+    score: number | null,
+    severeText: string,
+    moderateText: string,
+    type: OpportunityInsight["type"],
+  ) => {
+    if (score === null) return;
+    if (score < 50) {
+      weaknesses.push({ text: severeText, severe: true });
+      if (primaryType === "mixed") primaryType = type;
+    } else if (score < 70) {
+      weaknesses.push({ text: moderateText, severe: false });
+      if (primaryType === "mixed") primaryType = type;
+    }
+  };
+
+  checkWeak(mobileScore,      `poor mobile performance (${mobileScore}/100)`,      `mobile performance of ${mobileScore}/100`,  "mobile");
+  checkWeak(performanceScore, `slow desktop performance (${performanceScore}/100)`, `desktop performance of ${performanceScore}/100`, "performance");
+  checkWeak(seoScore,         `weak SEO (${seoScore}/100)`,                         `SEO score of ${seoScore}/100`,              "seo");
+  checkWeak(designScore,      `outdated design (${designScore}/100)`,               `design score of ${designScore}/100`,        "design");
+  checkWeak(trustScore,       `missing trust signals (${trustScore}/100)`,          `trust score of ${trustScore}/100`,          "trust");
 
   if (weaknesses.length > 0) {
-    const weaknessText = weaknesses.slice(0, 2).join(" and ");
-    const remaining = weaknesses.length - 2;
-    const remainingText = remaining > 0 ? `, plus ${remaining} other issue${remaining > 1 ? "s" : ""}` : "";
-    return {
-      summary: `${weaknessText}${remainingText} make this a strong redesign candidate. Fixing these could take the score from ${currentScore} to ${potentialScore}.`,
-      type: primaryType,
-      potentialScore,
-      delta,
-    };
+    const hasSevere   = weaknesses.some(w => w.severe);
+    const top         = weaknesses.slice(0, 2).map(w => w.text);
+    const remaining   = weaknesses.length - 2;
+    const remainText  = remaining > 0 ? `, plus ${remaining} more area${remaining > 1 ? "s" : ""}` : "";
+    const scoreHint   = potentialScore ? ` — improvements could push the score from ${currentScore} to ~${potentialScore}` : "";
+    const summary     = hasSevere
+      ? `${top.join(" and ")}${remainText} make this a strong improvement candidate. Fixing these could take the score from ${currentScore} to ~${potentialScore}.`
+      : `${top.join(" and ")}${remainText} need attention${scoreHint}.`;
+    return { summary, type: primaryType, potentialScore, delta };
   }
 
   // No specific weaknesses — use tiered opportunity text enriched by business activity signals

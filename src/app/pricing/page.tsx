@@ -82,7 +82,13 @@ export default function PricingPage() {
       body: JSON.stringify({ productId }),
     });
     const json = await res.json();
-    if (json.url) window.location.href = json.url;
+    if (json.url) {
+      window.location.href = json.url;
+    } else {
+      console.error("[PRICING] Checkout failed:", json.error ?? "No URL returned");
+      // Fallback: redirect to settings page where upgrade buttons exist
+      navigate("/dashboard/settings");
+    }
   }
 
   return (
@@ -120,7 +126,7 @@ export default function PricingPage() {
           transition={{ duration: 0.35, ease }}
         >
           {/* Pricing cards — animated internally */}
-          <Pricing navigate={navigate} mode="page" onPlanSelect={handlePlanSelect} />
+          <Pricing navigate={navigate} mode="page" onPlanSelect={handlePlanSelect} isLoggedIn={isLoggedIn} />
 
           {/* How Audits Work */}
           <motion.section

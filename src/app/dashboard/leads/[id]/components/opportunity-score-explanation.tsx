@@ -20,6 +20,12 @@ export type OpportunityScoreExplanationProps = {
   contactAvailable: boolean;
   businessType: string | null;
   issues: Array<{ title: string; impact: string; point_deduction?: number }>;
+  /** Individual scores — when provided, insight text becomes score-specific */
+  performanceScore?: number | null;
+  mobileScore?: number | null;
+  seoScore?: number | null;
+  designScore?: number | null;
+  trustScoreVal?: number | null;
 };
 
 // ── Pure helpers ───────────────────────────────────────────────────────────────
@@ -67,20 +73,38 @@ function getTypes(
   websiteStatus: string,
   overallScore: number,
   issues: Array<{ title: string; impact: string }>,
+  perfScore?: number | null,
+  mobileScore?: number | null,
+  designScoreVal?: number | null,
+  seoScoreVal?: number | null,
 ): string[] {
   const types: string[] = [];
 
-  if      (websiteStatus === "no_website")    types.push("Website Needed");
-  else if (websiteStatus === "social_only")   types.push("Digital Presence Gap");
-  else if (websiteStatus === "platform_only") types.push("Website Upgrade");
-  else if (overallScore < 50)                 types.push("Redesign Candidate");
-  else                                        types.push("Performance Opportunity");
+  if (websiteStatus === "no_website")    { types.push("Website Needed"); }
+  else if (websiteStatus === "social_only")   { types.push("Digital Presence Gap"); }
+  else if (websiteStatus === "platform_only") { types.push("Website Upgrade"); }
+  else if (overallScore < 50)                 { types.push("Redesign Candidate"); }
+  else {
+    // Pick the most specific primary label based on real scores
+    const mobileLag = mobileScore != null && perfScore != null && perfScore - mobileScore > 15;
+    if (mobileLag || (mobileScore != null && mobileScore < 70)) {
+      types.push("Mobile Optimisation");
+    } else if (designScoreVal != null && designScoreVal < 65) {
+      types.push("Design Improvement");
+    } else if (perfScore != null && perfScore < 70) {
+      types.push("Performance Opportunity");
+    } else if (seoScoreVal != null && seoScoreVal < 70) {
+      types.push("SEO Opportunity");
+    } else {
+      types.push("Refinement Opportunity");
+    }
+  }
 
-  const hasSEO  = issues.some(i => /(seo|search|meta|keyword)/i.test(i.title));
-  const hasCTA  = issues.some(i => /(cta|conversion|button|lead|contact form)/i.test(i.title));
+  const hasSEO = issues.some(i => /(seo|search|meta|keyword)/i.test(i.title));
+  const hasCTA = issues.some(i => /(cta|conversion|button|lead|contact form)/i.test(i.title));
 
-  if (hasSEO)  types.push("SEO Opportunity");
-  if (hasCTA)  types.push("Conversion Optimisation");
+  if (hasSEO && types[0] !== "SEO Opportunity") types.push("SEO Opportunity");
+  if (hasCTA) types.push("Conversion Optimisation");
 
   return types.slice(0, 3);
 }
@@ -89,6 +113,10 @@ function getServices(
   websiteStatus: string,
   overallScore: number,
   issues: Array<{ title: string; impact: string }>,
+  perfScore?: number | null,
+  mobileScore?: number | null,
+  designScoreVal?: number | null,
+  seoScoreVal?: number | null,
 ): string[] {
   if (websiteStatus === "no_website")    return ["Website Design", "Google Business Setup", "Local SEO"];
   if (websiteStatus === "social_only")   return ["Website Development", "Social Integration", "Lead Capture"];
@@ -96,10 +124,14 @@ function getServices(
 
   const svcs: string[] = [overallScore < 50 ? "Website Redesign" : "Website Optimisation"];
 
-  if (issues.some(i => /(speed|performance|lcp|fcp|slow|mobile)/i.test(i.title))) svcs.push("Performance Optimisation");
-  if (issues.some(i => /(seo|search|meta)/i.test(i.title)))                        svcs.push("Local SEO");
-  if (issues.some(i => /(cta|conversion|lead|button)/i.test(i.title)))              svcs.push("Conversion Optimisation");
-  if (issues.some(i => /(trust|review|credib)/i.test(i.title)))                     svcs.push("Trust & Credibility");
+  const mobileLag = mobileScore != null && perfScore != null && perfScore - mobileScore > 15;
+  if (mobileLag || (mobileScore != null && mobileScore < 70)) svcs.push("Mobile Optimisation");
+  else if (issues.some(i => /(speed|performance|lcp|fcp|slow)/i.test(i.title))) svcs.push("Performance Optimisation");
+
+  if (designScoreVal != null && designScoreVal < 65) svcs.push("Design Refresh");
+  if (issues.some(i => /(seo|search|meta)/i.test(i.title)) || (seoScoreVal != null && seoScoreVal < 70)) svcs.push("Local SEO");
+  if (issues.some(i => /(cta|conversion|lead|button)/i.test(i.title))) svcs.push("Conversion Optimisation");
+  if (issues.some(i => /(trust|review|credib)/i.test(i.title))) svcs.push("Trust & Credibility");
 
   if (svcs.length < 2) svcs.push("Local SEO");
   return svcs.slice(0, 3);
@@ -220,6 +252,11 @@ export function OpportunityScoreExplanation({
   contactAvailable,
   businessType,
   issues,
+  performanceScore,
+  mobileScore,
+  seoScore,
+  designScore,
+  trustScoreVal,
 }: OpportunityScoreExplanationProps) {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen]     = useState(false);
@@ -234,11 +271,11 @@ export function OpportunityScoreExplanation({
   const confidence     = getConfidence(hasAudit, hasDesign, reviewCount);
   const insight        = opportunityInsight(
     websiteStatus,
-    null,  // performanceScore — not available at this level
-    null,  // designScore
-    null,  // mobileScore
-    null,  // seoScore
-    null,  // trustScore
+    performanceScore ?? null,
+    designScore ?? null,
+    mobileScore ?? null,
+    seoScore ?? null,
+    trustScoreVal ?? null,
     {
       businessType: businessType ?? undefined,
       reviewCount,
@@ -248,8 +285,8 @@ export function OpportunityScoreExplanation({
   );
   const summary        = insight.summary;
   const signals        = getSignals(websiteStatus, overallScore, reviewCount, rating, contactAvailable, issues);
-  const types          = getTypes(websiteStatus, overallScore, issues);
-  const services       = getServices(websiteStatus, overallScore, issues);
+  const types          = getTypes(websiteStatus, overallScore, issues, performanceScore, mobileScore, designScore, seoScore);
+  const services       = getServices(websiteStatus, overallScore, issues, performanceScore, mobileScore, designScore, seoScore);
   const drivers        = getDrivers(websiteStatus, overallScore, reviewCount, rating, contactAvailable);
 
   const confColor =
