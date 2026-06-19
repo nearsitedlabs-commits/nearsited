@@ -63,7 +63,7 @@ export default function AuditPage() {
   const [mapsLookupHint, setMapsLookupHint] = useState<string | null>(null);
   const [mapsRating, setMapsRating] = useState<number | null>(null);
   const [mapsReviewCount, setMapsReviewCount] = useState<number | null>(null);
-  const [_mapsPlaceId, setMapsPlaceId] = useState<string | null>(null);
+  const [mapsPlaceId, setMapsPlaceId] = useState<string | null>(null);
   const [mapsBusinessName, setMapsBusinessName] = useState<string | null>(null);
   const [designRetrying, setDesignRetrying] = useState<DesignRetrying>({
     mobile: false,
@@ -907,6 +907,9 @@ export default function AuditPage() {
             url={url}
             auditResult={auditResult}
             designResult={designResult}
+            mapsRating={mapsRating}
+            mapsReviewCount={mapsReviewCount}
+            mapsPlaceId={mapsPlaceId}
           />
         </div>
       )}

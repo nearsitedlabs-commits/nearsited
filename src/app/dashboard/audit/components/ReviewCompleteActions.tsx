@@ -17,12 +17,21 @@ type ReviewCompleteActionsProps = {
   auditResult: { mobile: StrategyResult; desktop: StrategyResult } | null;
   /** The design analysis result */
   designResult: { mobile: DesignResult; desktop: DesignResult } | null;
+  /** Google Maps rating from Maps lookup */
+  mapsRating?: number | null;
+  /** Google Maps review count from Maps lookup */
+  mapsReviewCount?: number | null;
+  /** Google Maps place_id from Maps lookup */
+  mapsPlaceId?: string | null;
 };
 
 export function ReviewCompleteActions({
   url,
   auditResult,
   designResult,
+  mapsRating,
+  mapsReviewCount,
+  mapsPlaceId,
 }: ReviewCompleteActionsProps) {
   const router = useRouter();
 
@@ -60,7 +69,7 @@ export function ReviewCompleteActions({
     setShowPitchResult(false);
 
     try {
-      // 1. Save the lead
+      // 1. Save the lead (include Maps data if available)
       const saveRes = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -68,6 +77,9 @@ export function ReviewCompleteActions({
           website: url.trim(),
           audit: auditResult,
           ...(designResult ? { design: designResult } : {}),
+          ...(mapsRating != null ? { rating: mapsRating } : {}),
+          ...(mapsReviewCount != null ? { reviewCount: mapsReviewCount } : {}),
+          ...(mapsPlaceId ? { placeId: mapsPlaceId } : {}),
         }),
       });
 
@@ -123,7 +135,7 @@ export function ReviewCompleteActions({
     } finally {
       setPrimaryLoading(false);
     }
-  }, [url, auditResult, designResult]);
+  }, [url, auditResult, designResult, mapsRating, mapsReviewCount, mapsPlaceId]);
 
   // ── Save without pitch ────────────────────────────────────────────────────────
   const handleSaveOnly = useCallback(
@@ -142,6 +154,9 @@ export function ReviewCompleteActions({
             businessType: skipDetails ? undefined : saveLeadType || undefined,
             audit: auditResult,
             ...(designResult ? { design: designResult } : {}),
+            ...(mapsRating != null ? { rating: mapsRating } : {}),
+            ...(mapsReviewCount != null ? { reviewCount: mapsReviewCount } : {}),
+            ...(mapsPlaceId ? { placeId: mapsPlaceId } : {}),
           }),
         });
         const data = (await res.json()) as {
@@ -160,7 +175,7 @@ export function ReviewCompleteActions({
         setSaveLoading(false);
       }
     },
-    [url, saveLeadName, saveLeadCity, saveLeadType, auditResult, designResult, router],
+    [url, saveLeadName, saveLeadCity, saveLeadType, auditResult, designResult, router, mapsRating, mapsReviewCount, mapsPlaceId],
   );
 
   // ── Add to Pipeline ───────────────────────────────────────────────────────────
