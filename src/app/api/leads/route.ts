@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { scopedAdmin } from "@/lib/api/scoped-admin";
 import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
+import { deductAudit } from "@/lib/credits";
 
 export async function POST(request: NextRequest) {
   try {
@@ -99,6 +100,16 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Deduct 1 credit when audit data is being saved (quick audit → save)
+      if (audit || design) {
+        const deducted = await deductAudit(user.id);
+        if (!deducted.success) {
+          console.warn(`[LEADS] Credit deduction failed on save for user=...${user.id.slice(-4)}`);
+        } else {
+          console.log(`[LEADS] Credit deducted for user=...${user.id.slice(-4)} (save lead with audit data)`);
+        }
+      }
+
       console.log("[LEADS] Returning existing business:", existing.id);
       return NextResponse.json({ success: true, business_id: existing.id });
     }
@@ -129,6 +140,16 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       console.error("[LEADS] Insert error:", { code: insertError.code, message: insertError.message, details: insertError.details, hint: insertError.hint });
       return NextResponse.json({ error: "Failed to create lead" }, { status: 500 });
+    }
+
+    // Deduct 1 credit when audit data is being saved (quick audit → save)
+    if (audit || design) {
+      const deducted = await deductAudit(user.id);
+      if (!deducted.success) {
+        console.warn(`[LEADS] Credit deduction failed on save for user=...${user.id.slice(-4)}`);
+      } else {
+        console.log(`[LEADS] Credit deducted for user=...${user.id.slice(-4)} (new lead with audit data)`);
+      }
     }
 
     console.log("[LEADS] Created business:", businessId);
