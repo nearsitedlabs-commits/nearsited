@@ -5,6 +5,24 @@ import { rateLimiter, checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-
 import { blendQualityForOpportunity, computeOpportunityScore } from "@/lib/scoring";
 import { deductAudit } from "@/lib/credits";
 
+type AuditStrategy = {
+  performance_score?: number | null;
+  seo_score?: number | null;
+  fcp?: string | null;
+  lcp?: string | null;
+  tbt?: string | null;
+  cls?: string | null;
+  status?: string;
+};
+
+type DesignStrategy = {
+  status?: string;
+  design_score?: number;
+  criteria_scores?: Record<string, unknown>;
+  issues?: Record<string, unknown>[];
+  raw_analysis?: Record<string, unknown>;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as {
@@ -16,12 +34,12 @@ export async function POST(request: NextRequest) {
       reviewCount?: number;
       placeId?: string;
       audit?: {
-        mobile?: { performance_score?: number | null };
-        desktop?: { performance_score?: number | null };
+        mobile?: AuditStrategy;
+        desktop?: AuditStrategy;
       };
       design?: {
-        mobile?: { design_score?: number | null };
-        desktop?: { design_score?: number | null };
+        mobile?: DesignStrategy;
+        desktop?: DesignStrategy;
       };
     };
 
@@ -100,6 +118,10 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Persist audit + design rows to their tables (so lead detail page shows them)
+      await persistAuditRows(sa, existing.id, user.id, audit);
+      await persistDesignRows(sa, existing.id, user.id, design);
+
       // Deduct 1 credit when audit data is being saved (quick audit → save)
       if (audit || design) {
         const deducted = await deductAudit(user.id);
@@ -142,6 +164,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create lead" }, { status: 500 });
     }
 
+    // Persist audit + design rows to their tables (so lead detail page shows them)
+    await persistAuditRows(sa, businessId, user.id, audit);
+    await persistDesignRows(sa, businessId, user.id, design);
+
     // Deduct 1 credit when audit data is being saved (quick audit → save)
     if (audit || design) {
       const deducted = await deductAudit(user.id);
@@ -157,5 +183,81 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[LEADS] Unexpected error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────────
+
+/** Persist audit results (mobile + desktop) to the audits table. */
+async function persistAuditRows(
+  sa: ReturnType<typeof scopedAdmin>,
+  businessId: string,
+  userId: string,
+  audit: { mobile?: AuditStrategy; desktop?: AuditStrategy } | undefined,
+) {
+  if (!audit) return;
+  const now = new Date().toISOString();
+  const rows: Record<string, unknown>[] = [];
+
+  for (const strategy of ["mobile", "desktop"] as const) {
+    const s = audit[strategy];
+    if (!s || s.status !== "ok") continue;
+    rows.push({
+      business_id: businessId,
+      user_id: userId,
+      strategy,
+      performance_score: s.performance_score ?? null,
+      seo_score: s.seo_score ?? null,
+      fcp: s.fcp ?? null,
+      lcp: s.lcp ?? null,
+      tbt: s.tbt ?? null,
+      cls: s.cls ?? null,
+      has_ssl: null,
+      created_at: now,
+    });
+  }
+
+  if (rows.length === 0) return;
+  const { error } = await sa.from("audits").insert(rows);
+  if (error) {
+    console.error("[LEADS] Audit row insert error:", { code: error.code, message: error.message });
+  } else {
+    console.log(`[LEADS] Inserted ${rows.length} audit row(s) for business ${businessId.slice(-4)}`);
+  }
+}
+
+/** Persist design analysis results (mobile + desktop) to the design_analyses table. */
+async function persistDesignRows(
+  sa: ReturnType<typeof scopedAdmin>,
+  businessId: string,
+  userId: string,
+  design: { mobile?: DesignStrategy; desktop?: DesignStrategy } | undefined,
+) {
+  if (!design) return;
+  const now = new Date().toISOString();
+  const rows: Record<string, unknown>[] = [];
+
+  for (const strategy of ["mobile", "desktop"] as const) {
+    const s = design[strategy];
+    if (!s || s.status !== "ok") continue;
+    rows.push({
+      business_id: businessId,
+      user_id: userId,
+      strategy,
+      design_score: s.design_score ?? null,
+      criteria_scores: s.criteria_scores ?? null,
+      issues: s.issues ?? null,
+      screenshot_url: null,
+      raw_analysis: s.raw_analysis ?? null,
+      analyzed_at: now,
+    });
+  }
+
+  if (rows.length === 0) return;
+  const { error } = await sa.from("design_analyses").insert(rows);
+  if (error) {
+    console.error("[LEADS] Design row insert error:", { code: error.code, message: error.message });
+  } else {
+    console.log(`[LEADS] Inserted ${rows.length} design analysis row(s) for business ${businessId.slice(-4)}`);
   }
 }
