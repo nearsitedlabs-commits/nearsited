@@ -316,9 +316,14 @@ export function OpportunityScoreExplanation({
           >
             {opportunityScore}
           </span>
-          <span className={`mt-2 text-sm font-semibold ${scoreTierTextColor}`}>
-            {opportunityLabel(opportunityScore)}
-          </span>
+          <div className="mt-2 flex items-baseline gap-1">
+            <span className={`text-sm font-semibold ${scoreTierTextColor}`}>
+              {opportunityLabel(opportunityScore)}
+            </span>
+            {!hasAudit && !hasDesign && (
+              <span className="text-[10px] text-[var(--color-text-tertiary)]">(est.)</span>
+            )}
+          </div>
         </div>
 
         {/* Header row */}
