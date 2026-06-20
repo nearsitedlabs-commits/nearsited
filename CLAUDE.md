@@ -30,6 +30,7 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 |---|---|---|
 | `--color-bg-page` | `#0a0e12` | Page background |
 | `--color-bg-surface` | `#12171e` | Cards, primary surfaces |
+| `--color-bg-surface-raised` | `#1e2530` | Elevated landing cards (hero panel, sample report, CTA bg) |
 | `--color-bg-elevated` | `#1a2028` | Dropdowns, modals |
 | `--color-border-subtle` | `rgba(255,255,255,0.06)` | Default borders |
 | `--color-border-strong` | `rgba(255,255,255,0.10)` | Emphasis borders only |

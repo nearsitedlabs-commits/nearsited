@@ -87,9 +87,10 @@
    * single source of truth going forward. */
 
   /* Surface hierarchy */
-  --color-bg-page:     var(--bg-base);
-  --color-bg-surface:  var(--bg-surface-1);
-  --color-bg-elevated: var(--bg-surface-2);
+  --color-bg-page:           var(--bg-base);
+  --color-bg-surface:        var(--bg-surface-1);
+  --color-bg-surface-raised: #1e2530;
+  --color-bg-elevated:       var(--bg-surface-2);
 
   /* Borders */
   --color-border-subtle:  rgba(255,255,255,0.06);       /* structural borders — dividers, table lines */
