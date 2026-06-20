@@ -63,10 +63,21 @@ function getAllowedOrigins(): string[] {
 function isTrustedOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
   const referer = request.headers.get("referer");
+  const host = request.headers.get("host");
+
+  // Same-origin check: if Origin matches the request's own Host, always trust it.
+  // This works regardless of env var configuration.
+  if (origin && host) {
+    try {
+      if (new URL(origin).host === host) return true;
+    } catch {
+      // Malformed origin — fall through to allowlist check
+    }
+  }
 
   const allowedOrigins = getAllowedOrigins();
 
-  // Check Origin header first (more reliable than Referer)
+  // Check Origin header against configured allowlist
   if (origin) {
     if (allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
       return true;
