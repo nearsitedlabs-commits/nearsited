@@ -89,10 +89,10 @@ export function HowItWorksSection() {
 
         {/* Scoring explainer */}
         <motion.div {...anim(0.45)} className="mt-12 mx-auto max-w-2xl">
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-6">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-6">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-                <Info className="h-4 w-4" />
+                <Info aria-hidden="true" className="h-4 w-4" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-sm font-medium text-[var(--color-text-primary)]">
@@ -102,17 +102,17 @@ export function HowItWorksSection() {
                   Every lead gets a single <strong className="text-[var(--color-text-primary)]">0–100 opportunity score</strong> that
                   combines website weakness with business viability. The higher the score, the hotter the lead.
                 </p>
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-4 flex flex-wrap gap-4">
                   {[
                     { color: "var(--score-high)", range: "< 40", label: "Low" },
                     { color: "var(--score-mid)", range: "40–69", label: "Medium" },
                     { color: "var(--score-good)", range: "70+", label: "High" },
                   ].map(({ color, range, label }) => (
-                    <div key={label} className="rounded-[var(--radius-sm)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full shrink-0" style={{ background: color }} />
-                      <p className="text-xs font-medium text-[var(--color-text-primary)] leading-none">{range}</p>
-                      <p className="text-[10px] text-[var(--color-text-tertiary)] leading-none">{label}</p>
-                    </div>
+                    <span key={label} className="inline-flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
+                      <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full" style={{ background: color }} />
+                      <span className="font-medium text-[var(--color-text-primary)]">{range}</span>
+                      <span className="text-[var(--color-text-tertiary)]">— {label}</span>
+                    </span>
                   ))}
                 </div>
                 <p className="mt-3 text-xs leading-6 text-[var(--color-text-tertiary)]">
@@ -125,7 +125,7 @@ export function HowItWorksSection() {
 
         <div className="mt-10 text-center">
           <Link href="/signup">
-            <Button variant="primary" icon={<Search className="h-4 w-4" />} className="px-8 py-3 text-base">
+            <Button variant="primary" icon={<Search aria-hidden="true" className="h-4 w-4" />} className="px-8 py-3 text-base">
               Find your first opportunity
             </Button>
           </Link>
