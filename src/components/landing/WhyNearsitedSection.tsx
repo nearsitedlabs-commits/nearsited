@@ -51,17 +51,17 @@ export function WhyNearsitedSection() {
         <div className="mt-8 grid gap-4 md:mt-12 md:gap-6 md:grid-cols-2 md:items-stretch">
           {/* Traditional — muted card (the pain) */}
           <motion.div {...anim(0)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] border border-white/10 bg-[var(--color-bg-elevated)] px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] border-l-2 border-l-[var(--color-danger)] bg-[var(--color-bg-elevated)] pl-6 pr-6 py-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10">
-                  <AlertTriangle className="h-4 w-4 text-[var(--color-danger)]" />
+                  <AlertTriangle aria-hidden="true" className="h-4 w-4 text-[var(--color-danger)]" />
                 </div>
                 <h3 className="text-base font-medium text-[var(--color-text-secondary)]">Traditional prospecting</h3>
               </div>
               <ul className="space-y-3">
                 {TRADITIONAL_CONS.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-[var(--color-text-tertiary)]">
-                    <span className="mt-0.5 shrink-0 text-[var(--color-danger)] font-bold">✕</span>
+                    <span aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--color-danger)] font-bold">✕</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -71,17 +71,17 @@ export function WhyNearsitedSection() {
 
           {/* Nearsited — accent bordered card (the resolution) */}
           <motion.div {...anim(0.1)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/[0.06] px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] border-l-2 border-l-[var(--color-accent)] bg-[var(--color-accent)]/[0.06] pl-6 pr-6 py-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/15">
-                  <Zap className="h-4 w-4 text-[var(--color-accent)]" />
+                  <Zap aria-hidden="true" className="h-4 w-4 text-[var(--color-accent)]" />
                 </div>
                 <h3 className="text-base font-medium text-[var(--color-text-primary)]">Nearsited</h3>
               </div>
               <ul className="space-y-3">
                 {NEARSITED_PROS.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
+                    <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -91,28 +91,22 @@ export function WhyNearsitedSection() {
         </div>
 
         {/* Lead type badges */}
-        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6">
+        <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6">
           <p className="mb-3 text-center text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-text-tertiary)] md:mb-4 md:tracking-[0.18em]">
             Four opportunity types · all in one search
           </p>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
             {[
-              { color: "var(--score-high)", label: "No Website", sub: "Biggest opportunity" },
-              { color: "var(--score-mid)", label: "Social Only", sub: "Social-only presence" },
-              { color: "var(--badge-indigo-text)", borderColor: "var(--badge-indigo-border)", bg: "var(--badge-indigo-bg)", label: "Platform Only", sub: "Third-party platform" },
-              { color: "var(--accent)", label: "Weak Website", sub: "Redesign opportunity" },
+              { dotClass: "bg-[var(--color-danger)]", textClass: "text-[var(--color-danger)]", bgClass: "bg-[var(--color-danger)]/10", label: "No Website", sub: "Biggest opportunity" },
+              { dotClass: "bg-[var(--color-info)]", textClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-info)]/10", label: "Social Only", sub: "Social-only presence" },
+              { dotClass: "bg-[var(--color-info)]", textClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-info)]/10", label: "Platform Only", sub: "Third-party platform" },
+              { dotClass: "bg-[var(--color-accent)]", textClass: "text-[var(--color-accent)]", bgClass: "bg-[var(--color-accent)]/10", label: "Weak Website", sub: "Redesign opportunity" },
             ].map((item) => (
               <motion.div key={item.label} {...anim(0)}>
-                <div
-                  className="flex flex-col gap-1 rounded-[var(--radius-sm)] border px-3 py-3 md:px-4 md:py-4"
-                  style={{
-                    borderColor: `${item.borderColor ?? item.color}30`,
-                    backgroundColor: `${item.bg ?? item.color}12`,
-                  }}
-                >
+                <div className={`flex flex-col gap-1 rounded-[var(--radius-sm)] px-3 py-3 md:px-4 md:py-4 ${item.bgClass}`}>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: item.color }} />
-                    <span className="text-sm font-medium leading-tight md:text-base" style={{ color: item.color }}>{item.label}</span>
+                    <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${item.dotClass}`} />
+                    <span className={`text-sm font-medium leading-tight md:text-base ${item.textClass}`}>{item.label}</span>
                   </div>
                   <span className="text-xs leading-snug text-[var(--color-text-tertiary)]">{item.sub}</span>
                 </div>
