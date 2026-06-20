@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Pill } from "@/components/ui/Pill";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
@@ -60,10 +59,10 @@ function WeakWebsiteContent() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Brighton Dental</h3>
-            <Badge color="green">87/100</Badge>
-            <Badge color="green">Verified</Badge>
+            <Pill variant="success" size="sm">87/100</Pill>
+            <Pill variant="neutral" size="sm">Verified</Pill>
           </div>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">brightondental.co.uk · Brighton, UK · Dentist</p>
         </div>
@@ -77,7 +76,7 @@ function WeakWebsiteContent() {
             <div key={item.issue} className="flex items-start gap-2 text-sm leading-snug text-[var(--color-text-secondary)]">
               <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[var(--color-text-tertiary)]" />
               <span>{item.issue}</span>
-              <span className="shrink-0 text-[11px] text-[var(--score-high)] ml-auto">{item.impact}</span>
+              <span className="shrink-0 text-[11px] text-[var(--color-danger)] ml-auto">{item.impact}</span>
             </div>
           ))}
         </div>
@@ -94,7 +93,7 @@ function WeakWebsiteContent() {
             {WEAK_SCORES.map((item) => (
               <div key={item.label}>
                 <p className="text-[11px] text-[var(--color-text-tertiary)]">{item.label}</p>
-                <p className="text-xl font-bold" style={{ color: item.score < 40 ? "var(--score-high)" : item.score < 55 ? "var(--score-mid)" : "var(--score-good)" }}>
+                <p className="text-xl font-bold" style={{ color: item.score < 40 ? "var(--color-danger)" : item.score < 55 ? "var(--color-warning)" : "var(--color-success)" }}>
                   {item.score}
                 </p>
               </div>
@@ -111,11 +110,11 @@ function NoWebsiteContent() {
     <div className="space-y-0">
       <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Harbor Legal Group</h3>
-            <Badge color="green">85/100</Badge>
-            <Badge color="green">Verified</Badge>
-            <Badge color="red">No site</Badge>
+            <Pill variant="success" size="sm">85/100</Pill>
+            <Pill variant="neutral" size="sm">Verified</Pill>
+            <Pill variant="danger" size="sm">No site</Pill>
           </div>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Google Business only · Downtown, Austin, TX · Legal Services</p>
         </div>
@@ -152,11 +151,11 @@ function SocialOnlyContent() {
     <div className="space-y-0">
       <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">The Hideaway Cafe</h3>
-            <Badge color="green">72/100</Badge>
-            <Badge color="green">Verified</Badge>
-            <Badge color="indigo">Social Only</Badge>
+            <Pill variant="success" size="sm">72/100</Pill>
+            <Pill variant="neutral" size="sm">Verified</Pill>
+            <Pill variant="info" size="sm">Social Only</Pill>
           </div>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">instagram.com/hideawaycafe · Byron Bay, NSW · Cafe</p>
         </div>
@@ -193,11 +192,11 @@ function PlatformOnlyContent() {
     <div className="space-y-0">
       <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-xl font-medium text-[var(--color-text-primary)]">Bloom Beauty Bar</h3>
-            <Badge color="green">65/100</Badge>
-            <Badge color="green">Verified</Badge>
-            <Badge color="indigo">Platform Only</Badge>
+            <Pill variant="success" size="sm">65/100</Pill>
+            <Pill variant="neutral" size="sm">Verified</Pill>
+            <Pill variant="info" size="sm">Platform Only</Pill>
           </div>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">booksy.com/bloom-beauty-bar · Williamsburg, Brooklyn, NY · Salon</p>
         </div>
@@ -275,7 +274,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
           </div>
         </div>
 
-        <Card variant="default" padding="lg" className="mt-4 border-[var(--color-border-strong)]">
+        <div className="mt-4 rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] p-6 md:p-8">
           {prefersReducedMotion ? (
             <TabContent activeTab={activeTab} />
           ) : (
@@ -292,7 +291,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
             </AnimatePresence>
           )}
 
-          <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Want to find opportunities like this in your city?</p>
               <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">Choose from 249 business types across 16 industries. Get ranked leads in under 2 minutes.</p>
@@ -301,7 +300,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
               Try it now →
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
     </section>
   );
