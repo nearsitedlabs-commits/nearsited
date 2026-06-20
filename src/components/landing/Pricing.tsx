@@ -56,10 +56,8 @@ const PLANS: Plan[] = [
       { label: "White-label", included: false },
     ],
     featured: false,
-    monthlyProductId:
-      process.env.NEXT_PUBLIC_DODO_PRODUCT_FREE_TRIAL ?? "",
-    annualProductId:
-      process.env.NEXT_PUBLIC_DODO_PRODUCT_FREE_TRIAL ?? "",
+    monthlyProductId: "",
+    annualProductId: "",
     cta: "Start free →",
   },
   {
