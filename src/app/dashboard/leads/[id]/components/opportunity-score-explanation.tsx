@@ -384,13 +384,7 @@ export function OpportunityScoreExplanation({
             </p>
             <ul className="space-y-1">
               {services.map((s, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]"
-                  onClick={() => {
-                    if (process.env.NODE_ENV === "development") console.log("[ANALYTICS] recommendation_clicked", s);
-                  }}
-                >
+                <li key={i} className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
                   <span className="h-1 w-1 shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-accent)]" />
                   {s}
                 </li>
@@ -408,7 +402,7 @@ export function OpportunityScoreExplanation({
             console.log("[ANALYTICS] score_breakdown_expanded");
           }
         }}
-        className="flex w-full cursor-pointer items-center justify-between border-t border-[var(--color-border-subtle)] px-5 sm:px-6 py-3 text-left transition-colors hover:bg-[var(--color-bg-elevated)]"
+        className="flex w-full cursor-pointer items-center justify-between border-t border-[var(--color-border-subtle)] px-5 sm:px-6 py-3 text-left transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]"
       >
         <span className="text-xs font-medium text-[var(--color-text-tertiary)]">Score Breakdown</span>
         <ChevronDown

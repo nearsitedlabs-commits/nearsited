@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useToast } from "@/lib/shared-hooks";
+import { useQuotaTimer } from "../hooks/useQuotaTimer";
+import { useContactInfo } from "../hooks/useContactInfo";
+import { timeAgo } from "@/lib/time";
 
 import { Toast } from "@/components/ui/Toast";
 import { estimatedOpportunity } from "@/lib/scoring";
@@ -35,20 +39,6 @@ function buildNoDigitalCallBrief(name: string, type: string, city: string | null
     scope: "Build a professional website, set up Google Business Profile, create social media accounts, establish a contact funnel (form + phone + booking).",
     objection: `"We've been fine without a website." Response: You're leaving money on the table. ${(city ? `${city} ` : "")}customers search online first — if they can't find you, they call a competitor who has a site.`,
   };
-}
-
-function timeAgo(iso: string | null): string {
-  if (!iso) return "—";
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  if (d < 30) return `${d}d ago`;
-  const mo = Math.floor(d / 30);
-  return `${mo}mo ago`;
 }
 
 // ── Lead Context Block ────────────────────────────────────────────────────────
@@ -102,21 +92,13 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   const [pitchFocus, setPitchFocus] = useState("all");
   const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
   const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
-  const [toast, setToast] = useState<string | null>(null);
-  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
-    email: null, phone: null, loading: true,
-  });
-
-  // AI quota error state
-  const [aiQuotaError, setAiQuotaError] = useState<string | null>(null);
-  const [aiQuotaTimer, setAiQuotaTimer] = useState(0);
   const [aiRetryCount, setAiRetryCount] = useState(0);
   const [isGeminiQuota, setIsGeminiQuota] = useState(false);
+  const [autoRetryPending, setAutoRetryPending] = useState(false);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  }, []);
+  const { toast, showToast, setToast } = useToast();
+  const { quotaError, quotaRetryTimer, setQuotaError, startQuotaTimer, clearQuotaTimer } = useQuotaTimer();
+  const { contactInfo } = useContactInfo(business.id);
 
   const biz = business as {
     id: string; name: string; business_type: string; address: string; city: string;
@@ -131,25 +113,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     rating: biz.rating ?? null,
     user_ratings_total: biz.review_count ?? null,
   });
-
-  // Fetch contact info
-  useEffect(() => {
-    if (!biz.id) return;
-    fetch(`/api/contact-info?businessId=${biz.id}`)
-      .then((r) => r.json())
-      .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
-      .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
-  }, [biz.id]);
-
-  // Background rating refresh
-  useEffect(() => {
-    if (!biz.id) return;
-    fetch("/api/refresh-ratings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ businessId: biz.id }),
-    }).catch(() => {});
-  }, [biz.id]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -183,7 +146,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     const length = overrideLength ?? pitchLength;
     setGeneratingPitch(true);
     setPitchError(null);
-    setAiQuotaError(null);
     try {
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -198,27 +160,24 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
       if (res.status === 429) {
         setIsGeminiQuota(true);
         setAiRetryCount((c) => c + 1);
-        setAiQuotaError("AI service is at capacity. Auto-retrying…");
-        setAiQuotaTimer(5);
-        const interval = setInterval(() => {
-          setAiQuotaTimer((prev) => {
-            if (prev <= 1) { clearInterval(interval); return 0; }
-            return prev - 1;
-          });
-        }, 1000);
+        setQuotaError("AI service is at capacity. Auto-retrying…");
+        startQuotaTimer(5);
+        setAutoRetryPending(true);
         return;
       }
       const data = await res.json();
       if (data.success && data.pitch?.body) {
         setPitchResults((prev) => ({ ...prev, [activeChannel]: { subject: data.pitch.subject ?? "", body: data.pitch.body } }));
+        setIsGeminiQuota(false);
         setAiRetryCount(0);
-        setAiQuotaError(null);
+        setAutoRetryPending(false);
+        clearQuotaTimer();
       } else {
         setPitchError(data.error ?? "Pitch generation failed.");
       }
     } catch { setPitchError("Network error — please try again."); }
     finally { setGeneratingPitch(false); }
-  }, [biz.id, pitchTone, pitchLength, activeChannel, pitchFocus, pitchOpening, pitchUrgency]);
+  }, [biz.id, pitchTone, pitchLength, activeChannel, pitchFocus, pitchOpening, pitchUrgency, setQuotaError, startQuotaTimer, clearQuotaTimer]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) { showToast("Generate a pitch first"); return; }
@@ -245,26 +204,27 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     handleGeneratePitch(true);
   }, [handleGeneratePitch]);
 
+  const handleClearQuotaTimer = useCallback(() => {
+    setAutoRetryPending(false);
+    setAiRetryCount(0);
+    clearQuotaTimer();
+  }, [clearQuotaTimer]);
+
   const handleUseFallback = useCallback(() => {
+    setAutoRetryPending(false);
+    setAiRetryCount(0);
+    clearQuotaTimer();
     setPitchTone("friendly");
     setPitchLength("short");
     handleGeneratePitch(true, "friendly", "short");
-  }, [handleGeneratePitch]);
+  }, [clearQuotaTimer, handleGeneratePitch]);
 
-  const clearQuotaTimer = useCallback(() => {
-    setAiQuotaError(null);
-    setAiQuotaTimer(0);
-    setAiRetryCount(0);
-  }, []);
-
-  // Auto-retry once with 5s backoff
+  // Auto-retry once when quota timer auto-clears
   useEffect(() => {
-    if (!aiQuotaError || aiRetryCount > 1 || aiQuotaTimer > 0) return;
-    if (aiRetryCount === 1) {
-      const t = setTimeout(() => handleGeneratePitch(true), 5000);
-      return () => clearTimeout(t);
-    }
-  }, [aiQuotaError, aiRetryCount, aiQuotaTimer, handleGeneratePitch]);
+    if (!autoRetryPending || quotaError !== null) return;
+    setAutoRetryPending(false);
+    if (aiRetryCount <= 1) handleGeneratePitch(true);
+  }, [autoRetryPending, quotaError, aiRetryCount, handleGeneratePitch]);
 
   // ── Derived data ──────────────────────────────────────────────────────────
 
@@ -369,10 +329,10 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
 
       {/* AI Quota error banner */}
       <AIQuotaBanner
-        quotaError={aiQuotaError}
+        quotaError={quotaError}
         isGeminiQuota={isGeminiQuota}
-        quotaRetryTimer={aiQuotaTimer}
-        clearQuotaTimer={clearQuotaTimer}
+        quotaRetryTimer={quotaRetryTimer}
+        clearQuotaTimer={handleClearQuotaTimer}
         onRetry={handleAiRetry}
         onUseFallback={handleUseFallback}
         retryCount={aiRetryCount}

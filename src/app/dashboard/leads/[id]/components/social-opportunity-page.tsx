@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useToast } from "@/lib/shared-hooks";
+import { useQuotaTimer } from "../hooks/useQuotaTimer";
+import { useContactInfo } from "../hooks/useContactInfo";
 
 import { Hash } from "lucide-react";
 import { Toast } from "@/components/ui/Toast";
@@ -64,21 +67,13 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
   const [pitchFocus, setPitchFocus] = useState("all");
   const [pitchOpening, setPitchOpening] = useState<"direct" | "question" | "empathy" | "data">("direct");
   const [pitchUrgency, setPitchUrgency] = useState<"low" | "medium" | "high">("medium");
-  const [toast, setToast] = useState<string | null>(null);
-  const [contactInfo, setContactInfo] = useState<{ email: string | null; phone: string | null; loading: boolean }>({
-    email: null, phone: null, loading: true,
-  });
-
-  // AI quota error state
-  const [aiQuotaError, setAiQuotaError] = useState<string | null>(null);
-  const [aiQuotaTimer, setAiQuotaTimer] = useState(0);
   const [aiRetryCount, setAiRetryCount] = useState(0);
   const [isGeminiQuota, setIsGeminiQuota] = useState(false);
+  const [autoRetryPending, setAutoRetryPending] = useState(false);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  }, []);
+  const { toast, showToast, setToast } = useToast();
+  const { quotaError, quotaRetryTimer, setQuotaError, startQuotaTimer, clearQuotaTimer } = useQuotaTimer();
+  const { contactInfo } = useContactInfo(business.id);
 
   const biz = business as {
     id: string; name: string; business_type: string; address: string; city: string;
@@ -93,26 +88,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     rating: biz.rating ?? null,
     user_ratings_total: biz.review_count ?? null,
   });
-
-  // Fetch contact info
-  useEffect(() => {
-    if (!biz.id) return;
-    fetch(`/api/contact-info?businessId=${biz.id}`)
-      .then((r) => r.json())
-      .then((d) => setContactInfo({ email: d.email ?? null, phone: d.phone ?? null, loading: false }))
-      .catch(() => setContactInfo((p) => ({ ...p, loading: false })));
-  }, [biz.id]);
-
-  // Background rating refresh
-  useEffect(() => {
-    if (!biz.id) return;
-    fetch("/api/refresh-ratings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ businessId: biz.id }),
-    }).catch(() => {});
-  }, [biz.id]);
-
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -133,7 +108,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     const length = overrideLength ?? pitchLength;
     setGeneratingPitch(true);
     setPitchError(null);
-    setAiQuotaError(null);
     try {
       const res = await fetch("/api/pitch", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -149,27 +123,24 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
       if (res.status === 429) {
         setIsGeminiQuota(true);
         setAiRetryCount((c) => c + 1);
-        setAiQuotaError("AI service is at capacity. Auto-retrying…");
-        setAiQuotaTimer(5);
-        const interval = setInterval(() => {
-          setAiQuotaTimer((prev) => {
-            if (prev <= 1) { clearInterval(interval); return 0; }
-            return prev - 1;
-          });
-        }, 1000);
+        setQuotaError("AI service is at capacity. Auto-retrying…");
+        startQuotaTimer(5);
+        setAutoRetryPending(true);
         return;
       }
       const data = await res.json();
       if (data.success && data.pitch?.subject && data.pitch?.body) {
         setPitchResults((prev) => ({ ...prev, [activeChannel]: { subject: data.pitch.subject, body: data.pitch.body } }));
+        setIsGeminiQuota(false);
         setAiRetryCount(0);
-        setAiQuotaError(null);
+        setAutoRetryPending(false);
+        clearQuotaTimer();
       } else {
         setPitchError(data.error ?? "Pitch generation failed.");
       }
     } catch { setPitchError("Network error — please try again."); }
     finally { setGeneratingPitch(false); }
-  }, [biz.id, pitchTone, pitchLength, activeChannel, socialPlatforms, pitchFocus, pitchOpening, pitchUrgency]);
+  }, [biz.id, pitchTone, pitchLength, activeChannel, socialPlatforms, pitchFocus, pitchOpening, pitchUrgency, setQuotaError, startQuotaTimer, clearQuotaTimer]);
 
   const handleCopyPitch = useCallback(() => {
     if (!pitchResult) { showToast("Generate a pitch first"); return; }
@@ -209,26 +180,27 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     handleGeneratePitch(true);
   }, [handleGeneratePitch]);
 
+  const handleClearQuotaTimer = useCallback(() => {
+    setAutoRetryPending(false);
+    setAiRetryCount(0);
+    clearQuotaTimer();
+  }, [clearQuotaTimer]);
+
   const handleUseFallback = useCallback(() => {
+    setAutoRetryPending(false);
+    setAiRetryCount(0);
+    clearQuotaTimer();
     setPitchTone("friendly");
     setPitchLength("short");
     handleGeneratePitch(true, "friendly", "short");
-  }, [handleGeneratePitch]);
+  }, [clearQuotaTimer, handleGeneratePitch]);
 
-  const clearQuotaTimer = useCallback(() => {
-    setAiQuotaError(null);
-    setAiQuotaTimer(0);
-    setAiRetryCount(0);
-  }, []);
-
-  // Auto-retry once with 5s backoff
+  // Auto-retry once when quota timer auto-clears
   useEffect(() => {
-    if (!aiQuotaError || aiRetryCount > 1 || aiQuotaTimer > 0) return;
-    if (aiRetryCount === 1) {
-      const t = setTimeout(() => handleGeneratePitch(true), 5000);
-      return () => clearTimeout(t);
-    }
-  }, [aiQuotaError, aiRetryCount, aiQuotaTimer, handleGeneratePitch]);
+    if (!autoRetryPending || quotaError !== null) return;
+    setAutoRetryPending(false);
+    if (aiRetryCount <= 1) handleGeneratePitch(true);
+  }, [autoRetryPending, quotaError, aiRetryCount, handleGeneratePitch]);
 
   // ── Derived data ──────────────────────────────────────────────────────────
 
@@ -261,7 +233,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               {socialPlatforms.map((platform) => (
                 <span key={platform}
                   className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
-                  <Hash className="h-3 w-3" /> {platform}
+                  <Hash className="h-3 w-3" aria-hidden="true" /> {platform}
                 </span>
               ))}
               <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
@@ -269,7 +241,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               </span>
               {biz.website && safeHref(biz.website) && (
                 <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--status-info-text)]/40 hover:text-[var(--status-info-text)]">
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--status-info-text)]/40 [@media(hover:hover)]:hover:text-[var(--status-info-text)]">
                   View Profile
                 </a>
               )}
@@ -332,17 +304,16 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               issues={[]}
             />
 
-
           </div>
         </div>
 
       </div>
 
       <AIQuotaBanner
-        quotaError={aiQuotaError}
+        quotaError={quotaError}
         isGeminiQuota={isGeminiQuota}
-        quotaRetryTimer={aiQuotaTimer}
-        clearQuotaTimer={clearQuotaTimer}
+        quotaRetryTimer={quotaRetryTimer}
+        clearQuotaTimer={handleClearQuotaTimer}
         onRetry={handleAiRetry}
         onUseFallback={handleUseFallback}
         retryCount={aiRetryCount}

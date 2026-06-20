@@ -56,10 +56,11 @@ function load<T>(key: string): T | null {
 async function fetchPersistedData(
   ids: string[],
   sb: SupabaseClient
-): Promise<{ audits: Map<string, AuditResult>; designScores: Map<string, number> }> {
-  const [auditResp, designResp] = await Promise.all([
+): Promise<{ audits: Map<string, AuditResult>; designScores: Map<string, number>; pipelineIds: Set<string> }> {
+  const [auditResp, designResp, pipelineResp] = await Promise.all([
     sb.from("audits").select("business_id, strategy, performance_score, seo_score, fcp, lcp, tbt, cls").in("business_id", ids).order("created_at", { ascending: false }),
     sb.from("businesses").select("id, design_score").in("id", ids),
+    sb.from("pipeline").select("business_id").in("business_id", ids),
   ]);
 
   const audits = new Map<string, AuditResult>();
@@ -80,7 +81,14 @@ async function fetchPersistedData(
     }
   }
 
-  return { audits, designScores };
+  const pipelineIds = new Set<string>();
+  if (!pipelineResp.error && pipelineResp.data) {
+    for (const r of pipelineResp.data as { business_id: string }[]) {
+      pipelineIds.add(r.business_id);
+    }
+  }
+
+  return { audits, designScores, pipelineIds };
 }
 
 // ─── Tier helpers ────────────────────────────────────────────────────────────
@@ -196,8 +204,8 @@ export default function DiscoverPage() {
   // Hydrate audit + design scores from DB once userId resolves
   useEffect(() => {
     if (!userId || !results.length) return;
-    fetchPersistedData(results.map((r) => r.id), supabase).then(({ audits, designScores }) => {
-      if (!audits.size && !designScores.size) return;
+    fetchPersistedData(results.map((r) => r.id), supabase).then(({ audits, designScores, pipelineIds }) => {
+      if (!audits.size && !designScores.size && !pipelineIds.size) return;
       setResults((prev) => prev.map((r) => {
         const a = audits.get(r.id);
         const ds = designScores.get(r.id);
@@ -206,6 +214,7 @@ export default function DiscoverPage() {
       }));
       if (audits.size) setAudited((prev) => { const n = new Set(prev); for (const id of audits.keys()) n.add(id); return n; });
       if (designScores.size) setAnalysed((prev) => { const n = new Set(prev); for (const id of designScores.keys()) n.add(id); return n; });
+      if (pipelineIds.size) setPipeline((prev) => { const n = new Set(prev); for (const id of pipelineIds) n.add(id); save(SS.PIPELINE, [...n]); return n; });
     }).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
@@ -370,7 +379,7 @@ export default function DiscoverPage() {
           if (t === "progress") continue;
           if (t === "results") { const b = (ch.data as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); setVisible(30); setFetching(false); setSubmitting(false); setResKey((k) => k + 1); gotInit = true; continue; }
           if (t === "enrichment") { const upd = (ch.updated as { id: string; website: string | null; phone: string | null; website_status: string; flagged_for_outreach?: boolean }[]) ?? []; if (upd.length) { const m = new Map(upd.map((u) => [u.id, u])); setResults((pr) => pr.map((b) => { const e = m.get(b.id); return e ? { ...b, website: e.website ?? b.website, phone: e.phone ?? b.phone, website_status: e.website_status as WebsiteStatus, flagged_for_outreach: e.flagged_for_outreach ?? b.flagged_for_outreach } : b; })); } continue; }
-          if (t === "done") { const b = (ch.businesses as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); if (b.length) fetchPersistedData(b.map((x) => x.id), supabase).then(({ audits, designScores }) => { setResults((pr) => pr.map((r) => { const a = audits.get(r.id); const ds = designScores.get(r.id); if (!a && ds == null) return r; return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) }; })); }).catch(() => {}); continue; }
+          if (t === "done") { const b = (ch.businesses as BusinessResult[]) ?? []; setResults(b); save(SS.RESULTS, b, () => showToast("Too many results to save locally.")); if (b.length) fetchPersistedData(b.map((x) => x.id), supabase).then(({ audits, designScores, pipelineIds }) => { setResults((pr) => pr.map((r) => { const a = audits.get(r.id); const ds = designScores.get(r.id); if (!a && ds == null) return r; return { ...r, ...(a ? { audit: a } : {}), ...(ds != null ? { design_score: ds } : {}) }; })); if (pipelineIds.size) setPipeline((prev) => { const n = new Set(prev); for (const id of pipelineIds) n.add(id); save(SS.PIPELINE, [...n]); return n; }); }).catch(() => {}); continue; }
           if (t === "error") throw new Error((ch.message as string) ?? "Error");
         }
       }

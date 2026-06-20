@@ -1,5 +1,5 @@
 # CLAUDE.md — Nearsited
-*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-18.*
+*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-20.*
 
 ---
 
@@ -67,7 +67,7 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 | `<Badge>` | [`Badge.tsx`](src/components/ui/Badge.tsx) | Legacy badge — prefer `<Pill>` for new code. |
 | `<ScoreRing>` | [`ScoreRing.tsx`](src/components/ui/ScoreRing.tsx) | Legacy score ring — prefer `<ScoreCircle>` for new code. |
 
-### Global Design Rules (A–J)
+### Global Design Rules (A–K)
 
 **A. At most ONE `<Section variant="card">` per page.** Use `"flush"` or `"bordered"` for everything else.
 
@@ -88,6 +88,8 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 **I. No uppercase eyebrow text that repeats the sidebar nav label.** Don't write "OPPORTUNITIES" as a section header on the Opportunities page.
 
 **J. Score circles never show "~95".** Use `<ScoreCircle variant="estimated">` (dotted ring) for projections — never tilde-prefix the number.
+
+**K. No decorative borders.** Borders appear only on: focus rings, hover states, semantic chips/pills, form inputs, error states, and the single highlighted item in a comparison set (e.g., the Agency pricing tier). Everywhere else, group via background elevation (`--color-bg-page` → `--color-bg-surface` → `--color-bg-surface-raised` → `--color-bg-elevated`), spacing, thin horizontal dividers between rows, or a 2–3px left accent line. Hardcoded opacity borders (`border-white/10`, `rgba(255,255,255,X)`) banned — reference `--color-border-subtle/strong` tokens. Never nest perimeter borders (a bordered card containing a bordered sub-card).
 
 ---
 
@@ -751,6 +753,12 @@ Run this checklist on every PR that touches UI code. Automated ESLint rules (3.1
 ### Border Radius
 - [ ] Only `rounded-[var(--radius-sm)]` (6px) or `rounded-[var(--radius-md)]` (10px) used — **no `rounded-full`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, or arbitrary `rounded-[Xpx]`**
 
+### Borders
+- [ ] No perimeter border on cards, sections, or panels — group via background elevation or spacing
+- [ ] No `border-white/X` or hardcoded `rgba` opacity borders — use `--color-border-subtle/strong` tokens
+- [ ] No nested perimeter borders (bordered card inside bordered card)
+- [ ] Borders only on: focus rings, hover states, semantic chips, form inputs, error states, single highlighted item in comparison
+
 ### Design Tokens
 - [ ] All colors reference CSS variables (`--color-*`, `--bg-*`, `--text-*`) — no raw Tailwind semantic colors (`red-500`, `amber-500`, `green-500`)
 - [ ] Semantic meaning preserved: danger=red, warning=amber, success=deep-green, info=blue, accent=sage
@@ -782,4 +790,4 @@ Run this checklist on every PR that touches UI code. Automated ESLint rules (3.1
 
 ---
 
-*Update this file the moment a schema, enum, model name, runtime, or convention changes. Last updated: 2026-06-18.*
+*Update this file the moment a schema, enum, model name, runtime, or convention changes. Last updated: 2026-06-20.*

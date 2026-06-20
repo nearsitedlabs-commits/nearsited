@@ -75,11 +75,11 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
           </SectionSub>
         </div>
 
-        <div className="mt-10 mx-auto max-w-3xl space-y-3">
+        <div className="mt-10 mx-auto max-w-3xl divide-y divide-[var(--color-border-subtle)] border-t border-[var(--color-border-subtle)]">
           {OBJECTIONS.map((item, i) => (
             <div
               key={item.objection}
-              className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] overflow-hidden"
+              className="overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}
@@ -88,6 +88,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
               >
                 <span className="text-sm font-medium text-[var(--color-text-primary)]">{item.objection}</span>
                 <ChevronDown
+                  aria-hidden="true"
                   className={`h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200 ${
                     openIndex === i ? "rotate-180" : ""
                   }`}
@@ -117,7 +118,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
                       <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4 space-y-3">
                         <div className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{item.response}</div>
                         <div className="flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-3">
-                          <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
+                          <ArrowUpRight aria-hidden="true" className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
                           <p className="text-sm text-[var(--color-text-primary)] font-medium">{item.answer}</p>
                         </div>
                       </div>
