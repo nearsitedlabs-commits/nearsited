@@ -6,6 +6,7 @@ import { getLeadWebUrl } from "@/components/ui/LeadAffordances";
 import PipelineSelect from "@/components/ui/PipelineSelect";
 import { ActionMenu } from "@/components/ui/ActionMenu";
 import { Button } from "@/components/ui/Button";
+import { StarRating } from "@/components/ui/StarRating";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 
 type ActionMenuItem = {
@@ -90,9 +91,7 @@ export function LeadHeaderStrip({
             {rating != null && (
               <>
                 {(businessType || city) ? " · " : ""}
-                <span className="text-[var(--color-warning)]">★</span>
-                {rating.toFixed(1)}
-                {reviewCount != null ? ` (${reviewCount.toLocaleString()})` : ""}
+                <StarRating value={rating} count={reviewCount} />
               </>
             )}
           </p>
@@ -147,6 +146,7 @@ export function LeadHeaderStrip({
               size="sm"
               icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />}
               onClick={() => onPipelineChange("new_lead")}
+              className="text-[var(--color-accent)] border-[var(--color-accent)]/30 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
             >
               Add to Pipeline
             </Button>

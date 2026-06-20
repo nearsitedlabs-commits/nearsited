@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { motion } from "@/lib/motion";
 import { GhostButton } from "@/components/ui/Button";
 import { ImpactPill } from "./ImpactPill";
@@ -65,16 +65,19 @@ export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion, pr
               <GhostButton
                 size="sm"
                 onClick={onToggleShowAll}
-                icon={showAll ? undefined : <ArrowRight className="h-3 w-3" aria-hidden="true" />}
+                icon={showAll
+                  ? <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                  : <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                }
               >
-                {showAll ? "Show less" : `+${issues.length - 3} more issue${issues.length - 3 !== 1 ? "s" : ""}`}
+                {showAll ? "Show top 3 only" : `+${issues.length - 3} more issue${issues.length - 3 !== 1 ? "s" : ""}`}
               </GhostButton>
             </div>
           )}
           {projDelta != null && projDelta > 0 && (
             <p className="flex items-center gap-1 pt-1 text-xs text-[var(--color-text-secondary)]">
               Fix these issues
-              <ArrowRight className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" aria-hidden="true" />
+              <ArrowRight className="h-3.5 w-3.5 text-[var(--color-text-secondary)]" aria-hidden="true" />
               <span className="font-semibold text-[var(--color-accent)]">+{projDelta} pts</span>
               {" "}site quality improvement
             </p>
