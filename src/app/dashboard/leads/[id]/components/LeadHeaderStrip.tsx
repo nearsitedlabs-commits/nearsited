@@ -100,7 +100,7 @@ export function LeadHeaderStrip({
                 href={getLeadWebUrl(websiteStatus ?? "unknown", website ?? null)!}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" /> Website
               </a>
@@ -108,7 +108,7 @@ export function LeadHeaderStrip({
             {phone && (
               <a
                 href={`tel:${phone}`}
-                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
                 <Phone className="h-3.5 w-3.5" /> {phone}
               </a>
@@ -118,7 +118,7 @@ export function LeadHeaderStrip({
                 href={`https://www.google.com/maps/search/?api=1&query_place_id=${placeId}&query=${encodeURIComponent(businessName)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]"
+                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]"
               >
                 <MapPin className="h-3.5 w-3.5" /> Map
               </a>
@@ -136,19 +136,19 @@ export function LeadHeaderStrip({
               options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
             />
           ) : (
-            <Button variant="secondary" size="sm" onClick={() => onPipelineChange("new_lead")} className="min-h-[44px] sm:min-h-0">
-              <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
+            <Button variant="secondary" size="sm" icon={<TrendingUp className="h-3.5 w-3.5" />} onClick={() => onPipelineChange("new_lead")}>
+              Add to Pipeline
             </Button>
           )}
           {/* PDF + Share inline on desktop */}
           <a
             href={`/api/export/pdf?businessId=${businessId}`}
-            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] min-h-[36px] lg:min-h-[32px] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
           >
             <FileDown className="h-3.5 w-3.5" /> PDF
           </a>
-          <Button variant="secondary" size="sm" onClick={onShare} className="hidden sm:inline-flex">
-            <Share2 className="h-3.5 w-3.5" /> Share
+          <Button variant="secondary" size="sm" icon={<Share2 className="h-3.5 w-3.5" />} onClick={onShare} className="hidden sm:inline-flex">
+            Share
           </Button>
           {/* ⋯ overflow on mobile — PDF + Share collapsed here */}
           <div className="sm:hidden">

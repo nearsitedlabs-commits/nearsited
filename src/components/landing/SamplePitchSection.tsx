@@ -185,7 +185,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 </div>
               </div>
 
-              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5">
+              <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-5">
                 {prefersReducedMotion ? (
                   <>
                     <p className="mb-4 text-xs text-[var(--color-text-tertiary)]">{metaDisplay}</p>

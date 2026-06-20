@@ -19,7 +19,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
   const content = (
     <>
       {/* Founder quote — left-border accent so it stands out from the stat grid */}
-      <blockquote className="mt-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-2 border-l-[var(--color-accent)] bg-[var(--color-bg-elevated)] p-6 text-left">
+      <blockquote className="mt-8 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 border-l-2 border-l-[var(--color-accent)] bg-[var(--color-bg-elevated)] p-6 text-left">
         <p className="text-base italic leading-7 text-[var(--color-text-secondary)]">
           &ldquo;I was spending 3 hours every week just finding businesses to pitch. I built Nearsited so I could spend that time closing instead.&rdquo;
         </p>
@@ -39,7 +39,7 @@ export function ProofBlocksSection({ navigate }: { navigate: (href: string) => v
         {PROOF_POINTS.map((point) => (
           <div
             key={point.stat}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 text-center"
+            className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] p-6 text-center"
           >
             <p className="text-3xl font-bold tracking-tight text-[var(--color-accent)]">
               {point.stat}

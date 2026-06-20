@@ -1,4 +1,4 @@
-"use client";
+e "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -475,14 +475,11 @@ export default function AuditPage() {
         website?: string;
       };
       if (!data.found) {
-        setMapsLookupHint("No business found. Fill in details manually below.");
+        setMapsLookupHint("No business found at this link. Paste the website URL above to run the audit.");
       } else {
         const urlWasEmpty = !url.trim();
         if (data.website && urlWasEmpty) setUrl(data.website);
         if (data.name) setMapsBusinessName(data.name);
-        if (data.city) setMapsLookupHint(`Found "${data.name}" — city: ${data.city}`);
-        if (data.suggested_business_type)
-          setMapsLookupHint(mapsLookupHint ?? null);
         if (data.rating != null) setMapsRating(data.rating);
         if (data.review_count != null) setMapsReviewCount(data.review_count);
         if (data.place_id) setMapsPlaceId(data.place_id);
@@ -498,7 +495,7 @@ export default function AuditPage() {
         setMapsLookupHint(hint);
       }
     } catch {
-      setMapsLookupHint("Lookup failed. Fill in details manually.");
+      setMapsLookupHint("Lookup failed. Try pasting the website URL directly above.");
     } finally {
       setMapsLookupLoading(false);
     }

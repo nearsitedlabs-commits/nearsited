@@ -141,7 +141,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             </div>
 
             {/* Pitch preview — changes based on selected row */}
-            <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+            <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-4">
               <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">
                 <MessageSquare className="h-3 w-3 text-[var(--color-accent)]" />
                 AI pitch · ready to send

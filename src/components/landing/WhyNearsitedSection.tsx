@@ -51,7 +51,7 @@ export function WhyNearsitedSection() {
         <div className="mt-8 grid gap-4 md:mt-12 md:gap-6 md:grid-cols-2 md:items-stretch">
           {/* Traditional — subtle border, no fill (the pain) */}
           <motion.div {...anim(0)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 px-6 py-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--score-high)]/10">
                   <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
@@ -91,7 +91,7 @@ export function WhyNearsitedSection() {
         </div>
 
         {/* Lead type badges */}
-        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6">
+        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-4 md:mt-10 md:p-6">
           <p className="mb-3 text-center text-[0.65rem] uppercase tracking-[0.14em] text-[var(--color-text-tertiary)] md:mb-4 md:tracking-[0.18em]">
             Four opportunity types · all in one search
           </p>

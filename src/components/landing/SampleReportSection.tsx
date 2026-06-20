@@ -292,7 +292,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
             </AnimatePresence>
           )}
 
-          <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 flex flex-col gap-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Want to find opportunities like this in your city?</p>
               <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">Choose from 249 business types across 16 industries. Get ranked leads in under 2 minutes.</p>

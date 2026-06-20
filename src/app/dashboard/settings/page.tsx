@@ -19,8 +19,6 @@ type SubData = {
   tier: "free_trial" | "solo" | "agency" | "scale";
   audits_used: number;
   audits_limit: number;
-  searches_used: number;
-  searches_limit: number;
 };
 
 const TIER_LABELS: Record<string, string> = { free_trial: "Free Trial", solo: "Solo", agency: "Agency", scale: "Scale" };
@@ -33,8 +31,8 @@ const TIER_COLORS: Record<string, string> = {
 
 /** Benefits copy — kept in sync with landing page Pricing.tsx PLANS array */
 const PLAN_BENEFITS: Record<string, string> = {
-  starter: "50 analyses/mo · 3 city searches/mo · email pitches · pipeline tracking",
-  agency: "200 analyses/mo · 10 city searches/mo · WhatsApp pitches · white-label reports · priority support",
+  starter: "50 analyses/mo · unlimited searches · email pitches · pipeline tracking",
+  agency: "200 analyses/mo · unlimited searches · WhatsApp pitches · white-label reports · priority support",
 };
 
 type ClearScope = "leads" | "pipeline" | "pitches" | "saved_searches";
@@ -300,10 +298,10 @@ export default function SettingsPage() {
       if (!authUser) { setLoading(false); return; }
       const [{ data: profile }, { data: subRow }] = await Promise.all([
         supabase.from("profiles").select("email, full_name, created_at, notification_prefs").eq("id", authUser.id).single(),
-        supabase.from("subscriptions").select("tier, audits_used, audits_limit, searches_used, searches_limit").eq("user_id", authUser.id).maybeSingle(),
+        supabase.from("subscriptions").select("tier, audits_used, audits_limit").eq("user_id", authUser.id).maybeSingle(),
       ]);
       setUser((profile as UserData) ?? { email: authUser.email ?? null, full_name: null, created_at: null });
-      const resolvedSub = (subRow as SubData) ?? { tier: "free", audits_used: 0, audits_limit: 20, searches_used: 0, searches_limit: 3 };
+      const resolvedSub = (subRow as SubData) ?? { tier: "free", audits_used: 0, audits_limit: 20 };
       setSub(resolvedSub);
 
       // Load notification prefs
@@ -350,7 +348,7 @@ export default function SettingsPage() {
       const res = await fetch("/api/check-subscription");
       const json = await res.json();
       if (json.synced && json.reason === "reconciled") {
-        setSub({ tier: json.tier, audits_used: json.audits_used, audits_limit: json.audits_limit, searches_used: json.searches_used, searches_limit: json.searches_limit });
+        setSub({ tier: json.tier, audits_used: json.audits_used, audits_limit: json.audits_limit });
         const tierLabel = json.tier === "solo" ? "Solo" : json.tier === "agency" ? "Agency" : json.tier === "scale" ? "Scale" : json.tier;
         setSyncMsg(`Upgrade confirmed! You're now on the ${tierLabel} plan.`);
         setTimeout(() => setSyncMsg(null), 6000);

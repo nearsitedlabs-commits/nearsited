@@ -359,9 +359,6 @@ export default function DiscoverPage() {
       const res = await fetch("/api/discover", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ city: cq, businessType: tq, radiusMeters: radius }) });
       if (!res.ok) {
         const p = await res.json().catch(() => null);
-        if (res.status === 429 && p?.error === "Search limit reached") {
-          throw new Error(`Monthly search limit reached (${p.searches_used}/${p.searches_limit} searches used). Upgrade your plan for more city searches.`);
-        }
         throw new Error(p?.error || p?.details || `Failed (${res.status})`);
       }
       const reader = res.body!.getReader(); const dec = new TextDecoder(); let buf = "";

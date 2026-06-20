@@ -17,8 +17,6 @@ type SubRow = {
   tier: string;
   audits_used: number;
   audits_limit: number;
-  searches_used: number;
-  searches_limit: number;
   credits_reset_at: string | null;
 };
 
@@ -38,7 +36,7 @@ type DeductResult = {
  */
 export async function getSubscription(userId: string): Promise<SubRow> {
   const { data } = await subTable()
-    .select("tier, audits_used, audits_limit, searches_used, searches_limit, credits_reset_at")
+    .select("tier, audits_used, audits_limit, credits_reset_at")
     .eq("user_id", userId)
     .maybeSingle();
   if (data) {
@@ -68,8 +66,6 @@ export async function getSubscription(userId: string): Promise<SubRow> {
       tier: "free_trial",
       audits_used: FREE_TRIAL_AUDIT_LIMIT,  // Capped — no more audits
       audits_limit: FREE_TRIAL_AUDIT_LIMIT,
-      searches_used: 0,
-      searches_limit: 0,
       credits_reset_at: null,
     };
   }
@@ -80,8 +76,6 @@ export async function getSubscription(userId: string): Promise<SubRow> {
     tier: "free_trial",
     audits_used: 0,
     audits_limit: FREE_TRIAL_AUDIT_LIMIT,
-    searches_used: 0,
-    searches_limit: 0,
     credits_reset_at: null, // Free trial is lifetime; no monthly reset
   };
   const { error: upsertError } = await subTable().upsert(

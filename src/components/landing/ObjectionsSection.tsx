@@ -79,7 +79,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
           {OBJECTIONS.map((item, i) => (
             <div
               key={item.objection}
-              className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+              className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}

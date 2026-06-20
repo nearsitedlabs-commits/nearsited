@@ -305,7 +305,7 @@ export default function LeadsPage() {
           <h1 className="text-xl font-medium sm:text-2xl text-[var(--color-text-primary)]">Your opportunities</h1>
           <Link
             href="/dashboard/discover"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
           >
             + Find more
           </Link>
@@ -344,7 +344,7 @@ export default function LeadsPage() {
                 onClick={handleBulkAudit}
                 disabled={bulkLoading}
                 aria-label={`Run website audit on ${selectedIds.size} selected ${selectedIds.size === 1 ? "business" : "businesses"} — uses ${selectedIds.size} ${selectedIds.size === 1 ? "credit" : "credits"}`}
-                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-colors disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)] transition-colors disabled:opacity-50"
               >
                 {bulkLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 Audit ({selectedIds.size} credits)

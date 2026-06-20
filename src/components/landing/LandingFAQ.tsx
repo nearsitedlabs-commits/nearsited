@@ -83,7 +83,7 @@ export function LandingFAQ() {
               <div
                 key={faq.q}
                 id={faq.id}
-                className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+                className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] overflow-hidden"
               >
                 <button
                   onClick={() => toggle(i)}

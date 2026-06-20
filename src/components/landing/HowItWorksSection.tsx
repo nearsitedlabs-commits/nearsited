@@ -89,7 +89,7 @@ export function HowItWorksSection() {
 
         {/* Scoring explainer */}
         <motion.div {...anim(0.45)} className="mt-12 mx-auto max-w-2xl">
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-6">
+          <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-6">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
                 <Info className="h-4 w-4" />
@@ -108,7 +108,7 @@ export function HowItWorksSection() {
                     { color: "var(--score-mid)", range: "40–69", label: "Medium" },
                     { color: "var(--score-good)", range: "70+", label: "High" },
                   ].map(({ color, range, label }) => (
-                    <div key={label} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5">
+                    <div key={label} className="rounded-[var(--radius-sm)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] px-2 py-2.5 flex flex-col items-center gap-1.5">
                       <span className="h-2 w-2 rounded-full shrink-0" style={{ background: color }} />
                       <p className="text-xs font-medium text-[var(--color-text-primary)] leading-none">{range}</p>
                       <p className="text-[10px] text-[var(--color-text-tertiary)] leading-none">{label}</p>

@@ -73,12 +73,12 @@ export function AuditForm({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => onRun()} className="whitespace-nowrap">
-              <RotateCcw className="h-3 w-3 shrink-0" /> Re-run
+            <Button variant="secondary" size="sm" icon={<RotateCcw className="h-3 w-3" />} onClick={() => onRun()} className="whitespace-nowrap">
+              Re-run
             </Button>
             {onReset && (
-              <Button variant="secondary" size="sm" onClick={onReset} className="whitespace-nowrap">
-                <X className="h-3 w-3 shrink-0" /> New search
+              <Button variant="secondary" size="sm" icon={<X className="h-3 w-3" />} onClick={onReset} className="whitespace-nowrap">
+                New search
               </Button>
             )}
           </div>
@@ -106,23 +106,22 @@ export function AuditForm({
   // ── Idle state — full input form ─────────────────────────────────────────────
   return (
     <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-6">
-      {/* URL input */}
-      <div className="relative">
-        <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => onUrlChange(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && onRun()}
-          placeholder="Paste a business website URL"
-          autoFocus
-          className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] py-3 pl-10 pr-4 text-base text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] transition-colors duration-150 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20"
-        />
-      </div>
-
-      <div className="mt-3">
-        <Button variant="primary" onClick={() => onRun()} disabled={running || !url.trim()}>
-          <Search className="h-4 w-4" /> Analyse
+      {/* URL input + Analyse button inline */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => onUrlChange(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !running && url.trim() && onRun()}
+            placeholder="Paste a business website URL"
+            autoFocus
+            className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] py-3 pl-10 pr-4 text-base text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] transition-colors duration-150 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20"
+          />
+        </div>
+        <Button variant="primary" icon={<Search className="h-4 w-4" />} onClick={() => onRun()} disabled={running || !url.trim()} className="shrink-0">
+          Analyse
         </Button>
       </div>
 
