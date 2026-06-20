@@ -53,7 +53,8 @@ export const REQUIRED_ENV_VARS = [
  * not prevent the server from starting in development.
  */
 export const OPTIONAL_ENV_VARS = [
-  "NEXT_PUBLIC_SITE_URL",           // Used by CSRF origin validation in middleware
+  "SITE_URL",                        // Used by CSRF origin validation in middleware (server-only, runtime)
+  "NEXT_PUBLIC_SITE_URL",           // Legacy alias — prefer SITE_URL
   "CSRF_ALLOWED_ORIGINS",           // Comma-separated additional origins for CSRF
   "RESEND_AUDIENCE_ID",             // Resend audience ID for newsletter subscriptions
   "NEXT_PUBLIC_DODO_PRODUCT_STARTER_MONTHLY",  // Client-side: overrides hardcoded pricing IDs

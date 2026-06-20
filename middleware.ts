@@ -25,8 +25,8 @@ function getAllowedOrigins(): string[] {
 
   const origins: string[] = [];
 
-  // Primary site URL
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  // Primary site URL — use server-only SITE_URL (runtime) not NEXT_PUBLIC_SITE_URL (build-time inline)
+  const siteUrl = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL;
   if (siteUrl) {
     // Strip trailing slash so `startsWith` matching works consistently
     origins.push(siteUrl.replace(/\/+$/, ""));
