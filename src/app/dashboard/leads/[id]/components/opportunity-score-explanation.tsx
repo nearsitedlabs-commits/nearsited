@@ -219,9 +219,9 @@ const TYPE_STYLES: Record<string, string> = {
 
 function DriverBar({ label, score, description }: Driver) {
   const color =
-    score >= 70 ? "var(--score-good)" :
-    score >= 40 ? "var(--score-mid)"  :
-    "var(--text-tertiary)";
+    score >= 70 ? "var(--color-success)" :
+    score >= 40 ? "var(--color-warning)"  :
+    "var(--color-text-tertiary)";
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
@@ -295,14 +295,14 @@ export function OpportunityScoreExplanation({
     "text-[var(--color-text-tertiary)]";
 
   const scoreTierColor =
-    opportunityScore >= 70 ? "var(--score-good)" :
-    opportunityScore >= 40 ? "var(--score-mid)"  :
-    "var(--score-high)";
+    opportunityScore >= 70 ? "var(--color-success)" :
+    opportunityScore >= 40 ? "var(--color-warning)"  :
+    "var(--color-danger)";
 
   const scoreTierTextColor =
     opportunityScore >= 70 ? "text-[var(--color-success)]" :
     opportunityScore >= 40 ? "text-[var(--color-info)]"  :
-    "text-[var(--score-high)]";
+    "text-[var(--color-danger)]";
 
   return (
     <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] overflow-hidden">
