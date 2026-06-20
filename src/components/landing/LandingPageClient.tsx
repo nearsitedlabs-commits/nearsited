@@ -28,9 +28,9 @@ export default function LandingPageClient() {
       <LandingScrollNav />
       <main className="pt-16 lg:pt-20">
         <LandingHero navigate={navigate} />
-        <QuickAuditSection navigate={navigate} />
         <TrustBar />
         <HowItWorksSection />
+        <QuickAuditSection navigate={navigate} />
         <WhyNearsitedSection />
         <SampleReportSection navigate={navigate} />
         <SamplePitchSection navigate={navigate} />

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Loader2, AlertTriangle, CheckCircle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Loader2, AlertTriangle, ArrowRight } from "lucide-react";
 import { motion, useSafeReducedMotion, type Variants } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 const viewport = { once: true, margin: "-40px" as const };
@@ -23,7 +22,27 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AuditResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [displayScore, setDisplayScore] = useState(0);
   const shouldReduce = useSafeReducedMotion();
+
+  // Count-up animation when a result score arrives
+  useEffect(() => {
+    if (!result?.score) { setDisplayScore(0); return; }
+    if (shouldReduce) { setDisplayScore(result.score); return; }
+    const target = result.score;
+    setDisplayScore(0);
+    const start = performance.now();
+    const duration = 800;
+    let rafId = 0;
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayScore(Math.round(target * eased));
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [result?.score, shouldReduce]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -130,7 +149,8 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 flex items-start gap-3 rounded-[var(--radius-md)] border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+            aria-live="polite"
+          className="mt-6 flex items-start gap-3 rounded-[var(--radius-md)] border border-[var(--color-danger)]/20 bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]"
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
@@ -145,11 +165,11 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
             transition={{ duration: 0.35, ease }}
             className="mt-8"
           >
-            <Card variant="default" padding="lg" className="overflow-hidden">
+            <div className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
               {/* Score */}
               <div className="flex items-center gap-4">
-                <div className={`text-4xl font-bold tracking-tight ${scoreColor}`}>
-                  {result.score}
+                <div className={`text-4xl font-bold tracking-tight tabular-nums ${scoreColor}`}>
+                  {displayScore}
                   <span className="text-lg font-normal text-[var(--color-text-tertiary)]">/100</span>
                 </div>
                 <div>
@@ -177,21 +197,21 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
                 </div>
               )}
 
-              {/* Gate */}
-              <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 p-4 text-center">
+              {/* Gate — tonal bg + left accent line, no perimeter border */}
+              <div className="mt-6 rounded-r-[var(--radius-md)] border-l-2 border-l-[var(--color-accent)] bg-[var(--color-accent)]/5 px-4 py-4">
                 <p className="text-sm font-medium text-[var(--color-text-primary)]">
                   Want the full picture?
                 </p>
-                <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-tertiary)]">
                   Sign up for free to see revenue estimates, pitch angles, competitor comparison, and the complete 14-signal audit.
                 </p>
-                <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                   <Button
                     variant="primary"
                     onClick={() => navigate("/signup")}
                     className="w-full sm:w-auto sm:min-w-[180px] whitespace-nowrap"
                   >
-                    Get full audit free <ArrowRight className="ml-1.5 h-3.5 w-3.5 inline-block flex-shrink-0" />
+                    Get full audit free <ArrowRight aria-hidden="true" className="ml-1.5 h-3.5 w-3.5 inline-block flex-shrink-0" />
                   </Button>
                   <Button
                     variant="secondary"
@@ -202,7 +222,7 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
                   </Button>
                 </div>
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </div>
