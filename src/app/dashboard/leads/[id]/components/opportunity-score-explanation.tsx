@@ -208,8 +208,8 @@ function getDrivers(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const TYPE_STYLES: Record<string, string> = {
-  "Website Needed":          "border-[var(--color-success)]/30 bg-[var(--color-success)]/10 text-[var(--color-success)]",
-  "Digital Presence Gap":    "border-[var(--color-success)]/30 bg-[var(--color-success)]/10 text-[var(--color-success)]",
+  "Website Needed":          "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+  "Digital Presence Gap":    "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   "Redesign Candidate":      "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   "Website Upgrade":         "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   "Performance Opportunity": "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
@@ -305,11 +305,11 @@ export function OpportunityScoreExplanation({
     "text-[var(--score-high)]";
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] overflow-hidden">
       <div className="p-5 sm:p-6">
 
-        {/* Score hero */}
-        <div className="mb-5 flex flex-col items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] py-6">
+        {/* Score hero — no inner card, just centered typography */}
+        <div className="mb-5 flex flex-col items-center justify-center py-4">
           <span
             className="text-5xl font-bold leading-none tabular-nums"
             style={{ color: scoreTierColor }}
@@ -375,7 +375,7 @@ export function OpportunityScoreExplanation({
           {/* Services */}
           <div>
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--color-text-tertiary)]">
-              Recommended Services
+              Pitch Angles
             </p>
             <ul className="space-y-1">
               {services.map((s, i) => (

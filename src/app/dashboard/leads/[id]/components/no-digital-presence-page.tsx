@@ -4,19 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Toast } from "@/components/ui/Toast";
 import { estimatedOpportunity } from "@/lib/scoring";
-// import { getNoDigitalOpportunityReasons } from "@/lib/lead-types";
 
 import type { BusinessRow } from "@/lib/db-types";
 
 // Shared components
 import { LeadHeaderStrip } from "./LeadHeaderStrip";
-import { StatsRow } from "./StatsRow";
 import { PitchCard } from "./PitchCard";
 import { PreCallBrief } from "./PreCallBrief";
 import type { CallBriefSections } from "./PreCallBrief";
 import { AIQuotaBanner } from "./AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./opportunity-score-explanation";
-import { LeadExportSection } from "./LeadExportSection";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -38,6 +35,54 @@ function buildNoDigitalCallBrief(name: string, type: string, city: string | null
     scope: "Build a professional website, set up Google Business Profile, create social media accounts, establish a contact funnel (form + phone + booking).",
     objection: `"We've been fine without a website." Response: You're leaving money on the table. ${(city ? `${city} ` : "")}customers search online first — if they can't find you, they call a competitor who has a site.`,
   };
+}
+
+function timeAgo(iso: string | null): string {
+  if (!iso) return "—";
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d ago`;
+  const mo = Math.floor(d / 30);
+  return `${mo}mo ago`;
+}
+
+// ── Lead Context Block ────────────────────────────────────────────────────────
+
+function LeadContextBlock({
+  discoveredAt,
+  auditedAt,
+}: {
+  discoveredAt: string;
+  auditedAt: string | null;
+}) {
+  const items: { label: string; value: string }[] = [
+    { label: "Discovered", value: timeAgo(discoveredAt) },
+    { label: "Classification", value: "No digital presence — no website, social profile, or booking platform detected" },
+  ];
+  if (auditedAt) {
+    items.splice(1, 0, { label: "Last audited", value: timeAgo(auditedAt) });
+  }
+
+  return (
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+      <h2 className="mb-4 text-base font-semibold text-[var(--color-text-primary)]">Context</h2>
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div key={item.label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-4">
+            <span className="w-28 shrink-0 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--color-text-tertiary)]">
+              {item.label}
+            </span>
+            <span className="text-xs text-[var(--color-text-secondary)]">{item.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ── No Digital Presence Page ─────────────────────────────────────────────────
@@ -77,6 +122,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     id: string; name: string; business_type: string; address: string; city: string;
     place_id: string | null; phone: string | null; rating: number | null; review_count: number | null;
     website: string | null; website_status: string | null;
+    discovered_at: string; audited_at: string | null;
   };
 
   const oppScore = estimatedOpportunity({
@@ -119,6 +165,19 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
     } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
   }, [biz.id, currentPipelineStatus, showToast]);
 
+  const handleRemoveFromPipeline = useCallback(async () => {
+    const prev = currentPipelineStatus;
+    setCurrentPipelineStatus(null);
+    try {
+      const res = await fetch("/api/pipeline", {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: biz.id }),
+      });
+      if (!res.ok) { setCurrentPipelineStatus(prev); showToast("Failed to remove from pipeline"); }
+      else { showToast("Removed from pipeline"); }
+    } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
+  }, [biz.id, currentPipelineStatus, showToast]);
+
   const handleGeneratePitch = useCallback(async (force = true, overrideTone?: string, overrideLength?: string) => {
     const tone = overrideTone ?? pitchTone;
     const length = overrideLength ?? pitchLength;
@@ -140,7 +199,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
         setIsGeminiQuota(true);
         setAiRetryCount((c) => c + 1);
         setAiQuotaError("AI service is at capacity. Auto-retrying…");
-        // Start countdown
         setAiQuotaTimer(5);
         const interval = setInterval(() => {
           setAiQuotaTimer((prev) => {
@@ -202,7 +260,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
   // Auto-retry once with 5s backoff
   useEffect(() => {
     if (!aiQuotaError || aiRetryCount > 1 || aiQuotaTimer > 0) return;
-    // Only auto-retry once
     if (aiRetryCount === 1) {
       const t = setTimeout(() => handleGeneratePitch(true), 5000);
       return () => clearTimeout(t);
@@ -232,6 +289,7 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
           reviewCount={biz.review_count}
           pipelineStatus={currentPipelineStatus}
           onPipelineChange={handlePipelineChange}
+          onRemovePipeline={handleRemoveFromPipeline}
           onShare={handleShare}
           backTo={backTo}
           badge={
@@ -239,15 +297,6 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
               No Digital Presence Found
             </span>
           }
-        />
-
-        {/* ── STATS ROW ─────────────────────────────────────────────────── */}
-        <StatsRow
-          opportunityScore={oppScore}
-          isVerified={false}
-          estimatedValue={null}
-          reviewVelocity30d={null}
-          localCompetitors={null}
         />
 
         {/* ── TWO-COLUMN MAIN ───────────────────────────────────────────── */}
@@ -283,6 +332,12 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
               pitchResult={pitchResult}
               handleCopyPitch={handleCopyPitch}
             />
+
+            {/* Lead Context block */}
+            <LeadContextBlock
+              discoveredAt={biz.discovered_at}
+              auditedAt={biz.audited_at}
+            />
           </div>
 
           {/* ════ RIGHT (2fr) ═══════════════════════════════════════════════ */}
@@ -307,14 +362,12 @@ export default function NoDigitalPresencePage({ business, pipelineStatus, savedP
               issues={[]}
             />
 
-            <LeadExportSection businessId={biz.id} handleShare={handleShare} />
-
           </div>
         </div>
 
       </div>
 
-      {/* AI Quota error banner (replaces old inline pitchError) */}
+      {/* AI Quota error banner */}
       <AIQuotaBanner
         quotaError={aiQuotaError}
         isGeminiQuota={isGeminiQuota}

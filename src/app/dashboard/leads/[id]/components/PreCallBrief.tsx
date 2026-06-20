@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy } from "lucide-react";
+import { GhostButton, SecondaryButton } from "@/components/ui/Button";
 
 export type CallBriefSections = {
   hook: string;
@@ -15,52 +16,57 @@ type Props = {
   sections: CallBriefSections;
 };
 
-/**
- * "Pre-Call Brief" card.
- * Replaces the legacy em-dash "Client Call Summary" with 4 structured blocks:
- * HOOK / PAIN / SUGGESTED SCOPE / OBJECTION TO PREP
- * Each block: small uppercase label + one or two short lines.
- */
-export function PreCallBrief({ businessName, businessType, sections }: Props) {
-  const blocks: { label: string; content: string }[] = [
-    { label: "HOOK", content: sections.hook },
-    { label: "PAIN", content: sections.pain },
-    { label: "SUGGESTED SCOPE", content: sections.scope },
-    { label: "OBJECTION TO PREP", content: sections.objection },
-  ];
+const BLOCKS: { key: keyof CallBriefSections; label: string }[] = [
+  { key: "hook",      label: "Hook" },
+  { key: "pain",      label: "Pain" },
+  { key: "scope",     label: "Suggested Scope" },
+  { key: "objection", label: "Objection to Prep" },
+];
 
-  const fullText = blocks.map((b) => `${b.label}\n${b.content}`).join("\n\n");
-  const handleCopy = () => {
-    navigator.clipboard.writeText(fullText);
-  };
+export function PreCallBrief({ businessName, businessType, sections }: Props) {
+  const fullText = BLOCKS.map(b => `${b.label.toUpperCase()}\n${sections[b.key]}`).join("\n\n");
+
+  function copySection(text: string) {
+    navigator.clipboard.writeText(text);
+  }
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
-      <div className="mb-4 flex items-start justify-between gap-4">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] p-5 sm:p-6">
+      <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)]">Pre-Call Brief</h2>
           <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
             {businessName} — {businessType}. Read this 60 seconds before a sales call.
           </p>
         </div>
-        <button
-          onClick={handleCopy}
-          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-3 py-2 text-xs font-medium text-white transition-colors duration-150 hover:opacity-90 min-h-[44px] sm:min-h-0"
+        <SecondaryButton
+          size="sm"
+          onClick={() => copySection(fullText)}
+          icon={<Copy className="h-3.5 w-3.5" aria-hidden="true" />}
+          className="shrink-0"
         >
-          <Copy className="h-3.5 w-3.5" /> Copy
-        </button>
+          Copy brief
+        </SecondaryButton>
       </div>
-      <div className="space-y-3">
-        {blocks.map((block) => (
-          <div
-            key={block.label}
-            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3.5 py-2.5"
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-accent)]">
-              {block.label}
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">
-              {block.content}
+
+      <div className="space-y-6">
+        {BLOCKS.map((block) => (
+          <div key={block.key}>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">
+                {block.label}
+              </span>
+              <GhostButton
+                size="sm"
+                onClick={() => copySection(sections[block.key])}
+                aria-label={`Copy ${block.label}`}
+                className="h-7 w-7 shrink-0 p-0 min-h-0"
+              >
+                <Copy className="h-3 w-3" aria-hidden="true" />
+              </GhostButton>
+            </div>
+            <p className="text-sm leading-relaxed text-[var(--color-text-secondary)]">
+              {sections[block.key]}
             </p>
           </div>
         ))}

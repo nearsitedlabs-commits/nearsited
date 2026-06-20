@@ -9,48 +9,27 @@ import { Button } from "@/components/ui/Button";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 
 type Props = {
-  /** Business ID (for PDF export link) */
   businessId: string;
-  /** Business display name */
   businessName: string;
-  /** Business type/category */
   businessType: string | null;
-  /** City */
   city: string | null;
-  /** Full address */
   address: string | null;
-  /** Place ID for Maps link */
   placeId: string | null;
-  /** Phone number */
   phone: string | null;
-  /** Business website URL */
   website?: string | null;
-  /** Website status (used to decide whether to show link) */
   websiteStatus?: string | null;
-  /** Google rating */
   rating: number | null;
-  /** Review count */
   reviewCount: number | null;
-  /** Current pipeline status */
   pipelineStatus: string | null;
-  /** Pipeline change handler */
   onPipelineChange: (status: string) => Promise<void>;
-  /** Share handler */
+  /** Called to remove the lead from pipeline (DELETE) */
+  onRemovePipeline?: () => Promise<void>;
   onShare: () => Promise<void>;
-  /** Where the back link goes */
   backTo?: string;
-  /** Optional extra action buttons rendered after Pipeline (e.g. Analyse) */
   extraActions?: React.ReactNode;
-  /** Optional badge rendered after business type (e.g. "No Digital Presence") */
   badge?: React.ReactNode;
 };
 
-/**
- * Full-width header strip with:
- * - Back link
- * - Business name (h1), one-line meta: industry · city · rating · phone · Map
- * - Right-aligned action cluster: [+ Pipeline] [PDF] [Share]
- */
 export function LeadHeaderStrip({
   businessId,
   businessName,
@@ -65,33 +44,49 @@ export function LeadHeaderStrip({
   reviewCount,
   pipelineStatus,
   onPipelineChange,
+  onRemovePipeline,
   onShare,
   backTo = "leads",
   extraActions,
   badge,
 }: Props) {
+  const backHref = backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads";
+  const backLabel = backTo === "discover" ? "Back to Discover" : "Back to Leads";
+
   return (
     <div className="mb-6">
+      {/* Icon-only back arrow — 44×44 tap target */}
       <Link
-        href={backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads"}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]"
+        href={backHref}
+        aria-label={backLabel}
+        className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] text-[var(--color-text-tertiary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--accent-tint)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> {backTo === "discover" ? "Back to Discover" : "Back to Leads"}
+        <ArrowLeft className="h-5 w-5" aria-hidden="true" />
       </Link>
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
+
+      <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
         {/* Left: Business info */}
         <div className="min-w-0 flex-1">
-          <h1 className="text-[1.375rem] sm:text-[clamp(1.5rem,4vw,2.75rem)] font-bold text-[var(--color-text-primary)] leading-tight max-w-full break-words [text-wrap:balance]">
+          <h1
+            title={businessName}
+            className="line-clamp-2 text-[1.375rem] font-bold leading-tight text-[var(--color-text-primary)] sm:text-2xl [text-wrap:balance] max-w-full"
+          >
             {businessName}
           </h1>
-          {/* One-line meta: type · city · rating */}
+
+          {/* One-line meta: type · city · ★ rating */}
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            {[
-              businessType,
-              city,
-              rating != null ? `${rating.toFixed(1)}★${reviewCount != null ? ` (${reviewCount.toLocaleString()})` : ""}` : null,
-            ].filter(Boolean).join(" · ")}
+            {[businessType, city].filter(Boolean).join(" · ")}
+            {rating != null && (
+              <>
+                {(businessType || city) ? " · " : ""}
+                <span className="text-[var(--color-warning)]">★</span>
+                {rating.toFixed(1)}
+                {reviewCount != null ? ` (${reviewCount.toLocaleString()})` : ""}
+              </>
+            )}
           </p>
+
           {/* Badges + Phone + Map */}
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {badge}
@@ -102,7 +97,7 @@ export function LeadHeaderStrip({
                 rel="noreferrer"
                 className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
-                <ExternalLink className="h-3.5 w-3.5" /> Website
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Website
               </a>
             )}
             {phone && (
@@ -110,7 +105,7 @@ export function LeadHeaderStrip({
                 href={`tel:${phone}`}
                 className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
-                <Phone className="h-3.5 w-3.5" /> {phone}
+                <Phone className="h-3.5 w-3.5" aria-hidden="true" /> {phone}
               </a>
             )}
             {placeId && (
@@ -120,54 +115,47 @@ export function LeadHeaderStrip({
                 rel="noreferrer"
                 className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]"
               >
-                <MapPin className="h-3.5 w-3.5" /> Map
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Map
               </a>
             )}
           </div>
         </div>
 
-        {/* Right: Actions — full cluster on desktop, extraActions+Pipeline+⋯ on mobile */}
+        {/* Right: Pipeline selector + ⋯ ActionMenu (PDF + Share always collapsed) */}
         <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
           {extraActions}
           {pipelineStatus ? (
             <PipelineSelect
               value={pipelineStatus}
               onChange={onPipelineChange}
+              onRemove={onRemovePipeline}
               options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
             />
           ) : (
-            <Button variant="secondary" size="sm" icon={<TrendingUp className="h-3.5 w-3.5" />} onClick={() => onPipelineChange("new_lead")}>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />}
+              onClick={() => onPipelineChange("new_lead")}
+            >
               Add to Pipeline
             </Button>
           )}
-          {/* PDF + Share inline on desktop */}
-          <a
-            href={`/api/export/pdf?businessId=${businessId}`}
-            className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] min-h-[36px] lg:min-h-[32px] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
-          >
-            <FileDown className="h-3.5 w-3.5" /> PDF
-          </a>
-          <Button variant="secondary" size="sm" icon={<Share2 className="h-3.5 w-3.5" />} onClick={onShare} className="hidden sm:inline-flex">
-            Share
-          </Button>
-          {/* ⋯ overflow on mobile — PDF + Share collapsed here */}
-          <div className="sm:hidden">
-            <ActionMenu
-              align="end"
-              items={[
-                {
-                  label: "Download PDF",
-                  icon: <FileDown className="h-3.5 w-3.5" />,
-                  onClick: () => { window.location.href = `/api/export/pdf?businessId=${businessId}`; },
-                },
-                {
-                  label: "Share link",
-                  icon: <Share2 className="h-3.5 w-3.5" />,
-                  onClick: onShare,
-                },
-              ]}
-            />
-          </div>
+          <ActionMenu
+            align="end"
+            items={[
+              {
+                label: "Download PDF report",
+                icon: <FileDown className="h-3.5 w-3.5" aria-hidden="true" />,
+                onClick: () => { window.location.href = `/api/export/pdf?businessId=${businessId}`; },
+              },
+              {
+                label: "Copy share link",
+                icon: <Share2 className="h-3.5 w-3.5" aria-hidden="true" />,
+                onClick: onShare,
+              },
+            ]}
+          />
         </div>
       </div>
     </div>
