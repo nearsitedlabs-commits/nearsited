@@ -2,6 +2,7 @@
 
 import { Users, Building2, Palette, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Pill } from "@/components/ui/Pill";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
@@ -46,9 +47,7 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
             <h3 className="text-base font-medium text-[var(--color-text-primary)]">{uc.title}</h3>
             {"badge" in uc && uc.badge && (
-              <span className="inline-flex items-center rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
-                {uc.badge}
-              </span>
+              <Pill variant="neutral" size="sm">{uc.badge}</Pill>
             )}
           </div>
           <p className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{uc.desc}</p>
