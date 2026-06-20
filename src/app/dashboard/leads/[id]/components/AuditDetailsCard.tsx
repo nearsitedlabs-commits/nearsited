@@ -3,6 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import type { AuditRow } from "@/lib/db-types";
 import { MetricKey, METRIC_META, metricColor } from "@/lib/metric-meta";
+import { ListRow } from "@/components/ui/ListRow";
 import { SubScore } from "./SubScore";
 
 type Props = {
@@ -48,25 +49,26 @@ export function AuditDetailsCard({
           </div>
 
           {auditsToShow.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {auditsToShow.map((audit) => (
-                <div key={audit.id as string} className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
-                  <p className="text-xs font-medium text-[var(--color-text-primary)] mb-2">
+                <div key={audit.id as string}>
+                  <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-tertiary)]">
                     {audit.strategy === "mobile" ? "Mobile" : "Desktop"} Web Vitals
                   </p>
-                  <div className="space-y-2">
+                  <div className="overflow-hidden rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)]">
                     {(["fcp", "lcp", "tbt", "cls"] as MetricKey[]).map((metric) => {
                       const rawVal = audit[metric] as string | null | undefined;
                       const colorClass = metricColor(metric, rawVal);
                       const meta = METRIC_META[metric];
                       return (
-                        <div key={metric} className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xs text-[var(--color-text-primary)]">{meta.label}</p>
-                            <p className="text-[10px] text-[var(--color-text-tertiary)]">{meta.subtitle}</p>
-                          </div>
-                          <span className={`text-xs font-bold ${colorClass}`}>{rawVal ?? "—"}</span>
-                        </div>
+                        <ListRow
+                          key={metric}
+                          title={meta.label}
+                          subtitle={meta.subtitle}
+                          trailing={
+                            <span className={`text-xs font-bold tabular-nums ${colorClass}`}>{rawVal ?? "—"}</span>
+                          }
+                        />
                       );
                     })}
                   </div>

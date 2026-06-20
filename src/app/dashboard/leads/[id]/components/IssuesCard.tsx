@@ -1,6 +1,8 @@
 "use client";
 
+import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "@/lib/motion";
+import { GhostButton } from "@/components/ui/Button";
 import { ImpactPill } from "./ImpactPill";
 
 type Issue = { title: string; detail: string; point_deduction?: number; impact: "High" | "Medium" | "Low" };
@@ -27,10 +29,14 @@ type Props = {
 
 export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion, projDelta }: Props) {
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
       <h2 className="mb-4 text-base font-semibold text-[var(--color-text-primary)]">Top Issues Impacting Score</h2>
       {issues.length === 0 ? (
-        <p className="text-sm text-[var(--color-text-tertiary)]">Run a design analysis to see issues.</p>
+        <div className="py-4 text-center">
+          <Sparkles className="mx-auto mb-3 h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
+          <p className="text-sm font-medium text-[var(--color-text-primary)]">Run an analysis to surface prioritised issues</p>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">Get severity-ranked design and performance findings with specific fix recommendations and point-impact estimates.</p>
+        </div>
       ) : (
         <motion.div
           className="space-y-3"
@@ -39,7 +45,7 @@ export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion, pr
           animate="visible"
         >
           {(showAll ? issues : issues.slice(0, 3)).map((issue, i) => (
-            <motion.div key={i} variants={issueItem} className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
+            <motion.div key={i} variants={issueItem} className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">{issue.title}</p>
@@ -48,23 +54,29 @@ export function IssuesCard({ issues, showAll, onToggleShowAll, reducedMotion, pr
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <ImpactPill impact={issue.impact ?? "Medium"} />
                   {issue.point_deduction && (
-                    <span className="text-xs font-bold text-[var(--score-high)]">−{issue.point_deduction}pts</span>
+                    <span className="text-xs font-bold text-[var(--color-danger)]">−{issue.point_deduction}pts</span>
                   )}
                 </div>
               </div>
             </motion.div>
           ))}
           {issues.length > 3 && (
-            <button
-              onClick={onToggleShowAll}
-              className="w-full cursor-pointer pt-1 text-xs text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-accent)]"
-            >
-              {showAll ? "Show less" : `+${issues.length - 3} more issue${issues.length - 3 !== 1 ? "s" : ""}`}
-            </button>
+            <div className="flex justify-center pt-1">
+              <GhostButton
+                size="sm"
+                onClick={onToggleShowAll}
+                icon={showAll ? undefined : <ArrowRight className="h-3 w-3" aria-hidden="true" />}
+              >
+                {showAll ? "Show less" : `+${issues.length - 3} more issue${issues.length - 3 !== 1 ? "s" : ""}`}
+              </GhostButton>
+            </div>
           )}
           {projDelta != null && projDelta > 0 && (
-            <p className="pt-1 text-xs text-[var(--color-text-tertiary)]">
-              Fix these issues → <span className="font-semibold text-[var(--color-success)]">+{projDelta} pts</span> site quality improvement
+            <p className="flex items-center gap-1 pt-1 text-xs text-[var(--color-text-secondary)]">
+              Fix these issues
+              <ArrowRight className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" aria-hidden="true" />
+              <span className="font-semibold text-[var(--color-accent)]">+{projDelta} pts</span>
+              {" "}site quality improvement
             </p>
           )}
         </motion.div>

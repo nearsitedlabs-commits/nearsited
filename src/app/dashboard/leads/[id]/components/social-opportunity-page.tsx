@@ -13,13 +13,11 @@ import type { BusinessRow } from "@/lib/db-types";
 
 // Shared components
 import { LeadHeaderStrip } from "./LeadHeaderStrip";
-import { StatsRow } from "./StatsRow";
 import { PitchCard } from "./PitchCard";
 import { PreCallBrief } from "./PreCallBrief";
 import type { CallBriefSections } from "./PreCallBrief";
 import { AIQuotaBanner } from "./AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./opportunity-score-explanation";
-import { LeadExportSection } from "./LeadExportSection";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -181,6 +179,19 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
     navigator.clipboard.writeText(text).then(() => showToast("Pitch copied to clipboard"));
   }, [pitchResult, activeChannel, showToast]);
 
+  const handleRemoveFromPipeline = useCallback(async () => {
+    const prev = currentPipelineStatus;
+    setCurrentPipelineStatus(null);
+    try {
+      const res = await fetch("/api/pipeline", {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: biz.id }),
+      });
+      if (!res.ok) { setCurrentPipelineStatus(prev); showToast("Failed to remove from pipeline"); }
+      else { showToast("Removed from pipeline"); }
+    } catch { setCurrentPipelineStatus(prev); showToast("Network error"); }
+  }, [biz.id, currentPipelineStatus, showToast]);
+
   const handleShare = useCallback(async () => {
     try {
       const res = await fetch("/api/share", {
@@ -236,12 +247,13 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
           address={biz.address}
           placeId={biz.place_id}
           phone={biz.phone}
-          website={biz.website}
+          website={null}
           websiteStatus={biz.website_status}
           rating={biz.rating}
           reviewCount={biz.review_count}
           pipelineStatus={currentPipelineStatus}
           onPipelineChange={handlePipelineChange}
+          onRemovePipeline={handleRemoveFromPipeline}
           onShare={handleShare}
           backTo={backTo}
           badge={
@@ -263,15 +275,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               )}
             </>
           }
-        />
-
-        {/* ── STATS ROW ─────────────────────────────────────────────────── */}
-        <StatsRow
-          opportunityScore={oppScore}
-          isVerified={false}
-          estimatedValue={null}
-          reviewVelocity30d={null}
-          localCompetitors={null}
         />
 
         {/* ── TWO-COLUMN MAIN ───────────────────────────────────────────── */}
@@ -329,7 +332,6 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
               issues={[]}
             />
 
-            <LeadExportSection businessId={biz.id} handleShare={handleShare} />
 
           </div>
         </div>

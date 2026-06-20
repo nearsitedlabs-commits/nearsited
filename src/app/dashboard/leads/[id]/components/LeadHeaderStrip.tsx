@@ -8,6 +8,13 @@ import { ActionMenu } from "@/components/ui/ActionMenu";
 import { Button } from "@/components/ui/Button";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 
+type ActionMenuItem = {
+  label: string;
+  icon?: React.ReactNode;
+  onClick: () => void;
+  destructive?: boolean;
+};
+
 type Props = {
   businessId: string;
   businessName: string;
@@ -27,6 +34,8 @@ type Props = {
   onShare: () => Promise<void>;
   backTo?: string;
   extraActions?: React.ReactNode;
+  /** Extra items prepended to the ⋯ ActionMenu (before PDF/Share) */
+  extraMenuItems?: ActionMenuItem[];
   badge?: React.ReactNode;
 };
 
@@ -48,6 +57,7 @@ export function LeadHeaderStrip({
   onShare,
   backTo = "leads",
   extraActions,
+  extraMenuItems,
   badge,
 }: Props) {
   const backHref = backTo === "discover" ? "/dashboard/discover" : "/dashboard/leads";
@@ -144,6 +154,7 @@ export function LeadHeaderStrip({
           <ActionMenu
             align="end"
             items={[
+              ...(extraMenuItems ?? []),
               {
                 label: "Download PDF report",
                 icon: <FileDown className="h-3.5 w-3.5" aria-hidden="true" />,

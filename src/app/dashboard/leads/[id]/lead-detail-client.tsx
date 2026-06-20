@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, useSafeReducedMotion } from "@/lib/motion";
 import { FadeUp, StaggerContainer } from "@/lib/motion";
-import { Pencil } from "lucide-react";
+import { Pencil, RefreshCw } from "lucide-react";
 import { computeOverall, uxDesignScore, trustScore, projection, computeOpportunityScore, blendQualityForOpportunity, estimatedOpportunity } from "@/lib/scoring";
 import type { WebsiteStatus } from "@/lib/db-types";
 import type { BusinessRow, AuditRow, DesignAnalysisRow } from "@/lib/db-types";
@@ -22,10 +22,8 @@ import { buildPreCallBriefSections } from "./components/OpportunityBullets";
 import { LeadHeaderStrip } from "./components/LeadHeaderStrip";
 import { PitchCard, type PitchToneConfig } from "./components/PitchCard";
 import { PreCallBrief } from "./components/PreCallBrief";
-import { LeadExportSection } from "./components/LeadExportSection";
 import { AIQuotaBanner } from "./components/AIQuotaBanner";
 import { OpportunityScoreExplanation } from "./components/opportunity-score-explanation";
-import { StatsRow } from "./components/StatsRow";
 import { BusinessEditPanel } from "./components/BusinessEditPanel";
 import { AnalysisProgressBanner } from "./components/AnalysisProgressBanner";
 import { DesignErrorBanner } from "./components/DesignErrorBanner";
@@ -243,6 +241,29 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
   }, [biz.id, currentPipelineStatus, showToast]);
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const handleRemoveFromPipeline = useCallback(async () => {
+    const prev = currentPipelineStatus;
+    setCurrentPipelineStatus(null);
+    try {
+      const res = await fetch("/api/pipeline", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: biz.id }),
+      });
+      if (!res.ok) {
+        setCurrentPipelineStatus(prev);
+        showToast("Failed to remove from pipeline");
+      } else {
+        showToast("Removed from pipeline");
+      }
+    } catch (err) {
+      console.error("[LEAD] Remove from pipeline error:", err);
+      setCurrentPipelineStatus(prev);
+      showToast("Network error");
+    }
+  }, [biz.id, currentPipelineStatus, showToast]);
+
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleShare = useCallback(async () => {
     try {
       const res = await fetch("/api/share", {
@@ -288,32 +309,25 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
               reviewCount={biz.review_count}
               pipelineStatus={currentPipelineStatus}
               onPipelineChange={handlePipelineChange}
+              onRemovePipeline={handleRemoveFromPipeline}
               onShare={handleShare}
               backTo={backTo}
+              extraMenuItems={
+                hasAudit && hasWebsite
+                  ? [{ label: "Re-analyse", icon: <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />, onClick: analysis.handleFullAnalysis }]
+                  : undefined
+              }
               extraActions={
-                <>
-                  {!biz.place_id && (
-                    <Button
-                      variant="icon"
-                      icon={<Pencil className="h-3.5 w-3.5" />}
-                      onClick={() => setShowEditPanel((v) => !v)}
-                      title="Edit business details"
-                    >
-                      Edit business
-                    </Button>
-                  )}
-                  {hasWebsite && (
-                    <Button
-                      variant={hasAudit ? "secondary" : "primary"}
-                      size="sm"
-                      onClick={analysis.handleFullAnalysis}
-                      disabled={analysis.runningFullAnalysis}
-                      loading={analysis.runningFullAnalysis}
-                    >
-                      {analysis.runningFullAnalysis ? "Analysing…" : hasAudit ? "Re-analyse" : "Analyse Opportunity"}
-                    </Button>
-                  )}
-                </>
+                !biz.place_id ? (
+                  <Button
+                    variant="icon"
+                    icon={<Pencil className="h-3.5 w-3.5" />}
+                    onClick={() => setShowEditPanel((v) => !v)}
+                    title="Edit business details"
+                  >
+                    Edit business
+                  </Button>
+                ) : undefined
               }
             />
             {showEditPanel && !biz.place_id && (
@@ -334,40 +348,26 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
             )}
           </MaybeFadeUp>
 
-          <MaybeFadeUp reduce={shouldReduce}>
-            <motion.div
-              className="mb-8"
-              initial={shouldReduce ? {} : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={shouldReduce ? undefined : { duration: 0.35, ease: EASE_OUT }}
-            >
-              <StatsRow
-                opportunityScore={displayOpportunityScore}
-                isVerified={(hasAudit && hasDesign) || biz.opportunity_score != null}
-                estimatedValue={null}
-                reviewVelocity30d={null}
-                localCompetitors={null}
-              />
-            </motion.div>
-          </MaybeFadeUp>
-
           {!hasAudit && !hasDesign && hasWebsite && (
             <MaybeFadeUp reduce={shouldReduce}>
-              <div className="flex items-center justify-between gap-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 px-5 py-4">
-                <div>
-                  <p className="text-sm font-medium text-[var(--color-text-primary)]">Scores not yet verified</p>
-                  <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">Run an analysis to get real performance, design, and SEO scores.</p>
+              <div className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] px-5 py-4 pl-8">
+                <div className="absolute left-0 top-0 h-full w-0.5 bg-[var(--color-accent)]" aria-hidden="true" />
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-[var(--color-text-primary)]">Scores not yet verified</p>
+                    <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">Run an analysis to get real performance, design, and SEO scores.</p>
+                  </div>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={analysis.handleFullAnalysis}
+                    disabled={analysis.runningFullAnalysis}
+                    loading={analysis.runningFullAnalysis}
+                    className="shrink-0 min-h-[44px] sm:min-h-0"
+                  >
+                    {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Now"}
+                  </Button>
                 </div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={analysis.handleFullAnalysis}
-                  disabled={analysis.runningFullAnalysis}
-                  loading={analysis.runningFullAnalysis}
-                  className="shrink-0 min-h-[44px] sm:min-h-0"
-                >
-                  {analysis.runningFullAnalysis ? "Analysing…" : "Analyse Now"}
-                </Button>
               </div>
             </MaybeFadeUp>
           )}
@@ -489,7 +489,7 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                   <OpportunityScoreExplanation
                     websiteStatus={biz.website_status}
                     overallScore={overall}
-                    opportunityScore={effectiveOpportunityScore}
+                    opportunityScore={displayOpportunityScore}
                     reviewCount={biz.review_count}
                     rating={biz.rating}
                     hasAudit={hasAudit}
@@ -503,9 +503,6 @@ export default function LeadDetailClient({ business, audits, designAnalyses, pip
                     designScore={biz.design_score}
                     trustScoreVal={criteria ? trustScoreVal : null}
                   />
-                </motion.div>
-                <motion.div variants={sectionCard}>
-                  <LeadExportSection businessId={biz.id} handleShare={handleShare} />
                 </motion.div>
               </motion.div>
 

@@ -5,7 +5,7 @@ export function SubScore({ label, score }: { label: string; score: number | null
     : score >= 40 ? "text-[var(--color-warning)]"
     : "text-[var(--score-high)]";
   return (
-    <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+    <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
       <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{score ?? "—"}</span>
     </div>
