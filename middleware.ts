@@ -125,7 +125,8 @@ export async function middleware(request: NextRequest) {
         console.warn(
           `[CSRF] Blocked ${method} ${pathname} — ` +
             `origin=${request.headers.get("origin") ?? "(none)"} ` +
-            `referer=${request.headers.get("referer") ?? "(none)"}`,
+            `referer=${request.headers.get("referer") ?? "(none)"} ` +
+            `allowed=${JSON.stringify(getAllowedOrigins())}`,
         );
         return new NextResponse(JSON.stringify({ error: "CSRF validation failed" }), {
           status: 403,
