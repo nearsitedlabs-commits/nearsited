@@ -25,19 +25,19 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
     "[@media(hover:hover)]:hover:opacity-90 " +
     "active:opacity-90 ",
   secondary:
-    "border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] " +
-    "[@media(hover:hover)]:hover:border-[var(--color-accent)]/30 [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
-    "active:bg-[var(--accent-tint)] ",
+    "border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] " +
+    "[@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] [@media(hover:hover)]:hover:shadow-[0_0_0_1px_rgba(138,151,119,0.12)] " +
+    "active:bg-[var(--accent-tint)] transition-all duration-150 ",
   ghost:
     "bg-transparent text-[var(--color-text-secondary)] " +
-    "[@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
-    "active:bg-[var(--color-bg-elevated)] " +
+    "[@media(hover:hover)]:hover:bg-[var(--accent-tint)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
+    "active:bg-[var(--accent-tint)] transition-all duration-150 " +
     "focus-visible:ring-[var(--color-accent)]/30 ",
   icon:
     "bg-transparent text-[var(--color-text-tertiary)] " +
     "p-2.5 min-h-[44px] min-w-[44px] " +
-    "[@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
-    "active:bg-[var(--color-bg-elevated)] " +
+    "[@media(hover:hover)]:hover:bg-[var(--accent-tint)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
+    "active:bg-[var(--accent-tint)] transition-all duration-150 " +
     "focus-visible:ring-[var(--color-accent)]/30 ",
   destructive:
     "border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 text-[var(--color-danger)] " +

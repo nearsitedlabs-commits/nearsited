@@ -35,7 +35,7 @@ export function ActionMenu({ items, trigger, align = "end" }: ActionMenuProps) {
               "rounded-[var(--radius-sm)]",
               "text-[var(--color-text-tertiary)]",
               "transition-colors duration-100",
-              "hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)]",
+              "hover:bg-[var(--accent-tint)] hover:text-[var(--color-text-primary)]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40",
             )}
             aria-label="More actions"
@@ -72,7 +72,7 @@ export function ActionMenu({ items, trigger, align = "end" }: ActionMenuProps) {
                 "focus-visible:outline-none",
                 item.danger
                   ? "text-[var(--color-danger)] data-[highlighted]:bg-[rgba(196,102,90,0.10)]"
-                  : "text-[var(--color-text-secondary)] data-[highlighted]:bg-[var(--color-bg-surface)] data-[highlighted]:text-[var(--color-text-primary)]",
+                  : "text-[var(--color-text-secondary)] data-[highlighted]:bg-[var(--accent-tint)] data-[highlighted]:text-[var(--color-text-primary)]",
                 item.disabled && "cursor-not-allowed opacity-40",
               )}
             >

@@ -92,9 +92,9 @@
   --color-bg-elevated: var(--bg-surface-2);
 
   /* Borders */
-  --color-border-subtle:  rgba(255,255,255,0.06);  /* default for most borders */
-  --color-border-strong:  rgba(255,255,255,0.10);  /* emphasis borders only */
-  --color-border-default: var(--color-border-subtle); /* alias — use for any border that needs a name */
+  --color-border-subtle:  rgba(255,255,255,0.06);       /* structural borders — dividers, table lines */
+  --color-border-strong:  rgba(138,151,119,0.22);       /* interactive borders — buttons, focused inputs */
+  --color-border-default: var(--color-border-subtle);
 
   /* Text */
   --color-text-primary:   var(--text-primary);
