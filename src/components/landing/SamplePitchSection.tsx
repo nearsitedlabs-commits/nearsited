@@ -4,8 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, useSafeReducedMotion } from "@/lib/motion";
 import { Zap, FileText, TrendingUp, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Pill } from "@/components/ui/Pill";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
@@ -27,13 +26,13 @@ const NEXT_TONE: Record<ToneOption, ToneOption> = {
 
 const PITCH_EXAMPLES: Record<PitchTab, {
   label: string;
-  badgeColor: "amber" | "red" | "indigo";
+  pillVariant: "warning" | "danger" | "info";
   metaFor: string;
   body: React.ReactNode;
 }> = {
   weak: {
     label: "Weak Website",
-    badgeColor: "amber",
+    pillVariant: "warning",
     metaFor: "Brighton Dental · 1.4s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -52,7 +51,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   },
   none: {
     label: "No Website",
-    badgeColor: "red",
+    pillVariant: "danger",
     metaFor: "Harbor Legal Group · 1.2s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -72,7 +71,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   },
   social: {
     label: "Social Only",
-    badgeColor: "indigo",
+    pillVariant: "info",
     metaFor: "The Hideaway Cafe · 1.1s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -91,7 +90,7 @@ const PITCH_EXAMPLES: Record<PitchTab, {
   },
   platform: {
     label: "Platform Only",
-    badgeColor: "indigo",
+    pillVariant: "info",
     metaFor: "Bloom Beauty Bar · 1.3s",
     body: (
       <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -173,19 +172,19 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 );
               })}
             </div>
-            <Card variant="default" padding="lg" className="border-[var(--color-border-strong)]">
+            <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-[var(--color-accent)]" />
+                  <MessageSquare aria-hidden="true" className="h-4 w-4 text-[var(--color-accent)]" />
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">Sample pitch</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge color={example.badgeColor}>{example.label}</Badge>
-                  <Badge color="green" dot>Ready to send</Badge>
+                  <Pill variant={example.pillVariant} size="sm">{example.label}</Pill>
+                  <Pill variant="success" size="sm" dot>Ready to send</Pill>
                 </div>
               </div>
 
-              <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-5">
+              <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-5">
                 {prefersReducedMotion ? (
                   <>
                     <p className="mb-4 text-xs text-[var(--color-text-tertiary)]">{metaDisplay}</p>
@@ -234,7 +233,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
               <p className="mt-4 text-center text-xs text-[var(--color-text-tertiary)]">
                 Every pitch is unique. No templates. Pitch angle, evidence, and tone are all generated from the opportunity.
               </p>
-            </Card>
+            </div>
           </div>
         </div>
       </div>
