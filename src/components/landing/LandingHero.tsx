@@ -100,7 +100,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
         transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       >
         <div className="relative w-full min-w-0 md:max-w-[440px]">
-          <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
+          <Card variant="default" padding="lg" className="border-[var(--color-border-strong)]">
             <div className="mb-4 flex min-w-0 items-center gap-2">
               <p className="min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Opportunities · Dubai</p>
               <Badge color="green" dot className="shrink-0">Sample</Badge>
@@ -143,7 +143,7 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
             {/* Pitch preview — changes based on selected row */}
             <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-elevated)] p-4">
               <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">
-                <MessageSquare className="h-3 w-3 text-[var(--color-accent)]" />
+                <MessageSquare aria-hidden="true" className="h-3 w-3 text-[var(--color-accent)]" />
                 AI pitch · ready to send
               </div>
               <p className="text-sm leading-7 text-[var(--color-text-secondary)] italic">{PITCHES[activeOpp]}</p>

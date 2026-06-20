@@ -144,7 +144,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 const Icon = item.icon;
                 return (
                   <div key={item.text} className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]">
-                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
+                    <Icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
                     <span>{item.text}</span>
                   </div>
                 );
@@ -165,7 +165,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                     className={`inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors ${
                       activeTab === id
                         ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
-                        : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--color-text-primary)]"
+                        : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
                     }`}
                   >
                     {tab.label}
@@ -173,7 +173,7 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                 );
               })}
             </div>
-            <Card variant="default" padding="lg" className="border-[var(--border-strong)]">
+            <Card variant="default" padding="lg" className="border-[var(--color-border-strong)]">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4 text-[var(--color-accent)]" />

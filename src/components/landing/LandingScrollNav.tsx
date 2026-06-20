@@ -73,11 +73,11 @@ function MobileProgressBar({ progress, prefersReducedMotion }: { progress: numbe
       style={{ background: "rgba(255,255,255,0.04)" }}
     >
       {prefersReducedMotion ? (
-        <div className="w-full rounded-b-full" style={{ height: barHeight, background: "var(--accent)", opacity: 0.7 }} />
+        <div className="w-full rounded-b-full" style={{ height: barHeight, background: "var(--color-accent)", opacity: 0.7 }} />
       ) : (
         <motion.div
           className="w-full rounded-b-full"
-          style={{ background: "var(--accent)", opacity: 0.7 }}
+          style={{ background: "var(--color-accent)", opacity: 0.7 }}
           animate={{ height: barHeight }}
           transition={{ duration: 0.1, ease: "linear" }}
         />
@@ -127,7 +127,7 @@ function NavDot({ section, isActive }: { section: Section; isActive: boolean }) 
             style={{
               width: 13,
               height: 13,
-              color: isActive ? "var(--accent)" : "rgba(255,255,255,0.35)",
+              color: isActive ? "var(--color-accent)" : "rgba(255,255,255,0.35)",
               transition: "color 0.18s ease",
             }}
           />
@@ -143,7 +143,7 @@ export function LandingScrollNav() {
   const prefersReducedMotion = useSafeReducedMotion();
 
   const inner = (
-    <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.06)] bg-[rgba(10,14,18,0.7)] px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
+    <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-page)]/70 px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
       {NAV_SECTIONS.map((section) => (
         <NavDot key={section.id} section={section} isActive={activeId === section.id} />
       ))}

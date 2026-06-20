@@ -67,10 +67,10 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
   const scoreColor =
     result?.score != null
       ? result.score >= 85
-        ? "text-green-400"
+        ? "text-[var(--color-success)]"
         : result.score >= 70
-          ? "text-amber-400"
-          : "text-red-400"
+          ? "text-[var(--color-warning)]"
+          : "text-[var(--color-danger)]"
       : "";
 
   return (
@@ -83,14 +83,14 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
           viewport={viewport}
           transition={{ duration: 0.35, ease }}
         >
-          <div className="mb-4 inline-flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--accent)]">
-            <span className="block h-px w-6 bg-[var(--accent)]" />
+          <div className="mb-4 inline-flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--color-accent)]">
+            <span className="block h-px w-6 bg-[var(--color-accent)]" />
             Quick Audit
           </div>
-          <h2 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--text-primary)]">
+          <h2 className="text-[clamp(1.8rem,3vw,2.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--color-text-primary)]">
             See what Nearsited finds.
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
+          <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]">
             Paste any website URL. Get a free performance scan — no signup needed.
           </p>
         </motion.div>
@@ -150,13 +150,13 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
               <div className="flex items-center gap-4">
                 <div className={`text-4xl font-bold tracking-tight ${scoreColor}`}>
                   {result.score}
-                  <span className="text-lg font-normal text-[var(--text-tertiary)]">/100</span>
+                  <span className="text-lg font-normal text-[var(--color-text-tertiary)]">/100</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                  <p className="text-sm font-medium text-[var(--color-text-primary)]">
                     {result.scoreLabel}
                   </p>
-                  <p className="text-xs text-[var(--text-tertiary)]">
+                  <p className="text-xs text-[var(--color-text-tertiary)]">
                     {result.totalIssuesFound} issue{result.totalIssuesFound !== 1 ? "s" : ""} detected
                   </p>
                 </div>
@@ -165,12 +165,12 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
               {/* Top issues */}
               {result.issues && result.issues.length > 0 && (
                 <div className="mt-6 space-y-2">
-                  <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
+                  <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-tertiary)]">
                     Top issues found
                   </p>
                   {result.issues.map((issue, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
-                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
+                    <div key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]">
+                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--color-warning)]" />
                       <span>{issue.title}</span>
                     </div>
                   ))}
@@ -179,24 +179,24 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
 
               {/* Gate */}
               <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 p-4 text-center">
-                <p className="text-sm font-medium text-[var(--text-primary)]">
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">
                   Want the full picture?
                 </p>
-                <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
                   Sign up for free to see revenue estimates, pitch angles, competitor comparison, and the complete 14-signal audit.
                 </p>
                 <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                   <Button
                     variant="primary"
                     onClick={() => navigate("/signup")}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto sm:min-w-[180px] whitespace-nowrap"
                   >
-                    Get full audit free <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    Get full audit free <ArrowRight className="ml-1.5 h-3.5 w-3.5 inline-block flex-shrink-0" />
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant="secondary"
                     onClick={() => navigate("/login")}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto sm:min-w-[180px]"
                   >
                     I have an account
                   </Button>

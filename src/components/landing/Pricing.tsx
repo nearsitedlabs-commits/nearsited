@@ -303,7 +303,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
                 padding="lg"
                 className={`flex h-full flex-col ${
                   plan.featured
-                    ? "border-[var(--color-accent)]/30 ring-1 ring-[var(--accent)]/10"
+                    ? "border-[var(--color-accent)]/30 ring-1 ring-[var(--color-accent)]/10"
                     : ""
                 }`}
               >

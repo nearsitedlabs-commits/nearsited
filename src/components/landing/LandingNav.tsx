@@ -79,22 +79,22 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const desktopLinksAnimated = (
     <ul className="hidden items-center gap-8 text-sm text-[var(--color-text-tertiary)] md:flex">
       <li>
-        <a href="#how" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#how" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--color-text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           How it works
         </a>
       </li>
       <li>
-        <a href="#report" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#report" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--color-text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           Sample report
         </a>
       </li>
       <li>
-        <Link href="/pricing" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <Link href="/pricing" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--color-text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           Pricing
         </Link>
       </li>
       <li>
-        <a href="#faq" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
+        <a href="#faq" className="relative transition hover:text-[var(--color-text-primary)] after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-[var(--color-text-primary)] after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">
           FAQ
         </a>
       </li>

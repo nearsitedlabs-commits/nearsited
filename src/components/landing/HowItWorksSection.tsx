@@ -58,7 +58,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Flush step list */}
-        <div className="mt-14 mx-auto max-w-3xl divide-y divide-[var(--border)]">
+        <div className="mt-14 mx-auto max-w-3xl divide-y divide-[var(--color-border-subtle)]">
           {HIERARCHY.map((step, i) => {
             const Icon = step.icon;
             return (
@@ -76,7 +76,7 @@ export function HowItWorksSection() {
                 <div className="min-w-0 flex-1">
                   <div className="mb-2 flex items-center gap-2.5">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-                      <Icon className="h-3.5 w-3.5" />
+                      <Icon aria-hidden="true" className="h-3.5 w-3.5" />
                     </div>
                     <h3 className="text-base font-medium text-[var(--color-text-primary)]">{step.title}</h3>
                   </div>

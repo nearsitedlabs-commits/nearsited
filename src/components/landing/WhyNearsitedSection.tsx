@@ -49,19 +49,19 @@ export function WhyNearsitedSection() {
         </div>
 
         <div className="mt-8 grid gap-4 md:mt-12 md:gap-6 md:grid-cols-2 md:items-stretch">
-          {/* Traditional — subtle border, no fill (the pain) */}
+          {/* Traditional — muted card (the pain) */}
           <motion.div {...anim(0)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] border border-white/10 bg-[var(--color-bg-elevated)] px-6 py-6">
               <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--score-high)]/10">
-                  <AlertTriangle className="h-4 w-4 text-[var(--score-high)]" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10">
+                  <AlertTriangle className="h-4 w-4 text-[var(--color-danger)]" />
                 </div>
                 <h3 className="text-base font-medium text-[var(--color-text-secondary)]">Traditional prospecting</h3>
               </div>
               <ul className="space-y-3">
                 {TRADITIONAL_CONS.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)] opacity-70">
-                    <span className="mt-0.5 shrink-0 text-[var(--score-high)] font-bold">✕</span>
+                  <li key={item} className="flex items-start gap-3 text-sm text-[var(--color-text-tertiary)]">
+                    <span className="mt-0.5 shrink-0 text-[var(--color-danger)] font-bold">✕</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -69,11 +69,11 @@ export function WhyNearsitedSection() {
             </div>
           </motion.div>
 
-          {/* Nearsited — accent bg tint, no border (the resolution) */}
+          {/* Nearsited — accent bordered card (the resolution) */}
           <motion.div {...anim(0.1)} className="h-full">
-            <div className="h-full rounded-[var(--radius-md)] bg-[var(--color-accent)]/[0.04] px-6 py-6">
+            <div className="h-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/[0.06] px-6 py-6">
               <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/15">
                   <Zap className="h-4 w-4 text-[var(--color-accent)]" />
                 </div>
                 <h3 className="text-base font-medium text-[var(--color-text-primary)]">Nearsited</h3>

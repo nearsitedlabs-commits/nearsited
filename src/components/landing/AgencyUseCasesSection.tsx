@@ -40,7 +40,7 @@ export function AgencyUseCasesSection({ navigate }: { navigate: (href: string) =
     return (
       <div key={uc.title} className="flex gap-5 py-6 border-b border-[var(--color-border-subtle)] last:border-0">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-          <Icon className="h-4.5 w-4.5" />
+          <Icon aria-hidden="true" className="h-4.5 w-4.5" />
         </div>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
