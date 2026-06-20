@@ -31,8 +31,8 @@ const TIER_COLORS: Record<string, string> = {
 
 /** Benefits copy — kept in sync with landing page Pricing.tsx PLANS array */
 const PLAN_BENEFITS: Record<string, string> = {
-  starter: "50 analyses/mo · unlimited searches · email pitches · pipeline tracking",
-  agency: "200 analyses/mo · unlimited searches · WhatsApp pitches · white-label reports · priority support",
+  starter: "50 analyses/mo · unlimited searches · unlimited AI pitches · pipeline tracking",
+  agency: "200 analyses/mo · unlimited searches · unlimited AI pitches · white-label reports · priority support",
 };
 
 type ClearScope = "leads" | "pipeline" | "pitches" | "saved_searches";
