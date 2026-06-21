@@ -78,12 +78,12 @@ export function LandingFAQ() {
             </SectionSub>
           </div>
 
-          <div className="mt-10 space-y-2">
+          <div className="mt-10 divide-y divide-[var(--color-border-subtle)] border-t border-[var(--color-border-subtle)]">
             {faqs.map((faq, i) => (
               <div
                 key={faq.q}
                 id={faq.id}
-                className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/15 bg-[var(--color-bg-surface)] overflow-hidden"
+                className="overflow-hidden"
               >
                 <button
                   onClick={() => toggle(i)}
@@ -92,6 +92,7 @@ export function LandingFAQ() {
                 >
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">{faq.q}</span>
                   <ChevronDown
+                    aria-hidden="true"
                     className={`h-4 w-4 shrink-0 text-[var(--color-text-tertiary)] transition-transform duration-200 ${
                       openIndex === i ? "rotate-180" : ""
                     }`}
