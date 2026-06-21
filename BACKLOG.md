@@ -50,6 +50,16 @@ _Filed: June 2026 — lead-detail sprint §10.4_
 
 ---
 
+## Landing (from polish sprint §0–§15, June 2026)
+
+**Pricing card borders** — `src/components/landing/Pricing.tsx`. Non-featured plan cards still use `<Card variant="default">` which adds a subtle perimeter border via the shared Card component. Sprint plan says "Agency keeps brand-accent border" but other cards should use elevation only. Fix: replace `<Card>` with `<div>` + explicit classes, same as done in SampleReportSection / SamplePitchSection.
+
+**Footer link hover not gated** — `src/components/landing/LandingFooter.tsx`. Footer `<a>` tags use `hover:text-[var(--color-text-primary)]` without `@media(hover:hover)`. Not a sticky-hover bug on simple text links but violates CLAUDE.md mobile rules. Gate with `[@media(hover:hover)]:hover:text-...` pattern.
+
+**ProofBlocksSection founder avatar** — `src/components/landing/ProofBlocksSection.tsx` line 27. Uses `rounded-full` for avatar circle. CLAUDE.md bans `rounded-full`; acceptable exception for avatar circles but worth documenting for design audit.
+
+---
+
 ## Lead-type-specific
 
 **Social `Website` pill:** Social-only leads sometimes show a `Website` pill in the top pills row alongside `#Instagram`. Either misnamed (should be `Visit Profile` if it links to the social URL) or the lead classifier is misrouting leads. Investigate. (Note: suppressed in sprint by passing `website={null}` to `LeadHeaderStrip` for social leads — the `View Profile` badge already handles this link.)
