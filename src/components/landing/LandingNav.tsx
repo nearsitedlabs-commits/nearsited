@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
@@ -27,6 +27,7 @@ function handleNavClick(href: string, navigate: (href: string) => void) {
 export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   const shouldReduceMotion = useSafeReducedMotion();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
@@ -39,6 +40,37 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [mobileMenuOpen, closeMobileMenu]);
+
+  // Focus trap for mobile drawer
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const trigger = document.activeElement as HTMLElement | null;
+    const container = drawerRef.current;
+    if (!container) return;
+    const focusable = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    focusable[0]?.focus();
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener("keydown", trap);
+    return () => {
+      document.removeEventListener("keydown", trap);
+      trigger?.focus();
+    };
+  }, [mobileMenuOpen]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -128,7 +160,7 @@ export function LandingNav({ navigate }: { navigate: (href: string) => void }) {
   // ── Mobile slide-down drawer ──
   const mobileDrawer = (animate: boolean) => {
     const content = (
-      <nav className="px-6 py-6" aria-label="Mobile navigation">
+      <nav ref={drawerRef} className="px-6 py-6" aria-label="Mobile navigation">
         <ul className="flex flex-col gap-1">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
