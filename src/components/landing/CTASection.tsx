@@ -3,7 +3,6 @@
 import { Search, Check } from "lucide-react";
 import { useSafeReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
-import { Pill } from "@/components/ui/Pill";
 import { FadeUp } from "@/lib/motion";
 
 export function CTASection({ navigate }: { navigate: (href: string) => void }) {
@@ -17,8 +16,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
 
             <div className="relative z-10">
-              <Pill variant="info" size="sm" dot>Start finding website opportunities today</Pill>
-              <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
                 Your next client is out there, without a website.
               </h2>
               <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]">
@@ -45,8 +43,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
               <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
 
               <div className="relative z-10">
-                <Pill variant="info" size="sm" dot>Start finding website opportunities today</Pill>
-                <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
+                <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
                   Your next client is out there, without a website.
                 </h2>
                 <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-[var(--color-text-secondary)]">
