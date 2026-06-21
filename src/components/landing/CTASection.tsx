@@ -13,11 +13,11 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
     <section className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? (
-          <div className="relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-accent)]/25 bg-[var(--color-bg-surface)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
+          <div className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
 
             <div className="relative z-10">
-              <Badge color="indigo" dot>Start finding website opportunities today</Badge>
+              <Pill variant="info" size="sm" dot>Start finding website opportunities today</Pill>
               <h2 className="mt-6 text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
                 Your next client is out there, without a website.
               </h2>
