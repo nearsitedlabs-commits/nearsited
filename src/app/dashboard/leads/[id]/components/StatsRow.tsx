@@ -103,7 +103,7 @@ export function StatsRow({
         return (
           <div
             key={stat.label}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3.5 py-3 sm:px-4 sm:py-3.5"
+            className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] px-3.5 py-3 sm:px-4 sm:py-3.5"
           >
             <div className="flex items-center gap-1.5 mb-1">
               <Icon className="h-3.5 w-3.5 text-[var(--color-text-tertiary)]" />

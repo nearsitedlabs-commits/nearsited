@@ -102,7 +102,7 @@ export function BusinessEditPanel({ bizId, initialName, initialCity, initialBusi
   const inputCls = "h-10 w-full rounded-[var(--radius-sm)] border bg-[var(--color-bg-elevated)] px-3 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition-colors focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--accent-tint)]";
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-bg-surface)] p-5 space-y-4">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] p-5 space-y-4">
       {/* Google Maps lookup */}
       <div>
         <p className="mb-1.5 text-xs font-medium text-[var(--color-text-tertiary)]">Find on Google Maps <span className="text-[var(--text-muted)]">(optional)</span></p>

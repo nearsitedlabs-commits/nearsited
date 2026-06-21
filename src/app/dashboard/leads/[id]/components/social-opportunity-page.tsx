@@ -232,7 +232,7 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
             <>
               {socialPlatforms.map((platform) => (
                 <span key={platform}
-                  className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--badge-indigo-border)] bg-[var(--badge-indigo-bg)] px-2.5 py-0.5 text-[10px] font-medium text-[var(--badge-indigo-text)]">
+                  className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
                   <Hash className="h-3 w-3" aria-hidden="true" /> {platform}
                 </span>
               ))}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Loader2, MapPin, Pencil, RefreshCw, TrendingUp } from "lucide-react";
 import PipelineSelect from "@/components/ui/PipelineSelect";
+import { SecondaryButton } from "@/components/ui/Button";
 import { PIPELINE_LABELS, PIPELINE_SALES_STATUSES } from "@/lib/ui-constants";
 import { PoweredByGoogle } from "@/components/ui/PoweredByGoogle";
 import { safeHref } from "@/lib/url-security";
@@ -116,16 +117,13 @@ export function LeadHeroSection({
           <div className="flex flex-wrap items-center gap-2">
             {hasWebsite && (
               <div className="flex items-center gap-1.5">
-                <button
+                <SecondaryButton
+                  size="sm"
                   onClick={handleFullAnalysis}
                   disabled={runningFullAnalysis}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 px-3 py-2 text-xs font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-[var(--color-accent)] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  loading={runningFullAnalysis}
+                  icon={runningFullAnalysis ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
                 >
-                  {runningFullAnalysis ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-3.5 w-3.5" />
-                  )}
                   {runningFullAnalysis
                     ? "Analysing…"
                     : biz.audited_at && !biz.design_analyzed_at
@@ -133,7 +131,7 @@ export function LeadHeroSection({
                       : biz.audited_at
                         ? "Re-analyse"
                         : "Analyse"}
-                </button>
+                </SecondaryButton>
                 {runningFullAnalysis && (
                   <button
                     type="button"
@@ -152,12 +150,14 @@ export function LeadHeroSection({
                 options={PIPELINE_SALES_STATUSES.map((s) => ({ value: s, label: PIPELINE_LABELS[s] }))}
               />
             ) : (
-              <button
+              <SecondaryButton
+                size="sm"
                 onClick={() => handlePipelineChange("new_lead")}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 px-3 py-2 text-xs font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-[var(--color-accent)] hover:text-white"
+                icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />}
+                className="text-[var(--color-accent)] border-[var(--color-accent)]/30 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
-                <TrendingUp className="h-3.5 w-3.5" /> Add to Pipeline
-              </button>
+                Add to Pipeline
+              </SecondaryButton>
             )}
           </div>
         </div>

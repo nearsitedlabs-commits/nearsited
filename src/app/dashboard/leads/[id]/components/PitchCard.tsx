@@ -209,7 +209,7 @@ export function PitchCard({
         <div
           role="alert"
           aria-live="polite"
-          className="mb-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400"
+          className="mb-3 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-2 text-xs text-[var(--color-danger)]"
         >
           {pitchError}
         </div>
@@ -275,7 +275,7 @@ export function PitchCard({
 
 function ContactLoading() {
   return (
-    <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+    <div className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
       <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--color-text-tertiary)]" aria-hidden="true" />
       <span className="text-xs text-[var(--color-text-tertiary)]">Finding contact info...</span>
     </div>
@@ -284,7 +284,7 @@ function ContactLoading() {
 
 function ContactChip({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+    <div className="flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
       <span className="text-[var(--color-text-tertiary)]">{icon}</span>
       <span className="text-xs text-[var(--color-text-secondary)]">{text}</span>
     </div>

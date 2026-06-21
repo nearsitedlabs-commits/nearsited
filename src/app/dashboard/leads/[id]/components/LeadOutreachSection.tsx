@@ -3,6 +3,7 @@
 import { Copy, ExternalLink, Loader2, Mail, Phone, RefreshCw, Send } from "lucide-react";
 import { useSafeReducedMotion } from "@/lib/motion";
 import PipelineSelect from "@/components/ui/PipelineSelect";
+import { GhostButton, SecondaryButton } from "@/components/ui/Button";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -72,7 +73,7 @@ export function LeadOutreachSection({
 }: LeadOutreachSectionProps) {
   const shouldReduce = useSafeReducedMotion();
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 sm:p-6">
       <h2 className="mb-3 text-base font-semibold text-[var(--color-text-primary)]">Ready-to-Send Outreach</h2>
 
       {/* Channel tabs with contact status dots */}
@@ -116,7 +117,7 @@ export function LeadOutreachSection({
         }
         if (contactLabel) {
           return (
-            <div className="mb-3 flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+            <div className="mb-3 flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
               <span className="text-xs text-[var(--color-text-secondary)] truncate max-w-[60%]">{contactLabel}</span>
               {contactAction?.url && (
                 <a href={contactAction.url} target="_blank" rel="noreferrer"
@@ -145,7 +146,7 @@ export function LeadOutreachSection({
           );
         }
         return (
-          <div className="mb-3 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+          <div className="mb-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
             <p className="text-xs text-[var(--color-text-tertiary)]">Couldn&rsquo;t find a phone number on the website.</p>
           </div>
         );
@@ -233,30 +234,32 @@ export function LeadOutreachSection({
       </div>
 
       {pitchError && (
-        <div className="mb-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+        <div className="mb-3 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-2 text-xs text-[var(--color-danger)]" role="alert" aria-live="polite">
           {pitchError}
         </div>
       )}
 
       {pitchResult ? (
-        <div className="space-y-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3">
+        <div className="space-y-2 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
           <p className="text-sm font-medium text-[var(--color-text-primary)]">{pitchResult.subject}</p>
           <p className="whitespace-pre-wrap break-words text-xs text-[var(--color-text-secondary)] leading-relaxed">{pitchResult.body}</p>
           <div className="flex gap-2 mt-2">
-            <button
+            <SecondaryButton
+              size="sm"
               onClick={handleCopyPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              icon={<Copy className="h-3 w-3" aria-hidden="true" />}
             >
-              <Copy className="h-3 w-3" /> Copy
-            </button>
-            <button
+              Copy
+            </SecondaryButton>
+            <GhostButton
+              size="sm"
               onClick={() => handleGeneratePitch(true)}
               disabled={generatingPitch}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              loading={generatingPitch}
+              icon={generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" aria-hidden="true" />}
             >
-              {generatingPitch ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               Regenerate
-            </button>
+            </GhostButton>
           </div>
         </div>
       ) : (
