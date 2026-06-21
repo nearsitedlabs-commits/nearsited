@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Check, Minus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { motion, AnimatePresence, useSafeReducedMotion, type Variants } from "@/lib/motion";
@@ -225,12 +224,12 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
           whileInView="visible"
           viewport={viewport}
         >
-          <div className="relative flex items-center rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm">
+          <div className="relative flex items-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm">
             {(["monthly", "annual"] as const).map((b) => (
               <button
                 key={b}
                 onClick={() => setBilling(b)}
-                className={`relative rounded-full px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] ${
+                className={`relative rounded-[var(--radius-sm)] px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] ${
                   billing === b
                     ? "text-[var(--color-text-primary)]"
                     : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
@@ -238,7 +237,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
               >
                 {billing === b && (
                   <div
-                    className="absolute inset-0 rounded-full bg-[var(--color-bg-surface)] shadow-sm transition-all duration-300"
+                    className="absolute inset-0 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] shadow-sm transition-all duration-300"
                   />
                 )}
                 <span className="relative z-10 inline-flex items-center gap-1.5">
@@ -277,26 +276,6 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
               }
               className="relative flex flex-col"
             >
-              {/* Glow pulse — featured card only */}
-              {plan.featured && !shouldReduce && (
-                <motion.div
-                  className="pointer-events-none absolute inset-0 rounded-[var(--radius-md)]"
-                  animate={{
-                    boxShadow: [
-                      "0 0 0px 0px rgba(138,151,119,0)",
-                      "0 0 28px 6px rgba(138,151,119,0.22)",
-                      "0 0 0px 0px rgba(138,151,119,0)",
-                    ],
-                  }}
-                  transition={{
-                    duration: 1.8,
-                    repeat: Infinity,
-                    repeatDelay: 6.2,
-                    ease: "easeInOut",
-                    delay: 1.5,
-                  }}
-                />
-              )}
 
               <Card
                 variant={plan.featured ? "interactive" : "default"}
@@ -308,9 +287,9 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
                 }`}
               >
                 {plan.badge && (
-                  <Badge color={plan.featured ? "amber" : "indigo"} className="mb-4 self-start">
+                  <span className="mb-4 self-start inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)]">
                     {plan.badge}
-                  </Badge>
+                  </span>
                 )}
                 <h3 className="text-xl font-medium text-[var(--color-text-primary)]">{plan.name}</h3>
                 <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">{plan.description}</p>
@@ -341,9 +320,9 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
                       className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]"
                     >
                       {feature.included ? (
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
+                        <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
                       ) : (
-                        <Minus className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-text-tertiary)]" />
+                        <Minus aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-text-tertiary)]" />
                       )}
                       <span className={feature.included ? "" : "text-[var(--color-text-tertiary)]"}>
                         {feature.label}
