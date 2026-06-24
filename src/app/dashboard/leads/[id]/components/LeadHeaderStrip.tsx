@@ -104,7 +104,7 @@ export function LeadHeaderStrip({
                 href={getLeadWebUrl(websiteStatus ?? "unknown", website ?? null)!}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
                 <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Website
               </a>
@@ -112,7 +112,7 @@ export function LeadHeaderStrip({
             {phone && (
               <a
                 href={`tel:${phone}`}
-                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
                 <Phone className="h-3.5 w-3.5" aria-hidden="true" /> {phone}
               </a>
@@ -122,7 +122,7 @@ export function LeadHeaderStrip({
                 href={`https://www.google.com/maps/search/?api=1&query_place_id=${placeId}&query=${encodeURIComponent(businessName)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]"
+                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors min-h-[44px] sm:min-h-0 sm:py-1 [@media(hover:hover)]:hover:bg-[var(--color-success)]/10 [@media(hover:hover)]:hover:text-[var(--color-success)]"
               >
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Map
               </a>
@@ -146,7 +146,7 @@ export function LeadHeaderStrip({
               size="sm"
               icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />}
               onClick={() => onPipelineChange("new_lead")}
-              className="text-[var(--color-accent)] border-[var(--color-accent)]/30 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+              className="text-[var(--color-accent)] [@media(hover:hover)]:hover:text-[var(--color-accent)]"
             >
               Add to Pipeline
             </Button>

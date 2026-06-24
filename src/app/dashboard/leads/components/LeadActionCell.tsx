@@ -30,7 +30,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const viewBtn = (
     <Link
       href={`/dashboard/leads/${lead.id}?from=leads`}
-      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/10"
+      className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15"
     >
       <Eye className="h-3 w-3" /> View
     </Link>
@@ -40,7 +40,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const auditBtn = (
     <button
       onClick={() => onAnalyse(lead.id, lead.website!)}
-      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
+      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)] [@media(hover:hover)]:hover:text-white"
     >
       <Eye className="h-3 w-3" /> Audit
     </button>
@@ -50,7 +50,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
   const retryBtn = (
     <button
       onClick={() => onAnalyse(lead.id, lead.website!)}
-      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+      className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/20"
     >
       Retry
     </button>
@@ -76,7 +76,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
     primaryBtn = (
       <Link
         href={`/dashboard/leads/${lead.id}?from=leads&tab=pitch`}
-        className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)] hover:text-white"
+        className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)] [@media(hover:hover)]:hover:text-white"
       >
         Send
       </Link>
@@ -97,7 +97,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2"
+            className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2"
           >
             <div className="flex items-center gap-1.5">
               <Loader2 className="h-2.5 w-2.5 animate-spin shrink-0 text-[var(--color-accent)]" />
@@ -113,7 +113,7 @@ export function LeadActionCell({ lead, status, isAnalysing, progress, onAnalyse,
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="text-[11px] text-red-400"
+            className="text-[11px] text-[var(--color-danger)]"
           >
             {progress!.error}
           </motion.p>

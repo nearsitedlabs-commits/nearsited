@@ -92,7 +92,7 @@ export function CardActionsMenu({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 min-w-[200px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-1 shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-1 min-w-[200px] rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] py-1 shadow-lg">
           {!confirmDelete ? (
             <>
               <Link
@@ -146,24 +146,24 @@ export function CardActionsMenu({
               </button>
               <button
                 onClick={handleDeleteClick}
-                className="block w-full px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
+                className="block w-full px-3 py-1.5 text-left text-xs text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/10"
               >
                 Delete
               </button>
             </>
           ) : (
             <div className="px-3 py-2">
-              <p className="mb-1.5 text-[10px] text-red-500">Delete this opportunity?</p>
+              <p className="mb-1.5 text-[10px] text-[var(--color-danger)]">Delete this opportunity?</p>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleConfirmDelete}
-                  className="rounded-[var(--radius-sm)] bg-red-500 px-2 py-0.5 text-[10px] text-white transition-colors hover:bg-red-600"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] px-2 py-0.5 text-[10px] text-white transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/80"
                 >
                   Yes, delete
                 </button>
                 <button
                   onClick={handleCancelDelete}
-                  className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-0.5 text-[10px] text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2 py-0.5 text-[10px] text-[var(--color-text-tertiary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
                 >
                   Cancel
                 </button>

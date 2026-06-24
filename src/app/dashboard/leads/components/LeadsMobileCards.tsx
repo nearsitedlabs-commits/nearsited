@@ -245,7 +245,7 @@ export function LeadsMobileCards({
   return (
     <div className="md:hidden">
       {/* Card list */}
-      <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+      <div className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]">
         {shouldReduce ? (
           <div>{cards}</div>
         ) : (
@@ -259,7 +259,7 @@ export function LeadsMobileCards({
       {hasMoreOnMobile && (
         <button
           onClick={onLoadMore}
-          className="mt-3 w-full rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] py-3 text-sm font-medium text-[var(--color-text-secondary)] transition-colors active:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
+          className="mt-3 w-full rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] py-3 text-sm font-medium text-[var(--color-text-secondary)] transition-colors active:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
         >
           Load more
         </button>
@@ -274,7 +274,7 @@ export function LeadsMobileCards({
               "calc(var(--mobile-nav-height, 56px) + var(--mobile-safe-bottom, 0px) + 12px)",
           }}
         >
-          <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-bg-elevated)] shadow-xl">
+          <div className="overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] shadow-xl">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border-subtle)]">
               <span className="flex-1 text-sm font-medium text-[var(--color-text-primary)]">
                 {selectedIds.size} selected

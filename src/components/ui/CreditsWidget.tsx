@@ -47,7 +47,7 @@ export default function AuditsWidget() {
   const limit = sub?.audits_limit ?? 20;
   const remaining = limit - used;
   const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
-  const barColor = pct >= 95 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-[var(--color-accent)]";
+  const barColor = pct >= 95 ? "bg-[var(--color-danger)]" : pct >= 80 ? "bg-[var(--color-warning)]" : "bg-[var(--color-accent)]";
   const isFreeTrial = tier === "free_trial";
 
   // Show low-balance toast once per session when audits are critically low
@@ -72,7 +72,7 @@ export default function AuditsWidget() {
       {toast && (
         <Toast message={toast} onClose={() => setToast(null)} duration={5000} />
       )}
-      <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 px-3 py-2.5">
+      <div className="rounded-[var(--radius-md)] bg-[var(--color-accent)]/10 px-3 py-2.5">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-[var(--color-accent)]">
             {TIER_LABELS[tier] ?? getTierLabel(tier)} Plan
@@ -89,7 +89,7 @@ export default function AuditsWidget() {
                 {!isFreeTrial && " this month"}
               </p>
               <Tooltip content={isFreeTrial ? "Free Trial audits are lifetime and don't reset — upgrade for a monthly allowance." : "Paid plan audits reset at the start of each billing month."}>
-                <span className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-[var(--color-border-subtle)] text-[9px] text-[var(--color-text-tertiary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]">
+                <span className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full bg-[var(--color-bg-elevated)] text-[9px] text-[var(--color-text-tertiary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]">
                   ?
                 </span>
               </Tooltip>

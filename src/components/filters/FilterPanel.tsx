@@ -96,10 +96,10 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
             <button
               key={o.value}
               onClick={() => toggleStatus(o.value)}
-              className={`cursor-pointer rounded-[var(--radius-sm)] border px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`cursor-pointer rounded-[var(--radius-sm)] px-3 py-1.5 text-xs font-medium transition-colors ${
                 filters.websiteStatus.includes(o.value)
-                  ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
-                  : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40"
+                  ? "bg-[var(--color-accent)]/15 text-[var(--color-accent)]"
+                  : "bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/8 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               }`}
             >
               {o.label}
@@ -184,7 +184,7 @@ function FilterBody({ filters, onChange, onReset, businessTypes }: Omit<FilterPa
       {countActiveFilters(filters) > 0 && (
         <button
           onClick={() => { onReset(); trackFilter("filter_reset"); }}
-          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-danger)]/30 hover:text-[var(--color-danger)]"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/10 [@media(hover:hover)]:hover:text-[var(--color-danger)]"
         >
           <RotateCcw className="h-3 w-3" /> Reset all filters
         </button>
@@ -225,7 +225,7 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
         {/* Bottom sheet */}
         <div
           ref={drawerRef}
-          className={`fixed bottom-0 left-0 right-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-2xl transition-transform duration-300 ease-out ${mobileOpen ? "translate-y-0" : "translate-y-full"}`}
+          className={`fixed bottom-0 left-0 right-0 z-50 max-h-[85dvh] overflow-y-auto rounded-t-[var(--radius-md)] border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-2xl transition-transform duration-300 ease-out ${mobileOpen ? "translate-y-0" : "translate-y-full"}`}
         >
           {/* Handle + header */}
           <div className="sticky top-0 z-20 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3">
@@ -262,7 +262,7 @@ export function FilterPanel({ filters, onChange, onReset, businessTypes, mobileO
       <div className="mb-3 flex items-center justify-between px-4 pt-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-tertiary)]">Filters</span>
         {countActiveFilters(filters) > 0 && (
-          <button onClick={() => { onReset(); trackFilter("filter_reset"); }} className="cursor-pointer text-[10px] text-[var(--color-text-tertiary)] hover:text-red-400 transition-colors">
+          <button onClick={() => { onReset(); trackFilter("filter_reset"); }} className="cursor-pointer text-[10px] text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-danger)] transition-colors">
             Reset
           </button>
         )}

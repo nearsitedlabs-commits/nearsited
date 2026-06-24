@@ -103,7 +103,7 @@ function PageHeader({ firstName }: { firstName: string }) {
       <Link
         href="/dashboard/discover"
         aria-label="Discover leads"
-        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] sm:min-w-0"
+        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-text-primary)] sm:min-w-0"
       >
         <Search className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="hidden sm:inline">Discover</span>
@@ -161,7 +161,7 @@ export default function DashboardClient({
       <div className="min-h-screen">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <PageHeader firstName={firstName} />
-          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8 sm:p-12 text-center">
+          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-8 sm:p-12 text-center">
             <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Find your first opportunity</h2>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               Search any city and business type to discover local businesses with weak websites. Nearsited will score, audit, and write the pitch.
@@ -185,7 +185,7 @@ export default function DashboardClient({
         <PageHeader firstName={firstName} />
 
         {/* ── Next Action Card — the ONLY card on the page ──────────────── */}
-        <div className="mb-8 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] border-l-[4px] border-l-[var(--color-accent)] bg-[var(--color-bg-surface)] p-5">
+        <div className="mb-8 rounded-[var(--radius-md)] border-l-[4px] border-l-[var(--color-accent)] bg-[var(--color-bg-surface)] p-5">
           {flaggedLeads > 0 ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0 flex-1">
@@ -227,7 +227,7 @@ export default function DashboardClient({
               {/* Full-width on mobile, auto on sm+ */}
               <Link
                 href="/dashboard/discover"
-                className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] sm:w-auto sm:shrink-0"
+                className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] sm:w-auto sm:shrink-0"
               >
                 + Find leads
               </Link>

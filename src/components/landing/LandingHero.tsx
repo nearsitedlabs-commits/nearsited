@@ -233,10 +233,10 @@ export function LandingHero({ navigate }: { navigate: (href: string) => void }) 
                   key={lead.id}
                   type="button"
                   onClick={() => handleLeadClick(idx)}
-                  className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] border px-3 py-2.5 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] ${
+                  className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] ${
                     activeLead === idx
-                      ? "border-[var(--color-accent)]/50 bg-[var(--color-accent)]/10"
-                      : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] hover:border-[var(--color-accent)]/30"
+                      ? "bg-[var(--color-accent)]/15"
+                      : "bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/8"
                   }`}
                 >
                   <span aria-hidden="true">

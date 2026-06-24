@@ -62,7 +62,7 @@ export default function NotFound() {
 
         <Link
           href="/login"
-          className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-transparent bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 ease-out hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
+          className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 ease-out [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-tint)]"
         >
           Sign in
         </Link>

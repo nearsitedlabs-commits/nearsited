@@ -88,10 +88,10 @@ function OpportunityDot({ score }: { score: number }) {
   const label = opportunityLabel(score);
   const variant = opportunityBadgeVariant(score);
   const colorMap: Record<string, string> = {
-    green:  "border-[var(--color-success)]/30 text-[var(--color-success)] bg-[var(--color-success)]/10",
-    amber:  "border-[var(--color-warning)]/30 text-[var(--color-warning)] bg-[var(--color-warning)]/10",
-    indigo: "border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
-    red:    "border-[var(--color-danger)]/30 text-[var(--color-danger)] bg-[var(--color-danger)]/10",
+    green:  "text-[var(--color-success)] bg-[var(--color-success)]/12",
+    amber:  "text-[var(--color-warning)] bg-[var(--color-warning)]/12",
+    indigo: "text-[var(--badge-indigo-text)] bg-[var(--badge-indigo-bg)]",
+    red:    "text-[var(--color-danger)] bg-[var(--color-danger)]/12",
   };
   const dotMap: Record<string, string> = {
     green:  "bg-[var(--badge-green-text)]",
@@ -148,7 +148,7 @@ export function OpportunityCard({
 
   const cardContent = (
     <div
-      className={`group relative w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-5 transition-all duration-200 hover:border-[var(--color-accent)]/40 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
+      className={`group relative w-full rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5 transition-all duration-200 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] ${className}`}
     >
       <div className="flex items-start gap-5">
         {/* ── Left: Score Ring (primary visual) ── */}
@@ -175,7 +175,7 @@ export function OpportunityCard({
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <WebsiteBadge status={lead.website_status} />
             {lead.issues_count !== undefined && lead.issues_count > 0 && (
-              <span className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--status-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30">
+              <span className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--status-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[var(--status-warning-text)]">
                 {lead.issues_count} {lead.issues_count === 1 ? "issue" : "issues"}
               </span>
             )}
@@ -232,7 +232,7 @@ export function OpportunityCard({
                   href={`https://www.google.com/maps/search/?api=1&query_place_id=${lead.place_id}&query=${encodeURIComponent(lead.name)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-success)]/40 hover:text-[var(--color-success)]"
+                  className="cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 [@media(hover:hover)]:hover:text-[var(--color-success)]"
                   title="View on Google Maps"
                 >
                   <MapPin className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function OpportunityCard({
                   href={lead.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                  className="cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-1.5 text-[var(--color-text-tertiary)] transition-colors duration-150 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
                   title="Open website"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />

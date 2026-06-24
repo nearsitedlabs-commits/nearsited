@@ -606,7 +606,7 @@ export default function AuditPage() {
 
         {/* Example Opportunity Card — hidden once user has run an audit */}
         {!hasCompletedAudit && (
-          <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+          <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-[var(--color-text-tertiary)]">
@@ -619,7 +619,7 @@ export default function AuditPage() {
                   See how Nearsited evaluates a business.
                 </p>
               </div>
-              <span className="shrink-0 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 font-mono text-xs text-[var(--color-text-tertiary)]">
+              <span className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1 font-mono text-xs text-[var(--color-text-tertiary)]">
                 {
                   {
                     weak_website: "lawfirmdubai.com",
@@ -642,10 +642,10 @@ export default function AuditPage() {
                 <button
                   key={tab.key}
                   onClick={() => setExampleTab(tab.key)}
-                  className={`cursor-pointer rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium transition-colors duration-150 ${
+                  className={`cursor-pointer rounded-[var(--radius-sm)] px-3 py-1 text-xs font-medium transition-colors duration-150 ${
                     exampleTab === tab.key
-                      ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                      : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                      ? "bg-[var(--color-accent)] text-white"
+                      : "bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
                   }`}
                 >
                   {tab.label}
@@ -655,7 +655,7 @@ export default function AuditPage() {
 
             {/* Score display */}
             {exampleTab === "weak_website" ? (
-              <div className="mb-5 flex flex-col gap-4 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 sm:flex-row sm:items-center">
+              <div className="mb-5 flex flex-col gap-4 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-4 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-[var(--score-high)]">
@@ -675,7 +675,7 @@ export default function AuditPage() {
                     </p>
                   </div>
                 </div>
-                <div className="rounded-[var(--radius-sm)] border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-4 py-2 text-center sm:ml-auto">
+                <div className="rounded-[var(--radius-sm)] bg-[var(--color-success)]/10 px-4 py-2 text-center sm:ml-auto">
                   <p className="text-xl font-bold text-[var(--color-success)]">
                     +39
                   </p>
@@ -685,7 +685,7 @@ export default function AuditPage() {
                 </div>
               </div>
             ) : (
-              <div className="mb-5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4">
+              <div className="mb-5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-4">
                 <p className="text-base font-semibold text-[var(--color-text-primary)]">
                   High Opportunity
                 </p>
@@ -762,7 +762,7 @@ export default function AuditPage() {
   if (error && !running && !auditResult) {
     const errorContent = (
       <>
-        <div className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 p-6 text-center">
+        <div className="rounded-[var(--radius-md)] bg-[var(--color-danger)]/10 p-6 text-center">
           <AlertTriangle className="mx-auto h-8 w-8 text-[var(--score-high)]" />
           <h2 className="mt-3 text-lg font-medium text-[var(--color-text-primary)]">
             Review Failed
@@ -827,14 +827,14 @@ export default function AuditPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="mt-4 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
+        <div className="mt-4 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
           {error}
         </div>
       )}
 
       {/* Quota error */}
       {quotaError && (
-        <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-5 py-4">
+        <div className="mt-4 rounded-[var(--radius-md)] bg-[var(--color-warning)]/10 px-5 py-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-warning)]" />
             <div className="flex-1">
@@ -847,7 +847,7 @@ export default function AuditPage() {
             </div>
             <button
               onClick={clearQuotaTimer}
-              className="cursor-pointer shrink-0 rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/15 px-3 py-1.5 text-xs font-medium text-[var(--color-warning)] transition-colors hover:bg-[var(--color-warning)]/25"
+              className="cursor-pointer shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-warning)]/15 px-3 py-1.5 text-xs font-medium text-[var(--color-warning)] transition-colors hover:bg-[var(--color-warning)]/25"
             >
               {quotaRetryTimer > 0 ? `Wait ${quotaRetryTimer}s` : "Dismiss"}
             </button>
@@ -864,7 +864,7 @@ export default function AuditPage() {
 
       {/* Both timed out */}
       {bothTimedOut && (
-        <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 p-8 text-center">
+        <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-warning)]/10 p-8 text-center">
           <AlertTriangle className="mx-auto h-10 w-10 text-[var(--color-info)]" />
           <h2 className="mt-4 text-lg font-medium text-[var(--color-text-primary)]">
             Couldn&rsquo;t reach the site

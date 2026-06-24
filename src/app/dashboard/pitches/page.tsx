@@ -328,7 +328,7 @@ export default function PitchesPage() {
                 <button
                   onClick={(e) => { e.stopPropagation(); handleAddToPipeline(bizId); }}
                   disabled={addingToPipeline === bizId}
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] px-2 py-1 min-h-[44px] sm:min-h-0 sm:py-0.5 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2 py-1 min-h-[44px] sm:min-h-0 sm:py-0.5 text-[11px] font-medium text-[var(--color-accent)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {addingToPipeline === bizId ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -350,10 +350,10 @@ export default function PitchesPage() {
                 .join(" · ")}
             </span>
             {pitch.pitch_status && pitch.pitch_status !== "draft" && (
-              <span className={`inline-flex items-center rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-medium ${
+              <span className={`inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-medium ${
                 pitch.pitch_status === "replied"
-                  ? "border-[var(--color-success)]/30 bg-[var(--color-success)]/10 text-[var(--color-success)]"
-                  : "border-blue-500/30 bg-blue-500/10 text-blue-400"
+                  ? "bg-[var(--color-success)]/12 text-[var(--color-success)]"
+                  : "bg-[var(--color-info)]/12 text-[var(--color-info)]"
               }`}>
                 {PITCH_STATUS_LABELS[pitch.pitch_status as keyof typeof PITCH_STATUS_LABELS] ?? pitch.pitch_status}
               </span>
@@ -385,7 +385,7 @@ export default function PitchesPage() {
               <button
                 onClick={() => handleOpenInWhatsApp(pitch)}
                 aria-label="Open pitch in WhatsApp"
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Open in WhatsApp
@@ -394,7 +394,7 @@ export default function PitchesPage() {
               <button
                 onClick={() => handleOpenInEmail(pitch)}
                 aria-label="Open pitch in email client"
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Open in email
@@ -406,7 +406,7 @@ export default function PitchesPage() {
               {bizId && (
                 <Link
                   href={`/dashboard/leads/${bizId}`}
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 min-h-[44px] sm:min-h-0 text-[11px] font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
                 >
                   View <ExternalLink className="h-3 w-3" />
                 </Link>
@@ -416,13 +416,13 @@ export default function PitchesPage() {
               <div className="relative" ref={isOpenMenu ? menuRef : undefined}>
                 <button
                   onClick={() => setOpenMenuId(isOpenMenu ? null : pitch.id)}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:p-1.5 text-[var(--color-text-tertiary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                  className="inline-flex cursor-pointer items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:p-1.5 text-[var(--color-text-tertiary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
                 >
                   <EllipsisVertical className="h-4 w-4" />
                 </button>
 
                 {isOpenMenu && (
-                  <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-1 shadow-xl">
+                  <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] py-1 shadow-xl">
                     <button className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]">
                       <RefreshCw className="h-3.5 w-3.5" /> Regenerate
                     </button>
@@ -454,13 +454,13 @@ export default function PitchesPage() {
                         <button
                           onClick={() => handleDelete(pitch.id)}
                           disabled={deletingId === pitch.id}
-                          className="cursor-pointer rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/15 px-2 py-1 text-[10px] font-medium text-[var(--color-danger)] transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-danger)]/12 px-2 py-1 text-[10px] font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/20 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {deletingId === pitch.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
                         </button>
                         <button
                           onClick={() => setDeleteConfirmId(null)}
-                          className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-1 text-[10px] font-medium text-[var(--color-text-tertiary)] transition-colors hover:text-[var(--color-text-secondary)]"
+                          className="cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2 py-1 text-[10px] font-medium text-[var(--color-text-tertiary)] transition-colors [@media(hover:hover)]:hover:text-[var(--color-text-secondary)]"
                         >
                           Cancel
                         </button>
@@ -468,7 +468,7 @@ export default function PitchesPage() {
                     ) : (
                       <button
                         onClick={() => setDeleteConfirmId(pitch.id)}
-                        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs text-[var(--color-danger)] transition-colors hover:bg-red-500/10"
+                        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/10"
                       >
                         <Trash2 className="h-3.5 w-3.5" /> Delete
                       </button>
@@ -539,10 +539,10 @@ export default function PitchesPage() {
               <button
                 key={f.key}
                 onClick={() => setActiveFilter(f.key)}
-                className={`shrink-0 cursor-pointer rounded-[var(--radius-sm)] border px-3 py-2 min-h-[44px] flex items-center text-xs font-medium transition-colors duration-150 ${
+                className={`shrink-0 cursor-pointer rounded-[var(--radius-sm)] px-3 py-2 min-h-[44px] flex items-center text-xs font-medium transition-colors duration-150 ${
                   activeFilter === f.key
-                    ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                    : `border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] ${isZero ? "opacity-50" : ""}`
+                    ? "bg-[var(--color-accent)] text-white"
+                    : `bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] ${isZero ? "opacity-50" : ""}`
                 }`}
               >
                 {f.label}
@@ -554,7 +554,7 @@ export default function PitchesPage() {
 
         {/* ── Collapsible search (advanced) ───────────────────────────── */}
         {showFilters && (
-          <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
+          <div className="mb-4 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-tertiary)]" />
               <input
@@ -591,7 +591,7 @@ export default function PitchesPage() {
             </p>
             <Link
               href="/dashboard/leads"
-              className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
             >
               View opportunities →
             </Link>
@@ -620,7 +620,7 @@ export default function PitchesPage() {
             </StaggerContainer>
 
             {/* ── End-of-list CTA ───────────────────────────────────── */}
-            <div className="mt-4 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-subtle)] p-6 text-center transition-colors hover:border-[var(--color-accent)]/30">
+            <div className="mt-4 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6 text-center">
               <p className="text-[13px] text-[var(--color-text-tertiary)]">
                 That&apos;s all your pitches.
               </p>
@@ -664,7 +664,7 @@ export default function PitchesPage() {
                   </button>
                   <button
                     onClick={() => { if (p.channel === "whatsapp") handleOpenInWhatsApp(p); else handleOpenInEmail(p); }}
-                    className="flex-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] py-3 text-sm font-medium text-[var(--color-text-secondary)] transition-colors active:bg-[var(--color-bg-surface)]"
+                    className="flex-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] py-3 text-sm font-medium text-[var(--color-text-secondary)] transition-colors active:bg-[var(--color-bg-surface)]"
                   >
                     {p.channel === "whatsapp" ? "Open in WhatsApp" : "Open in email"}
                   </button>

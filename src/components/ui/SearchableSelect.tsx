@@ -256,7 +256,7 @@ export default function SearchableSelect({
 
       {/* Dropdown using cmdk */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
+        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)]">
           <Command
             label={placeholder}
             shouldFilter={false}

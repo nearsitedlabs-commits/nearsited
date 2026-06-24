@@ -155,7 +155,7 @@ export default function PipelineSelect({ value, onChange, options, onRemove, cla
               </Dialog.Close>
               <button
                 onClick={handleConfirmRemove}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/20"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/20"
               >
                 <Trash2 className="h-3 w-3" aria-hidden="true" /> Remove
               </button>

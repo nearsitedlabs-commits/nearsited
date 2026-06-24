@@ -30,7 +30,7 @@ export default function SignupLoading() {
 
           {/* Right: Auth card skeleton */}
           <div className="w-full max-w-md mx-auto lg:mx-0 lg:justify-self-end">
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-8">
+            <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-8">
               <div className="text-center mb-8">
                 <SkeletonLoader className="mx-auto" width="140px" height="28px" radius="6px" />
                 <SkeletonLoader className="mx-auto mt-2" width="200px" height="14px" radius="4px" />

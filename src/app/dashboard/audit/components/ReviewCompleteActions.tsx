@@ -232,7 +232,7 @@ export function ReviewCompleteActions({
   return (
     <div className="space-y-4">
       {/* ── Primary action card ───────────────────────────────────────────────── */}
-      <div className="rounded-[var(--radius-md)] border border-[var(--color-accent)]/50 bg-[var(--color-bg-surface)] p-5">
+      <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1">
             <h3 className="text-base font-medium text-[var(--color-text-primary)]">
@@ -259,7 +259,7 @@ export function ReviewCompleteActions({
 
         {/* Primary action error */}
         {primaryError && (
-          <div className="mt-3 rounded-[var(--radius-sm)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <div className="mt-3 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
             {primaryError}
           </div>
         )}
@@ -267,7 +267,7 @@ export function ReviewCompleteActions({
         {/* Pitch result preview */}
         {showPitchResult && pitchResult && (
           <div className="mt-4 space-y-2">
-            <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-5">
+            <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-5">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-xs font-medium text-[var(--color-text-tertiary)]">
                   Pitch Preview
@@ -302,7 +302,7 @@ export function ReviewCompleteActions({
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Save without pitch */}
         {showSaveForm ? (
-          <div className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-4 sm:p-5">
+          <div className="w-full rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--color-text-primary)]">
                 Add a few details (optional)
@@ -342,7 +342,7 @@ export function ReviewCompleteActions({
             </div>
 
             {saveLeadError && (
-              <p className="mt-2 text-xs text-red-400">{saveLeadError}</p>
+              <p className="mt-2 text-xs text-[var(--color-danger)]">{saveLeadError}</p>
             )}
 
             <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -379,7 +379,7 @@ export function ReviewCompleteActions({
         {savedBusinessId && (
           <Link
             href={`/dashboard/leads/${savedBusinessId}`}
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Open full report
@@ -388,7 +388,7 @@ export function ReviewCompleteActions({
 
         {/* + Pipeline */}
         {pipelineAdded ? (
-          <div className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-success)]">
+          <div className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-success)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-success)]">
             <CheckCircle2 className="h-3.5 w-3.5" />
             Added to pipeline
             {pipelineBusinessId && (
@@ -414,7 +414,7 @@ export function ReviewCompleteActions({
         )}
 
         {pipelineError && (
-          <p className="w-full text-xs text-red-400">{pipelineError}</p>
+          <p className="w-full text-xs text-[var(--color-danger)]">{pipelineError}</p>
         )}
       </div>
     </div>

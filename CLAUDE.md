@@ -1,5 +1,5 @@
 # CLAUDE.md — Nearsited
-*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-20.*
+*Auto-loaded by Claude Code every session. Keep current. This is the contract; SCHEMA.md / ARCHITECTURE.md / CONVENTIONS.md are the detail. Last updated: 2026-06-22.*
 
 ---
 
@@ -89,7 +89,34 @@ Goal: walk an agency rep into a prospect meeting with real scores, ranked issues
 
 **J. Score circles never show "~95".** Use `<ScoreCircle variant="estimated">` (dotted ring) for projections — never tilde-prefix the number.
 
-**K. No decorative borders.** Borders appear only on: focus rings, hover states, semantic chips/pills, form inputs, error states, and the single highlighted item in a comparison set (e.g., the Agency pricing tier). Everywhere else, group via background elevation (`--color-bg-page` → `--color-bg-surface` → `--color-bg-surface-raised` → `--color-bg-elevated`), spacing, thin horizontal dividers between rows, or a 2–3px left accent line. Hardcoded opacity borders (`border-white/10`, `rgba(255,255,255,X)`) banned — reference `--color-border-subtle/strong` tokens. Never nest perimeter borders (a bordered card containing a bordered sub-card).
+**K. No decorative borders.** Borders appear ONLY on:
+
+1. **Focus rings** — keyboard navigation indicator on interactive elements (required for accessibility)
+2. **Form input fields** — textarea, Select trigger, text input (required for usability)
+3. **Error states** — semantic feedback when validation fails
+
+Everywhere else, borders are FORBIDDEN. This includes (non-exhaustive):
+- Cards, panels, sections, containers
+- Pills, chips, badges, tags
+- Secondary, ghost, or outline buttons
+- The highlighted item in a comparison set (e.g., the featured pricing tier)
+- Decorative dividers around content blocks
+
+To group, differentiate, or emphasize content WITHOUT borders, use:
+- **Tonal backgrounds** — semantic color at 10–12% opacity for pills, 8–10% for secondary buttons
+- **Background elevation** via the surface hierarchy: `--color-bg-page` → `--color-bg-surface` → `--color-bg-surface-raised` → `--color-bg-elevated`
+- **Whitespace and spacing** — generous padding and gaps separate content without strokes
+- **Thin horizontal dividers** (1px `--color-border-subtle`) BETWEEN rows in a list or accordion only — never as a perimeter
+- **A 2–3px left accent line** for highlighted callouts, quotes, or featured rows
+- **Scale or shadow** for elevation hierarchy (e.g., featured pricing tier uses `scale-105` and elevated background, not a border)
+
+**Hardcoded opacity borders are banned.** No `border-white/X`, no `border-black/X`, no `rgba(255,255,255,X)` or `rgba(0,0,0,X)` in border declarations. If a border genuinely belongs (per the 3 permitted uses above), reference `--color-border-subtle` or `--color-border-strong` tokens.
+
+**Nested perimeter borders are banned outright.** A bordered card containing a bordered sub-card produces the "vibecoded" appearance the rule is designed to eliminate.
+
+This rule applies system-wide — landing, auth, legal, dashboard, discover, quick-audit, opportunities, lead detail (all variants), pipeline, pitches, settings, billing. No exceptions per page, per component, per state.
+
+When in doubt, remove the border. If the section feels visually weak after removal, the answer is tonal background, elevation, better typography hierarchy, or accent line — never adding the border back.
 
 ---
 
@@ -754,10 +781,12 @@ Run this checklist on every PR that touches UI code. Automated ESLint rules (3.1
 - [ ] Only `rounded-[var(--radius-sm)]` (6px) or `rounded-[var(--radius-md)]` (10px) used — **no `rounded-full`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, or arbitrary `rounded-[Xpx]`**
 
 ### Borders
-- [ ] No perimeter border on cards, sections, or panels — group via background elevation or spacing
-- [ ] No `border-white/X` or hardcoded `rgba` opacity borders — use `--color-border-subtle/strong` tokens
-- [ ] No nested perimeter borders (bordered card inside bordered card)
-- [ ] Borders only on: focus rings, hover states, semantic chips, form inputs, error states, single highlighted item in comparison
+- [ ] Borders appear ONLY on focus rings, form inputs, or error states
+- [ ] No bordered pills, chips, badges, or buttons anywhere
+- [ ] No perimeter borders on cards, sections, or panels
+- [ ] No `border-white/X` or hardcoded opacity borders — use tokens
+- [ ] No nested perimeter borders
+- [ ] Featured/highlighted items use scale, elevation, or accent line — not borders
 
 ### Design Tokens
 - [ ] All colors reference CSS variables (`--color-*`, `--bg-*`, `--text-*`) — no raw Tailwind semantic colors (`red-500`, `amber-500`, `green-500`)

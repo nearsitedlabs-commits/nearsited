@@ -27,12 +27,12 @@ export const PIPELINE_SALES_STATUSES = ["new_lead", "contacted", "in_conversatio
 
 /** Tailwind classes for each pipeline status badge — references CSS variables */
 export const PIPELINE_BADGE_STYLES: Record<string, string> = {
-  new_lead:        "bg-[var(--bg-surface-2)] text-[var(--pipeline-new)] border border-[var(--border)]",
-  analysed:        "bg-[var(--pipeline-analysed-tint)] text-[var(--pipeline-analysed)] border border-[var(--pipeline-analysed)]/30",
-  contacted:       "bg-[var(--pipeline-contacted-tint)] text-[var(--pipeline-contacted)] border border-[var(--pipeline-contacted)]/30",
-  in_conversation: "bg-[var(--pipeline-conversation-tint)] text-[var(--pipeline-conversation)] border border-[var(--pipeline-conversation)]/30",
-  won:             "bg-[var(--pipeline-won-tint)] text-[var(--pipeline-won)] border border-[var(--pipeline-won)]/30",
-  lost:            "bg-[var(--pipeline-lost-tint)] text-[var(--pipeline-lost)] border border-[var(--pipeline-lost)]/30",
+  new_lead:        "bg-[var(--bg-surface-2)] text-[var(--pipeline-new)]",
+  analysed:        "bg-[var(--pipeline-analysed-tint)] text-[var(--pipeline-analysed)]",
+  contacted:       "bg-[var(--pipeline-contacted-tint)] text-[var(--pipeline-contacted)]",
+  in_conversation: "bg-[var(--pipeline-conversation-tint)] text-[var(--pipeline-conversation)]",
+  won:             "bg-[var(--pipeline-won-tint)] text-[var(--pipeline-won)]",
+  lost:            "bg-[var(--pipeline-lost-tint)] text-[var(--pipeline-lost)]",
 };
 
 /** Tailwind bar colour for each pipeline stage (used in dashboard pipeline chart) */
@@ -50,12 +50,12 @@ export const PIPELINE_BAR_COLORS: Record<string, string> = {
 export type OpportunityLevel = "high" | "medium" | "low" | "website" | "social" | "no_website";
 
 export const OPPORTUNITY_INDICATORS: Record<string, { label: string; color: string; dotColor: string }> = {
-  high:        { label: "High Opportunity",     color: "text-[var(--badge-green-text)] border-[var(--badge-green-border)] bg-[var(--badge-green-bg)]",     dotColor: "bg-[var(--badge-green-text)]" },
-  medium:      { label: "Medium Opportunity",   color: "text-[var(--badge-amber-text)] border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)]",   dotColor: "bg-[var(--badge-amber-text)]" },
-  low:         { label: "Low Opportunity",      color: "text-[var(--badge-red-text)] border-[var(--badge-red-border)] bg-[var(--badge-red-bg)]",         dotColor: "bg-[var(--badge-red-text)]" },
-  website:     { label: "Website Opportunity",  color: "text-[var(--badge-green-text)] border-[var(--badge-green-border)] bg-[var(--badge-green-bg)]",     dotColor: "bg-[var(--badge-green-text)]" },
-  social:      { label: "Social Presence Only", color: "text-[var(--badge-amber-text)] border-[var(--badge-amber-border)] bg-[var(--badge-amber-bg)]",   dotColor: "bg-[var(--badge-amber-text)]" },
-  no_website:  { label: "No Website Found",     color: "text-[var(--badge-red-text)] border-[var(--badge-red-border)] bg-[var(--badge-red-bg)]",         dotColor: "bg-[var(--badge-red-text)]" },
+  high:        { label: "High Opportunity",     color: "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",   dotColor: "bg-[var(--badge-green-text)]" },
+  medium:      { label: "Medium Opportunity",   color: "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]", dotColor: "bg-[var(--badge-amber-text)]" },
+  low:         { label: "Low Opportunity",      color: "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",     dotColor: "bg-[var(--badge-red-text)]" },
+  website:     { label: "Website Opportunity",  color: "text-[var(--badge-green-text)] bg-[var(--badge-green-bg)]",   dotColor: "bg-[var(--badge-green-text)]" },
+  social:      { label: "Social Presence Only", color: "text-[var(--badge-amber-text)] bg-[var(--badge-amber-bg)]", dotColor: "bg-[var(--badge-amber-text)]" },
+  no_website:  { label: "No Website Found",     color: "text-[var(--badge-red-text)] bg-[var(--badge-red-bg)]",     dotColor: "bg-[var(--badge-red-text)]" },
 };
 
 // ── Website Status ────────────────────────────────────────────────────────────
@@ -72,24 +72,24 @@ export const WEBSITE_STATUS_LABELS: Record<string, string> = {
 
 /** Tailwind classes for "Strong Opportunity" / "Needs Improvement" status pills */
 export const SCORE_STATUS_PILLS: Record<string, string> = {
-  Strong:              "bg-[var(--status-success-bg)] text-[var(--status-success-text)] border border-[var(--status-success-text)]/30",
-  Good:                "bg-[var(--status-success-bg)] text-[var(--status-success-text)] border border-[var(--status-success-text)]/30",
-  "Needs Improvement": "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30",
-  Poor:                "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-text)]/30",
+  Strong:              "bg-[var(--status-success-bg)] text-[var(--status-success-text)]",
+  Good:                "bg-[var(--status-success-bg)] text-[var(--status-success-text)]",
+  "Needs Improvement": "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)]",
+  Poor:                "bg-[var(--status-error-bg)] text-[var(--status-error-text)]",
 };
 
 // ── Impact Pill ────────────────────────────────────────────────────────────────
 
 export const IMPACT_PILL_STYLES: Record<string, string> = {
-  High:   "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-text)]/30",
-  Medium: "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30",
-  Low:    "bg-[var(--status-success-bg)] text-[var(--status-success-text)] border border-[var(--status-success-text)]/30",
+  High:   "bg-[var(--color-danger)]/12 text-[var(--color-danger)]",
+  Medium: "bg-[var(--color-warning)]/12 text-[var(--color-warning)]",
+  Low:    "bg-[var(--color-info)]/12 text-[var(--color-info)]",
 };
 
 // ── Issues Count Pill ──────────────────────────────────────────────────────────
 
 export const ISSUES_COUNT_STYLES =
-  "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border border-[var(--status-warning-text)]/30";
+  "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)]";
 
 // ── Outreach ──────────────────────────────────────────────────────────────────
 

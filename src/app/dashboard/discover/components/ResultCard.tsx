@@ -77,10 +77,10 @@ function getEffectiveScore(business: BusinessResult): number {
 function getScoreCircleStyle(score: number): { ring: string; text: string } {
   const color = scoreColor(score);
   const map: Record<string, { ring: string; text: string }> = {
-    emerald: { ring: "border-[var(--color-success)]", text: "text-[var(--color-success)]" },
-    green: { ring: "border-[var(--color-success)]", text: "text-[var(--color-success)]" },
-    amber: { ring: "border-[var(--color-info)]", text: "text-[var(--color-info)]" },
-    red: { ring: "border-[var(--score-high)]", text: "text-[var(--score-high)]" },
+    emerald: { ring: "bg-[var(--color-success)]/12", text: "text-[var(--color-success)]" },
+    green:   { ring: "bg-[var(--color-success)]/12", text: "text-[var(--color-success)]" },
+    amber:   { ring: "bg-[var(--color-info)]/12",    text: "text-[var(--color-info)]" },
+    red:     { ring: "bg-[var(--score-high)]/12",    text: "text-[var(--score-high)]" },
   };
   return map[color] ?? map.amber;
 }
@@ -136,7 +136,7 @@ export function ResultCard({
         </div>
       ) : (
         <div
-          className={`flex items-center justify-center w-7 h-7 rounded-full border-2 flex-shrink-0 ${circleStyle.ring}`}
+          className={`flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0 ${circleStyle.ring}`}
         >
           <span className={`text-[10px] font-semibold leading-none ${circleStyle.text}`}>
             {effectiveScore}
@@ -184,14 +184,14 @@ export function ResultCard({
           <>
             <Link
               href={`/dashboard/leads/${business.id}?from=discover&analyze=1`}
-              className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150"
+              className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-all duration-150"
             >
               View
             </Link>
             <button
               type="button"
               onClick={() => onCancelAnalysis(business.id)}
-              className="inline-flex items-center justify-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] transition-all duration-150"
+              className="inline-flex items-center justify-center gap-1 whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-text-secondary)] transition-all duration-150"
             >
               <Loader2 className="h-2.5 w-2.5 animate-spin" />
             </button>
@@ -200,7 +200,7 @@ export function ResultCard({
           <button
             type="button"
             onClick={() => onAnalyseOpportunity(business.id, business.website!)}
-            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-red-500/30 text-[var(--color-danger)] hover:bg-red-500/10 transition-all duration-150"
+            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 text-[var(--color-danger)] [@media(hover:hover)]:hover:bg-[var(--color-danger)]/15 transition-all duration-150"
             title={ap.label}
           >
             Retry
@@ -210,7 +210,7 @@ export function ResultCard({
             {isAnalyseDone ? (
               <Link
                 href={`/dashboard/leads/${business.id}?from=discover`}
-                className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150"
+                className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-all duration-150"
               >
                 View
               </Link>
@@ -218,7 +218,7 @@ export function ResultCard({
               <>
                 <Link
                   href={`/dashboard/leads/${business.id}?from=discover`}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-all duration-150"
                 >
                   View
                 </Link>
@@ -226,7 +226,7 @@ export function ResultCard({
                   type="button"
                   onClick={() => onAnalyseOpportunity(business.id, business.website!)}
                   disabled={isLoading}
-                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] transition-all duration-150 disabled:opacity-50"
+                  className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] transition-all duration-150 disabled:opacity-50"
                 >
                   Audit
                 </button>
@@ -236,7 +236,7 @@ export function ResultCard({
         ) : (
           <Link
             href={`/dashboard/leads/${business.id}?from=discover`}
-            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/40 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150"
+            className="inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-all duration-150"
           >
             View
           </Link>
@@ -248,10 +248,10 @@ export function ResultCard({
             type="button"
             onClick={() => onRemoveFromPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-red-500 text-red-500 hover:bg-red-500/10 transition-all duration-150 disabled:opacity-50"
+            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 text-[var(--color-danger)] [@media(hover:hover)]:hover:bg-[var(--color-danger)]/15 transition-all duration-150 disabled:opacity-50"
           >
             {pipelineLoadingId === business.id ? (
-              <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-red-500 border-t-transparent" />
+              <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-[var(--color-danger)] border-t-transparent" />
             ) : (
               "Remove"
             )}
@@ -261,7 +261,7 @@ export function ResultCard({
             type="button"
             onClick={() => onAddToPipeline(business.id)}
             disabled={pipelineLoadingId === business.id}
-            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all duration-150 disabled:opacity-50"
+            className="hidden sm:inline-flex items-center justify-center whitespace-nowrap text-[11px] font-medium h-7 px-2.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-all duration-150 disabled:opacity-50"
           >
             {pipelineLoadingId === business.id ? (
               <div className="h-2.5 w-2.5 animate-spin rounded-full border-[1.5px] border-[var(--color-accent)] border-t-transparent" />

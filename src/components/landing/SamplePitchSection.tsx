@@ -161,10 +161,10 @@ export function SamplePitchSection({ navigate }: { navigate: (href: string) => v
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] border px-4 py-2 text-sm font-medium transition-colors ${
+                    className={`inline-flex min-h-[44px] items-center rounded-[var(--radius-sm)] px-4 py-2 text-sm font-medium transition-colors ${
                       activeTab === id
-                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
-                        : "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+                        ? "bg-[var(--color-accent)]/12 text-[var(--color-accent)]"
+                        : "bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/8 [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
                     }`}
                   >
                     {tab.label}

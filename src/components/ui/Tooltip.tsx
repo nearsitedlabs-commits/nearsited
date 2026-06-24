@@ -51,7 +51,7 @@ export function Tooltip({
           side={side}
           sideOffset={6}
           className={cn(
-            "z-50 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2.5",
+            "z-50 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] px-3 py-2.5",
             "text-xs leading-relaxed text-[var(--color-text-primary)]",
             "shadow-[var(--brand-shadow-lg)]",
             "animate-in fade-in-0 zoom-in-95",

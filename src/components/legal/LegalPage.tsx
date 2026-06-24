@@ -141,7 +141,7 @@ export function LegalPage({ title, lastUpdated, dateModified = "2026-06-08", toc
         <button
           type="button"
           onClick={() => setTocSheetOpen(true)}
-          className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/90 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-lg backdrop-blur-sm transition-colors hover:text-[var(--color-text-primary)]"
+          className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)]/90 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] shadow-lg backdrop-blur-sm transition-colors [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
         >
           Jump to section
           <ChevronDown className="h-3.5 w-3.5" />

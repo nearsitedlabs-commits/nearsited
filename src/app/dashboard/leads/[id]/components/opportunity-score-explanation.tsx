@@ -208,13 +208,13 @@ function getDrivers(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const TYPE_STYLES: Record<string, string> = {
-  "Website Needed":          "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  "Digital Presence Gap":    "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  "Redesign Candidate":      "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  "Website Upgrade":         "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  "Performance Opportunity": "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  "SEO Opportunity":         "border-blue-500/30 bg-blue-500/10 text-blue-400",
-  "Conversion Optimisation": "border-amber-500/30 bg-amber-500/10 text-amber-400",
+  "Website Needed":          "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  "Digital Presence Gap":    "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  "Redesign Candidate":      "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  "Website Upgrade":         "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  "Performance Opportunity": "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  "SEO Opportunity":         "bg-[var(--color-info)]/12 text-[var(--color-info)]",
+  "Conversion Optimisation": "bg-[var(--color-warning)]/12 text-[var(--color-warning)]",
 };
 
 function DriverBar({ label, score, description }: Driver) {
@@ -335,7 +335,7 @@ export function OpportunityScoreExplanation({
             {types.map(t => (
               <span
                 key={t}
-                className={`inline-flex items-center rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]"}`}
+                className={`inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_STYLES[t] ?? "bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]"}`}
               >
                 {t}
               </span>
@@ -351,7 +351,7 @@ export function OpportunityScoreExplanation({
                 <Info className="h-3 w-3" />
               </button>
               {tooltipOpen && (
-                <div className="absolute right-0 top-full z-20 mt-1.5 w-48 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 shadow-lg">
+                <div className="absolute right-0 top-full z-20 mt-1.5 w-48 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3 shadow-lg">
                   <p className="text-[11px] leading-relaxed text-[var(--color-text-secondary)]">
                     Reflects how much verified data was available when calculating this score.
                   </p>

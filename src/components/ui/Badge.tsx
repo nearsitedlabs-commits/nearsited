@@ -15,16 +15,16 @@ export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 // ── Style Map ──────────────────────────────────────────────────────────────────
 
 const COLOR_STYLES: Record<BadgeColor, string> = {
-  green:  "bg-[var(--color-success)]/10 border-[var(--color-success)]/30 text-[var(--color-success)]",
-  red:    "bg-[var(--color-danger)]/10 border-[var(--color-danger)]/30 text-[var(--color-danger)]",
-  amber:  "bg-[var(--color-warning)]/10 border-[var(--color-warning)]/30 text-[var(--color-warning)]",
-  indigo: "bg-[var(--badge-indigo-bg)] border-[var(--badge-indigo-border)] text-[var(--badge-indigo-text)]",
-  neutral: "bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-tertiary)]",
+  green:  "bg-[var(--color-success)]/12 text-[var(--color-success)]",
+  red:    "bg-[var(--color-danger)]/12 text-[var(--color-danger)]",
+  amber:  "bg-[var(--color-warning)]/12 text-[var(--color-warning)]",
+  indigo: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)]",
+  neutral: "bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]",
 };
 
 const BASE =
   "inline-flex items-center gap-1.5 " +
-  "rounded-[var(--radius-sm)] border px-2.5 py-0.5 " +
+  "rounded-[var(--radius-sm)] px-2.5 py-0.5 " +
   "text-xs font-medium whitespace-nowrap";
 
 const DOT: Record<BadgeColor, string> = {

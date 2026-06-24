@@ -30,11 +30,11 @@ const VARIANT_STYLES: Record<CardVariant, string> = {
   default:
     "shadow-[var(--brand-shadow-sm)]",
   interactive:
-    "border border-[var(--color-border-subtle)] shadow-[var(--brand-shadow-sm)] " +
-    "[@media(hover:hover)]:hover:shadow-[var(--brand-shadow-md)] [@media(hover:hover)]:hover:border-[var(--border-strong)] " +
+    "shadow-[var(--brand-shadow-sm)] " +
+    "[@media(hover:hover)]:hover:shadow-[var(--brand-shadow-md)] " +
     "transition-all duration-150 ease-out cursor-pointer",
   dashed:
-    "border border-dashed border-[var(--color-border-subtle)]",
+    "bg-[var(--color-bg-surface)]",
 };
 
 const PADDING: Record<string, string> = {

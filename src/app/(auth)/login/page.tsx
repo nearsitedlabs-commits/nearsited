@@ -123,7 +123,7 @@ export default function LoginPage() {
         type="button"
         onClick={handleGoogle}
         disabled={loading || googleLoading}
-        className="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-surface)] hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] text-sm font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {googleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : GOOGLE_SVG}
         Continue with Google

@@ -78,13 +78,13 @@ export function LeadHeroSection({
             {biz.place_id && (
               <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${biz.place_id}&query=${encodeURIComponent(biz.name)}`}
                 target="_blank" rel="noreferrer"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:border-[var(--color-success)]/40 [@media(hover:hover)]:hover:text-[var(--color-success)]">
+                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-success)]/10 [@media(hover:hover)]:hover:text-[var(--color-success)]">
                 <MapPin className="h-3.5 w-3.5" /> Map
               </a>
             )}
             {biz.website && (
               <a href={safeHref(biz.website) ?? "#"} target="_blank" rel="noreferrer"
-                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:border-[var(--status-info-text)]/40 [@media(hover:hover)]:hover:text-[var(--status-info-text)]">
+                className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-info)]/10 [@media(hover:hover)]:hover:text-[var(--color-info)]">
                 <ExternalLink className="h-3.5 w-3.5" /> Website
               </a>
             )}
@@ -154,7 +154,7 @@ export function LeadHeroSection({
                 size="sm"
                 onClick={() => handlePipelineChange("new_lead")}
                 icon={<TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />}
-                className="text-[var(--color-accent)] border-[var(--color-accent)]/30 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
+                className="text-[var(--color-accent)] [@media(hover:hover)]:hover:text-[var(--color-accent)]"
               >
                 Add to Pipeline
               </SecondaryButton>

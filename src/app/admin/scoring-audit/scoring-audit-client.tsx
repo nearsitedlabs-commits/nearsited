@@ -16,31 +16,31 @@ function scoreColor(s: number) {
 
 function statusBadge(ws: string | null) {
   switch (ws) {
-    case "no_website":    return <span className="rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">No Website</span>;
-    case "social_only":   return <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400">Social Only</span>;
-    case "platform_only": return <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[10px] font-medium text-blue-400">Platform</span>;
-    case "has_website":   return <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)]">Has Website</span>;
-    default:              return <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)]">Unknown</span>;
+    case "no_website":    return <span className="rounded-[var(--radius-sm)] bg-[var(--color-danger)]/12 px-2 py-0.5 text-[10px] font-medium text-[var(--color-danger)]">No Website</span>;
+    case "social_only":   return <span className="rounded-[var(--radius-sm)] bg-[var(--color-warning)]/12 px-2 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">Social Only</span>;
+    case "platform_only": return <span className="rounded-[var(--radius-sm)] bg-[var(--color-info)]/12 px-2 py-0.5 text-[10px] font-medium text-[var(--color-info)]">Platform</span>;
+    case "has_website":   return <span className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-tertiary)]">Has Website</span>;
+    default:              return <span className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-tertiary)]">Unknown</span>;
   }
 }
 
 function flagIcon(type: ScoreExplanation["flags"][number]["type"]) {
   switch (type) {
-    case "high_warning": return <TrendingUp className="h-3.5 w-3.5 text-red-400" />;
-    case "low_warning":  return <TrendingDown className="h-3.5 w-3.5 text-amber-400" />;
-    case "suspicious":   return <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />;
-    case "cliff":        return <Activity className="h-3.5 w-3.5 text-blue-400" />;
+    case "high_warning": return <TrendingUp className="h-3.5 w-3.5 text-[var(--color-danger)]" />;
+    case "low_warning":  return <TrendingDown className="h-3.5 w-3.5 text-[var(--color-warning)]" />;
+    case "suspicious":   return <AlertTriangle className="h-3.5 w-3.5 text-[var(--color-warning)]" />;
+    case "cliff":        return <Activity className="h-3.5 w-3.5 text-[var(--color-info)]" />;
     case "info":         return <Info className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />;
   }
 }
 
 function flagBg(type: ScoreExplanation["flags"][number]["type"]) {
   switch (type) {
-    case "high_warning": return "border-red-500/20 bg-red-500/5";
-    case "low_warning":  return "border-amber-500/20 bg-amber-500/5";
-    case "suspicious":   return "border-orange-500/20 bg-orange-500/5";
-    case "cliff":        return "border-blue-500/20 bg-blue-500/5";
-    case "info":         return "border-[var(--border)] bg-[var(--bg-elevated)]";
+    case "high_warning": return "bg-[var(--color-danger)]/10";
+    case "low_warning":  return "bg-[var(--color-warning)]/10";
+    case "suspicious":   return "bg-[var(--color-warning)]/8";
+    case "cliff":        return "bg-[var(--color-info)]/10";
+    case "info":         return "bg-[var(--color-bg-elevated)]";
   }
 }
 
@@ -48,14 +48,14 @@ function flagBg(type: ScoreExplanation["flags"][number]["type"]) {
 
 function ExpandedBreakdown({ biz, explanation }: { biz: AuditBusiness; explanation: ScoreExplanation }) {
   return (
-    <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg-base)] p-4 space-y-4">
+    <div className="mt-3 rounded-[var(--radius-sm)] bg-[var(--bg-base)] p-4 space-y-4">
       {/* Method badge */}
       <div className="flex items-center gap-2">
-        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${explanation.method === "verified" ? "border-[var(--score-good)]/40 bg-[var(--score-good-tint)] text-[var(--score-good)]" : "border-[var(--score-mid)]/40 bg-[var(--score-mid-tint)] text-[var(--score-mid)]"}`}>
+        <span className={`rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${explanation.method === "verified" ? "bg-[var(--score-good-tint)] text-[var(--score-good)]" : "bg-[var(--score-mid-tint)] text-[var(--score-mid)]"}`}>
           {explanation.method === "verified" ? "✓ Verified (audited)" : "~ Estimated (pre-audit)"}
         </span>
         {explanation.storedScore !== null && explanation.method === "verified" && Math.abs(explanation.storedScore - explanation.displayScore) > 2 && (
-          <span className="text-[10px] text-amber-400">Note: stored score ({explanation.storedScore}) differs from recomputed ({explanation.displayScore})</span>
+          <span className="text-[10px] text-[var(--color-warning)]">Note: stored score ({explanation.storedScore}) differs from recomputed ({explanation.displayScore})</span>
         )}
       </div>
 
@@ -64,7 +64,7 @@ function ExpandedBreakdown({ biz, explanation }: { biz: AuditBusiness; explanati
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Score Components</p>
         <div className="space-y-2">
           {explanation.components.map((c) => (
-            <div key={c.label} className="flex items-start gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2">
+            <div key={c.label} className="flex items-start gap-3 rounded-[var(--radius-sm)] bg-[var(--bg-surface)] px-3 py-2">
               <div className="w-36 shrink-0">
                 <span className="text-xs font-medium text-[var(--text-primary)]">{c.label}</span>
               </div>
@@ -80,7 +80,7 @@ function ExpandedBreakdown({ biz, explanation }: { biz: AuditBusiness; explanati
       </div>
 
       {/* Formula */}
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2">
+      <div className="rounded-[var(--radius-sm)] bg-[var(--bg-elevated)] px-3 py-2">
         <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-1">Formula</p>
         <p className="font-mono text-xs text-[var(--text-primary)]">{explanation.formula}</p>
       </div>
@@ -91,7 +91,7 @@ function ExpandedBreakdown({ biz, explanation }: { biz: AuditBusiness; explanati
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Flags</p>
           <div className="space-y-1.5">
             {explanation.flags.map((f, i) => (
-              <div key={i} className={`flex items-start gap-2 rounded-lg border px-3 py-2 ${flagBg(f.type)}`}>
+              <div key={i} className={`flex items-start gap-2 rounded-[var(--radius-sm)] px-3 py-2 ${flagBg(f.type)}`}>
                 <span className="mt-0.5 shrink-0">{flagIcon(f.type)}</span>
                 <p className="text-xs text-[var(--text-secondary)]">{f.message}</p>
               </div>
@@ -198,33 +198,33 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
           { label: "Flagged (Wrong Rank)", value: report.flaggedCount, icon: AlertTriangle, warn: report.flaggedCount > 5 },
           { label: "Model Confidence", value: `${report.scoringConfidence}%`, icon: Zap, colorClass: confidenceColor },
         ].map(({ label, value, icon: Icon, warn, colorClass }) => (
-          <div key={label} className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+          <div key={label} className="rounded-[var(--radius-md)] bg-[var(--bg-surface)] p-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-[var(--text-tertiary)]">{label}</span>
-              <Icon className={`h-4 w-4 ${warn ? "text-red-400" : "text-[var(--text-tertiary)]"}`} />
+              <Icon className={`h-4 w-4 ${warn ? "text-[var(--color-danger)]" : "text-[var(--text-tertiary)]"}`} />
             </div>
-            <p className={`text-2xl font-bold ${colorClass ?? (warn ? "text-red-400" : "text-[var(--text-primary)]")}`}>{value}</p>
+            <p className={`text-2xl font-bold ${colorClass ?? (warn ? "text-[var(--color-danger)]" : "text-[var(--text-primary)]")}`}>{value}</p>
           </div>
         ))}
       </div>
 
       {/* Status distribution */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4">
+      <div className="rounded-[var(--radius-md)] bg-[var(--bg-surface)] p-4">
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Score Distribution by Web Presence</h2>
         <div className="flex flex-wrap gap-3">
           {report.byStatus.map((g) => (
-            <div key={g.status} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-center min-w-[120px]">
+            <div key={g.status} className="rounded-[var(--radius-sm)] bg-[var(--bg-elevated)] px-3 py-2 text-center min-w-[120px]">
               <div className="mb-1">{statusBadge(g.status)}</div>
               <p className={`text-lg font-bold ${scoreColor(g.avgScore)}`}>{g.avgScore}</p>
               <p className="text-[10px] text-[var(--text-tertiary)]">avg · {g.count} businesses</p>
-              {g.flaggedCount > 0 && <p className="text-[10px] text-red-400">{g.flaggedCount} flagged</p>}
+              {g.flaggedCount > 0 && <p className="text-[10px] text-[var(--color-danger)]">{g.flaggedCount} flagged</p>}
             </div>
           ))}
         </div>
       </div>
 
       {/* Audit Report */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
+      <div className="rounded-[var(--radius-md)] bg-[var(--bg-surface)]">
         <button
           onClick={() => setShowReport(v => !v)}
           className="w-full flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
@@ -240,9 +240,9 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Systematic Issues</h3>
               <div className="space-y-2">
                 {report.systematicIssues.map((issue) => (
-                  <div key={issue.title} className={`rounded-lg border p-3 ${issue.severity === "high" ? "border-red-500/30 bg-red-500/5" : issue.severity === "medium" ? "border-amber-500/30 bg-amber-500/5" : "border-[var(--border)] bg-[var(--bg-elevated)]"}`}>
+                  <div key={issue.title} className={`rounded-[var(--radius-sm)] p-3 ${issue.severity === "high" ? "bg-[var(--color-danger)]/8" : issue.severity === "medium" ? "bg-[var(--color-warning)]/8" : "bg-[var(--bg-elevated)]"}`}>
                     <div className="flex items-start gap-2">
-                      <span className={`mt-0.5 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase ${issue.severity === "high" ? "bg-red-500/20 text-red-400" : issue.severity === "medium" ? "bg-amber-500/20 text-amber-400" : "bg-[var(--bg-surface)] text-[var(--text-tertiary)]"}`}>
+                      <span className={`mt-0.5 rounded-[var(--radius-sm)] px-1.5 py-0.5 text-[9px] font-bold uppercase ${issue.severity === "high" ? "bg-[var(--color-danger)]/12 text-[var(--color-danger)]" : issue.severity === "medium" ? "bg-[var(--color-warning)]/12 text-[var(--color-warning)]" : "bg-[var(--bg-surface)] text-[var(--text-tertiary)]"}`}>
                         {issue.severity}
                       </span>
                       <div className="flex-1">
@@ -260,19 +260,19 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">Recommended Formula Changes</h3>
               <div className="space-y-3">
                 {report.recommendations.map((rec) => (
-                  <div key={rec.title} className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                  <div key={rec.title} className="rounded-[var(--radius-sm)] bg-[var(--bg-elevated)] p-3">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase ${rec.impact === "high" ? "bg-red-500/20 text-red-400" : rec.impact === "medium" ? "bg-amber-500/20 text-amber-400" : "bg-blue-500/20 text-blue-400"}`}>
+                      <span className={`rounded-[var(--radius-sm)] px-1.5 py-0.5 text-[9px] font-bold uppercase ${rec.impact === "high" ? "bg-[var(--color-danger)]/12 text-[var(--color-danger)]" : rec.impact === "medium" ? "bg-[var(--color-warning)]/12 text-[var(--color-warning)]" : "bg-[var(--color-info)]/12 text-[var(--color-info)]"}`}>
                         {rec.impact} impact
                       </span>
                       <p className="text-sm font-medium text-[var(--text-primary)]">{rec.title}</p>
                     </div>
                     <div className="grid gap-1 sm:grid-cols-2 text-xs">
-                      <div className="rounded bg-red-500/5 border border-red-500/20 px-2 py-1.5">
-                        <span className="text-red-400 font-medium">Current: </span>
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--color-danger)]/8 px-2 py-1.5">
+                        <span className="text-[var(--color-danger)] font-medium">Current: </span>
                         <span className="text-[var(--text-secondary)]">{rec.current}</span>
                       </div>
-                      <div className="rounded bg-[var(--score-good-tint)] border border-[var(--score-good)]/20 px-2 py-1.5">
+                      <div className="rounded-[var(--radius-sm)] bg-[var(--score-good-tint)] px-2 py-1.5">
                         <span className="text-[var(--score-good)] font-medium">Suggested: </span>
                         <span className="text-[var(--text-secondary)]">{rec.suggested}</span>
                       </div>
@@ -286,7 +286,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
       </div>
 
       {/* Business table */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)]">
+      <div className="rounded-[var(--radius-md)] bg-[var(--bg-surface)]">
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border)] px-5 py-4">
           <input
@@ -294,10 +294,10 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
             placeholder="Search business or industry…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] w-48"
+            className="rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] w-48"
           />
           <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
+            className="rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
             <option value="all">All Statuses</option>
             <option value="no_website">No Website</option>
             <option value="social_only">Social Only</option>
@@ -305,7 +305,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
             <option value="has_website">Has Website</option>
           </select>
           <select value={filterFlag} onChange={e => setFilterFlag(e.target.value)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
+            className="rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
             <option value="all">All Flags</option>
             <option value="flagged">Flagged Only</option>
             <option value="high_warning">Over-scored</option>
@@ -314,7 +314,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
             <option value="cliff">Threshold Cliff</option>
           </select>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
+            className="rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1.5 text-xs text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]">
             <option value="score">Sort: Score</option>
             <option value="reviews">Sort: Reviews</option>
             <option value="rating">Sort: Rating</option>
@@ -350,7 +350,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
             const hasSuspicious = exp.flags.some(f => f.type === "suspicious");
             const flagCount = exp.flags.filter(f => f.type !== "info").length;
             return (
-              <div key={biz.id} className={`px-4 py-2.5 ${hasWarning ? "bg-amber-500/[0.03]" : ""}`}>
+              <div key={biz.id} className={`px-4 py-2.5 ${hasWarning ? "bg-[var(--color-warning)]/[0.03]" : ""}`}>
                 <div className="grid grid-cols-[2rem_1fr_6rem_4rem_5rem_5rem_4rem_4rem] items-center gap-2">
                   <span className="text-xs text-[var(--text-tertiary)]">{rank}</span>
                   <div className="min-w-0">
@@ -368,7 +368,7 @@ export default function ScoringAuditClient({ businesses }: { businesses: AuditBu
                   <div className="text-right text-xs text-[var(--text-secondary)]">{biz.rating ? `${biz.rating}★` : "—"}</div>
                   <div className="text-right">
                     {flagCount > 0 ? (
-                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${hasWarning ? "bg-red-500/15 text-red-400" : hasSuspicious ? "bg-orange-500/15 text-orange-400" : "bg-blue-500/15 text-blue-400"}`}>
+                      <span className={`rounded-[var(--radius-sm)] px-1.5 py-0.5 text-[10px] font-semibold ${hasWarning ? "bg-[var(--color-danger)]/15 text-[var(--color-danger)]" : hasSuspicious ? "bg-[var(--color-warning)]/15 text-[var(--color-warning)]" : "bg-[var(--color-info)]/15 text-[var(--color-info)]"}`}>
                         {flagCount}
                       </span>
                     ) : (

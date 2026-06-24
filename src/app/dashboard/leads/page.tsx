@@ -305,7 +305,7 @@ export default function LeadsPage() {
           <h1 className="text-xl font-medium sm:text-2xl text-[var(--color-text-primary)]">Your opportunities</h1>
           <Link
             href="/dashboard/discover"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-text-primary)]"
           >
             + Find more
           </Link>
@@ -314,28 +314,28 @@ export default function LeadsPage() {
         {/* KPI tiles — StatTile grid */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <button onClick={() => handleKpiClick("total")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
-            <StatTile label="Total" value={leads.length} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+            <StatTile label="Total" value={leads.length} className="w-full transition-colors" />
           </button>
           <button onClick={() => handleKpiClick("unaudited")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
-            <StatTile label="Un-audited" value={unauditedCount} accent="warning" className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+            <StatTile label="Un-audited" value={unauditedCount} accent="warning" className="w-full transition-colors" />
           </button>
           <button onClick={() => handleKpiClick("flagged")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
-            <StatTile label="Ready to Pitch" value={readyToPitchCount} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+            <StatTile label="Ready to Pitch" value={readyToPitchCount} className="w-full transition-colors" />
           </button>
           <button onClick={() => handleKpiClick("pipeline")} className="cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 rounded-[var(--radius-md)]">
-            <StatTile label="In Pipeline" value={pipelineMap.size} className="w-full hover:border-[var(--color-border-strong)] transition-colors" />
+            <StatTile label="In Pipeline" value={pipelineMap.size} className="w-full transition-colors" />
           </button>
         </div>
 
         {/* Bulk action bar */}
         {selectedIds.size > 0 && (
-          <div className="mb-4 flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-info)]/30 bg-[var(--color-info)]/10 px-4 py-2.5 text-sm">
+          <div className="mb-4 flex items-center gap-3 rounded-[var(--radius-md)] bg-[var(--color-info)]/10 px-4 py-2.5 text-sm">
             <span className="font-medium text-[var(--color-info)]">{selectedIds.size} selected</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleBulkPipeline}
                 disabled={bulkLoading}
-                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 px-3 py-1.5 text-xs font-medium text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 transition-colors disabled:opacity-50"
               >
                 {bulkLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 + Pipeline
@@ -344,7 +344,7 @@ export default function LeadsPage() {
                 onClick={handleBulkAudit}
                 disabled={bulkLoading}
                 aria-label={`Run website audit on ${selectedIds.size} selected ${selectedIds.size === 1 ? "business" : "businesses"} — uses ${selectedIds.size} ${selectedIds.size === 1 ? "credit" : "credits"}`}
-                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-accent)] transition-colors disabled:opacity-50"
+                className="cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] transition-colors disabled:opacity-50"
               >
                 {bulkLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
                 Audit ({selectedIds.size} credits)
@@ -381,7 +381,7 @@ export default function LeadsPage() {
 
         {/* Results */}
         {paginated.length === 0 ? (
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]">
             <LeadsEmptyState activeTab={resolvedActiveTab} searchQuery={searchQuery} />
           </div>
         ) : (

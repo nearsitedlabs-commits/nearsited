@@ -44,11 +44,11 @@ export function AuditProgressPanel({
 
   return (
     <div className="mt-4">
-      <div className="relative rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 sm:p-4">
+      <div className="relative rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-3 sm:p-4">
         {running && onCancel && (
           <button
             onClick={onCancel}
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:border-[var(--color-danger)]/40 hover:text-[var(--color-danger)]"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-danger)]/10 [@media(hover:hover)]:hover:text-[var(--color-danger)]"
           >
             <span className="h-3.5 w-3.5 flex items-center justify-center">
               <span className="sr-only">×</span>

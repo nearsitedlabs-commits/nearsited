@@ -102,7 +102,7 @@ function SubScore({
           ? "text-[var(--color-info)]"
           : "text-[var(--score-high)]";
   return (
-    <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+    <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
       <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{score ?? "—"}</span>
     </div>
@@ -114,7 +114,7 @@ function SubScore({
 function MetricRow({ metricKey, value }: { metricKey: MetricKey; value: string | null }) {
   const meta = METRIC_META[metricKey];
   return (
-    <div className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2.5">
+    <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2.5">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-1.5">
           <p className="text-xs font-medium text-[var(--color-text-primary)]">
@@ -177,7 +177,7 @@ export function AuditResultsPanel({
     auditResult.desktop.status === "timeout"
   ) {
     return (
-      <div className="mt-6 rounded-[var(--radius-md)] border border-amber-500/30 bg-amber-500/10 p-8 text-center">
+      <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-warning)]/10 p-8 text-center">
         <AlertTriangle className="mx-auto h-10 w-10 text-[var(--color-info)]" />
         <h2 className="mt-4 text-lg font-medium text-[var(--color-text-primary)]">
           Couldn&rsquo;t reach the site
@@ -211,7 +211,7 @@ export function AuditResultsPanel({
         );
         const isVerified = mapsRating != null;
         return (
-          <div className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-5 py-4">
+          <div className="flex items-center justify-between rounded-[var(--radius-md)] bg-[var(--color-accent)]/10 px-5 py-4">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-accent)]">
                 {isVerified ? "Opportunity Score" : "Estimated Opportunity Score"}
@@ -235,7 +235,7 @@ export function AuditResultsPanel({
       })()
     ) : (
       // ── Partial data — honest display ──────────────────────────────────────
-      <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-5 py-4">
+      <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Dashed ring with "—" */}
@@ -284,7 +284,7 @@ export function AuditResultsPanel({
             <button
               onClick={() => onRetryDesign("mobile")}
               disabled={designRetrying.mobile}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {designRetrying.mobile ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -301,7 +301,7 @@ export function AuditResultsPanel({
 
   // ── Performance Scores ────────────────────────────────────────────────────────
   const performanceEl = (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
       <h2 className="mb-4 text-lg font-medium text-[var(--color-text-primary)]">
         Performance Scores
       </h2>
@@ -351,10 +351,10 @@ export function AuditResultsPanel({
         if (!summary.text) return null;
         return (
           <div
-            className={`mt-4 rounded-[var(--radius-sm)] border p-3 text-sm ${
+            className={`mt-4 rounded-[var(--radius-sm)] p-3 text-sm ${
               summary.isPositive
-                ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
-                : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
+                : "bg-[var(--color-warning)]/10 text-[var(--color-warning)]"
             }`}
           >
             {summary.text}
@@ -366,7 +366,7 @@ export function AuditResultsPanel({
 
   // ── Design Analysis ───────────────────────────────────────────────────────────
   const designEl = designResult ? (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
       <h2 className="mb-4 text-lg font-medium text-[var(--color-text-primary)]">
         Design Analysis
       </h2>
@@ -400,7 +400,7 @@ export function AuditResultsPanel({
                       {d.issues.slice(0, 3).map((issue, i) => (
                         <div
                           key={i}
-                          className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-2"
+                          className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-2"
                         >
                           <p className="text-xs font-medium text-[var(--color-text-primary)]">
                             {issue.title}
@@ -419,12 +419,12 @@ export function AuditResultsPanel({
                   )}
                 </>
               ) : (
-                <div className="rounded-[var(--radius-sm)] border border-dashed border-red-500/30 bg-red-500/10 p-4">
+                <div className="rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 p-4">
                   <div className="text-center">
                     <p className="text-sm font-medium text-[var(--score-high)]">
                       {errDisplay?.title ?? "Analysis failed"}
                     </p>
-                    <p className="mt-1 text-xs text-red-400">
+                    <p className="mt-1 text-xs text-[var(--color-danger)]">
                       {errDisplay?.description ?? "Click retry to try again."}
                     </p>
                   </div>
@@ -432,7 +432,7 @@ export function AuditResultsPanel({
                     <button
                       onClick={() => onRetryDesign(s)}
                       disabled={designRetrying[s]}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] border border-red-500/40 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/15 px-3 py-1.5 text-xs font-medium text-[var(--color-danger)] transition-colors hover:bg-[var(--color-danger)]/25 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {designRetrying[s] ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
@@ -455,7 +455,7 @@ export function AuditResultsPanel({
           designResult.desktop.issues,
         );
         return summary ? (
-          <div className="mt-4 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3 text-sm text-[var(--color-text-secondary)]">
+          <div className="mt-4 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3 text-sm text-[var(--color-text-secondary)]">
             <span className="font-medium text-[var(--color-text-primary)]">What the AI found: </span>
             {summary}
           </div>

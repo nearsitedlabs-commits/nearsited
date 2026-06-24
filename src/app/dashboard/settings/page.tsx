@@ -23,10 +23,10 @@ type SubData = {
 
 const TIER_LABELS: Record<string, string> = { free_trial: "Free Trial", solo: "Solo", agency: "Agency", scale: "Scale" };
 const TIER_COLORS: Record<string, string> = {
-  free_trial: "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
-  solo:       "border-blue-500/30 bg-blue-500/10 text-blue-400",
-  agency:     "border-purple-500/30 bg-purple-500/10 text-purple-400",
-  scale:      "border-amber-500/30 bg-amber-500/10 text-amber-400",
+  free_trial: "bg-[var(--color-accent)]/12 text-[var(--color-accent)]",
+  solo:       "bg-[var(--color-info)]/12 text-[var(--color-info)]",
+  agency:     "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)]",
+  scale:      "bg-[var(--color-warning)]/12 text-[var(--color-warning)]",
 };
 
 /** Benefits copy — kept in sync with landing page Pricing.tsx PLANS array */
@@ -123,14 +123,14 @@ function ConfirmModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
-        className="w-full rounded-t-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1.5rem))] shadow-2xl sm:mx-4 sm:max-w-md sm:rounded-[var(--radius-md)] sm:pb-6"
+        className="w-full rounded-t-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6 pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1.5rem))] shadow-2xl sm:mx-4 sm:max-w-md sm:rounded-[var(--radius-md)] sm:pb-6"
       >
         {/* Drag handle — mobile only */}
         <div className="sm:hidden -mt-2 mb-4 flex justify-center" aria-hidden="true">
           <div className="h-1 w-10 rounded-full bg-[var(--color-border-strong)]" />
         </div>
         <div className="mb-4 flex items-center gap-3">
-          {destructive && <AlertTriangle className="h-5 w-5 text-red-400" />}
+          {destructive && <AlertTriangle className="h-5 w-5 text-[var(--color-danger)]" />}
           <h3 id="confirm-modal-title" className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</h3>
         </div>
         <p className="text-sm leading-relaxed text-[var(--color-text-secondary)]">{description}</p>
@@ -144,7 +144,7 @@ function ConfirmModal({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               autoFocus
-              className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-red-400"
+              className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-danger)]"
               placeholder={requireType}
             />
           </div>
@@ -522,7 +522,7 @@ export default function SettingsPage() {
       <StaggerContainer>
         {/* ── Profile ─────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
                 <User className="h-5 w-5 text-[var(--color-accent)]" />
@@ -538,7 +538,7 @@ export default function SettingsPage() {
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.email ?? "—"}</span>
                   <button
                     onClick={() => setShowEmailForm(!showEmailForm)}
-                    className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
+                    className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                   >
                     Change
                   </button>
@@ -565,7 +565,7 @@ export default function SettingsPage() {
                     </button>
                   </div>
                   {emailMsg && (
-                    <p className={`mt-2 text-xs ${emailMsg.includes("Error") ? "text-red-400" : "text-[var(--color-success)]"}`}>
+                    <p className={`mt-2 text-xs ${emailMsg.includes("Error") ? "text-[var(--color-danger)]" : "text-[var(--color-success)]"}`}>
                       {emailMsg}
                     </p>
                   )}
@@ -588,7 +588,7 @@ export default function SettingsPage() {
                     autoFocus={false}
                   />
                   {emailMsg && (
-                    <p className={`text-xs ${emailMsg.includes("Error") ? "text-red-400" : "text-[var(--color-success)]"}`}>
+                    <p className={`text-xs ${emailMsg.includes("Error") ? "text-[var(--color-danger)]" : "text-[var(--color-success)]"}`}>
                       {emailMsg}
                     </p>
                   )}
@@ -644,7 +644,7 @@ export default function SettingsPage() {
                       <button
                         onClick={() => { setEditingName(false); setNameMsg(null); }}
                         disabled={savingName}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] disabled:opacity-50"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:text-[var(--color-text-primary)] disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -654,7 +654,7 @@ export default function SettingsPage() {
                       <span className="text-sm font-medium text-[var(--color-text-primary)]">{user?.full_name ?? "—"}</span>
                       <button
                         onClick={() => { setNameInput(user?.full_name ?? ""); setEditingName(true); }}
-                        className="inline-flex cursor-pointer items-center min-h-[44px] gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                        className="inline-flex cursor-pointer items-center min-h-[44px] gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
                       >
                         Edit
                       </button>
@@ -663,7 +663,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               {nameMsg && (
-                <p className={`text-xs ${nameMsg === "Name updated." ? "text-[var(--color-success)]" : "text-red-400"}`}>
+                <p className={`text-xs ${nameMsg === "Name updated." ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"}`}>
                   {nameMsg}
                 </p>
               )}
@@ -673,7 +673,7 @@ export default function SettingsPage() {
                 <span className="text-sm text-[var(--color-text-secondary)]">Password</span>
                 <button
                   onClick={() => setShowPasswordForm(!showPasswordForm)}
-                  className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--color-accent)]/40 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
+                  className="inline-flex items-center min-h-[44px] rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] cursor-pointer"
                 >
                   Change
                 </button>
@@ -692,7 +692,7 @@ export default function SettingsPage() {
                     {passwordLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Update password"}
                   </button>
                   {passwordMsg && (
-                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>{passwordMsg}</p>
+                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"}`}>{passwordMsg}</p>
                   )}
                 </div>
               )}
@@ -710,7 +710,7 @@ export default function SettingsPage() {
                   <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password"
                     className="w-full rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors focus:border-[var(--color-accent)]" disabled={passwordLoading} />
                   {passwordMsg && (
-                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-red-400"}`}>{passwordMsg}</p>
+                    <p className={`text-xs ${passwordMsg === "Password updated successfully." ? "text-[var(--color-success)]" : "text-[var(--color-danger)]"}`}>{passwordMsg}</p>
                   )}
                   <button onClick={handleChangePassword} disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
                     className="w-full inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] py-3 text-sm font-medium text-white transition-colors active:opacity-90 disabled:opacity-50">
@@ -725,7 +725,7 @@ export default function SettingsPage() {
                   <span className="text-sm text-[var(--color-text-secondary)]">Two-factor authentication</span>
                   <p className="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">Add an extra layer of security to your account</p>
                 </div>
-                <span className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider">
+                <span className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider">
                   Coming soon
                 </span>
               </div>
@@ -745,7 +745,7 @@ export default function SettingsPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-success)]/10`}>
                 <CreditCard className="h-5 w-5 text-[var(--color-success)]" />
@@ -760,7 +760,7 @@ export default function SettingsPage() {
             </div>
 
             {syncMsg && (
-              <div className="mb-4 rounded-[var(--radius-sm)] border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
+              <div className="mb-4 rounded-[var(--radius-sm)] bg-[var(--color-success)]/10 px-3 py-2 text-xs text-[var(--color-success)]">
                 {syncMsg}
               </div>
             )}
@@ -775,7 +775,7 @@ export default function SettingsPage() {
                   }
                 </p>
               </div>
-              <span className={`rounded-[var(--radius-sm)] border px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free_trial"]}`}>
+              <span className={`rounded-[var(--radius-sm)] px-3 py-1 text-xs font-medium ${TIER_COLORS[sub?.tier ?? "free_trial"]}`}>
                 {TIER_LABELS[sub?.tier ?? "free_trial"]}
               </span>
             </div>
@@ -837,7 +837,7 @@ export default function SettingsPage() {
 
         {/* ── Notifications ─────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-accent)]/10`}>
                 <Bell className="h-5 w-5 text-[var(--color-accent)]" />
@@ -871,7 +871,7 @@ export default function SettingsPage() {
 
         {/* ── Integrations ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
                 <Key className="h-5 w-5 text-[var(--color-info)]" />
@@ -890,16 +890,16 @@ export default function SettingsPage() {
 
         {/* ── Danger Zone ──────────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-red-500/20 lg:border lg:bg-red-500/5 px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] bg-[var(--color-danger)]/8 px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
-              <div className="rounded-[var(--radius-sm)] p-2 bg-red-500/10">
-                <Trash2 className="h-5 w-5 text-red-400" />
+              <div className="rounded-[var(--radius-sm)] p-2 bg-[var(--color-danger)]/12">
+                <Trash2 className="h-5 w-5 text-[var(--color-danger)]" />
               </div>
               <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Danger Zone</h2>
             </div>
 
             {clearMsg && (
-              <p className={`mb-4 rounded-[var(--radius-sm)] px-3 py-2 text-xs ${clearMsg.startsWith("Error") ? "border border-red-500/30 bg-red-500/10 text-red-400" : "border border-green-500/30 bg-green-500/10 text-green-400"}`}>
+              <p className={`mb-4 rounded-[var(--radius-sm)] px-3 py-2 text-xs ${clearMsg.startsWith("Error") ? "bg-[var(--color-danger)]/10 text-[var(--color-danger)]" : "bg-[var(--color-success)]/10 text-[var(--color-success)]"}`}>
                 {clearMsg}
               </p>
             )}
@@ -922,7 +922,7 @@ export default function SettingsPage() {
                       {!isConfirming && (
                         <button
                           onClick={() => setConfirming(scope)}
-                          className="shrink-0 rounded-[var(--radius-sm)] border border-red-500/30 px-3 py-1.5 min-h-[44px] text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 cursor-pointer"
+                          className="shrink-0 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-3 py-1.5 min-h-[44px] text-xs font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/15 cursor-pointer"
                         >
                           {SCOPE_LABELS[scope]}
                         </button>
@@ -968,7 +968,7 @@ export default function SettingsPage() {
 
         {/* ── Data & Privacy ──────────────────────────────────────────── */}
         <FadeUp>
-          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:border lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
+          <div className="mb-8 lg:mb-6 lg:rounded-[var(--radius-md)] border-y border-[var(--color-border-subtle)] lg:bg-[var(--color-bg-surface)] px-0 py-5 lg:p-6">
             <div className="mb-4 flex items-center gap-3">
               <div className={`${SECTION_ICON_BASE} bg-[var(--color-info)]/10`}>
                 <Shield className="h-5 w-5 text-[var(--color-info)]" />
@@ -976,7 +976,7 @@ export default function SettingsPage() {
               <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Data & Privacy</h2>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] p-3">
+              <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3">
                 <div>
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">Download my data</p>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Export all your data as JSON (GDPR request)</p>
@@ -984,26 +984,26 @@ export default function SettingsPage() {
                 <a
                   href="/api/export/user-data"
                   download
-                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] px-3 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
                 >
                   <Download className="h-3.5 w-3.5" />
                   Export
                 </a>
               </div>
-              <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-red-500/20 p-3">
+              <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-danger)]/8 p-3">
                 <div>
                   <p className="text-sm font-medium text-[var(--color-text-primary)]">Delete my account</p>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">Permanently removes your account and all associated data</p>
                 </div>
                 <button
                   onClick={() => setConfirmDelete(true)}
-                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] border border-red-500/30 px-3 text-xs font-medium text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10"
+                  className="inline-flex cursor-pointer items-center min-h-[44px] gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-3 text-xs font-medium text-[var(--color-danger)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-danger)]/15"
                 >
                   Delete
                 </button>
               </div>
               {deleteMsg && (
-                <p className="text-xs text-red-400">{deleteMsg}</p>
+                <p className="text-xs text-[var(--color-danger)]">{deleteMsg}</p>
               )}
             </div>
           </div>

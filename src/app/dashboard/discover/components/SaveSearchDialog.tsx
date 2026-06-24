@@ -34,7 +34,7 @@ export function SaveSearchDialog({
         onClick={onCancel}
       >
         <div
-          className="w-full max-w-sm rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 shadow-[var(--brand-shadow-lg)]"
+          className="w-full max-w-sm rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6 shadow-[var(--brand-shadow-lg)]"
           onClick={(e) => e.stopPropagation()}
         >
           <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
@@ -60,7 +60,7 @@ export function SaveSearchDialog({
               <button
                 type="button"
                 onClick={onCancel}
-                className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+                className="cursor-pointer rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
               >
                 Cancel
               </button>
@@ -97,7 +97,7 @@ export function SaveSearchDialog({
       />
       {/* Dialog */}
       <motion.div
-        className="relative w-full max-w-sm rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 shadow-[var(--brand-shadow-lg)]"
+        className="relative w-full max-w-sm rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6 shadow-[var(--brand-shadow-lg)]"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -127,7 +127,7 @@ export function SaveSearchDialog({
             <button
               type="button"
               onClick={onCancel}
-              className="cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-bg-elevated)]"
+              className="cursor-pointer rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80"
             >
               Cancel
             </button>

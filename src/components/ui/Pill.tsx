@@ -22,11 +22,11 @@ export type PillProps = {
 // ── Style maps ────────────────────────────────────────────────────────────────
 
 const VARIANT_STYLES: Record<PillVariant, string> = {
-  info:    "bg-[rgba(96,165,250,0.12)] border-[rgba(96,165,250,0.25)] text-[var(--color-info)]",
-  warning: "bg-[rgba(196,152,74,0.12)] border-[rgba(196,152,74,0.25)] text-[var(--color-warning)]",
-  success: "bg-[rgba(74,143,90,0.12)] border-[rgba(74,143,90,0.25)] text-[var(--color-success)]",
-  danger:  "bg-[rgba(196,102,90,0.12)] border-[rgba(196,102,90,0.25)] text-[var(--color-danger)]",
-  neutral: "bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-tertiary)]",
+  info:    "bg-[rgba(96,165,250,0.12)] text-[var(--color-info)]",
+  warning: "bg-[rgba(196,152,74,0.12)] text-[var(--color-warning)]",
+  success: "bg-[rgba(74,143,90,0.12)] text-[var(--color-success)]",
+  danger:  "bg-[rgba(196,102,90,0.12)] text-[var(--color-danger)]",
+  neutral: "bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]",
 };
 
 const DOT_STYLES: Record<PillVariant, string> = {
@@ -44,7 +44,7 @@ const SIZE_STYLES: Record<PillSize, string> = {
 
 const BASE =
   "inline-flex items-center gap-1.5 " +
-  "rounded-[var(--radius-sm)] border whitespace-nowrap font-medium";
+  "rounded-[var(--radius-sm)] whitespace-nowrap font-medium";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 

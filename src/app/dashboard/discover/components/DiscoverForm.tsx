@@ -67,7 +67,7 @@ export function DiscoverForm({
   const savedSearchesRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-5 shadow-[var(--brand-shadow-sm)]">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4 sm:p-5 shadow-[var(--brand-shadow-sm)]">
       <form onSubmit={onSubmit}>
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-2.5 sm:items-end">
           <div className="relative flex-1 min-w-0">
@@ -162,7 +162,7 @@ export function DiscoverForm({
               onClick={onRandomize}
               disabled={!!(submitting || loadingAuth)}
               title="Random city + business type"
-              className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-tertiary)] transition-all duration-150 hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-11 w-11 flex-shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] transition-all duration-150 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/10 [@media(hover:hover)]:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Shuffle className="h-4 w-4" />
             </button>
@@ -190,7 +190,7 @@ export function DiscoverForm({
                 Saved ({savedSearches.length})
               </button>
               {savedSearchesOpen && (
-                <div className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[var(--brand-shadow-lg)] overflow-hidden">
+                <div className="absolute left-0 top-full z-40 mt-1.5 w-64 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)] overflow-hidden">
                   <div className="px-3 py-2 text-[10px] uppercase tracking-[0.15em] font-medium text-[var(--color-text-tertiary)] border-b border-[var(--color-border-subtle)]">
                     Saved Searches
                   </div>
@@ -232,7 +232,7 @@ export function DiscoverForm({
       </div>
 
       {error && (
-        <div className="mt-3 rounded-[var(--radius-md)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-[var(--color-danger)]">
+        <div className="mt-3 rounded-[var(--radius-md)] bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]">
           {error}
         </div>
       )}

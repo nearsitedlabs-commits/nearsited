@@ -55,7 +55,7 @@ export default function AuthCard({
 
         {/* Card */}
         <div
-          className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] p-6"
+          className="rounded-[var(--radius-md)] p-6"
           style={{ background: "var(--color-bg-surface)" }}
         >
           {/* Dismissable error banner */}
@@ -68,7 +68,7 @@ export default function AuthCard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease }}
-                className="mb-4 flex items-start gap-2 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-2.5 text-xs text-[var(--color-danger)]"
+                className="mb-4 flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-3 py-2.5 text-xs text-[var(--color-danger)]"
               >
                 <span className="flex-1 leading-5">{error}</span>
                 {onDismissError && (

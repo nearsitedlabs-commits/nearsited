@@ -158,7 +158,7 @@ export default function PricingPage() {
                   <motion.div
                     key={item.q}
                     variants={faqItem}
-                    className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5"
+                    className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-6 py-5"
                   >
                     <p className="text-sm font-medium text-[var(--text-primary)]">{item.q}</p>
                     <p className="mt-1.5 text-base lg:text-body leading-7 text-[var(--text-secondary)]">{item.a}</p>
@@ -178,7 +178,7 @@ export default function PricingPage() {
                 <span className="block h-px w-6 bg-[var(--accent)]" />
                 A note from the founder
               </div>
-              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-8 text-left">
+              <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-8 text-left">
                 <p className="text-base leading-8 text-[var(--text-secondary)]">
                   I run a web design agency. I built Nearsited because I was spending 10 hours a week prospecting instead of building websites.
                 </p>

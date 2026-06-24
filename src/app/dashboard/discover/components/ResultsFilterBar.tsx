@@ -86,7 +86,7 @@ export function ResultsFilterBar({
           <AnimatePresence>
             {sortDropdownOpen && (
               <motion.div
-                className="absolute right-0 top-full z-40 mt-1 w-48 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
+                className="absolute right-0 top-full z-40 mt-1 w-48 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)] overflow-hidden"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}

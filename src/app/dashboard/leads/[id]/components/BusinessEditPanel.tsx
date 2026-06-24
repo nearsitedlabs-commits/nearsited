@@ -119,7 +119,7 @@ export function BusinessEditPanel({ bizId, initialName, initialCity, initialBusi
             type="button"
             onClick={handleLookup}
             disabled={!mapsUrl.trim() || lookupLoading}
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] border border-[var(--color-accent)]/20 px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] [@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:text-[var(--color-text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-3 py-2 text-xs font-medium text-[var(--color-accent)] [@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 [@media(hover:hover)]:hover:text-[var(--color-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {lookupLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
             Look up
@@ -158,7 +158,7 @@ export function BusinessEditPanel({ bizId, initialName, initialCity, initialBusi
       </div>
 
       {saveError && (
-        <p className="text-xs text-red-400">{saveError}</p>
+        <p className="text-xs text-[var(--color-danger)]">{saveError}</p>
       )}
 
       {/* Actions */}

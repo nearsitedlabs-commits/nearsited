@@ -49,7 +49,7 @@ function ScoreRing({ score, size = "md", label: labelOverride }: { score: number
   if (score === null) {
     return (
       <div className="flex flex-col items-center gap-1">
-        <div className="flex items-center justify-center rounded-full border-2 border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]" style={{ width: dim, height: dim }}>
+        <div className="flex items-center justify-center rounded-full bg-[var(--color-bg-elevated)]" style={{ width: dim, height: dim }}>
           <span className="text-sm font-bold text-[var(--color-text-tertiary)]">—</span>
         </div>
       </div>
@@ -92,7 +92,7 @@ function SubScore({ label, score }: { label: string; score: number | null }) {
     : score >= 40 ? "text-[var(--color-info)]"
     : "text-[var(--score-high)]";
   return (
-    <div className="flex items-center justify-between rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-2">
+    <div className="flex items-center justify-between rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-2">
       <span className="text-sm text-[var(--color-text-secondary)]">{label}</span>
       <span className={`text-sm font-bold ${color} tabular-nums`}>
         {score !== null ? <CountUp value={score} /> : "—"}
@@ -103,12 +103,12 @@ function SubScore({ label, score }: { label: string; score: number | null }) {
 
 function ImpactPill({ impact }: { impact: string }) {
   const color = impact === "High"
-    ? "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-text)]/30"
+    ? "bg-[var(--status-error-bg)] text-[var(--status-error-text)]"
     : impact === "Medium"
-    ? "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)] border-[var(--status-warning-text)]/30"
-    : "bg-[var(--status-success-bg)] text-[var(--status-success-text)] border-[var(--status-success-text)]/30";
+    ? "bg-[var(--status-warning-bg)] text-[var(--status-warning-text)]"
+    : "bg-[var(--status-success-bg)] text-[var(--status-success-text)]";
   return (
-    <span className={`inline-flex items-center rounded-[var(--radius-sm)] border px-2 py-0.5 text-[10px] font-semibold uppercase ${color}`}>
+    <span className={`inline-flex items-center rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase ${color}`}>
       {impact}
     </span>
   );
@@ -222,7 +222,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
           {hasAuditData ? (
             <div className="mb-6 grid gap-6 md:grid-cols-2">
               {/* Mobile Audit */}
-              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
                 <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]">📱 Mobile</p>
                 {mobileAudit ? (
                   <div className="space-y-2">
@@ -253,7 +253,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               </div>
 
               {/* Desktop Audit */}
-              <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+              <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
                 <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]">🖥️ Desktop</p>
                 {desktopAudit ? (
                   <div className="space-y-2">
@@ -284,7 +284,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
               </div>
             </div>
           ) : (
-            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+            <div className="mb-6 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
               <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">Why This Is An Opportunity</h2>
               <ul className="space-y-3">
                 {[
@@ -315,7 +315,7 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
         {/* AI Opportunity Summary */}
         {issues.length > 0 && (
           <Section delay={0.2}>
-            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+            <div className="mb-6 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
               <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">AI Opportunity Summary</h2>
               <p className="mb-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {getDesignSummary(
@@ -345,13 +345,13 @@ export default function ShareReportClient({ data }: { data: ShareData }) {
         {/* Design Issues */}
         {issues.length > 0 && (
           <Section delay={0.25}>
-            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6">
+            <div className="mb-6 rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-6">
               <h2 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">Design Issues</h2>
               <div className="space-y-3">
                 {issues.map((issue, i) => (
                   <motion.div
                     key={i}
-                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-3"
+                    className="rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] p-3"
                     initial={{ opacity: 0, y: 8 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

@@ -59,7 +59,7 @@ export function AuditForm({
       : "No Google Maps link added";
 
     return (
-      <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-5">
+      <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--color-success)]" />
@@ -91,7 +91,7 @@ export function AuditForm({
   if (running) {
     const truncatedUrl = url.length > 60 ? url.slice(0, 57) + "…" : url;
     return (
-      <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 py-3">
+      <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] px-4 py-3">
         <div className="flex items-center gap-3">
           <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[var(--color-accent)]" />
           <p className="min-w-0 flex-1 truncate text-sm text-[var(--color-text-secondary)]">
@@ -105,7 +105,7 @@ export function AuditForm({
 
   // ── Idle state — full input form ─────────────────────────────────────────────
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 sm:p-6">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4 sm:p-6">
       {/* URL input + Analyse button inline */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -181,7 +181,7 @@ export function AuditForm({
             <button
               key={ex}
               onClick={() => onUrlChange(ex)}
-              className="cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs text-[var(--color-text-tertiary)] transition-colors duration-150 hover:border-[var(--color-accent)]/40 hover:text-[var(--color-accent)]"
+              className="cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-3 py-1 text-xs text-[var(--color-text-tertiary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-accent)]/8 [@media(hover:hover)]:hover:text-[var(--color-accent)]"
             >
               {ex}
             </button>

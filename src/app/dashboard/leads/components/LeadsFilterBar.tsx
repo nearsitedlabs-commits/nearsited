@@ -68,8 +68,8 @@ export function LeadsFilterBar({
               title={tab.tooltip}
               className={`cursor-pointer rounded-[var(--radius-sm)] px-2.5 py-1 text-xs transition-colors duration-150 min-h-[44px] sm:min-h-0 sm:py-1 ${
                 isActive
-                  ? "font-medium text-[var(--color-text-primary)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)]"
-                  : "font-normal text-[var(--color-text-tertiary)] border border-transparent hover:text-[var(--color-text-secondary)]"
+                  ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-bg-elevated)]"
+                  : "font-normal text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-text-secondary)]"
               }`}
             >
               {tab.label}
@@ -100,8 +100,8 @@ export function LeadsFilterBar({
           onClick={onOpenFilterDrawer}
           className={`cursor-pointer inline-flex items-center gap-1 rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium transition-colors duration-150 min-h-[44px] sm:min-h-0 sm:py-1 ${
             activeFilterCount > 0
-              ? "text-[var(--color-text-primary)] border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)]"
-              : "text-[var(--color-text-tertiary)] border border-transparent hover:text-[var(--color-text-secondary)]"
+              ? "text-[var(--color-text-primary)] bg-[var(--color-bg-elevated)]"
+              : "text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-text-secondary)]"
           }`}
         >
           <Filter className="h-3 w-3" />

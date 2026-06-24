@@ -2,7 +2,7 @@
 
 export function LoadingSkeleton() {
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden shadow-[var(--brand-shadow-sm)]">
+    <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] overflow-hidden shadow-[var(--brand-shadow-sm)]">
       <div className="border-b border-[var(--color-border-subtle)] px-6 py-4">
         <div className="h-5 w-44 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] animate-pulse" />
       </div>

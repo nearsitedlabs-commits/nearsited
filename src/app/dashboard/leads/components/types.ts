@@ -76,13 +76,13 @@ export const PIPELINE_FILTER_OPTIONS: { value: PipelineTab; label: string }[] = 
 
 /** Semantic colors for each opportunity status pill */
 export const STATUS_BADGE: Record<OpportunityStatus, { label: string; class: string }> = {
-  new:         { label: "New",         class: "border-blue-500/30 bg-blue-500/10 text-blue-400" },
-  audited:     { label: "Audited",     class: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" },
-  pitched:     { label: "Pitched",     class: "border-indigo-500/30 bg-indigo-500/10 text-indigo-400" },
-  in_pipeline: { label: "In pipeline", class: "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" },
-  won:         { label: "Won",         class: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold" },
-  lost:        { label: "Lost",        class: "border-red-500/30 bg-red-500/10 text-red-400" },
-  archived:    { label: "Archived",    class: "border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]" },
+  new:         { label: "New",         class: "bg-[var(--color-info)]/10 text-[var(--color-info)]" },
+  audited:     { label: "Audited",     class: "bg-[var(--color-accent)]/10 text-[var(--color-accent)]" },
+  pitched:     { label: "Pitched",     class: "bg-[var(--badge-indigo-bg)] text-[var(--badge-indigo-text)]" },
+  in_pipeline: { label: "In pipeline", class: "bg-[var(--color-info)]/10 text-[var(--color-info)]" },
+  won:         { label: "Won",         class: "bg-[var(--color-success)]/10 text-[var(--color-success)] font-semibold" },
+  lost:        { label: "Lost",        class: "bg-[var(--color-danger)]/10 text-[var(--color-danger)]" },
+  archived:    { label: "Archived",    class: "bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)]" },
 };
 
 /** Site presence labels for the SITE column */

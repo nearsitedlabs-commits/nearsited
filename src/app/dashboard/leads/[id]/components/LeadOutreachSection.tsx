@@ -234,7 +234,7 @@ export function LeadOutreachSection({
       </div>
 
       {pitchError && (
-        <div className="mb-3 rounded-[var(--radius-sm)] border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-3 py-2 text-xs text-[var(--color-danger)]" role="alert" aria-live="polite">
+        <div className="mb-3 rounded-[var(--radius-sm)] bg-[var(--color-danger)]/10 px-3 py-2 text-xs text-[var(--color-danger)]" role="alert" aria-live="polite">
           {pitchError}
         </div>
       )}

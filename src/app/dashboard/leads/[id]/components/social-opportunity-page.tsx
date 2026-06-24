@@ -232,16 +232,16 @@ export default function SocialOpportunityPage({ business, pipelineStatus, savedP
             <>
               {socialPlatforms.map((platform) => (
                 <span key={platform}
-                  className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
+                  className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/12 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-accent)]">
                   <Hash className="h-3 w-3" aria-hidden="true" /> {platform}
                 </span>
               ))}
-              <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
+              <span className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-warning)]/12 px-2.5 py-0.5 text-[10px] font-medium text-[var(--color-warning)]">
                 Social Presence Detected
               </span>
               {biz.website && safeHref(biz.website) && (
                 <a href={safeHref(biz.website)!} target="_blank" rel="noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:border-[var(--status-info-text)]/40 [@media(hover:hover)]:hover:text-[var(--status-info-text)]">
+                  className="inline-flex cursor-pointer items-center gap-1 rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-secondary)] transition-colors [@media(hover:hover)]:hover:bg-[var(--color-info)]/10 [@media(hover:hover)]:hover:text-[var(--color-info)]">
                   View Profile
                 </a>
               )}

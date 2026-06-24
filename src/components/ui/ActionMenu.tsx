@@ -52,7 +52,7 @@ export function ActionMenu({ items, trigger, align = "end" }: ActionMenuProps) {
           className={cn(
             "z-[var(--z-dropdown)] min-w-[160px] overflow-hidden",
             "rounded-[var(--radius-md)]",
-            "border border-[var(--color-border-subtle)]",
+            "",
             "bg-[var(--color-bg-elevated)]",
             "shadow-[var(--brand-shadow-lg)]",
             "p-1",

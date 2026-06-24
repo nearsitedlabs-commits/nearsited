@@ -52,7 +52,7 @@ export default function SettingsLoading() {
           </div>
 
           {/* Danger zone */}
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/20 bg-[var(--color-bg-surface)] p-6">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-danger)]/8 p-6">
             <SkeletonLoader width="100px" height="18px" radius="4px" />
             <SkeletonLoader className="mt-2" width="240px" height="12px" radius="4px" />
             <SkeletonLoader className="mt-4" width="140px" height="36px" radius="8px" />

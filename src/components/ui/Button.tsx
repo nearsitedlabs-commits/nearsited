@@ -25,9 +25,9 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
     "[@media(hover:hover)]:hover:opacity-90 " +
     "active:opacity-90 ",
   secondary:
-    "border border-[var(--color-accent)]/20 bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] " +
-    "[@media(hover:hover)]:hover:border-[var(--color-accent)]/45 [@media(hover:hover)]:hover:bg-[var(--color-bg-surface)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] [@media(hover:hover)]:hover:shadow-[0_0_0_1px_rgba(138,151,119,0.12)] " +
-    "active:bg-[var(--accent-tint)] transition-all duration-150 ",
+    "bg-[var(--color-accent)]/10 text-[var(--color-accent)] " +
+    "[@media(hover:hover)]:hover:bg-[var(--color-accent)]/15 [@media(hover:hover)]:hover:text-[var(--color-accent)] " +
+    "active:bg-[var(--color-accent)]/20 transition-all duration-150 ",
   ghost:
     "bg-transparent text-[var(--color-text-secondary)] " +
     "[@media(hover:hover)]:hover:bg-[var(--accent-tint)] [@media(hover:hover)]:hover:text-[var(--color-text-primary)] " +
@@ -40,8 +40,8 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
     "active:bg-[var(--accent-tint)] transition-all duration-150 " +
     "focus-visible:ring-[var(--color-accent)]/30 ",
   destructive:
-    "border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 text-[var(--color-danger)] " +
-    "[@media(hover:hover)]:hover:border-[var(--color-danger)]/50 [@media(hover:hover)]:hover:bg-[var(--color-danger)]/20 " +
+    "bg-[var(--color-danger)]/10 text-[var(--color-danger)] " +
+    "[@media(hover:hover)]:hover:bg-[var(--color-danger)]/15 " +
     "active:bg-[var(--color-danger)]/25 " +
     "focus-visible:ring-[var(--color-danger)] ",
 };

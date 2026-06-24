@@ -103,10 +103,10 @@ export function ExampleReportModal({
   const isWebsite = type === "weak_website";
   const badgeColor =
     type === "weak_website"
-      ? "bg-[var(--color-success)]/10 text-[var(--color-success)] border-[var(--color-success)]/30"
+      ? "bg-[var(--color-success)]/12 text-[var(--color-success)]"
       : type === "no_website"
-        ? "bg-[var(--color-danger)]/10 text-[var(--color-danger)] border-[var(--color-danger)]/30"
-        : "bg-[var(--color-warning)]/10 text-[var(--color-warning)] border-[var(--color-warning)]/30";
+        ? "bg-[var(--color-danger)]/12 text-[var(--color-danger)]"
+        : "bg-[var(--color-warning)]/12 text-[var(--color-warning)]";
   const badgeLabel = EXAMPLE_TABS.find((t) => t.key === type)?.label ?? "";
 
   return (
@@ -120,7 +120,7 @@ export function ExampleReportModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="example-modal-title"
-        className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)]"
+        className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] shadow-[var(--brand-shadow-lg)]"
       >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] px-6 py-4">
@@ -145,7 +145,7 @@ export function ExampleReportModal({
           {/* Type badge */}
           <div>
             <span
-              className={`inline-flex items-center rounded-[var(--radius-sm)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${badgeColor}`}
+              className={`inline-flex items-center rounded-[var(--radius-sm)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badgeColor}`}
             >
               {badgeLabel}
             </span>
@@ -157,7 +157,7 @@ export function ExampleReportModal({
               <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
                 Opportunity Score
               </p>
-              <div className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
+              <div className="flex items-center gap-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-4">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-[var(--score-high)]">
                     {data.currentScore}
@@ -171,7 +171,7 @@ export function ExampleReportModal({
                   </p>
                   <p className="mt-0.5 text-xs text-[var(--color-text-tertiary)]">Potential</p>
                 </div>
-                <div className="ml-auto rounded-[var(--radius-sm)] border border-[var(--color-success)]/30 bg-[var(--color-success)]/10 px-4 py-2 text-center">
+                <div className="ml-auto rounded-[var(--radius-sm)] bg-[var(--color-success)]/10 px-4 py-2 text-center">
                   <p className="text-2xl font-bold text-[var(--color-success)]">
                     +{data.potentialScore! - data.currentScore!}
                   </p>
@@ -184,7 +184,7 @@ export function ExampleReportModal({
               <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
                 Website Opportunity
               </p>
-              <div className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4">
+              <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-4">
                 <p className="text-sm font-medium text-[var(--color-text-primary)]">
                   {data.opportunityText}
                 </p>
@@ -206,7 +206,7 @@ export function ExampleReportModal({
               {data.findings.map((finding, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2.5"
+                  className="flex items-center gap-3 rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] px-3 py-2.5"
                 >
                   <div className="h-1.5 w-1.5 shrink-0 rounded-[var(--radius-sm)] bg-[var(--text-muted)]" />
                   <span className="text-sm text-[var(--color-text-secondary)]">{finding}</span>
@@ -221,7 +221,7 @@ export function ExampleReportModal({
               <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
                 AI Opportunity Summary
               </p>
-              <div className="rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+              <div className="rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 The website appears functional but underperforms in several areas that may
                 impact lead generation and trust. Improving mobile usability, trust indicators,
                 and conversion pathways could significantly improve effectiveness.
@@ -232,7 +232,7 @@ export function ExampleReportModal({
               <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
                 {type === "no_website" ? "Why a Website Matters" : "Why an Owned Website Matters"}
               </p>
-              <div className="rounded-[var(--radius-sm)] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/10 p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+              <div className="rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {type === "no_website"
                   ? "A professional website establishes credibility, improves search visibility, and creates a central hub for lead generation. Without one, potential customers may struggle to find or trust the business."
                   : "Social media drives engagement, but an owned website provides credibility, search visibility, and lead capture that platforms cannot replace. It's the foundation of a professional digital presence."}
@@ -245,7 +245,7 @@ export function ExampleReportModal({
             <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
               Outreach Preview
             </p>
-            <div className="rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            <div className="rounded-[var(--radius-sm)] bg-[var(--color-bg-surface)] p-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
               {isWebsite ? (
                 <>
                   <p>Hi,</p>

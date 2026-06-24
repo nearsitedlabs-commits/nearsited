@@ -224,7 +224,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
           whileInView="visible"
           viewport={viewport}
         >
-          <div className="relative flex items-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] p-1 text-sm">
+          <div className="relative flex items-center rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)] p-1 text-sm">
             {(["monthly", "annual"] as const).map((b) => (
               <button
                 key={b}
@@ -278,13 +278,10 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
             >
 
               <Card
-                variant={plan.featured ? "interactive" : "default"}
+                variant="default"
+                elevation={plan.featured ? 2 : 1}
                 padding="lg"
-                className={`flex h-full flex-col ${
-                  plan.featured
-                    ? "border-[var(--color-accent)]/30 ring-1 ring-[var(--color-accent)]/10"
-                    : ""
-                }`}
+                className={`flex h-full flex-col ${plan.featured ? "scale-105 shadow-[var(--brand-shadow-md)]" : ""}`}
               >
                 {plan.badge && (
                   <span className="mb-4 self-start inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)]">

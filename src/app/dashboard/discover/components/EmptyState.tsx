@@ -7,7 +7,7 @@ type EmptyStateProps = {
 export function EmptyState({ type }: EmptyStateProps) {
   if (type === "no-search") {
     return (
-      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-16 text-center">
+      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] py-16 text-center">
         <p className="text-sm font-medium text-[var(--color-text-primary)]">
           Hidden revenue is waiting.
         </p>
@@ -19,7 +19,7 @@ export function EmptyState({ type }: EmptyStateProps) {
   }
 
   return (
-    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] py-16 text-center">
+    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] py-16 text-center">
       <p className="text-sm font-medium text-[var(--color-text-primary)]">
         No businesses found in this area.
       </p>

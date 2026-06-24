@@ -108,20 +108,15 @@ function NavDot({ section, isActive }: { section: Section; isActive: boolean }) 
             width: isActive ? 32 : 28,
             height: isActive ? 32 : 28,
             backgroundColor: isActive
-              ? "rgba(138,151,119,0.18)"
-              : "rgba(255,255,255,0.04)",
-            borderColor: isActive
-              ? "rgba(138,151,119,0.5)"
-              : "rgba(255,255,255,0.08)",
+              ? "rgba(138,151,119,0.22)"
+              : "rgba(255,255,255,0.05)",
           }}
           whileHover={{
             width: 32,
             height: 32,
-            backgroundColor: isActive ? "rgba(138,151,119,0.26)" : "rgba(255,255,255,0.08)",
-            borderColor: isActive ? "rgba(138,151,119,0.65)" : "rgba(255,255,255,0.18)",
+            backgroundColor: isActive ? "rgba(138,151,119,0.30)" : "rgba(255,255,255,0.10)",
           }}
           transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{ border: "1px solid" }}
         >
           <Icon
             style={{
@@ -143,7 +138,7 @@ export function LandingScrollNav() {
   const prefersReducedMotion = useSafeReducedMotion();
 
   const inner = (
-    <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-page)]/70 px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
+    <div className="flex flex-col items-center gap-1 rounded-[var(--radius-md)] bg-[var(--color-bg-elevated)]/80 px-1 py-2 shadow-[var(--brand-shadow-lg)] backdrop-blur-md">
       {NAV_SECTIONS.map((section) => (
         <NavDot key={section.id} section={section} isActive={activeId === section.id} />
       ))}

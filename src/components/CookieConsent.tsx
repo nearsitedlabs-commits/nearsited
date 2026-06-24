@@ -50,7 +50,7 @@ export function CookieConsent() {
           transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
           className="fixed bottom-4 left-4 right-4 z-[100] sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-sm"
         >
-          <div className="rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-4 shadow-2xl">
+          <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-4 shadow-2xl">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--color-text-primary)]">
@@ -77,7 +77,7 @@ export function CookieConsent() {
             <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={handleDecline}
-                className="flex-1 cursor-pointer rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text-primary)] min-h-[44px]"
+                className="flex-1 cursor-pointer rounded-[var(--radius-sm)] bg-[var(--color-bg-elevated)] py-2 text-xs font-medium text-[var(--color-text-secondary)] transition-colors duration-150 [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)]/80 [@media(hover:hover)]:hover:text-[var(--color-text-primary)] min-h-[44px]"
               >
                 Decline
               </button>

@@ -21,7 +21,7 @@ export default async function ScoringAuditPage() {
 
   if (error) {
     return (
-      <div className="p-8 text-red-400">
+      <div className="p-8 text-[var(--color-danger)]">
         Failed to load businesses: {error.message}
       </div>
     );
