@@ -379,6 +379,19 @@ export default function LeadsPage() {
           onClose={() => setDrawerOpen(false)}
         />
 
+        {/* Active filter summary — shown when user arrives via a preset-filter route or has filters active */}
+        {activeFilterCount > 0 && (
+          <div className="mb-4 flex items-center justify-between text-xs text-[var(--color-text-tertiary)]">
+            <span>Showing {displayLeads.length} {displayLeads.length === 1 ? "lead" : "leads"}</span>
+            <button
+              onClick={() => setFilters(DEFAULT_FILTERS)}
+              className="text-[var(--color-accent)] [@media(hover:hover)]:hover:underline transition-colors"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+
         {/* Results */}
         {paginated.length === 0 ? (
           <div className="rounded-[var(--radius-md)] bg-[var(--color-bg-surface)]">

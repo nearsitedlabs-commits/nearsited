@@ -84,7 +84,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
               <button
                 onClick={() => toggle(i)}
                 aria-expanded={openIndex === i}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-accent)]/40"
               >
                 <span className="text-sm font-medium text-[var(--color-text-primary)]">{item.objection}</span>
                 <ChevronDown
@@ -99,7 +99,7 @@ export function ObjectionsSection({ navigate }: { navigate: (href: string) => vo
                   <div className="border-t border-[var(--color-border-subtle)] px-6 pb-6 pt-4 space-y-3">
                     <div className="text-base lg:text-body leading-7 text-[var(--color-text-secondary)]">{item.response}</div>
                     <div className="flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 p-3">
-                      <ArrowUpRight className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4 mt-0.5 text-[var(--color-accent)] shrink-0" />
                       <p className="text-sm text-[var(--color-text-primary)] font-medium">{item.answer}</p>
                     </div>
                   </div>

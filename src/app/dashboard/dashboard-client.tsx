@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { blendQualityForOpportunity, computeOpportunityScore, estimatedOpportunity } from "@/lib/scoring";
@@ -67,16 +66,6 @@ const PIPELINE_STAGES = [
   { key: "lost",            label: "Lost" },
 ] as const;
 
-// Bar segment bg colors — semantic per spec:
-// Prospect=secondary, Contacted=neutral, In conv=info, Won=success, Lost=danger
-const PIPELINE_BAR_COLORS: Record<string, string> = {
-  new_lead:        "bg-[var(--color-text-tertiary)]",
-  contacted:       "bg-[var(--color-border-strong)]",
-  in_conversation: "bg-[var(--color-info)]",
-  won:             "bg-[var(--color-success)]",
-  lost:            "bg-[var(--color-danger)]",
-};
-
 // Count-line text colors — semantic, applied only when count > 0
 const PIPELINE_TEXT_COLORS: Record<string, string> = {
   new_lead:        "text-[var(--color-text-secondary)]",
@@ -119,7 +108,6 @@ export default function DashboardClient({
   unanalysedLeads, activeConversations, pipelineCounts, recentLeads,
 }: Props) {
   const [now, setNow] = useState<number | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const timeout = setTimeout(() => setNow(Date.now()), 0);
@@ -129,6 +117,7 @@ export default function DashboardClient({
 
   const leads = recentLeads as RecentLead[];
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
+  const activeStagesTotal = (pipelineCounts["new_lead"] ?? 0) + (pipelineCounts["contacted"] ?? 0) + (pipelineCounts["in_conversation"] ?? 0);
 
   const highOpportunityCount = useMemo(() =>
     leads.filter((l) => {
@@ -161,7 +150,7 @@ export default function DashboardClient({
       <div className="min-h-screen">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <PageHeader firstName={firstName} />
-          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] bg-[var(--color-bg-surface)] p-8 sm:p-12 text-center">
+          <div className="mx-auto max-w-lg rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] p-8 sm:p-12 text-center">
             <h2 className="text-lg font-medium text-[var(--color-text-primary)]">Find your first opportunity</h2>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               Search any city and business type to discover local businesses with weak websites. Nearsited will score, audit, and write the pitch.
@@ -205,7 +194,7 @@ export default function DashboardClient({
               </div>
               {/* Full-width on mobile (primary CTA inside a card), auto-width on sm+ */}
               <Link
-                href="/dashboard/leads"
+                href="/dashboard/leads?flagged=1"
                 className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90 sm:w-auto sm:shrink-0"
               >
                 Pitch them →
@@ -275,10 +264,11 @@ export default function DashboardClient({
                         rating: lead.rating,
                       }));
                 return (
-                  <div
+                  <Link
                     key={lead.id}
-                    onClick={() => router.push(`/dashboard/leads/${lead.id}`)}
-                    className={`flex cursor-pointer items-center gap-3 px-1 py-0.5 transition-colors hover:bg-[var(--color-bg-elevated)] min-h-[56px] sm:min-h-[46px]${idx === 4 ? " hidden sm:flex" : ""}`}
+                    href={`/dashboard/leads/${lead.id}`}
+                    aria-label={`View lead detail for ${lead.name}`}
+                    className={`flex items-center gap-3 px-1 py-0.5 transition-colors rounded-[var(--radius-sm)] [@media(hover:hover)]:hover:bg-[var(--color-bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/40 min-h-[56px] sm:min-h-[46px]${idx === 4 ? " hidden sm:flex" : ""}`}
                     style={{
                       borderBottom: idx < leads.length - 1 ? "1px solid var(--color-border-subtle)" : undefined,
                     }}
@@ -297,7 +287,7 @@ export default function DashboardClient({
                     <p className="shrink-0 whitespace-nowrap text-[11px] text-[var(--color-text-tertiary)]">
                       {timeAgo(lead.discovered_at, now)}
                     </p>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -316,26 +306,18 @@ export default function DashboardClient({
             </Link>
           </div>
 
-          {/* Horizontal segmented bar */}
-          {totalPipeline === 0 ? (
+          {/* Horizontal segmented bar — active stages only (Prospect/Contacted/In conv.), sage fill */}
+          {activeStagesTotal === 0 ? (
             <div className="mb-2 h-2 w-full rounded-full bg-[var(--color-bg-elevated)]" />
           ) : (
             <div className="mb-2 flex h-2 w-full overflow-hidden rounded-full bg-[var(--color-bg-elevated)]">
-              {PIPELINE_STAGES.map((stage) => {
-                const count = pipelineCounts[stage.key] ?? 0;
-                if (count === 0) {
-                  return (
-                    <div
-                      key={stage.key}
-                      className="h-full shrink-0 bg-[var(--color-bg-elevated)]"
-                      style={{ width: 8 }}
-                    />
-                  );
-                }
+              {(["new_lead", "contacted", "in_conversation"] as const).map((key) => {
+                const count = pipelineCounts[key] ?? 0;
+                if (count === 0) return null;
                 return (
                   <div
-                    key={stage.key}
-                    className={`h-full shrink-0 first:rounded-l-full last:rounded-r-full ${PIPELINE_BAR_COLORS[stage.key] ?? ""}`}
+                    key={key}
+                    className="h-full shrink-0 bg-[var(--color-accent)]"
                     style={{ flexGrow: count }}
                   />
                 );

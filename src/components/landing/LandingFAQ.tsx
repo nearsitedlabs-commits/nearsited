@@ -88,7 +88,7 @@ export function LandingFAQ() {
                 <button
                   onClick={() => toggle(i)}
                   aria-expanded={openIndex === i}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-accent)]/40"
                 >
                   <span className="text-sm font-medium text-[var(--color-text-primary)]">{faq.q}</span>
                   <ChevronDown

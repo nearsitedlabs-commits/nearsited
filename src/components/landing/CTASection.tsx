@@ -13,7 +13,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         {prefersReducedMotion ? (
           <div className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
-            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-[var(--radius-md)] bg-[var(--color-accent)]/5 blur-[100px]" />
 
             <div className="relative z-10">
               <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">
@@ -40,7 +40,7 @@ export function CTASection({ navigate }: { navigate: (href: string) => void }) {
         ) : (
           <FadeUp>
             <div className="relative overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-bg-surface-raised)] px-5 sm:px-8 py-12 sm:py-16 text-center md:px-16">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--color-accent)]/5 blur-[100px]" />
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-[var(--radius-md)] bg-[var(--color-accent)]/5 blur-[100px]" />
 
               <div className="relative z-10">
                 <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-medium tracking-[-0.03em] leading-[1.1] text-[var(--color-text-primary)]">

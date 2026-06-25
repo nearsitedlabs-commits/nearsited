@@ -126,30 +126,30 @@ export function LandingFooter() {
           <div>
             <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Product</div>
             <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
-              <li><a href="#how" className="transition hover:text-[var(--color-text-primary)]">How it works</a></li>
-              <li><a href="#report" className="transition hover:text-[var(--color-text-primary)]">Sample report</a></li>
-              <li><a href="#pitch" className="transition hover:text-[var(--color-text-primary)]">Sample pitch</a></li>
-              <li><Link href="/pricing" className="transition hover:text-[var(--color-text-primary)]">Pricing</Link></li>
+              <li><a href="#how" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">How it works</a></li>
+              <li><a href="#report" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Sample report</a></li>
+              <li><a href="#pitch" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Sample pitch</a></li>
+              <li><Link href="/pricing" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Pricing</Link></li>
             </ul>
           </div>
           <div>
             <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Company</div>
             <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
-              <li><Link href="/#story" className="transition hover:text-[var(--color-text-primary)]">About</Link></li>
-              <li><a href="mailto:nearsitedlabs@gmail.com" className="transition hover:text-[var(--color-text-primary)]">Contact</a></li>
+              <li><Link href="/#story" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">About</Link></li>
+              <li><a href="mailto:nearsitedlabs@gmail.com" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Contact</a></li>
             </ul>
           </div>
           <div>
             <div className="mb-4 text-[0.7rem] uppercase tracking-[0.12em] text-[var(--color-text-tertiary)]">Legal</div>
             <ul className="space-y-3 text-sm text-[var(--color-text-tertiary)]">
-              <li><Link href="/terms" className="transition hover:text-[var(--color-text-primary)]">Terms</Link></li>
-              <li><Link href="/privacy" className="transition hover:text-[var(--color-text-primary)]">Privacy</Link></li>
+              <li><Link href="/terms" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Terms</Link></li>
+              <li><Link href="/privacy" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]">Privacy</Link></li>
             </ul>
           </div>
         </div>
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-subtle)] pt-6 text-sm text-[var(--color-text-tertiary)] md:flex-row">
           <span>© 2026 Nearsited. All rights reserved.</span>
-          <span className="text-[var(--color-text-secondary)]">Built by Again Labs · <a href="https://againlive.com" className="transition hover:text-[var(--color-text-primary)]" target="_blank" rel="noopener noreferrer">Again Live</a> family of products</span>
+          <span className="text-[var(--color-text-secondary)]">Built by Again Labs · <a href="https://againlive.com" className="transition [@media(hover:hover)]:hover:text-[var(--color-text-primary)]" target="_blank" rel="noopener noreferrer">Again Live</a> family of products</span>
         </div>
       </footer>
     </FadeIn>

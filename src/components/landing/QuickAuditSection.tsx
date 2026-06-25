@@ -152,7 +152,7 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
             aria-live="polite"
           className="mt-6 flex items-start gap-3 rounded-[var(--radius-md)] bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-danger)]"
           >
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </motion.div>
         )}
@@ -190,7 +190,7 @@ export function QuickAuditSection({ navigate }: { navigate: (href: string) => vo
                   </p>
                   {result.issues.map((issue, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]">
-                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--color-warning)]" />
+                      <AlertTriangle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--color-warning)]" />
                       <span>{issue.title}</span>
                     </div>
                   ))}

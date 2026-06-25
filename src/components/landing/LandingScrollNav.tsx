@@ -119,6 +119,7 @@ function NavDot({ section, isActive }: { section: Section; isActive: boolean }) 
           transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Icon
+            aria-hidden="true"
             style={{
               width: 13,
               height: 13,

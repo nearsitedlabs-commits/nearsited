@@ -10,7 +10,13 @@ import { SectionSub } from "@/components/landing/SectionSub";
 
 type ReportTab = "weak" | "none" | "social" | "platform";
 
-type IssueItem = { issue: string; impact: string };
+type IssueItem = { issue: string; impact: "High" | "Medium" | "Low" };
+
+const IMPACT_COLOR: Record<"High" | "Medium" | "Low", string> = {
+  High:   "var(--color-danger)",
+  Medium: "var(--color-warning)",
+  Low:    "var(--color-text-tertiary)",
+};
 
 const WEAK_ISSUES: IssueItem[] = [
   { issue: "Homepage takes 4.2s to load on mobile — 53% of visitors leave if it's over 3s", impact: "High" },
@@ -76,7 +82,7 @@ function WeakWebsiteContent() {
             <div key={item.issue} className="flex items-start gap-2 text-sm leading-snug text-[var(--color-text-secondary)]">
               <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[var(--color-text-tertiary)]" />
               <span>{item.issue}</span>
-              <span className="shrink-0 text-[11px] text-[var(--color-danger)] ml-auto">{item.impact}</span>
+              <span className="shrink-0 text-[11px] ml-auto" style={{ color: IMPACT_COLOR[item.impact] }}>{item.impact}</span>
             </div>
           ))}
         </div>
@@ -85,7 +91,7 @@ function WeakWebsiteContent() {
       {/* Technical scores */}
       <div className="border-t border-[var(--color-border-subtle)] pt-6">
         <details className="group">
-          <summary className="cursor-pointer text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
+          <summary className="cursor-pointer text-xs text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-text-secondary)] list-none flex items-center gap-1.5">
             <svg aria-hidden="true" className="h-3 w-3 transition-transform group-open:rotate-90" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
             Technical scores
           </summary>
@@ -245,7 +251,7 @@ export function SampleReportSection({ navigate }: { navigate: (href: string) => 
     <section id="report" className="border-t border-[var(--color-border-subtle)] py-14 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-8">
         <div className="max-w-3xl">
-          <SectionLabel>SAMPLE OPPORTUNITY REPORT</SectionLabel>
+          <SectionLabel>Sample opportunity report</SectionLabel>
           <SectionTitle>Every opportunity type, one platform.</SectionTitle>
           <SectionSub>
             Nearsited discovers all four kinds of website opportunity. Here&rsquo;s what each report looks like.

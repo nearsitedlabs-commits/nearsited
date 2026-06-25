@@ -2,7 +2,6 @@
 
 import { Search, Target, Mail, TrendingUp, Info } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/landing/SectionLabel";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { SectionSub } from "@/components/landing/SectionSub";
@@ -124,10 +123,12 @@ export function HowItWorksSection() {
         </motion.div>
 
         <div className="mt-10 text-center">
-          <Link href="/signup">
-            <Button variant="primary" icon={<Search aria-hidden="true" className="h-4 w-4" />} className="px-8 py-3 text-base">
-              Find your first opportunity
-            </Button>
+          <Link
+            href="/signup"
+            className="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-accent)] px-8 py-3 text-base font-medium text-white shadow-[var(--brand-shadow-xs)] transition-colors duration-150 [@media(hover:hover)]:hover:opacity-90 active:opacity-90"
+          >
+            <Search aria-hidden="true" className="h-4 w-4" />
+            Find your first opportunity
           </Link>
         </div>
       </div>

@@ -64,3 +64,15 @@ _Filed: June 2026 — lead-detail sprint §10.4_
 
 **Social `Website` pill:** Social-only leads sometimes show a `Website` pill in the top pills row alongside `#Instagram`. Either misnamed (should be `Visit Profile` if it links to the social URL) or the lead classifier is misrouting leads. Investigate. (Note: suppressed in sprint by passing `website={null}` to `LeadHeaderStrip` for social leads — the `View Profile` badge already handles this link.)
 _Filed: June 2026 — lead-detail polish addendum §6_
+
+---
+
+## Dashboard (from dashboard-refactor sprint, June 2026)
+
+**Next-action queue expansion:** Today banner currently surfaces "leads ready to pitch." Could also surface: "pitches generated, awaiting send"; "contacted >7 days ago, follow-up due"; "won leads, awaiting handoff." Each state would have its own CTA. Requires data-layer support for these states and design for the multi-state banner.
+
+**Focused pitch flow:** Alternative to "Pitch them" landing on filtered list — open a one-lead-at-a-time review flow (generate pitch → review → copy → mark sent → move to next). Higher activation/throughput for first-time users.
+
+**Territory switcher:** Today banner is locked to one territory (derived from most common city in loaded leads). Multi-territory users need a way to switch territory context on the dashboard without going to Find. Requires a proper territory data model (currently inferred, not stored).
+
+**Sidebar "Discover" duplication:** Both the sidebar (`Find`) and the dashboard top-right (`Discover`) lead to `/dashboard/discover` with different labels. Standardise naming across sidebar nav and dashboard header button.

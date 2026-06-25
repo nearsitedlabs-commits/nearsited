@@ -232,7 +232,7 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
                 className={`relative rounded-[var(--radius-sm)] px-5 py-2 font-medium transition-colors duration-150 min-h-[44px] ${
                   billing === b
                     ? "text-[var(--color-text-primary)]"
-                    : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+                    : "text-[var(--color-text-tertiary)] [@media(hover:hover)]:hover:text-[var(--color-text-secondary)]"
                 }`}
               >
                 {billing === b && (
@@ -268,11 +268,9 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
               whileHover={
                 shouldReduce
                   ? undefined
-                  : {
-                      y: -4,
-                      boxShadow: "0 20px 48px rgba(0,0,0,0.22)",
-                      transition: { duration: 0.2, ease },
-                    }
+                  : plan.featured
+                    ? { y: -6, transition: { duration: 0.2, ease } }
+                    : { y: -4, boxShadow: "0 20px 48px rgba(0,0,0,0.22)", transition: { duration: 0.2, ease } }
               }
               className="relative flex flex-col"
             >
@@ -281,8 +279,18 @@ export function Pricing({ navigate, mode = "inline", onPlanSelect, isLoggedIn }:
                 variant="default"
                 elevation={plan.featured ? 2 : 1}
                 padding="lg"
-                className={`flex h-full flex-col ${plan.featured ? "scale-105 shadow-[var(--brand-shadow-md)]" : ""}`}
+                className={`relative flex h-full flex-col ${
+                  plan.featured
+                    ? "scale-105 shadow-[inset_0_2px_0_0_var(--color-accent),0_0_56px_-8px_rgba(138,151,119,0.28),0_16px_40px_rgba(0,0,0,0.30)]"
+                    : ""
+                }`}
               >
+                {plan.featured && (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-[var(--radius-md)] bg-[var(--color-accent)]/[0.04]"
+                  />
+                )}
                 {plan.badge && (
                   <span className="mb-4 self-start inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent)]">
                     {plan.badge}
