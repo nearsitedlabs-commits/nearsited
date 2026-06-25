@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "@/lib/motion";
 import { Loader2 } from "lucide-react";
 import { LeadNameLink, LeadAffordanceIcons } from "@/components/ui/LeadAffordances";
+import { WebsiteStatusPill } from "@/components/ui/WebsiteStatusPill";
 import {
   estimatedOpportunity,
   computeOpportunityScore,
@@ -162,6 +163,11 @@ export function ResultCard({
             compact
           />
         </div>
+      </div>
+
+      {/* Website status pill */}
+      <div className="hidden sm:block flex-shrink-0">
+        <WebsiteStatusPill status={business.website_status ?? "unknown"} size="sm" />
       </div>
 
       {/* Rating + review count — 11px tertiary */}
